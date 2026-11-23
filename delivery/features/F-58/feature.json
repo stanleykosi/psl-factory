@@ -91,6 +91,18 @@
       "at": "2026-11-23T12:50:10Z",
       "seconds": 520.4,
       "evidence_ref": "delivery/features/F-58/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T13:17:22Z",
+      "seconds": 376.8,
+      "evidence_ref": "delivery/features/F-58/round-1/checks.md"
     }
   ],
   "reviews": {
@@ -146,8 +158,212 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The spec's Fixtures say the scenario cookies `401`, `429`, `503` and `500` all work on `POST /session`. Expected: `401` gives a 401 there too. Actual: `SCENARIO_ERRORS` covers only 429, 500 and 503. Under scenario `401` a sign-in with the sample pair succeeds and sets `psl_mock_session=in`, but the frame keeps answering 401. This affects the mock only (`frontend/mock/session.mjs:29`, `guarded` at :52). Either add 401 to the list or record that scenario 401 is just the starting state for showing the form.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-58/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T13:21:54Z",
+          "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The loading, \"cannot get ready\" and not-admitted views have no heading (only the ready form has the h1), so a screen-reader user lands on a page with no title. Add a visually-hidden or visible \"Sign in\" heading. src/features/sign-in/SignInView.tsx:128-155.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-58/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T13:21:54Z",
+          "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Error state: the board's Password field takes a red-orange border after a failed sign-in (SCR-17-desktop-error, SCR-17-mobile-error). The built Password field keeps the normal dark border. Expected the error border token on the field the callout refers to.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-58/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-23T13:21:54Z",
+          "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone: board inputs are 52px high (Password box 350x52); built inputs are 48px (350x48), so every control below shifts. Match the board height at 390.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-58/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-23T13:21:54Z",
+          "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Field labels render bold in the build; the board's labels are a lighter (medium) weight, on both desktop and phone. Use the board's label weight and the existing label token.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-58/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-23T13:21:54Z",
+          "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f"
+        }
+      ]
+    },
+    {
+      "id": "SEC-1-1",
+      "round": 1,
+      "snapshot_ref": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Signing out switches pages inside the app (`router.replace('/sign-in')` in `frontend/src/features/sign-in/useSignOut.ts:27`) instead of loading the page fresh. Data the app holds in memory survives the sign-out: for example the last RFP frame kept by `frontend/src/features/rfp/frameMemory.ts:9`. On a shared device, the next person who signs in in the same tab and opens one of that RFP's tabs could briefly see the previous person's RFP header before their own read replaces it or fails. Expected: signing out clears everything the app holds in memory, for example by doing a full page load to `/sign-in` once the logout succeeds (the not-admitted notice on `/sign-in` can keep its current `onSignedOut` path). Actual: the module state stays in memory until the page reloads. The exposure is narrow: it needs the same tab and the same work item id, and the server still enforces access.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-58/round-1/review-security.md"
+      ],
+      "raised_by": "reviewer-security",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-security",
+          "at": "2026-11-23T13:21:54Z",
+          "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead, light panel D-180)",
+          "snapshot_ref": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+          "evidence_refs": [
+            "delivery/features/F-58/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-58/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer (light panel, D-180)",
+          "snapshot_ref": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+          "evidence_refs": [
+            "delivery/features/F-58/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+          "evidence_refs": [
+            "delivery/features/F-58/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "security reviewer",
+          "snapshot_ref": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+          "evidence_refs": [
+            "delivery/features/F-58/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -170,7 +386,7 @@
     "base_branch": "main",
     "base_sha": "44878365c9d1e71bb56a3e9b3cd8a0d7ddbb240a",
     "task_branch": "fe-signin-sign-in-reset-and-set-up",
-    "head_sha": "473090df18b54f3897f876ef417cac262980974e",
+    "head_sha": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
     "worktree": "/Users/Hunchoo/psl-factory",
     "pr_url": null,
     "pr_number": null,
@@ -283,7 +499,7 @@
     }
   },
   "created_at": "2026-11-23T11:27:08Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -301,6 +517,30 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-23T13:17:46Z",
+      "round": 1,
+      "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-23T13:22:03Z",
+      "round": 1,
+      "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T13:22:10Z",
+      "round": 2,
+      "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
+      "reason": null
     }
   ],
   "routing": {
@@ -317,10 +557,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "FAIL",
-    "commit": "473090df18b54f3897f876ef417cac262980974e"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

@@ -4,6 +4,16 @@ Lanes append here; the coordinator brings them about twice a day and writes the 
 
 ## Lane A
 
+### F-61 · Alerts list, drawer and alert settings on the live API (SCR-15 default and settings)
+Context: live `GET /notifications` and `/me/alert-preferences` are much smaller than the boards (spec `delivery/features/F-61/spec.md`, "Conflicts with the boards"). F-61 is parked until these are answered.
+1. Alert rows have no agent avatar, name or time in live (A-42). (a) Recommended: show title over subject and detail, no avatar, no time. (b) Keep a neutral PSL mark in the avatar slot so the board's row alignment holds. (c) Wait for the backend to add `at` and `agent`.
+2. Settings without per-event switches, digest and quiet hours (A-44). (a) Recommended: only the Email and WhatsApp switches, with Ready state and receipts. (b) Also show the old rows greyed out, "Not available yet". (c) Hold the settings page until the backend decides.
+3. Search, agent filter, unread filter and totals (A-43). (a) Recommended: remove them for this release; show "N alerts loaded" with the as-of time. (b) Keep an unread-only toggle and text search over the loaded list, worded "filtered from the loaded alerts". (c) Keep the full toolbar and wait for paging.
+4. The recent-deliveries list is new on the settings board. (a) Recommended: a plain list under the switches. (b) A one-line summary of the last delivery per channel. (c) Leave receipts out until the board is redrawn.
+5. An alert with no usable link (no work id in its link). (a) Recommended: the row is not clickable and has a Mark as read button. (b) The row stays clickable and only marks it read. (c) Hide such alerts.
+6. Wording of the receipt states. (a) Recommended: Queued, Not confirmed, Delivered, Held. (b) Waiting to send, Could not confirm, Delivered, On hold. (c) Your own wording.
+7. D-ALERTS-ENTRY, the part still open: the account menu's "My roles" and "Delegate while away" links lead nowhere, and no phone board shows how the account page (password change, SCR-15 account boards) opens. (a) Recommended: for now the account menu shows only the person's name and Sign out (as F-58 built it), and the phone menu gets an "Account" row opening `/settings/account`; draw "My roles" and "Delegate while away" later. (b) Draw both links now, pointing at the setup screens. (c) Leave the account tab unbuilt this release.
+
 ## Lane B
 
 - **F-74 · B1. Setup without a workspace (backend B-21, short-list 4).** Every live Setup read and save needs a workspace; our Setup pages are organisation-wide. How should Setup open?
@@ -36,6 +46,11 @@ Lanes append here; the coordinator brings them about twice a day and writes the 
   1. (Recommended) Offer approve and return as drawn, require the note on approve as live does, and leave reject out until you draw it.
   2. Add a Reject button now with the same note box.
 
+- **F-70 · B9. Project list and journey: nine board changes from live data.** Full options in `delivery/features/F-70/spec.md` ("Conflicts with the boards"). We build option 1 of each; say "accept all" or name the ones to change.
+  1. (Recommended) Accept all: project list loses the next-milestone column, reference, count badges and rows-per-page (shows "N shown, more available"); the journey loses "What is next", Tola's summary and "Station n of m"; the facts strip has four cells (invoices verified and paid have no live source) with "Figures may be partial." when finance is partial; the Delivery tab is hidden and its address says "not available yet"; work tags are one neutral colour with the live words; no tab counts; started and updated times are shown on each work row.
+  2. Keep the missing parts as "Not available" placeholders instead of removing them.
+  Context: each gap has a backend question (B-2 to B-6, B-33, B-34); we switch them on when answered.
+
 ## Lane C
 
 ### LC-Q1 · F-85, F-87 · Work item parts the live API does not give
@@ -53,3 +68,19 @@ In the design, a person with recovery authority chooses delivered, not delivered
 Some lines say `can_submit_via_api: false`, and the invoice start is not among the live lines (backend question 8).
 1. **(Recommended)** List those lines as unavailable with a one-line reason, and leave out the invoice start until the backend answers.
 2. Hide them from the chooser completely.
+
+### LC-Q4 · F-85 · History list: filters, counts and sentences
+The approved History view has per-filter counts, rows written as sentences with an actor kind, and "show more". Live `GET /work/{id}/history` returns at most 30 rows of `{at, station, status, actor?, reason?, evidence_id?}`, filtered only by worker, decision or evidence, with no counts and no paging (backend question 5).
+1. **(Recommended)** Keep the filter tabs but drop the counts and "show more"; write each row from `station` and `status` words plus the actor and reason when present; say "Showing the latest 30" with the as-of time.
+2. Hide the filters too and show one list.
+3. Hold History until the backend adds counts and paging.
+
+### LC-Q5 · F-85, F-87 · Buttons the boards draw that this feature leaves out
+The work item boards draw Resume, Cancel and "Confirm what happened" buttons and the decision card. Their writes are in F-87 and the decision screen is a separate feature. Until F-87 merges the page shows no write buttons (decisions waiting link to their own page).
+1. **(Recommended)** Leave the buttons out until F-87 merges; the page shows state, next step and blocker only.
+2. Show them disabled with "Not available yet".
+
+### LC-Q6 · F-85 · Fields the boards show that live does not give
+Reference (for example "INV-0412"), started by, started at and amount have no live source on `GET /work/{id}` (backend question 7, A-14). Live gives the work id, `owner` and `updated_at`.
+1. **(Recommended)** Drop reference, started by and amount; show "Updated" from `updated_at` and "With" from `owner` when there is one.
+2. Show the numeric work id as the reference.

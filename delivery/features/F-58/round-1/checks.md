@@ -1,93 +1,93 @@
-GATE: FAIL
-COMMIT: 473090df18b54f3897f876ef417cac262980974e
-ATTEMPT: 1
+GATE: PASS
+COMMIT: 15c8e6bd1aa8c17eefc1f3365473714f6700eb3f
+ATTEMPT: 2
 
 ## Summary
-- checks.sh failed with exit 1
+- checks.sh passed
 - Protected paths: none changed
-- Commit 473090df18b5, round 1, attempt 1
+- Commit 15c8e6bd1aa8, round 1, attempt 2
 
 ## checks.sh (last 80 lines of checks.log)
 
 ```
-            </svg>
-            <span>
-              Sign-in isn’t working right now. Try again in a moment. Nothing was changed.
-+           </span>
-+         </div>
-+         <div
-+           class="psl-field"
-+         >
-+           <label
-+             class="psl-label"
-+             for="_r_26_-control"
-+             id="_r_26_-control-label"
-+           >
-+             Work email or sign-in name
-+           </label>
-+           <input
-+             autocapitalize="none"
-+             autocomplete="username"
-+             class="psl-input"
-+             id="_r_26_-control"
-+             name="username"
-+             spellcheck="false"
-+             type="text"
-+             value="someone@psl.example"
-+           />
-+         </div>
-+         <div
-+           class="psl-field"
-+         >
-+           <label
-+             class="psl-label"
-+             for="_r_27_-control"
-+             id="_r_27_-control-label"
-+           >
-+             Password
-+           </label>
-+           <input
-+             autocomplete="current-password"
-+             class="psl-input"
-+             id="_r_27_-control"
-+             name="password"
-+             type="password"
-+             value=""
-+           />
-+         </div>
-+         <label
-+           class="psl-check cmp-check"
-+         >
-+           <input
-+             type="checkbox"
-+           />
-+           <span>
-+             Keep me signed in
-            </span>
-+         </label>
-+         <button
-+           class="psl-btn psl-btn--lg psl-btn--block"
-+           type="submit"
-+         >
-+           Sign in
-+         </button>
-+         <p
-+           class="signin-forgot"
-+         >
-+           Forgot your password? Reset opens in a later release. Ask your administrator for help.
-+         </p>
-+       </form>
-+     </main>
-    </div>
-+ </body>
+├ ƒ /assistant/[conversationId]
+├ ○ /clients
+├ ƒ /clients/[clientId]
+├ ○ /exceptions
+├ ƒ /finance/month-end
+├ ○ /finance/payments
+├ ƒ /frame-fixtures/phone-back
+├ ○ /my-work
+├ ○ /notifications
+├ ○ /overview
+├ ○ /projects
+├ ƒ /projects/[caseId]
+├ ƒ /projects/[caseId]/[tab]
+├ ƒ /projects/[caseId]/documents/[documentId]
+├ ○ /settings/alerts
+├ ○ /setup
+├ ○ /setup/costing-rule
+├ ○ /setup/delegation
+├ ○ /setup/payroll-visibility
+├ ○ /setup/roles
+├ ○ /setup/rules
+├ ○ /setup/rules/delivery
+├ ○ /setup/rules/finance
+├ ○ /setup/staff
+├ ○ /setup/templates
+├ ○ /sign-in
+├ ƒ /work/[id]
+├ ƒ /work/[id]/decide
+├ ƒ /work/[id]/history
+├ ƒ /work/[id]/outcome
+└ ƒ /work/[id]/respond
 
- ❯ tests/sign-in.test.tsx:226:36
-    224|     const alert = await screen.findByRole('alert');
-    225|     expect(alert.textContent).toBe(wording);
-    226|     expect(document.activeElement).toBe(alert);
-       |                                    ^
-    227|     expect(passField().value).toBe('');
-    228|     expect(userField().value).toBe('someone@psl.example');
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'jsdom@31.0.1',
+npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
+npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'w3c-xmlserializer@6.0.0',
+npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
+npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
+npm warn EBADENGINE }
+npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
 ```
