@@ -155,3 +155,5 @@ Entered in `delivery/connect/questions-batch.md` under "## Lane C" as LC-Q14 to 
 
 ## Coordinator note (lane C, 23 Nov)
 LC-Q16: the lane C coordinator changed the recommendation to "do not draw Approve until the report parts are shown on the page; Return and Refuse stay", because approving sends the report to the client and the reviewer must see what goes out. Build that, not option 1 above. The design engineer's batch-2 answer overrides this.
+
+D-183 (batch 2): the design engineer confirmed LC-Q16 "Hold Approve" and LC-Q14 "Add Refuse" (one button per verdict the API lists). LC-Q10 to LC-Q15 accepted as recommended.
