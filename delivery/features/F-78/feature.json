@@ -3,26 +3,61 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-78",
-  "outcome": "A person can mark a milestone complete from the Milestones tab with proof, through the live command, once PSL has said who may do it",
-  "state": "BLOCKED",
+  "outcome": "Mark a milestone complete, recorded only after a re-read",
+  "state": "READY",
   "task_ids": [
     "FE-MILESTONE-COMPLETE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "The control follows the server only: with the options body `can_complete: true`, \"Mark complete\" is present; with `can_complete: false` it is absent, whatever the user's role label says \u2014 verify: `tests/milestone-complete.test.tsx` renders both bodies for the same persona and asserts the button; `grep -rniE \"pmo lead|isPmo|role\" frontend/src/features/projects/MilestoneComplete.tsx frontend/src/features/projects/useMilestoneComplete.ts` finds no role check.",
+    "Each hold shows its plain-word text and no control: `baseline_required`, `proof_required`, `name_in_use`, and `can_complete:false` with `hold:null` \u2014 verify: test asserts text and `queryByRole('button', {name: 'Mark complete'})` is null for each; the raw hold codes never appear in the DOM.",
+    "With `can_complete: true` and no evidence chosen, or the confirmation unticked, the button is disabled \u2014 verify: test asserts `disabled` for each missing piece and enabled when all are present.",
+    "Choosing an existing proof and pressing sends exactly one `POST \u2026/milestones/completions` with body `{revision, name, evidence_id}` and header `X-CSRFToken`, and no `upload_id` or `checked` \u2014 verify: test spies on `fetch` and asserts the count and exact JSON.",
+    "Choosing a PDF first sends `POST /api/v1/cases/<id>/files` as multipart with `file`, then (after both checkboxes) `POST \u2026/completions` with `{revision, name, upload_id, checked: true}`; `checked` is never sent without the second checkbox \u2014 verify: test asserts request bodies and order; asserts the PDF zone is absent when `can_attach_pdf` is false.",
+    "Double activation (click twice, Enter then click) sends one POST \u2014 verify: test fires two clicks before the mock resolves and asserts one completions POST.",
+    "\"Recorded\" appears only after the re-read: after a 201, before the `GET \u2026/milestones/<id>` resolves the page shows \"Checking the record\u2026\" and not \"Milestone recorded\"; when the re-read fails (`reread-fail`) the page shows \"couldn't confirm it yet\" with \"Check again\", never \"recorded\", and \"Check again\" issues only a GET \u2014 verify: test with a deferred re-read, then the `reread-fail` mock case; asserts no second POST.",
+    "The Recorded view's name, date and \"Proof version\" come from the re-read body, not the 201 \u2014 verify: test serves different `name` casing/`proof_version` in the re-read and asserts the re-read values are shown; a re-read whose `name` differs from the written name does not show \"recorded\".",
+    "A 409 keeps the person's input and reloads: after `conflict` the options are re-read once with `?name=`, the new `revision` is used on the next press, the chosen proof, uploaded PDF and ticked boxes remain, the 409 message shows, and no POST is made until the person presses again \u2014 verify: test counts requests (one POST, one options GET) and asserts the form state; then press and assert the second POST carries the new revision.",
+    "An uncertain failure (network error or 503) shows \"We couldn't tell whether this was recorded\" and sends no second POST on its own (wait past a fake-timer advance of 60 s) \u2014 verify: test with `uncertain` and fake timers asserts one POST total. \"Check again\" issues a GET options only; for `uncertain-saved` it says a completion with this name is now recorded and does not show \"Milestone recorded\" for this press; for `uncertain` it says it wasn't recorded and returns the form with input kept.",
+    "403 on the write shows \"You can't mark this milestone complete.\" and keeps input; 404, 401, 400/422, 413, 415 and 429 show their wording above; 401 shows `SignedOutState` \u2014 verify: one test per status using a `fetch` stub.",
+    "Options read 403/404/5xx/guard failure on the page shows the no-access card or `WorkErrorCard` with Try again, and no control; no partial data is drawn \u2014 verify: tests with the `forbidden`, `notfound` cases and an invalid body (missing `can_attach_pdf`).",
+    "Completion never starts an invoice: no \"Start the invoice\", \"Chidi drafts\", \"invoice started\" or invoice number appears on the page in any state, and the page issues no request to any `billing-invoices` or work-start route \u2014 verify: `grep -rniE \"start the invoice|chidi\" frontend/src/features/projects/MilestoneComplete.tsx` has no match; test asserts the Recorded text equals the \"What happens next\" wording and the fetch log has only the files POST, completions GET/POST and milestone GET.",
+    "The Milestones tab shows \"Mark complete\" only on rows with `completed_at: null` and only when the tab's unnamed options read gives `can_complete: true`; the link goes to `\u2026/milestones/complete?name=<encoded label>`; a hold shows its reason once above the table; an options-read failure leaves F-71's table and completions unchanged \u2014 verify: extend `tests/milestones.test.tsx` (F-71's file) with these cases; a completed row never has the link.",
+    "No name in the URL shows \"Choose a milestone from the Milestones tab.\" and makes no request \u2014 verify: test with an empty `name` and an over-200-character `name`; assert `fetch` call count 0.",
+    "A \"Show more\" on proofs requests `?name=<name>&page=2` and appends without duplicating ids \u2014 verify: test with `paged`.",
+    "Every mock body served for the new routes validates against `contracts/psl-factory.openapi.json` 1.24.0 \u2014 verify: new Ajv test, as in `tests/mock-live-projects.test.ts`, covers each case above.",
+    "Phone (390 px): one column, \"Mark complete\" at the foot, 44 px tap targets, no horizontal scroll \u2014 verify: browser check of `/projects/<id>/milestones/complete?name=\u2026` at 1440 and 390 against `SCR-19-desktop` and `SCR-19-mobile`.",
+    "Live smoke (integration owner), Django 8010: with an account whose options read gives `can_complete: true`, one real completion records, the re-read returns the same `id`, and a second visit shows `name_in_use`; with an account that gets `can_complete: false` there is no control \u2014 verify: recorded in build.md with the account names and responses.",
+    "LB-2 is named in the PR description as flagged: \"PMO Lead enforcement on POST milestones/completions is unconfirmed server-side; the screen follows `can_complete` and invents no role rule\" \u2014 verify: the PR body contains the text, and `delivery/connect/backend-questions.md` \"New from lanes\" has an LB-2 line (the coordinator adds it if missing)."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. A completion is an irreversible, billing-adjacent write that queues a Finance handoff (contract 1.24.0, backend-answers B-28 to B-31). Surfaces: ui and api for the screen and write. auth because authority rests on the server's `can_complete` and LB-2 is unconfirmed. contract-change for the 1.24.0 options and write. product-decision for D-187 and the PSL PMO Lead rule. The UI adds no authority, so the residual risk is the backend gap, which is flagged and not hidden."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-78/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +94,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-78/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -146,18 +202,42 @@
       "round": 0,
       "head": null,
       "reason": "NOT-READY: live 1.22.0 now has POST /projects/{case_id}/milestones/completions, but PSL has not said who may mark a milestone complete or whether it starts the invoice draft; backend B-28 to B-31 also open"
+    },
+    {
+      "from": "BLOCKED",
+      "to": "PLANNED",
+      "at": "2026-11-23T18:25:49Z",
+      "round": 0,
+      "head": null,
+      "reason": "Unblocked by D-187 (B31: completion only queues the Finance handoff) and PSL's PMO Lead decision; LB-2 built on the server's can_complete"
+    },
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T18:29:35Z",
+      "round": 0,
+      "head": null,
+      "reason": null
     }
   ],
-  "routing": null,
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-78/readiness.md",
+      "delivery/features/F-78/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
     "verdict": null,
     "commit": null
   },
-  "blocked": {
-    "from": "PLANNED",
-    "reason": "NOT-READY: live 1.22.0 now has POST /projects/{case_id}/milestones/completions, but PSL has not said who may mark a milestone complete or whether it starts the invoice draft; backend B-28 to B-31 also open",
-    "at": "2026-11-23T13:24:41Z"
-  }
+  "blocked": null
 }

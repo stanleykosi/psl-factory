@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 1209ff65d24e5c991a4132a9f21ab44be6bbba39
+COMMIT: 71e65c9565280619ffa6cccec8a36b0e71a893b4
 BUILDER: builder
 LANE: full
 
@@ -57,3 +57,16 @@ None (round 1).
 - Status tag tone: live gives no tone, so it is "person" while a decision is open to the reader and neutral otherwise.
 - Shared-code finding: `mock/server.mjs`' generic scenario cookie `psl_mock_scenario=403` also fails `/me`, so a 403 no-access check in the browser needs the reserved ids instead (used here). Not changed.
 - v7 `E-DOCUMENT` fixtures/tests (`mock-document-review.test.ts`, `D-2901.*.json`) remain for the work-item document link; they can go when that link is connected.
+
+## Update after the 1.24.0 / 1.26.0 merges
+- 669d6aea: the preview fixture now carries the 1.24.0 required fields `template_name`, `template_version`, `sample`; no code change was needed (the page ignores them). Merged origin/main (API 1.26.0, no conflicts); head 71e65c9565280619ffa6cccec8a36b0e71a893b4. Pushed with the explicit refspec; worktree clean; no server of mine running.
+- F-72 files after the merge: `mock-live-document-review`, `document-review`, `document-review-model`, `next-config` tests 78/78 pass against the 1.26.0 contract. Lint clean.
+- Typecheck: fails only in `tests/shell-live.test.tsx:95` (missing `positions`): waiting for the lane A hotfix, which is not in origin/main yet. I did not touch it.
+- Full `npx vitest run` (log `.../scratchpad/vitest2.log`): 158 files, 3803 tests, 3758 passed, 45 failed in 10 files, none F-72's: `api-live-schema-drift` (1), `mock-live-me` (8), `mock-live-projects` (13), `mock-contract` (16), `asset-schedule`, `assistant`, `cash-forecast` (2), `demo-mock`, `setup-delegation`, `start-work-prefill` (1 each). The first five are main's fixtures and generated types against 1.26.0; the rest are lane A/C files, not re-run singly. Needs main's fix before the gate can be green.
+
+## Follow-up for 1.24.0/1.26.0 (not built; for a small follow-up feature)
+- B-7: `GET /projects/{case}/document-versions` lists readable standalone report versions with links to preview and controls. The Documents tab can reach `version_id` from it. Today only direct URL (and a row's own `api_url`) enters the page.
+- B-8: the preview now gives `template_name`, `template_version` and `sample`, so the TEST TEMPLATE tag and template line can come back. F-72 ignores them.
+- B-9: a compare read exists for two versions of the same report (changed, added, removed, unchanged sections); weekly report review returns draft-only section notes. Compare and "changed since" can return.
+- B-10: `/publication` gives findings and `review_status`; the returner's name, time and reason still need a review-history projection (not available).
+- B-11: answer confirms `delegated:false` for an ordinary reviewer; the preview's decision token suffix (ordinary vs delegated) may carry a delegated route, so `decisions[]` entries may need parsing. F-72 keeps `delegated:false`.
