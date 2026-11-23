@@ -3,26 +3,74 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-104B",
-  "outcome": "Ledger source, part 2: duplicate references and recovery after a rejected or uncertain check run live",
-  "state": "PLANNED",
+  "outcome": "A Finance person resolves a duplicate ledger source, an independent reviewer confirms, returns or withdraws it, and a verified source can be re-checked, live",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4221` (mock) shows the duplicate card with \"Nothing was posted.\", the rows \"This capture\" and \"The other capture\" with the references of claims 11 and 12, the resolve form, and no amount, no capture date, no \"LED-\" label and no \"Open\" link \u2014 verify: page; DOM text search; e2e.",
+    "`/work/4222` shows \"You can't see the other capture.\" and the form with only the served claim; no id numbers in the text \u2014 verify: page; unit test on the model.",
+    "The resolve form opens with nothing ticked, kept, chosen or typed; \"Propose resolution\" is off until at least two captures are ticked, one is kept, a kind and a reference are chosen, and both texts are within limits (4000 and 400) \u2014 verify: component test stepping through each requirement.",
+    "\"Reference\" offers only the distinct non-null references of the ticked captures and no free text \u2014 verify: component test; the input type is a `Select`.",
+    "One press sends exactly two requests in order: `POST /api/v1/projects/{case_id}/incumbent-evidence` with `{kind:\"ledger_resolution\", case_revision, value}`, then (after a resolutions re-read) `POST .../incumbent-resolutions` with `{action:\"propose\", case_revision, selected_id, retired_ids, member_ids, mode, reference, predecessor_id, evidence_id, reason}` where `evidence_id` is the first response's id; `retired_ids` is a proper subset of `member_ids` without `selected_id` \u2014 verify: e2e request capture; unit test on the builders.",
+    "`predecessor_id` is `null` when no packet has the chosen reference and the highest-`version` packet's `id` when one does (two packets with one reference: the later version wins) \u2014 verify: unit test.",
+    "After the propose 201 the page re-reads and shows the packet only if the re-read has it; with a mock that returns 201 and an unchanged re-read it does not say \"Proposed\" \u2014 verify: e2e with both scenarios.",
+    "A 422 on propose (for example an incomplete population) shows the server message and first `fields[].message` as given and sends nothing more; a retry after a 422 sends only the propose call with the same `evidence_id` \u2014 verify: unit test counts evidence and propose POSTs (one and two).",
+    "A 409 on propose re-reads, says \"This changed while you were working. Showing the latest version.\", keeps the typed texts, and the next press makes new evidence from the fresh read \u2014 verify: e2e on `/work/4230` counting requests.",
+    "After a dropped connection on propose the page re-reads; with no new packet it says \"We couldn't confirm that this was recorded. Check the page before trying again.\", disables the button and sends nothing over 60 s of fake time; with the new packet present it shows it proposed \u2014 verify: unit test with fake timers; e2e applied and not-applied variants.",
+    "`/work/4223` draws the packet card with its mode, version, members and \"Waiting for review\" and the Confirm, Return and Withdraw buttons, off until the note is set (1 to 4000) \u2014 verify: page; component test.",
+    "Pressing Confirm sends the evidence call `{kind:\"ledger_resolution_review\", case_revision, value}` then `POST .../incumbent-resolutions` `{action:\"review\", case_revision, resolution_id, evidence_id, verdict:\"confirm\"}`; Return and Withdraw send their verdicts; the body has no reason, no null and no 0 \u2014 verify: e2e request capture for each verdict.",
+    "`/work/4224` offers only Withdraw; `/work/4225` and `/work/4226` offer no review control and show \"Returned\" and \"Withdrawn\" \u2014 verify: e2e asserts absence.",
+    "A double click on a verdict sends one evidence call and one review; while it runs all three buttons of that card are disabled and a poll or re-read result mid-write does not clear the lock \u2014 verify: unit test with a deferred POST; e2e counts requests.",
+    "A 403 `forbidden` on a review shows \"You can't do this.\" plus the server message \"Independent resolution reviewer required\", re-reads, and sends nothing more \u2014 verify: mock scenario; e2e.",
+    "A 403 `csrf_failed` on any write of this feature refreshes the session once, says \"Press the button again\", is not shown as no-access, and sends no second request \u2014 verify: unit test counts POSTs (one) and session reads (one).",
+    "After a review 201 the card shows the verdict from the re-read; with an unchanged re-read it does not \u2014 verify: e2e with both scenarios.",
+    "`/work/4227` shows \"A reference only. If the source changes later, a re-check reopens it.\" and a Re-check button; `/work/4201` (part 1 verified-free item) shows neither \u2014 verify: page; e2e asserts absence.",
+    "Re-check sends one `POST /api/v1/work/4227/incumbent-reference` with exactly `{action:\"recheck\", expected_revision, case_revision, reason}` (tokens from the incumbent-reference read, `action` equal to the generated type's value, no key, no 0 or null); an empty reason sends nothing \u2014 verify: e2e request capture; unit test on the descriptor `body()`.",
+    "`makeCommand` for these commands is called with `inputs` holding only `reason`; no revision token and no key appear in `inputs` \u2014 verify: unit test; grep.",
+    "After a re-check 201 the page re-reads and the verified block and sentence follow the re-read, not the 201; after a dropped connection both buttons stay locked until `expected_revision` changes or the page is reloaded \u2014 verify: e2e applied and not-applied variants.",
+    "`/work/4228` (`ctx.state` cancelled) shows Restart and its reason field; with `ctx.state` absent from the context, Restart is not drawn and nothing breaks \u2014 verify: e2e; unit test with a context lacking `state`.",
+    "`/work/4229` shows \"Correct it with the right evidence; the correction continues the same lineage.\" and no Correct button; a rejected item with `can_observe:false` shows no such sentence \u2014 verify: page; unit test.",
+    "The lineage row reads \"New \u00b7 no predecessor\" for `predecessor_id:null` and \"Continues an earlier capture\" otherwise, with the claim's `source_reference` only when that claim is served, and never an id number \u2014 verify: unit test on the model.",
+    "`/work/4231` (resolutions read 404) shows \"This record is unavailable.\" in this feature's block and part 1's panel still draws; a 429 or 503 shows \"Try again shortly.\" with Try again \u2014 verify: e2e; mock scenarios.",
+    "No client code reads `/me` or a role to decide a control; the forms are drawn from `conflict_id`, `claims`, `resolutions`, `verified` and `ctx.state` only \u2014 verify: grep `useMe`, `/me`, `role` in `features/ledger-source-resolution`.",
+    "On load, poll and navigation the page sends no `POST`; every write is from a press \u2014 verify: e2e asserts zero POSTs after load and after a 12 s poll window; grep `liveApi.POST` shows calls only in `resolutionApi.ts` and `useWorkCommand`.",
+    "No amount, currency symbol or \"posted\" claim appears in any state of this feature; \"Nothing was posted\" appears only on the duplicate card \u2014 verify: DOM text search across the fixtures.",
+    "Part 1's files are unchanged apart from the named registration line (if needed) \u2014 verify: `git diff --stat origin/main -- frontend/src/features/ledger-source` shows nothing, or that one line.",
+    "Against live Django 8030 with a Finance account that may read the case: the claims and packets the page draws equal `GET /api/v1/projects/{case_id}/incumbent-resolutions` for that case (use the session with `curl`); proposing, then reviewing as a second Finance user, changes the packet's `last_verdict` in that read. Also record whether the evidence call changes `case_revision`. If no accounts or data reach this state, say so and mark it not run \u2014 verify: page against the live read; output pasted in build.md.",
+    "Against live Django, the same person who proposed tries to confirm: the page shows the server's refusal unchanged and nothing changes in the read \u2014 verify: live read before and after; if not reachable, mark not run.",
+    "Viewport check at 1440 and 390: the duplicate, rejected and verified states match the SCR-58 duplicate, rejected and verified boards for the parts that remain; hidden parts leave no gap or heading; the forms and cards (not drawn) follow the design system tokens \u2014 verify: screenshots at both widths against `design/screens.md` SCR-58 artboards.",
+    "New tests: unit tests for the model (lineage row, packet filtering by `lineage_id`/`conflict_id`, predecessor, retired subset), the request builders and the lock rules, component tests for the three forms, and `frontend/e2e/ledger-resolution.spec.ts`; `delivery/checks.sh` passes \u2014 verify: the check run output."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "data-migration",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. Resolutions retire or alias ledger references, which is hard to undo, and the confirm, return and withdraw review is an authority control. The independent-review rule is the same as in part 1, so the `data-migration` surface reflects record retirement and lineage change, not a schema migration. The new payloads change the contract against the v7 mock (`contract-change`). The merge goes to the design engineer's batch, and the client must see the changed duplicate and recovery flows."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-104B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +107,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-104B/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +207,29 @@
   "created_at": "2026-11-23T17:39:41Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T20:01:34Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-104B/readiness.md",
+      "delivery/features/F-104B/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

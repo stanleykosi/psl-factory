@@ -4331,3 +4331,27 @@
 {"at":"2026-11-23T18:37:51Z","feature":"F-92","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-23T19:35:49Z","feature":"F-71","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
 {"at":"2026-11-23T19:55:06Z","feature":"F-114C","round":0,"kind":"created","tasks":["FE-DELIVERY-RELEASE"]}
+{"at":"2026-11-23T20:01:30Z","feature":"F-101B","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","contract-change"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T20:01:30Z","feature":"F-101B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T20:01:31Z","feature":"F-102B","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","auth","contract-change"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T20:01:32Z","feature":"F-102B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T20:01:33Z","feature":"F-103B","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","payments","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T20:01:33Z","feature":"F-103B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T20:01:34Z","feature":"F-104B","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","data-migration","contract-change"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T20:01:34Z","feature":"F-104B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T20:01:35Z","feature":"F-107B","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","auth","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T20:01:36Z","feature":"F-107B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T20:01:36Z","feature":"F-110B","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","auth","payments","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T20:01:36Z","feature":"F-110B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T20:01:37Z","feature":"F-111B","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","external-messaging"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T20:01:38Z","feature":"F-111B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T20:01:38Z","feature":"F-112B","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T20:01:39Z","feature":"F-112B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T20:01:39Z","feature":"F-113B","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","security","contract-change","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T20:01:40Z","feature":"F-113B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T20:01:40Z","feature":"F-114B","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","contract-change","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T20:01:41Z","feature":"F-114B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T20:01:44Z","feature":"F-115B","round":0,"kind":"planned","risk":"high","surfaces":["ui","api"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-23T20:01:45Z","feature":"F-115B","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T20:01:46Z","feature":"F-114C","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","external-messaging"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T20:01:53Z","feature":"F-114C","round":0,"kind":"transition","reason":"Backend LD-6: no API 1.25.0 read gives a non-PM reviewer the go-live document version_id; building the form would ship a control that never appears","from":"PLANNED","to":"BLOCKED"}

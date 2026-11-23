@@ -3,26 +3,71 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-103B",
-  "outcome": "Cash forecast, part 2: forecast reviews, group disclosure, actuals matching and uncertain delivery recovery run live",
-  "state": "PLANNED",
+  "outcome": "The cash forecast page lets the right person review, share, match actuals and recover a delivery, live",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "On `/work/4302` (mock, Next 4990, mock 4991) with `review_roles:[\"Finance\"]` the Approve, Return and Reject buttons are off until an evidence item and a note are given; with an item picked and a note typed, Approve sends one `POST /api/v1/work/4302/forecast` whose body has `action:\"review\"`, `role:\"Finance\"`, `verdict:\"approve\"`, the picked `evidence_id`, `reason`, `scenario_id`, `run_id`, and `expected_revision`/`case_revision` as read \u2014 verify: e2e asserts the request body and that exactly one request was made.",
+    "Nothing is preselected: the evidence list and any role select start empty, and with an empty evidence list the page says \"No evidence is on file for this work yet.\" and every send button is off \u2014 verify: e2e on a fixture with no evidence rows; unit test on the form state.",
+    "With `review_roles: []` no review control and no \"reviewer not set\" text is drawn at 1440 or 390 \u2014 verify: e2e text and role search on both widths.",
+    "A null `expected_revision` or `case_revision` blocks every send with the disabled reason and makes no request; `null` is never sent as 0 \u2014 verify: unit test on `forecastCommands.ts` for all five action areas; e2e asserts zero POSTs.",
+    "Return and Reject need a non-empty note; so does Approve (contract) \u2014 verify: unit test that an empty or whitespace note keeps all three off; body carries the note verbatim.",
+    "On `/work/4308` (`audience:\"group\"`) the verdict sends `action:\"group_review\"` with `version_id` and no `evidence_id` \u2014 verify: e2e body assertion.",
+    "A 409 on a verdict re-reads the forecast, shows \"This changed while you were working. Showing the latest version.\" and does not resend; a 403 shows \"You can't do this.\" plus the server message and leaves the page as read; a 422 shows the server message and first field message; a wrong-tenant 404 shows \"This record is unavailable.\" \u2014 verify: mock scenarios, e2e and the `useWorkCommand` error unit tests.",
+    "A double click on Approve makes one request and every button in the action area is disabled while it runs \u2014 verify: e2e counts requests.",
+    "A network failure on a verdict re-reads the page, says \"We couldn't confirm that this happened. Check the page before trying again.\", and keeps the buttons off until the revision changes or the page is reloaded \u2014 verify: e2e with the mock dropping the connection; unit test.",
+    "The month form for `2026-11` offers match only for rows not already matched; Match needs an evidence item, an `actual_id` chosen from the month read's `actuals[]`, and a typed decimal amount; the body carries `item_key`, `actual_id`, the amount exactly as typed, `operation_key` and `evidence_id` \u2014 verify: e2e body assertion; unit test that `\"abc\"`, `\"1,000\"`, an empty amount and `\"-5\"` keep the button off.",
+    "The page never fills or computes an amount: with a row `expected: \"1500000.00\"` and an actual of `\"1000000.00\"` the amount field starts empty and no sum, difference or \"remaining\" figure appears; an actual with a null amount reads \"Unknown\" and cannot be picked for a match \u2014 verify: e2e and unit test.",
+    "Retrying the same match press after an uncertain failure sends the same `operation_key`; after a re-read or success a new one is generated \u2014 verify: unit test on the form state.",
+    "Leave unmatched sends `POST /api/v1/work/{id}/forecast/actuals/2026-11` with `item_key`, `actual_id`, `reason`; an empty reason keeps it off \u2014 verify: e2e and unit test.",
+    "After a successful match or unmatch the month read and the forecast read are both re-requested and the row shows the state from the re-read; the page never shows \"Matched\" before the re-read \u2014 verify: e2e network order on a mock that changes state only after the POST.",
+    "The disclosure form offers rows only from `row_keys`, recipients only from `recipient_ids`, one `oracle` from `oracle_choices`, one `decision` from `decision_choices`, `fields` and `metadata` only from the contract lists; the poisoned fixture (staff name and pay in a row object) draws neither the name nor the pay figure, and no payroll key is selectable unless it is in `row_keys` \u2014 verify: e2e on `4309` asserts DOM text and the checkbox set; unit test on the choice mapper.",
+    "\"Send for group review\" stays off until at least one row, one field, one recipient, an oracle, a decision, at least one reviewer role, at least one publisher role and an `effective_from` are chosen; `allow_preparer_review` starts unticked; the body matches the contract with `base_configuration` equal to `disclosure.configuration_id` \u2014 verify: e2e body assertion; unit test on each missing input.",
+    "A 422 on disclosure puts the first `fields[].message` beside the matching control and the rest above the form; a 409 re-reads and keeps the ticked choices \u2014 verify: mock scenarios, e2e.",
+    "Nothing is sent to the group by the disclosure form: the page text says \"Sending this for review does not send anything to the group.\" and no request goes to any route other than `POST .../forecast/disclosure` and the re-reads \u2014 verify: e2e request log.",
+    "On `/work/4305` with `observation: null` Retry and Cancel delivery are off with \"Record what happened first.\" and \"Record what happened\" shows delivered, not delivered and \"I can't tell yet\" with nothing preselected \u2014 verify: e2e.",
+    "Recording `delivered` or `not_delivered` without a file keeps Record off; `unknown` can be sent without one; the request is `multipart/form-data` with `job_id`, `outcome`, `expected_revision`, `case_revision` and `proof` as the field name; the file is not previewed \u2014 verify: e2e inspects the multipart body.",
+    "After an `unknown` observation, with `can_retry:true`, Retry opens a confirm step that shows the recorded state and \"Nothing has been resent from this page.\"; only the confirm sends `{action:\"operate\", operation:\"retry\", job_id, reason, ...}` and it needs a reason; Cancel delivery does the same with `operation:\"cancel\"` \u2014 verify: e2e on both; unit test on the body builder.",
+    "Retry is off for a job with `can_retry:false`, Cancel delivery is off for `can_operate:false`, and retry is off after a `delivered` observation; no attempt count or \"retry once\" wording appears \u2014 verify: e2e on four job variants; text search.",
+    "No restart control is drawn when `can_restart` is true: the F-103 line \"Restart allowed under rule {id}\" stays text \u2014 verify: e2e on 4305.",
+    "Group view shows no staff name or individual pay anywhere, including inside any form, and the page makes no request to a `payroll` URL \u2014 verify: e2e on the poisoned fixture asserts DOM text and the request log.",
+    "A page load, a month change and a navigation make no POST, PUT, PATCH or DELETE; every write comes from a press \u2014 verify: e2e records methods across all fixtures; `grep -rn \"liveApi.POST\" frontend/src/features/forecast` shows hits only in `forecastCommands.ts` or the shared `useWorkCommand` path.",
+    "`ForecastActions` is the adapter's `Actions` slot, rendered under the forecast panel's sections inside its error boundary; a thrown error in a form leaves the F-103 sections on screen; nothing under `frontend/src/features/workspace` or `work-item` changed \u2014 verify: unit test; `git diff --stat origin/main -- frontend/src/features/workspace frontend/src/features/work-item` shows no lines.",
+    "At 1440 and 390 the forms match the SCR-56 boards for the parts kept (Decide panel and note, group rows, group review decide panel, actuals Match action, uncertain Record what happened and Cancel/Retry), hidden parts leave no empty heading or gap, controls are at least 44 px high at 390 and axe WCAG 2.2 AA has no violations on 4302, 4305, 4308 and 4309 \u2014 verify: screenshots at both widths against the artboards; axe.",
+    "New tests exist and run: unit tests for each body builder, the form states, the evidence list mapper, the disclosure choice mapper and the observation multipart builder; one e2e file for the scenarios above \u2014 verify: files exist and run in `npm test` and `npm run e2e`; `delivery/checks.sh` passes.",
+    "The v7 forecast pages `W-4001..W-4013`, `e2e/cash-forecast.spec.ts` and F-103's `e2e/cash-forecast-live.spec.ts` still pass; F-103's \"no write\" criterion is replaced by criterion 25 here \u2014 verify: run the three specs."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "payments",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. These actions settle forecast review verdicts, match actuals to money items, send a group-facing disclosure that could carry payroll-related assumptions (E-26), and record or retry an uncertain external delivery (`forecast/observations`, `forecast/lifecycle`). That is the sensitive-data, external-messaging and hard-to-undo case in the Lane D rules. The product-decision surface applies because the wording and flow of the review and recovery states are new to the client. PRODUCT-ACCEPTANCE is required."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-103B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +104,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-103B/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +204,29 @@
   "created_at": "2026-11-23T17:39:38Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T20:01:33Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-103B/readiness.md",
+      "delivery/features/F-103B/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

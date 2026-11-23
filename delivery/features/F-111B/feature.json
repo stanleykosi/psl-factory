@@ -3,26 +3,58 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-111B",
-  "outcome": "Issue, part 2: owner updates and replies, setting an owner and messaging the owner are recorded live",
-  "state": "PLANNED",
+  "outcome": "The issue page records owner updates and replies, sets the owner and messages the owner (SCR-30 part 2)",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/5111` shows the update form only; posting Progress with a note, next action and a chosen proof sends exactly one POST to `/api/v1/work/5111/issue-followup` with the body shape above, `team_reply:null`, `task_id`/`task_revision` from `response_task`, and the page then shows the re-read status \u2014 verify: e2e records the request and compares it to the fixture JSON.",
+    "`/work/5112` (team owner, no task) shows the reply form and sends one POST to `/projects/{case}/issues/{issue}/team-replies` with a uuid `operation_key`, `assignment_id` 7, channel and source reference; it sends nothing to `issue-followup` \u2014 verify: e2e. `/work/5111` never calls `team-replies` \u2014 verify: e2e request log.",
+    "The update form with `team.mode:'team'` sends `team_reply` with `assignment_id`, a uuid `operation_key`, party, channel, `responded_at` null when blank \u2014 verify: unit test on the descriptor body.",
+    "Every write body carries `expected_revision`/`case_revision` (or `case_revision` alone for project routes) from the correct read, never 0, never inside `inputs`; with a `null` token the control is disabled with the reload text and no request is made \u2014 verify: unit tests on each descriptor and `grep` that no `inputs` object holds a revision or key.",
+    "Flags: with 5119 no control is drawn; with `can_record` false the update and reply forms are absent; with `can_request_update` false \"Message owner\" is absent \u2014 verify: unit test on the visibility table and e2e on 5119.",
+    "Proof: no proof is preselected; submit is off with an empty list; the evidence id sent is one from the served list; no file input is on the page \u2014 verify: unit test and e2e; `grep -rn \"fileToEvidence\" frontend/src/features/issue-followup` returns nothing.",
+    "`/work/5113` Set an owner reads `GET /projects/{case}/issues` only when the form opens, lists the owner names from `owners[]` with none preselected, and sends one `assignment` POST with `mode:'internal'`, `recorder_id`, `state_id`, `evidence_id`, `reason`, `work_id`; the Owner fact changes only after the re-read \u2014 verify: e2e; no external-team option appears.",
+    "Message steps follow the structure table: 5114 offers only Prepare; 5115 Edit and Review; 5116 only Send to the owner; 5117 Check what happened, Record it by hand and Cancel; 5118 offers Prepare only and shows the receipt \u2014 verify: unit test on `messageSteps.ts` for all five fixtures; the `status` text is never read (grep).",
+    "Release sends one request on one press (double click sends one), needs a chosen channel and \"Acting as\", and no step releases anything automatically on load, poll, timer or tool text \u2014 verify: e2e counting POSTs; `grep liveApi.POST` shows sends only through `useWorkCommand`.",
+    "Uncertain send: a dropped connection on release locks the message controls, re-reads, shows the uncertainty message, offers only Check what happened, and does not send a second release until the re-read changes `dispatch_id`/`receipt`/`case_revision` or the page is reloaded \u2014 verify: e2e with the failure switch and a request count.",
+    "A message with `receipt:null` shows \"No receipt yet\" and never \"Delivered\"; \"Delivered\" shows only when `receipt.delivered` is true \u2014 verify: unit test and e2e on 5117 and 5118.",
+    "Wrong person / wrong tenant / invalid input: 403 shows \"You can't do this.\" with the server message and re-reads; 404 shows \"This record is unavailable.\"; 409 re-reads and shows the stale text without repeating the press; 422 shows the server message and `fields[]`; `csrf_failed` refreshes the session once and sends nothing by itself; 503 shows \"Try again shortly.\" \u2014 verify: mock scenarios and unit tests on each.",
+    "Empty note, missing update type, missing proof, missing channel or source reference (team form) keep submit off with the field named; limits (2000/4000 characters) are enforced before sending \u2014 verify: unit tests.",
+    "A provider/delivery failure is not success: after `release` with a 201 the page says \"Sent. Waiting for the receipt\" and only a served `receipt` changes it \u2014 verify: e2e on 5116 then 5117 fixture sequence.",
+    "The case id and issue id sent come only from the loaded work item and reads; no input accepts either \u2014 verify: unit test on request URLs with a changed `case_id`.",
+    "`IssueFollowupActions` is registered through the adapter's `Actions` slot and the issue page works without it for a line with no `Actions`; no file under `frontend/src/features/workspace` or `work-item` is changed \u2014 verify: `git diff --stat` and a unit test.",
+    "Against live Django (8030, an account that can see an issue) the update and the message prepare are exercised once each against a test project; the status of each answer and the page after re-read are recorded in build.md. The live result of Set an owner (Question B2) is recorded as found \u2014 verify: curl the three reads before and after and compare with the page.",
+    "Viewport check at 1440 and 390 on the four SCR-30 states plus the forms: boards' parts remain; added forms use CMP-04 fields, CMP-09 buttons and CMP-18 callouts and leave no empty heading \u2014 verify: screenshots reviewed against SCR-30 artboards.",
+    "New tests cover descriptors, step derivation, the visibility table, the uncertain-send lock and error mapping; `npm run lint`, `typecheck` and `npm test` pass \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. `issue_communications_command` releases an external message (external-messaging) and `assignment` changes who is accountable, with concurrency through `expected_revision` and `case_revision` and uncertain-send recovery (`apps/core/factory_api`, `contracts/psl-factory.openapi.json` around lines 46390 to 47245). It moves no money and touches no payroll or identity data. It needs UI review, a security review for the permission and idempotency handling, and the design engineer's merge batch."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-111B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +91,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-111B/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +191,29 @@
   "created_at": "2026-11-23T17:39:43Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T20:01:38Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-111B/readiness.md",
+      "delivery/features/F-111B/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

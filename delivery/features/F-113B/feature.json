@@ -3,26 +3,72 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-113B",
-  "outcome": "Release gates read and record the live planning exit, workaround and release register",
-  "state": "PLANNED",
+  "outcome": "The release gates page shows the live gates and lets the right person decide the planning exit and record the release",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4201` (Next 4990, mock 4991) shows the four phases in order with each check's title and a status tag, the checklist rows and a \"Planning decision\" row \u2014 verify: open the page; compare with `GET /api/v1/work/4201/release-register` and `/planning-exit` JSON.",
+    "Every D-14 status maps to its words (CURRENT, STALE SCOPE, AUTHORITY CHANGED, UNKNOWN OR STALE, UNKNOWN) and a made-up status shows the raw text in capitals; none is drawn as 0 or as done unless `current` \u2014 verify: unit test on `releaseModel.ts` over all five plus one unknown.",
+    "A check with empty `records[]` shows no \"0 records\" text \u2014 verify: component test on a fixture.",
+    "Each board state selects from the reads as in the state table (default, decision, returned, owner-needed, readiness, ready), including the precedence rule and the null-packet case \u2014 verify: unit test on the state function over fixtures 4201 to 4211; open each page at 1440 and 390 widths.",
+    "On `/work/4201` (`can_approve_directly:true`) the decision form shows \"Approve for release\" and \"Return with a note\" (no Reject), a Note field and an optional \"Evidence (optional)\" select listing `proofs[]` with nothing preselected; Approve is enabled with no proof chosen, Return stays off until a proof is chosen and a note is typed \u2014 verify: e2e; DOM shows the select at \"Choose evidence\".",
+    "A fixture with `can_approve_directly:false` and `proofs:[]` (make `4202` this) shows both buttons off and \"No evidence is on file for this decision yet.\"; no request is made on press attempts. A fixture with `can_approve_directly:true` and `proofs:[]` (make `4213`) lets Approve work and keeps Return off \u2014 verify: e2e asserts no POST on 4202 and one on 4213 approve.",
+    "Direct approve on `/work/4201` with no proof sends exactly one `POST /api/v1/work/4201/planning-exit` with `verdict:\"approve\"`, the loaded `expected_revision`, `case_revision`, `packet` and no `evidence_id`; with a proof chosen it includes that `evidence_id`. On a `can_approve_directly:false` fixture Approve sends only with a chosen proof. After success the page re-reads and shows \"Approved by PMO Lead\", the name and the time from `latest_decision` \u2014 verify: network panel body; mock logs one POST; page text.",
+    "Return needs a note and a chosen proof: either missing leaves \"Return with a note\" off; with both it sends `verdict:\"return\"`, `note`, and `issue_id` only when a blocker was picked \u2014 verify: e2e and the POST body.",
+    "The page sends `evidence_id` only when the person chose a proof, and never sends an id not in `proofs[]` \u2014 verify: unit test on the command body; grep shows no literal evidence id.",
+    "`/work/4203` (packet null) and `/work/4212` (null revision) show the form off with its reason and send nothing; a null token is never sent as 0 \u2014 verify: e2e plus unit test on `body()`.",
+    "`/work/4204` (`verdicts:[]`) shows no decision form and no buttons, and the line \"Waiting for the PMO Lead\" \u2014 verify: e2e.",
+    "A double click on Approve sends one request; while it runs both buttons are disabled \u2014 verify: e2e counting POSTs on the mock.",
+    "Each error scenario shows its words: 403 `forbidden` \"You can't do this.\" plus server message; `csrf_failed` \"Press the button again\" with one session read and no second POST; 409 \"This changed while you were working\u2026\" with the item re-read; 422 the server message and first field message; 429/503 \"Try again shortly.\"; a dropped connection or 500 shows \"We couldn't confirm\u2026\" and locks the button until the revision changes or reload \u2014 verify: mock scenarios, e2e, and unit test of the lock.",
+    "`/work/4205` shows \"{by} returned the release on {date}\" and blockers as reference text; it does not show \"Send for decision again\" or a note quote \u2014 verify: page text.",
+    "`/work/4206` shows \"Client workaround on file\" and `/work/4205` does not \u2014 verify: page text.",
+    "`/work/4207` (owner-needed) shows the held line, \"PMO Lead assigned\" as OWNER NEEDED, and the people and eligibility from decision-appointments, with no decision form; the decision-appointments call is made only on that item \u2014 verify: network panel on 4207 and on 4201.",
+    "`/work/4208` shows \"Prepare release readiness\" and pressing it sends one `POST /release-register` `{action:\"prepare_readiness\", expected_revision, case_revision}` and re-reads; `/work/4209` (no such action) shows no such button \u2014 verify: e2e on both.",
+    "`/work/4210` shows \"Release ready\", the record count, and the record-release form; the submit stays off until date, reference, note, a PDF and the \"I have checked this file\" box are all set \u2014 verify: e2e toggling each.",
+    "Submitting the release form uploads the PDF to the item's `case_id` (`POST /cases/{case_id}/files`), then sends `observe_release` with `upload_id`, `checked:true`, `readiness_id` (the single id), and null `environment`/`private_log_id` when blank; `upload_id` is never in `evidence_id` \u2014 verify: network panel; unit test on the body; `// @ts-expect-error` test that an `UploadId` cannot be passed as `evidence_id`.",
+    "An uncertain observe_release (dropped connection) re-reads the register; a non-null `release` with the same reference is shown as recorded, otherwise the form locks with \"We couldn't confirm that this was recorded\u2026\" and no second POST is sent \u2014 verify: e2e with the scenario; count POSTs.",
+    "`/work/4211` shows \"Release recorded {date} \u00b7 {reference}\" and no record form \u2014 verify: page text.",
+    "The client UAT row shows the `outcome` words, \"No response recorded\" for null, and \"Proof is out of date\" when `proof_current` is false; a failing client-testing read hides only this row and the rest loads \u2014 verify: unit test and mock 500 on that route.",
+    "Not drawn: stage and issue figures, Tola cards or step lists, \"Send for decision again\", PMO Lead and PM names on the first row, Reject \u2014 verify: page text search on 4201, 4205, 4208 finds none.",
+    "Wrong person: for a viewer the server gives no `verdicts` and no `actions`, no write control exists; a forced POST that the mock answers with 403 shows the mapped error \u2014 verify: e2e with the 403 scenario on 4201.",
+    "Wrong record: `/work/4290` (mock 404) and a work id the account cannot see against Django 8030 both show exactly \"This record is unavailable.\" \u2014 verify: open both and compare text.",
+    "Against live Django 8030 (account with a delivery-release item), the phases, checklist and `proofs[]` shown match `GET /api/v1/work/{id}/release-register` and `/planning-exit` as returned \u2014 verify: compare page with `curl` JSON using the session.",
+    "No write is made by page load, polling or navigation; the three POSTs exist only in `ReleaseActions.tsx` through `useWorkCommand` \u2014 verify: `grep -rn \"liveApi.POST\" frontend/src/features/delivery-release` lists none outside it; e2e asserts zero POSTs on load.",
+    "`ReleaseActions` is registered as `adapter.Actions` and `frontend/src/features/workspace/**` has no changes \u2014 verify: `git diff --stat origin/main` lists no path there; the adapter test registers the release adapter and gets sections and three descriptors.",
+    "At 1440 and 390 widths each of the six states matches the SCR-44 boards for the parts that remain, with no horizontal scroll and no empty heading or gap where a part is hidden \u2014 verify: screenshots at both widths against `design/screens.md` SCR-44 artboards.",
+    "New tests exist for `releaseModel` (states, statuses, precedence), the adapter (`read`, `sections`, `commands`, tokens stay null) and the form (proof gating, double press, uncertain lock); `src/api/live-schema.d.ts` is unchanged apart from a regeneration to 1.25.0 or later \u2014 verify: test files present; `git diff --stat`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "security",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High, because it records the planning-exit approval and the release record. These are authority-checked governance decisions with packet and revision concurrency, and they are hard to undo (`planning-exit`, `release-register` in the live contract; D-12, D-13, PSL answer 1). Surfaces are ui and api, plus auth and security for the approver checks and proof upload, contract-change for the reshaped operations, and product-decision for the self-approval rule. There is no money or payroll, but the merge goes to the design engineer's merge batch and product acceptance is required, since the flow and copy change from the mock."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-113B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +105,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-113B/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +205,29 @@
   "created_at": "2026-11-23T17:39:44Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T20:01:40Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-113B/readiness.md",
+      "delivery/features/F-113B/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

@@ -3,26 +3,69 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-110B",
-  "outcome": "Payroll run, part 2: reviews, publish, withdraw, successor, restart, HR corrections and the recipient receipt run live",
-  "state": "PLANNED",
+  "outcome": "A payroll reviewer decides each review, an operator publishes, withdraws or replaces the totals, and a recipient acknowledges their own receipt, live",
+  "state": "READY",
   "task_ids": [
     "FE-FIN-PAYROLL-RUN"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Every write sends exactly the bodies in Contract (no extra fields, no null or 0 token, `successor` and `restart` inputs are exactly two distinct ids) \u2014 verify: unit tests on `payrollRunWrites.ts` for all seven bodies; mock rejects extras.",
+    "With the read not loaded, every control is off and nothing is sent \u2014 verify: unit test.",
+    "`/work/4621` shows Approve and Return off with \"No review evidence is available yet.\" and sends nothing; no id is invented and `hr_receipt.proofs[]` is not offered for a review \u2014 verify: e2e request count 0; unit test.",
+    "`/work/4622` Approve sends one `POST /work/4622/reviews` with `kind:\"payroll\"`, `subject:\"run\"`, `verdict:\"approve\"`, an `operation_key` starting `review-`, then re-reads; the card shows the decision only after the re-read \u2014 verify: mock request log.",
+    "A repeated press after a 409 does not reuse an `operation_key` that the server already saw; a repeated press while uncertain sends nothing \u2014 verify: mock scenarios 4628 and 4633; request count.",
+    "A reviewer the server refuses as not independent (`4634`, 403) sees the server message and \"You can't do this.\"; no client-side role check hides or shows the card \u2014 verify: e2e; grep for role checks in `payroll-run`.",
+    "`/work/4625` shows \"Publish totals\"; pressing it sends one `{action:\"publish\", expected_revision, case_revision}` and nothing else; the report block appears only from the re-read \u2014 verify: mock log; e2e.",
+    "Publish is off when `publication_id` is set or no `aggregate` entry is complete; a 422 on `4627` shows the server message and no total is drawn from the answer \u2014 verify: unit test of the gate; e2e.",
+    "`/work/4626` draws the totals-review board with \"NGN 99,200,000.00\" from `eligible_total` through `Money`, the four unit rows, \"Version 1\", and no \"Unknown\" split, no \"Not matched\" row, no staff counts, no per-recipient rows; a unit absent from `by_business_unit` has no row and no 0 \u2014 verify: page; unit test.",
+    "The totals-review board is not drawn when `publication_id` is null (`4625`) \u2014 verify: e2e asserts absence.",
+    "Withdraw sends `{action:\"withdraw\", expected_revision, case_revision, publication_id, evidence_id, reason}`; reason is required (empty is refused in the form and sends nothing); with no evidence list the button is off with its reason line \u2014 verify: unit tests; e2e.",
+    "After a withdraw 200 the page shows the state and `previous_receipt` only from re-reads; the confirm text mentions the receipt only when `receipt_id` is set \u2014 verify: mock; page text.",
+    "Successor sends `{action:\"successor\", ..., publication_id, request_id, inputs:{input_ids, hr_snapshot_id}, reason}` with `hr_snapshot_id: null` kept as `null` when \"No snapshot\" is chosen; two identical input ids cannot be submitted \u2014 verify: unit test; mock.",
+    "\"Start a corrected run\" appears on `4629` and not on `4630` (`restart: null`) and not on a run that is not `cancelled` or `followup_needed`; its body uses `restart` values and the recovery tokens, with `configuration_id` and an `instruction_key` matching the pattern \u2014 verify: e2e; unit test on the pattern.",
+    "\"Ask HR to correct\" appears on `4623` and not on `4624` (null counts) and sends the `finance-payroll/v1` corrections body \u2014 verify: e2e; unit test.",
+    "`/work/4631` shows \"Confirm I received it\" on the report; it sends `POST /work/4631/aggregate-receipt` `{publication_id}`; \"Your receipt: Recorded\" appears from the re-read; `4632` shows no button \u2014 verify: mock log; page.",
+    "A person who can acknowledge sees only the aggregate report (total, unit rows, version): no staff name, pay row or count appears in the DOM, storage, URL, cache keys or console \u2014 verify: unit test greps mapper output; e2e dumps storage and DOM and searches fixture names.",
+    "403 `csrf_failed` on any write does not show no-access; it refreshes the session once and says \"Press the button again\"; no automatic second send \u2014 verify: unit test counts fetch calls.",
+    "A write that gets 409 re-reads, shows \"This changed while you were working. Showing the latest version.\", and sends nothing again by itself \u2014 verify: scenario `4628`; count requests.",
+    "A dropped connection after any of the seven writes, or `/work/4633` (`effect_uncertain`), locks every control in `PayrollRunActions` with \"We couldn't confirm that this ran. Check the page before trying again.\" and sends no request until the re-read shows a new `expected_revision` and a settled state \u2014 verify: scenarios; request count.",
+    "403 and 404 on the work read still draw only \"This record is unavailable.\" (no ids, values, or which of the two); a different user without the payroll grant and a different tenant each get no-access and no write control \u2014 verify: mock scenarios; live check with two accounts against Django 8030.",
+    "Against live Django 8030 with a real payroll work: the buttons that appear match `payroll-operations`, `payroll-recovery` and the report (`publication_id`, `restart`, `can_acknowledge`), and a server refusal (for example a non-independent reviewer) shows its message \u2014 verify: compare with `curl` JSON using the session; run with two accounts.",
+    "The page makes no write on load, polling or navigation \u2014 verify: e2e asserts zero POSTs on load; `grep liveApi.POST frontend/src/features/payroll-run` shows only `working`, `receive_hr`, `startPayrollRun` (F-110) and the seven writes here.",
+    "No change in `src/features/workspace` and none in `delivery/config.json` protected paths \u2014 verify: `git diff --stat` against main.",
+    "Viewport check at 1440 and 390 against SCR-59 totals-review, publish and the part 1 boards with decision cards: hidden parts leave no empty gap or heading \u2014 verify: screenshots at both widths reviewed against the boards.",
+    "Tests exist for each write body, the key rules, the gates (publish, restart, ask HR, withdraw), the uncertain lock, the 409 path, the csrf path and the no-leak rule; `delivery/checks.sh` passes \u2014 verify: `npm test`; checks result."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth",
+      "payments",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. These writes publish and withdraw payroll aggregates and record independent approvals. Independence rules, revision tokens, and uncertain effects that must reconcile before any retry make them hard to undo. The surfaces are ui, api, security and auth (restricted payroll, per-record access), payments, external-messaging (the published totals reach named recipients) and product-decision (new flows and wording the client must see). `payroll-operations` bodies carry no idempotency key, so only `expected_revision` and `case_revision` guard them, as in F-110."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-110B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +102,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-110B/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +202,29 @@
   "created_at": "2026-11-23T17:48:58Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T20:01:36Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-110B/readiness.md",
+      "delivery/features/F-110B/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

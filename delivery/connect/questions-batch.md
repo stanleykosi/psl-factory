@@ -578,6 +578,72 @@ Added after batch 3. The full options are under "Questions" in `delivery/feature
 4. `restart` and `prepare_rule` have no board and need a configuration id that no read serves. **(Recommended)** No form in part 1.
 5. Hide the board figures the API does not serve (staff in the match, BU counts, "Legal (2 people)", owner names, the station track, "Ask Chidi"), as D-182 and D-187 do. **(Recommended)** Hide each.
 
+### LD-Q4 · Part 2 specs · Plain forms where no board is drawn, and accept every recommended option?
+The part 2 specs add the write forms the live commands need: evidence choices, reasons, confirm steps, retry and cancel, the go-live milestone confirmation, and the BU and payroll publish and receipt. Most of these have no board. Several spec writers suggest drawing boards first (the four-concepts rule).
+1. **(Recommended)** Build them now as plain forms from existing components, in the same pattern D-187 accepted for part 1, and accept every recommended option in the part 2 specs below. You check the merged screens on port 3000, and anything you redraw becomes a fix. Money, payroll, BU totals and client-facing ones still come to you in the merge batch.
+2. Draw boards first (four concepts each) for the undrawn forms. Those part 2 features wait until the boards exist.
+3. Accept all recommended options except the ones you name.
+F-114C (go-live document review) is held: no read gives the reviewer the version (backend LD-6). New backend questions LD-4 to LD-11 are in `backend-questions.md`.
+
+- **F-101B · Income schedules, part 2**, 5 questions, `delivery/features/F-101B/spec.md`:
+   1. The adjustment review form (`POST /projects/{case_id}/accounting-adjustments/{adjustment_id}` needs `role`, a 1 to 50 character string; no read says which ro…
+   2. Source mappings (`POST .../accounting-sources/{source_id}/mappings`, `GET .../accounting-mappings/{mapping_id}`).
+   3. Combined export (Conflict 1).
+   4. Partial duplicate settlement.
+   5. Where the adjustment page lives.
+- **F-102B · Fixed assets, part 2**, 4 questions, `delivery/features/F-102B/spec.md`:
+   1. The review form shows the basis review as a further choice beside register and schedule, only when `review_options` lists it.
+   2. One shared evidence picker (a select labelled by kind and version) for the review, capture and dates forms.
+   3. Phone shows the same forms in one column, as F-102.
+   4. F-87's `useWorkCommand` may be JSON-only.
+- **F-103B · Cash forecast, part 2**, 4 questions, `delivery/features/F-103B/spec.md`:
+   1. **Where does the evidence for a verdict, a record-actual and a match come from?** The forecast read lists none and those routes have no upload field.
+   2. **Withdraw, post and restart.** Readiness lists withdraw and post, but the 1.25.0 `POST /forecast` union has no such action; `lifecycle` `restart` needs a `c…
+   3. **Who reviews and publishes a group forecast?** `POST disclosure` requires `reviewer_roles`, `publisher_roles` and `allow_preparer_review`, and the board say…
+   4. **Confirm steps.** Retry and cancel of a delivery are hard to undo.
+- **F-104B · Ledger source, part 2**, 6 questions, `delivery/features/F-104B/spec.md`:
+   1. Restart needs the work item's `state` and the page's `LineContext` does not carry it.
+   2. The rejected board's "Correct" button.
+   3. Plain-words labels for the two modes, which no board draws:
+   4. Backend:
+   5. Who types the "Reference" value.
+   6. The ticked list is every claim the person can see (up to 100), not only related ones.
+- **F-107B · BU totals, part 2 (restricted)**, 4 questions, `delivery/features/F-107B/spec.md`:
+   1. Receipt progress for Finance.
+   2. Cancel-after-publish.
+   3. A Finance reader who is also a recipient.
+   4. Live proof of the publish.
+- **F-110B · Payroll run, part 2 (restricted)**, 5 questions, `delivery/features/F-110B/spec.md`:
+   1. Where does the evidence id for a payroll review come from?
+   2. The same gap for Withdraw (`evidence_id` required, no list, no proof route).
+   3. What does "Ask HR to correct" mean to the API?
+   4. Does a board draw the successor entry (Replace these totals) and the "Start a corrected run" entry?
+   5. Review verdicts "Revoke approval" and "Approve draft match":
+- **F-111B · Issue, part 2 writes**, 3 questions, `delivery/features/F-111B/spec.md`:
+   1. Message panel without a board (design engineer).
+   2. Set an owner on the no-owner board.
+   3. Verified/closed issues.
+- **F-112B · Change request, part 2**, 5 questions, `delivery/features/F-112B/spec.md`:
+   1. The close form and the document review controls have no board.
+   2. Execution evidence:
+   3. The closed board's "Milestone 3's scope now includes" line and "Open milestones" link depend on `change-milestone-link`, which has no board.
+   4. `close` source fields (D-7) are typed by the PM from the retained proof.
+   5. "Cancel" appears on every job not clearly finished (Assumption 4).
+- **F-113B · Release gates (SCR-44)**, 4 questions, `delivery/features/F-113B/spec.md`:
+   1. Resolved by the coordinator:
+   2. Resolved by PSL answer 1:
+   3. How should the blocker issue link read?
+   4. Reject is in `verdicts[]` but not on the board.
+- **F-114B · Go-live, part 2 milestone**, 4 questions, `delivery/features/F-114B/spec.md`:
+   1. **Who supplies the milestone name when `milestone.name` is null?** (a) The PMO Lead types it, no prefill (recommended; matches D-17 and the required `name`).
+   2. **Where does a corrected or withdrawn reply's proof come from?** (a) Same as F-114's question 1:
+   3. **Should withdrawal ask for all reply fields?** (a) Yes, as the contract requires (recommended).
+   4. **Hypercare pointer after completion.** (a) Say nothing (recommended, nothing supplied).
+- **F-115B · Hypercare, part 2**, 3 questions, `delivery/features/F-115B/spec.md`:
+   1. Criteria `issue_clearance`.
+   2. Criteria form board.
+   3. Observation proof when no file is on the project.
+
 ## Answers, batch 1 (23 Nov 2026, D-182)
 
 Every recommended option above is accepted ("Hide, accept all recs"), including LC-Q1 (hide until backend), F-65 (as recommended) and F-76 (read-only list now). Lanes: unpark these features and build them as their specs recommend.

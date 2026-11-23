@@ -3,26 +3,63 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-114B",
-  "outcome": "Go-live acceptance, part 2: the PMO Lead confirms and completes the go-live milestone, and replies are corrected or withdrawn, live",
-  "state": "PLANNED",
+  "outcome": "The PMO Lead confirms and completes the go-live milestone, and staff correct or withdraw a recorded client reply",
+  "state": "READY",
   "task_ids": [
     "FE-DELIVERY-RELEASE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "On `4411` the replies read shows a \"Confirm and complete milestone\" form with a required name field, an evidence list of `8101` and `8102` with nothing selected, an optional note and a button that is off until a name and one evidence are chosen \u2014 verify: open `/work/4411/go-live`; `frontend/e2e/go-live-completion.spec.ts`.",
+    "Sending posts one `POST /work/4411/go-live-milestone` with `action:\"confirm_and_complete\"`, both revisions from the read, the typed `name`, `acceptance_id:7001`, the chosen `evidence_id`, and `note` only when filled; no `draft_mapping` or `record_completion` call is made \u2014 verify: unit test on the body; network panel.",
+    "On `4412` the name shows \"Go-live\", is not editable and is sent unchanged \u2014 verify: unit test on the body; e2e.",
+    "On `4413` (`can_confirm:false`) and for any fixture with `acceptance_id` null no confirm control is drawn and no reason text is invented \u2014 verify: e2e DOM.",
+    "On `4414` (empty list) the words \"No completion evidence is available yet.\" show and the button stays off; no evidence id is sent or preselected \u2014 verify: e2e; unit test.",
+    "A double click on the confirm button sends exactly one POST \u2014 verify: unit test with a slow mock counts calls.",
+    "On `4415` a 409 shows the changed-record message, re-reads, and a second press sends a body with the new revisions \u2014 verify: e2e compares revision values.",
+    "On `4419` a 403 shows the API's message and the page stays unchanged after the refetch; a 403 `csrf_failed` refreshes the session once and sends no second POST \u2014 verify: unit test counts calls.",
+    "On `4416` the page shows \"Milestone completed\", the milestone name, \"Confirmed by the PMO Lead\" with the time and note, and no confirm form; the \"Milestone\" row reads \"Recorded\" \u2014 verify: e2e DOM.",
+    "The blank note is omitted and a name over 200 characters or empty is refused before any request \u2014 verify: unit test.",
+    "On `4417` the current reply row has \"Correct\" and \"Withdraw\" controls; the form offers only `changes_requested` and `declined` for a correction, only the read's `channels[]` and only the entry's `roles[]`, and refuses to send without the attestation tick \u2014 verify: unit test; network panel.",
+    "A correction sends `record_reply` with `receipt_id` and `previous_id` (301) from the `corrections[]` entry, the chosen outcome, `attested:true` and both revisions; a withdrawal sends the same with `outcome:\"withdrawn\"` and a non-empty `note` \u2014 verify: unit tests on both bodies.",
+    "On `4418` the withdrawn row has no control and no form offers \"withdrawn\" for a row that is already withdrawn; on any fixture with `corrections:[]` no correct or withdraw control is drawn \u2014 verify: e2e DOM.",
+    "A reply with hidden details still shows \"Details not available to you\", never blank, 0 or \"null\", and has controls only when `corrections[]` supplies an entry \u2014 verify: unit test.",
+    "The reply form's `evidence_id` comes only from the source F-114 settles and is never typed or copied from another reply; with no source the form is held with \"Add a proof first\" and build.md lists it \u2014 verify: unit test; build.md.",
+    "Both writes disable on a `null` revision and after a 2xx until the refetch; after success the shown history and milestone come from the read \u2014 verify: unit test.",
+    "Only the routes in the Contract are called by the new files; nothing is sent to the client \u2014 verify: grep `liveApi.POST` and `liveApi.GET` in the two new files and `frontend/src/features/go-live`.",
+    "A work id not on this line or returning 404 shows exactly \"This record is unavailable.\" \u2014 verify: e2e (F-114 fixtures).",
+    "Against live Django (8030), signed in as the PMO Lead on a go-live item with `can_confirm:true`, the page's milestone block, evidence list and corrections match `GET /api/v1/work/{id}/go-live-replies`; as another user (not the PMO Lead) no confirm control shows \u2014 verify: compare the page with the `curl` JSON using the session. Do not complete a real milestone on shared data without the design engineer's say; use a seeded test project.",
+    "Viewport check at 1440 and 390: the milestone block matches SCR-45-desktop-accepted and -mobile-accepted for the parts kept; hidden parts leave no empty heading or gap \u2014 verify: screenshots against `design/screens.md` SCR-45.",
+    "`npm run lint`, `npm run typecheck`, `npm test` pass and `api-live-schema-drift.test.ts` still passes \u2014 verify: `delivery/checks.sh`.",
+    "build.md names the board parts hidden and any change to `frontend/mock/go-live.mjs` shape \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High: confirming the milestone is irreversible in effect (it unlocks hypercare and handover) and uses a PMO Lead authority check on the server; correcting or withdrawing a reply alters recorded acceptance evidence. Surfaces: ui, api, auth (`can_confirm` and role-limited corrections), contract-change (new 1.25.0 fields), product-decision (D-17 answer, acceptance wording). Product acceptance is required because the client-facing outcome flow changes. Sources: backend-answers D-17, F-114 readiness and spec, `contracts/psl-factory.openapi.json` 1.25.0."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-114B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +96,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-114B/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +196,29 @@
   "created_at": "2026-11-23T17:46:27Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T20:01:41Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-114B/readiness.md",
+      "delivery/features/F-114B/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

@@ -3,25 +3,51 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-114C",
-  "outcome": "Go-live acceptance, part 3: the go-live document review is recorded live through POST /work/{id}/reviews",
-  "state": "PLANNED",
+  "outcome": "Go-live document review records the reviewer's verdict on the exact version",
+  "state": "BLOCKED",
   "task_ids": [
     "FE-DELIVERY-RELEASE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "On the live-shaped work read (`4601`, `tasks: []`) the go-live page shows no review control and no error \u2014 verify: `cd frontend && npx playwright test e2e/go-live-review.spec.ts` (Next 4990, mock 4991) asserts the heading \"Review the go-live document\" is absent.",
+    "`readReviewSubject` returns `null` for the real 1.25.0 work read and for the go-live-signoff and go-live-replies reads; no code path takes `version_id` from user input, a URL parameter, or `document-versions` \u2014 verify: unit test on the function; `grep -rn \"version_id\" frontend/src/features/go-live/GoLiveReviewActions.tsx` shows it only as a prop.",
+    "With a subject (`4602`), the form shows \"Version 5120\", the three verdicts unselected, and the button is off \u2014 verify: component test and e2e screenshot at 1440 and 390 px.",
+    "A subject that is present but `can_decide` is false (`4603`) draws nothing \u2014 verify: component test.",
+    "Only the verdicts in the subject's `verdicts[]` are offered; a subject with `[approve, return]` offers no reject \u2014 verify: component test.",
+    "Approve sends exactly `{kind:\"document\", expected_revision:7, case_revision:12, version_id:5120, verdict:\"approve\", note:\"\"}` with the work read's revisions and no other key \u2014 verify: unit test on the request body.",
+    "Return and reject with a blank note do not send and say a reason is required; with text they send the note unchanged \u2014 verify: component test counts calls.",
+    "After a 200 the form shows \"Review recorded: Approved\" and `review_id` when present, the work is refetched once, and the page shows the refetched `state`; with `review_id: null` it shows the result without an id \u2014 verify: e2e with `4604`; unit test on null.",
+    "A double click on \"Record my review\" sends exactly one POST \u2014 verify: unit test with a slow mock counts calls.",
+    "A 409 (`4605`) shows \"This changed while you were working. We reloaded it. Check it and try again.\", re-reads the work, keeps the typed note, and the next press sends the new revisions \u2014 verify: e2e compares revision values in the two POST bodies.",
+    "A 422 `STALE_VERSION` (`4606`) shows the server's text inline and records nothing \u2014 verify: component test.",
+    "Wrong user or wrong tenant: a 404 on the work read (`4607`) and a 403 on the POST both show exactly \"This record is unavailable.\" with no difference between them and no form \u2014 verify: e2e and mapper unit test.",
+    "A 403 `csrf_failed` refreshes the session once and says \"Press the button again\"; no second POST is sent automatically. A lost response says \"Check the record before trying again\" after re-reading the work, with no automatic retry \u2014 verify: unit tests count calls.",
+    "The control is not drawn for a work item on any line other than `delivery-go-live/v1` \u2014 verify: unit test with another `line`.",
+    "Nothing on this page sends, publishes or previews the document to the client; no \"send\" control exists \u2014 verify: e2e asserts the text and controls list.",
+    "No Tola, agent step or \"ask the agent\" wording appears (D-182) \u2014 verify: `grep -rni \"tola\" frontend/src/features/go-live/GoLiveReviewActions.tsx` returns nothing.",
+    "`git diff --name-only origin/main...HEAD` contains no file under `frontend/src/features/workspace/`, `frontend/src/features/work-item/`, none of F-114's or F-114B's files other than the one registration line, and none of `delivery/checks.sh`, `delivery/config.json`, `delivery/merge-policy.json` \u2014 verify: command output.",
+    "build.md lists the held write, the test-only seam, the one-line `server.mjs` change, and each board part hidden \u2014 verify: file content."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. A document approval is a recorded independent decision that lets the go-live document go to the client, and it is hard to undo. The server enforces who may review and independence (`apps/core/factory_api` reviews, `backend-answers.md` C-5 and C-29 for the `reviews` pattern), so auth and external-messaging are surfaces along with ui and api. Product acceptance is required because the reviewer flow and its wording are new and client-visible. The `version_id` source for a non-PM reviewer is the one open detail, and the spec writer settles it from the work read."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-114C/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
+    "readiness_checked": true,
     "explicit_exception": null
   },
   "roles": {},
@@ -59,9 +85,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-114C/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,13 +185,38 @@
   "created_at": "2026-11-23T19:55:06Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "BLOCKED",
+      "at": "2026-11-23T20:01:53Z",
+      "round": 0,
+      "head": null,
+      "reason": "Backend LD-6: no API 1.25.0 read gives a non-PM reviewer the go-live document version_id; building the form would ship a control that never appears"
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-114C/readiness.md",
+      "delivery/features/F-114C/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
     "verdict": null,
     "commit": null
   },
-  "blocked": null
+  "blocked": {
+    "from": "PLANNED",
+    "reason": "Backend LD-6: no API 1.25.0 read gives a non-PM reviewer the go-live document version_id; building the form would ship a control that never appears",
+    "at": "2026-11-23T20:01:53Z"
+  }
 }

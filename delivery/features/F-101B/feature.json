@@ -3,26 +3,62 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-101B",
-  "outcome": "Income schedules, part 2: row corrections, duplicate settlement and the adjustment export run live",
-  "state": "PLANNED",
+  "outcome": "Income schedules, part 2: correct returned rows, settle duplicates, export as an adjustment",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4211` (Next 4990, mock 4991) shows \"Correct and resubmit\" for `row-12` and `row-14`, each with its current relationship and a three-way choice with nothing selected, and the button is off until a choice is made \u2014 verify: open the page; `frontend/e2e/income-schedules-actions.spec.ts`.",
+    "Choosing Reclassification for `row-12` and pressing the button sends exactly one `POST /api/v1/work/4211/finance-schedule` with `{action:\"resubmit_row\", expected_revision:7, case_revision:20, schedule_id:12, return_id:40, row_key:\"row-12\", relationship:\"reclassification\"}` and `X-CSRFToken`, and no other field \u2014 verify: network panel; unit test on the descriptor `body()`.",
+    "After the 201 the page shows what the re-read says and never \"resubmitted\" from the write alone; with a mock where the re-read still returns the old state, the page still shows the returned rows \u2014 verify: mock scenario; unit test.",
+    "`/work/4210` lists only `row-36` and `row-37` under \"Rows to resolve\" with a choice each and an amount of \"Unknown\" for the null one; `row-38` shows as settled with its evidence id; the button stays off until both rows have a choice, an evidence row is chosen and a reason is typed \u2014 verify: e2e; unit test of the gate.",
+    "Saving on `/work/4210` sends one `POST` with `{action:\"resolve_duplicates\", expected_revision:7, case_revision:20, schedule_id:12, decisions:[{key:\"row-36\",treatment:...},{key:\"row-37\",treatment:...}], evidence_id, reason}` and nothing for `row-38` \u2014 verify: network panel; unit test.",
+    "`/work/4212` shows \"Export as an adjustment\" with a kind choice and an evidence choice, both unselected; choosing Reclassification lists only reclassification rows and shows \"Unknown\" for the null total; the page adds up nothing \u2014 verify: e2e; `grep -n \"parseFloat\\|Number(\\|reduce(\" ` on the new files returns nothing on amounts.",
+    "Pressing Export on `/work/4212` sends one `POST` with `{action:\"export_adjustment\", expected_revision, case_revision, schedule_id, kind, evidence_id}` and no note; the export form is absent when `can_export` is false (`4213`, `4210`, `4211`) \u2014 verify: network panel; e2e on all four.",
+    "After a successful export the re-read shows `exports[]` as a list with a link to `/projects/{case_id}/accounting-adjustments/71`; `/work/4213` shows the list and no export form \u2014 verify: e2e.",
+    "With `evidence: []` (`4215`) the duplicates form and the export form each show their \"no evidence\" message and no button; no evidence select offers anything but `evidence[]` rows; the page has no free-text evidence id and no file input; nothing is preselected \u2014 verify: component test and e2e.",
+    "With `expected_revision: null` and `case_revision: null` (`4214`) every form shows its reason and no request is sent; the null is never sent as 0 \u2014 verify: unit test asserts no fetch call.",
+    "A dropped connection or 503 after a press shows \"We couldn't confirm that this was recorded\u2026\", re-reads both, keeps that button off until the re-read shows a different `expected_revision`, and sends the write once \u2014 verify: mock scenario; count POST calls.",
+    "A 409 shows \"This schedule changed while you were reading it, so nothing was recorded\", re-reads, and keeps the person's choices, evidence and reason (a choice for a row that is gone is dropped and says so) \u2014 verify: mock scenario.",
+    "A 403 `csrf_failed` refreshes the session once, says \"Press the button again\" and does not retry by itself; any other 403 shows \"You can't do this.\" with the server's message; a 404 shows \"This record is unavailable.\" \u2014 verify: mock scenarios; count calls.",
+    "A 422 with `fields[]` shows the first field message beside the form and keeps the input; a reason over 2000 characters or empty is stopped before any request \u2014 verify: mock scenario; unit test.",
+    "A double click on any button makes one request; while one write runs every form on the panel is off \u2014 verify: unit test with a recording fetch.",
+    "`/projects/{caseId}/accounting-adjustments/71` shows reference \"ADJ-0071\", \"Version 1\", kind, both lines with their amount strings unmodified and \"Not reviewed yet\"; `/72` shows \"Approved\"; `/73` shows exactly \"This record is unavailable.\" with no title; no review form, no mapping control and no currency symbol appear \u2014 verify: e2e; grep the new files for `role:`, `mappings` and `liveApi.POST` (only the finance-schedule writes through `useWorkCommand`).",
+    "Against live Django (8030) a real returned, held or export-ready `income_schedules` item shows forms exactly when the read says (`returned`, a `not_assessed` row, `can_export`), and a person the server refuses sees the server's 403 message with no access control invented \u2014 verify: compare the page with `GET /api/v1/work/{id}/finance-schedule` JSON for each case and a second signed-in role.",
+    "A wrong tenant: a work id or adjustment id of another case gives the same \"This record is unavailable.\" as a missing one, with no title and no further call \u2014 verify: live or mock `4299` and adjustment `73`.",
+    "No write happens on load, polling or navigation; the only `POST`s to `finance-schedule` come from a press \u2014 verify: e2e asserts zero POSTs on load of each fixture.",
+    "\"Posted to the ledger\", the board's \"Units match the accounts\", \"A different Finance person must approve\u2026\" and the export Note field appear nowhere in the new files; `build.md` says each is hidden because the read supplies nothing \u2014 verify: grep; `build.md`.",
+    "Viewport check at 1440 and 390 against the held, returned and export boards (SCR-54 desktop and mobile): remaining parts match, hidden parts leave no empty heading or gap, controls are at least 44 by 44 px on the phone \u2014 verify: screenshots at both widths against `design/screens.md` SCR-54.",
+    "New tests exist for the three descriptors (ids, urls, bodies, null tokens staying null, no key field), each form's gate, the uncertain lock, each error mapping and the adjustment page mapper; the F-101 tests and `api-live-schema-drift` still pass \u2014 verify: `delivery/checks.sh` runs them green."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. The export creates accounting adjustments that feed the ledger and the duplicate settlement decides which source rows count, so both are money-adjacent and hard to undo, and each needs evidence and revision checks (`finance-schedule` write, `accounting-adjustments`). The change also moves from the v7 mock to live bodies (contract-change) and depends on server-side role checks (auth). Source: lane D rules, connection map `### SCR-54`, F-101 readiness-proposal-r0.md."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-101B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +95,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-101B/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +195,29 @@
   "created_at": "2026-11-23T17:39:29Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T20:01:30Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-101B/readiness.md",
+      "delivery/features/F-101B/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

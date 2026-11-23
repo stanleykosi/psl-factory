@@ -3,26 +3,61 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-102B",
-  "outcome": "Fixed assets, part 2: register, date and schedule reviews, returns and corrections are recorded live",
-  "state": "PLANNED",
+  "outcome": "Fixed assets: record the register, date and schedule reviews, answer a return and correct the register (SCR-55, part 2)",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "On mock `3911` the register review form shows the purpose heading, an evidence list from `review_evidence` with nothing selected, a note and only the verdicts listed; Approve, Return and Reject are off until evidence is chosen \u2014 verify: open `http://localhost:4990/work/3911`; `frontend/e2e/fixed-assets-reviews.spec.ts` asserts the disabled state and the choices.",
+    "Approve on `3911` sends one `POST /api/v1/work/3911/reviews` with `kind:'asset'`, `purpose:'register'`, the option's `target_id`, the chosen `evidence_id`, `expected_revision` and `case_revision` from the read, and an empty note allowed; afterwards the panel is re-read \u2014 verify: e2e inspects the recorded body and the follow-up GETs.",
+    "A schedule review on `3913` sends `kind:'schedule'` with no `purpose` field; `revoke` (\"Withdraw approval\") appears only when `revoke` is in that option's `verdicts` and is absent on `3911` \u2014 verify: e2e body and button assertions; unit test on the body builder.",
+    "Return, Reject and Withdraw with an empty note are refused in the form before sending; Approve with an empty note is sent \u2014 verify: unit test and e2e (no request on the refused cases).",
+    "A `basis` option (`3912`) draws \"Review the dates\" and is absent when `review_options` has no `basis` entry; no option is drawn that the server did not list \u2014 verify: e2e on `3912` and `3911`; unit test mapping `review_options` to forms.",
+    "With `review_options: []` (`3901`, `3904`) no review form, heading or empty gap is drawn and \"No review is open for you.\" remains; with `review_evidence: []` (`3914`) the verdict buttons are off with \"No evidence is available to attach.\" \u2014 verify: e2e.",
+    "No evidence id appears in any request unless the person chose it; `grep -rn \"fileToEvidence\" frontend/src/features/fixed-assets` returns nothing \u2014 verify: e2e asserts the chosen id in the body; grep.",
+    "A 403 hold message on `3916` shows as returned, the form stays and no automatic retry is sent; the client holds no \"preparer cannot review\" rule \u2014 verify: e2e counts requests; `grep -rn \"prepared by\\|preparer\" frontend/src/features/fixed-assets` returns nothing.",
+    "Capture a register on `3908` sends `POST /api/v1/projects/{ctx.caseId}/asset-registers` with `case_revision`, `reference`, `evidence_id`; an invalid reference (`-x`) is shown as the 422 field message and sent only if it matched the pattern client-side or the server answered; there is no input for a case id \u2014 verify: unit test on the body and the pattern; component test on props.",
+    "Record dates on `3912` sends one multipart `POST .../asset-registers/{register_id}/dates` with `case_revision`, `evidence_id`, `asset_id` (one of the \"Date unclear\" assets), the dates, `fraction_basis` and a `file` part, with no hand-set Content-Type; a non-PDF or a file over the limit is refused before sending, a mock 413 and 415 show the server message \u2014 verify: e2e on request headers and body parts; unit tests.",
+    "Correct and resubmit on `3915` sends multipart `POST /work/3915/assets/opening-proof` with `expected_revision`, `case_revision`, the `target_id` and `review_id` from `opening_return` (not editable), `reason` and `file`; an empty reason or no file keeps the button off; with `opening_return: null` the control is absent \u2014 verify: e2e and unit test.",
+    "409 on `3917` re-reads the panel and item, says \"This changed while you were working. Showing the latest version.\", and does not repeat the press; 422 on `3918` shows the field message and keeps the entered values \u2014 verify: e2e counting requests.",
+    "A 403 `csrf_failed` refreshes the session once, says to press again and does not resend by itself; a 403 other or 404 shows \"This record is unavailable.\" with no difference; 429, 503 and a dropped network show \"Try again shortly\" and lock the form until reload or Try again \u2014 verify: mock scenarios; unit tests count fetches.",
+    "Pressing a verdict twice quickly sends one request; a retry of the same attempt reuses the same idempotency key where the body has one, and a new attempt after success gets a new one \u2014 verify: unit test on the lock and key.",
+    "No write happens on page load, polling or navigation; `grep -rn \"liveApi.POST\\|fetch(\" frontend/src/features/fixed-assets` shows calls only in the forms' send functions \u2014 verify: e2e asserts zero POSTs on load; grep.",
+    "`FixedAssetsActions` is registered through F-87's `Actions` slot and renders inside its error boundary; `git diff` shows no change under `frontend/src/features/workspace/`; the F-102 panels and mapper tests are unchanged and still pass \u2014 verify: `git diff --stat`; `npm test`.",
+    "Against live Django (8030) with a finance reviewer account: the listed `review_options` produce a `POST /reviews` that returns 200 and a changed `review_id`, and a second account without access gets 404 on the work item and on every write and sees \"This record is unavailable.\" \u2014 verify: `python3 /Users/Hunchoo/psl-factory-main/delivery/connect/oa.py live GET /api/v1/work/{work_id}/assets 3` before and after; the session `curl` JSON for the write. If no live case is in a review state, say so in `build.md` and list the mock result only; do not claim live evidence.",
+    "A schedule with a held status, or any null money field, never shows 0 in the new forms; money stays as F-102 draws it \u2014 verify: e2e on `3903`-style fixture with the forms present.",
+    "The drawn parts the API does not supply are absent and listed in the PR: \"Chidi never reads asset values\", the accounting-note text, the phone short money form, the review dates (including the returner's quoted note on the returned board), \"Feeds MANAGEMENT ACCOUNTS\" \u2014 verify: `grep -rn \"never reads asset values\\|MANAGEMENT ACCOUNTS\" frontend/src/features/fixed-assets` returns nothing.",
+    "Viewport check at 1440 and 390 against the eight boards (`SCR-55-{desktop,mobile}-{register-review,date-review,schedule-review,returned}`): frame, decide card, note field, buttons and proof row match, and hidden parts leave no empty heading or gap \u2014 verify: screenshots at both widths reviewed against `design/screens.md` SCR-55.",
+    "Tests exist and pass: unit tests for the review body builder (asset and schedule variants, notes rule), option-to-form mapping, the multipart builders, the locking and the error mapping; `npm run lint`, `npm run typecheck`, `npm test` and `delivery/checks.sh` pass \u2014 verify: command output."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. `POST /work/{id}/reviews` records approval decisions under per-record, independent-reviewer authority (`auth`), and three writes are multipart uploads. The basis review is a new flow (product acceptance required) on a contract that changes the review shape (`contract-change`). It moves no money, does not post to the ledger (`ledger_posted` is read-only) and has no restricted payroll data. The decisions are reversible by return or revoke, so it is not high. Under D-180/D-184 it merges routinely, but reviewers should check the authority handling and the upload checks."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-102B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +94,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-102B/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +194,29 @@
   "created_at": "2026-11-23T17:39:34Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T20:01:32Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-102B/readiness.md",
+      "delivery/features/F-102B/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

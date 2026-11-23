@@ -3,26 +3,67 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-112B",
-  "outcome": "Change request, part 2: notice, execution, signatures, closure, retry and restart run live",
-  "state": "PLANNED",
+  "outcome": "A change request's notice, execution, go-live note and closure can be worked from its work page (part 2 of SCR-31)",
+  "state": "READY",
   "task_ids": [
     "FE-CHANGE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4301` (Next 4990, mock 4991) shows step 2 current, \"Change notice\" with \"Not delivered yet\", the job status as served, and Approve, Return and Reject buttons, one per `verdicts[]` entry \u2014 verify: open page; `e2e/change-request-closure.spec.ts`.",
+    "`/work/4302` shows \"Delivered\" only because `receipt_ids` is non-empty and no review controls (empty `verdicts`); `/work/4301` shows no \"Delivered\" or \"Published\" text \u2014 verify: e2e; unit test on the status mapper.",
+    "No delivery date or time is drawn on any step, and the Tola card, \"TEST TEMPLATE\" tag and \"Ask Tola\" are absent \u2014 verify: e2e DOM assertions; grep copy.",
+    "Approve sends `POST /work/4301/change` with `{action:\"document_review\", expected_revision, case_revision, change_version_id, version_id: <documents[].id>, verdict:\"approve\", note}`; with an empty note the button stays off and no request is sent; Return and Reject open a confirm step and cancelling sends nothing \u2014 verify: unit on `changeBodies.ts`; e2e checks the request body in the mock log.",
+    "A verdict not in the row's `verdicts[]` has no button; `4309`, `4311` and any read with empty `verdicts` show no write control and no banner \u2014 verify: e2e.",
+    "`/work/4304` execution form: nothing preselected for `kind` or `evidence`; the evidence list holds exactly the read's `evidence[]`; submitting sends `{action:\"execution\", ..., kind, evidence, note, scope_items, dossier_id:null, candidate_id:null}` with blank `scope_items` as `null` \u2014 verify: unit; e2e body assertion.",
+    "`/work/4305` (empty `evidence[]`) disables \"Record evidence\" with \"No proof file is recorded for this case yet\" and sends nothing \u2014 verify: e2e.",
+    "The execution form is absent when `stage !== \"execution\"` \u2014 verify: e2e on `4301` and `4306`.",
+    "`/work/4308` close form: nothing preselected for mode, receipt or either signature; `receipt_id` options equal the union of `documents[].receipt_ids`; both signature lists equal `evidence[]`; no evidence id can be typed \u2014 verify: e2e; unit.",
+    "Mode `signed` requires both signature objects with all six fields filled and `signed_at` as an ISO 8601 string with offset; any empty field keeps \"Close the change\" disabled; the body has `client_signature_id` and `client_signature` non-null \u2014 verify: unit table over each missing field; e2e body assertion.",
+    "Mode `owner_applicability` hides the client signature section, sends `client_signature_id:null` and `client_signature:null`, and requires the confirm step \"This closes the change without a client signature.\" \u2014 verify: e2e; unit.",
+    "`close` sends `operation_key` as a uuid; after a network drop the \"Check again\" path re-reads and does not resend; an explicit retry of the same attempt reuses the key and a new attempt makes a new one; a double click sends one request \u2014 verify: unit with fake fetch counting calls and keys.",
+    "`/work/4309` (`can_close:false`) and `/work/4310` (`closure_id` set) show no close form; `4310` shows \"Closed\", the mode text only if the page itself just sent it (a reload shows \"Closed\" and `closure_id` only), and no person name, date or \"verified\" text \u2014 verify: e2e.",
+    "A failed job `4303` shows \"Retry\" (`can_retry:true`) and \"Cancel\"; `4301` shows no Retry; each sends `{action:\"operate_delivery\", ..., job_id, operation, reason}` with a required reason and a confirm step \u2014 verify: e2e; unit.",
+    "`restart` is drawn only when `can_restart` is true (`4310`), asks for a reason (1 to 2000), confirms, and sends `{action:\"restart\", ..., reason}` once \u2014 verify: e2e on `4310` and `4311`.",
+    "Every write body has `expected_revision`, `case_revision` and `change_version_id` equal to the last read; after a 201 the next write uses freshly read values \u2014 verify: unit sequence.",
+    "A 409 on any action keeps typed text, shows \"This change was updated by someone else. Reload to see it.\", and sends nothing automatically; a 422 with `fields[]` shows each message by its field; a 403 `csrf_failed` says \"Press save again\" without resending; 413, 415, 429 and 503 show F-85's wording; a network drop or 5xx shows \"We could not confirm this was saved\" with \"Check again\" only \u2014 verify: mock scenarios; fetch counts in unit tests.",
+    "A failed re-read after a 201 leaves the form locked with \"Couldn't refresh\" and Try again, never a repeat of the write \u2014 verify: unit.",
+    "`/work/4312` and a live work id the caller cannot see both show exactly \"This record is unavailable.\" \u2014 verify: open both.",
+    "`deployment_authorized` is false in every state and no copy says deployment is authorised or the change notice/note \"was sent\" unless a receipt supports it \u2014 verify: unit on the mapper; grep copy.",
+    "Nothing in the page names a signer or approver the read does not carry, and the \"Milestone 3's scope now includes\" line and \"Open milestones\" link are absent \u2014 verify: e2e DOM absent; no empty gap in screenshots.",
+    "No write is made by page load, polling or navigation; POSTs to `/work/{id}/change` come only from a press \u2014 verify: e2e asserts zero POSTs on load; `grep -rn \"liveApi.POST\" frontend/src/features/change-request` shows them only in the command send path.",
+    "The shared frame is unchanged: `git diff origin/main -- frontend/src/features/workspace` is empty, and `grep -rn \"Actions\" frontend/src/features/workspace` shows no addition from this feature \u2014 verify: those commands.",
+    "Layout at 1440 and 390 matches the 8 boards for the parts kept (stage track, document rows, forms, closed state), with a vertical track on mobile as in the mobile boards, keyboard order and focus working on forms and confirm steps \u2014 verify: screenshots at both widths against the 8 boards; Tab through each form.",
+    "Against live Django 8030 (Postgres), for a `pmo-change/v1` item at a notice or go_live stage, the page's document rows, receipts and jobs match `curl` of `GET /work/{id}/change`; one `document_review` on a test change returns 201 and the re-read shows it; any action that cannot be exercised live is stated in build.md rather than claimed \u2014 verify: compare page and curl; record the response.",
+    "New unit tests cover the five body builders, the stage and document status mappers, the close validation table, null handling and the error mapper; `npm run lint`, `npm run typecheck` and `npm test` pass \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. `close` records PM and client signatures, including `owner_applicability`, which waives the client signature. `restart`, `retry` and `cancel` change a change request's life and are hard to undo. They are revision-gated and role-gated by the read (`can_close`, `can_restart`, `jobs[]`). The notice and go-live note documents go to the client (external-messaging) and need reviewing before they are sent, so the screen must not imply anything was sent unless `jobs[]` or a receipt says so. The change also touches auth (role-gated actions) and product-decision (D-7 signature rules). It is a new flow, so product acceptance is required. The merge goes to the design engineer's batch."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-112B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +100,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-112B/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +200,29 @@
   "created_at": "2026-11-23T17:46:23Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T20:01:39Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-112B/readiness.md",
+      "delivery/features/F-112B/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

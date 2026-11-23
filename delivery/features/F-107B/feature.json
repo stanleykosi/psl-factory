@@ -3,26 +3,71 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-107B",
-  "outcome": "BU totals, part 2: publication to the CEO and BU heads, their receipts and the verified result run live",
-  "state": "PLANNED",
+  "outcome": "BU totals are published to the CEO and BU heads, each confirms receipt, and Finance sees \"Verified\" only when the server says so",
+  "state": "READY",
   "task_ids": [
     "FE-FIN-BU"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4710` shows the publish board: tag \"Ready to publish\", the sentence \"The CEO and the business unit heads.\", the \"What happens next\" sentence, the totals table, and a \"Publish totals\" button; it shows no recipient name, no \"6\", no \"7\", no disclosure-rule tag and not the \"BU publisher\" line \u2014 verify: open at 1440 and 390 wide against the two publish boards; the e2e asserts text and absences.",
+    "Pressing \"Publish totals\" sends exactly one `POST /api/v1/work/4710/business-units` with body exactly `{\"action\":\"publish\",\"expected_revision\":<n>,\"case_revision\":<n>}` (no key, no `inputs`), and after the re-read the page shows the Finance receipts board; with a mock whose re-read still has `publication_id:null` it shows \"Recorded. The page will update when the publication is applied.\" and never \"Published\" \u2014 verify: e2e request capture; unit test of the `business-units.publish` body.",
+    "A double click on Publish sends one request \u2014 verify: e2e counts POSTs.",
+    "`/work/4711` (still in review) and `/work/4712` (`can_publish:false`) and `/work/4719` (held) show no Publish button \u2014 verify: e2e by role and name.",
+    "`/work/4713` (published, waiting) shows \"Waiting for receipts\", \"Receipts recorded: 1\" (the length of `receipt_ids`), the totals table, and no Publish button, no per-recipient list, no \"of 7\" and no cancel control even with `can_publish:true` \u2014 verify: e2e; grep the DOM for `of 7`, `OF`, `WAITING`, `NEEDS YOU`, `Cancel` returns nothing.",
+    "`/work/4714` (recipient, not confirmed) shows the reduced view with only this person's totals and one \"Confirm I received it\" button; no Inputs list, no evidence list, no Publish, no request to `business-unit-intake` \u2014 verify: e2e asserts DOM and request list.",
+    "Pressing \"Confirm I received it\" on 4714 sends exactly one `POST /api/v1/work/4714/aggregate-receipt` with body exactly `{\"publication_id\":31}`; after the re-read with `receipt_id` non-null the page shows \"You confirmed receipt.\" and no button; with a re-read that still has `receipt_id:null` it shows \"Recorded. The page will update when the receipt is applied.\" \u2014 verify: e2e request capture, both mock outcomes; unit test of the body.",
+    "`/work/4715` (already confirmed) shows \"You confirmed receipt.\" and no button; `/work/4716` (nothing published) shows no button and \"Nothing has been published to you yet.\" \u2014 verify: e2e.",
+    "`/work/4717` (verified) shows \"Verified\" with the served `verified_at` and \"Receipts recorded: 2\", and shows none of \"Coverage\", \"Private data\", \"Posted to the ledger\", \"Cancelling now\", \"7 OF 7\" \u2014 verify: e2e; the verified word is absent on 4713 and 4710 (no `verified_at`) even when the mock sets `stage:'verified'` text \u2014 verify: e2e with that variant.",
+    "A job or agent claim is not \"verified\": a fixture with `verified_at:null`, `stage:'Verified'` and `receipt_ids:[91,92]` shows no Verified tag \u2014 verify: e2e and unit test of the state function.",
+    "The page computes nothing: the cells of every table equal served strings; the only number drawn that the page did not receive as a string is the array length of `receipt_ids`; no total row, share, recipient count or denominator \u2014 verify: property test (every cell string appears in the input) and e2e DOM comparison against the fixture.",
+    "A null value in `totals` shows \"Unknown\", never 0, `0.00` or a dash; a null `period` or `currency` hides that part with no gap \u2014 verify: unit test and e2e on a variant.",
+    "Authority comes from the server only: `/work/4712` (`can_publish:false`) shows no Publish for any job title in the mock session, and no code path reads a role or job title \u2014 verify: grep `frontend/src/features/finance/business-units` for role and job-title strings returns nothing.",
+    "Wrong person: a 403 on Publish or on the receipt shows \"You can't do this.\" plus the server message and re-reads, no retry; a `csrf_failed` 403 refreshes the session once, says \"Press again\" and sends no second request \u2014 verify: e2e scenarios `forbidden` and `csrf`; unit test counts fetches.",
+    "Wrong tenant or unknown record: a 404 on the read or on either write shows exactly \"This record is unavailable.\"; a 403 on the read looks the same; nothing distinguishes them \u2014 verify: e2e compares text and DOM structure.",
+    "Invalid input: a 422 shows the server message and `fields[]` as given and re-reads \u2014 verify: scenario `invalid`.",
+    "Stale publish: a 409 re-reads, shows the server message, does not repeat the press; the next press carries the new `expected_revision` \u2014 verify: e2e scenario `stale` with capture of both bodies.",
+    "Second receipt: a 409 `already` re-reads, shows the server message and the page shows \"You confirmed receipt.\" when the re-read has `receipt_id`; no repeat send \u2014 verify: e2e scenario `already`.",
+    "Uncertain publish: a dropped connection after Publish locks the button, says \"We couldn't confirm that this happened. Check the page before trying again.\", sends nothing by itself for 60 s of fake time, and unlocks only when the re-read has a changed `expected_revision` or a non-null `publication_id` \u2014 verify: unit test with fake timers; e2e scenario `drop` counts POSTs.",
+    "Uncertain receipt: same for the receipt; unlocks only after the re-read shows `receipt_id` non-null (control gone) or after a reload; never auto-resends \u2014 verify: unit test and e2e scenario `drop`.",
+    "A 429 or 503 says \"Try again shortly.\" and sends nothing more by itself \u2014 verify: unit test over 30 s of fake time.",
+    "A null `expected_revision` or `case_revision` disables Publish with \"We don't have this item's current version yet. Reload and try again.\" and sends nothing; a null `publication_id` hides the receipt control \u2014 verify: unit test on both descriptors.",
+    "Publish and receipt are external messaging, and this page composes none: no message text, alert, email, WhatsApp copy or amount is built or sent by the page, and the only POSTs are `business-units.publish` and `business-units.aggregate-receipt` through `useWorkCommand` \u2014 verify: grep for `liveApi.POST` in `src/features/finance/business-units` shows no direct use; e2e asserts zero POSTs on load of every fixture.",
+    "Disclosure proof, mock: for fixtures 4710 to 4719 the canary keys and their values appear nowhere in the DOM text, attributes or serialized state; the recipient fixtures never show another unit's figures or any name \u2014 verify: e2e reads `document.body.innerHTML` per fixture; unit test that `model.ts` is an allowlist mapper that drops unknown keys.",
+    "Disclosure proof, live (D-187): against Django on 8030 with a seeded published BU work item, for three people (a Finance publisher, a BU head recipient, and a person with no access), compare the page with `GET /api/v1/work/{id}/business-units` fetched with the same session: every figure and word on the page is in that JSON; the BU head's JSON and page contain only their own unit's figures and no staff names, staff ids or pay; the Finance page shows no recipient figures beyond what its JSON serves; the no-access person sees exactly \"This record is unavailable.\" \u2014 verify: `curl` with each session cookie next to the page text; record the three comparisons in build.md, plus the exact live shape of `totals` and of `receipt_ids`.",
+    "Live round trip: against Django 8030, the Finance publisher presses Publish on a work item whose read has `can_publish:true` and the 201 and the re-read agree; then a recipient presses \"Confirm I received it\" and the 200 body `{receipt_id, publication_id}` matches the re-read; the Finance re-read lists the new `receipt_id` in `receipt_ids[]`; `verified_at` appears only when the server sets it \u2014 verify: record the JSON of both responses and both re-reads in build.md. If the seeded data cannot reach `can_publish:true`, record that and keep the mock proof (Assumptions 6).",
+    "Viewport check at 1440 and 390: each of the six boards matches for the parts that remain; every hidden part leaves no empty heading, no gap and no \"not available\" text \u2014 verify: screenshots of 4710, 4713, 4714, 4717 at both widths against `design/screens.md` SCR-57 artboards; the Conflicts list is the allowed difference.",
+    "Typecheck, lint and tests pass, and `api-live-schema-drift.test.ts` still passes \u2014 verify: `delivery/checks.sh`. New unit tests cover: the state function for every row of the Contract table, both command bodies and their null-token holds, the allowlist model, and the lock behaviour of criteria 19 and 20.",
+    "build.md and the PR description state in plain words what is hidden under D-182/D-187 (recipient names and counts, receipts list, \"7 OF 7\", Coverage, Private data, Posted to the ledger, cancel-after-publish, the BU publisher line, abbreviated money), name every change under `frontend/mock/finance*` (expected none), and say that no cancel-after-publish is drawn because 1.25.0 serves none \u2014 verify: read build.md."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High: publishing sends payroll-derived money aggregates to people outside Finance (the CEO and BU heads). A wrong recipient, a premature publish or a small-group leak cannot be undone, and a double publish or double receipt is an uncertain effect. Surfaces are ui and api (`business-units` publish and `aggregate-receipt`), security and auth (per-recipient views with server-decided authority), external-messaging (delivery to the CEO and BU heads), and product-decision (D-187 chose to build on the API's disclosure, and PSL can still overrule D-PAYROLL-VISIBILITY). Files: `frontend/src/features/finance/business-units/` (from F-107). Payments is not ticked because nothing is invoiced, paid or posted."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-107B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +104,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-107B/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +204,29 @@
   "created_at": "2026-11-23T18:26:37Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T20:01:36Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-107B/readiness.md",
+      "delivery/features/F-107B/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

@@ -3,26 +3,63 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-115B",
-  "outcome": "Hypercare, part 2: stability observations with evidence, the release record and the criteria result are recorded live",
-  "state": "PLANNED",
+  "outcome": "Hypercare lets the PM log a metric observation with proof and set the criteria",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "No release form: on every fixture (F-115's `4202` to `4204` and this feature's) there is no \"Record release\" button, no release proof select, and no POST to `stability/events` or `release-register` \u2014 verify: e2e asserts absence and request capture; grep `stability/events`, `release-register`, `observe_release`, `can_record_release` in the new non-test files returns nothing.",
+    "F-115's release and acceptance facts section is unchanged by this feature \u2014 verify: F-115's tests still pass; the diff to `hypercareAdapter.ts` is only the `Actions` assignment and the new descriptors.",
+    "On `4301`, choosing Engineering shows only the `error_rate` row; choosing Infrastructure shows only `uptime`; a different owner's metric is never drawn \u2014 verify: page.",
+    "Observation validation: an empty metric row without \"Not known\" blocks the button; \"Not known\" sends `null`; `0` typed is sent as `0`; nothing defaults to 0; `confirmed` has no preselected radio and \"Not known\" sends `null`; the button stays off with no proof selected \u2014 verify: unit test on `hypercareForms.ts`.",
+    "The observation POST body is exactly `{expected_revision, case_revision, configuration_id, owner, observed_at, confirmed, reference, evidence_id, metrics}`: no `verify_sample`, no note, no key not in the contract, and `metrics` has exactly that owner's approved keys \u2014 verify: request capture; unit test.",
+    "After an observation 201 the page re-reads and F-115's criteria list shows the new result; the success text appears only when `observations[]` changed \u2014 verify: e2e on `4305`.",
+    "`4302` offers only Infrastructure; `4303` (no proofs) disables the button with \"No proof is on this project yet.\"; `4304` and `4305` draw no observation form \u2014 verify: pages.",
+    "A 409 `STALE_VERSION` on the observation re-reads, keeps owner, time, reference and proof, clears the metric values, and shows the server message \u2014 verify: scenario test.",
+    "On `4306` the criteria form draws the controls above with nothing prefilled; invalid key text, a duplicate key for the same owner, 0 confirmation owners, hours above 87600 and a missing policy decision each show their message and keep the button off \u2014 verify: unit test and page.",
+    "Submitting criteria sends exactly one `POST /api/v1/work/4306/stability/criteria` with `{case_revision, criteria, evidence_id, effective_from}`, `criteria.clock` `elapsed_hours_since_release`, `criteria.financial_controls` `independent`, no `issue_clearance`, no `expected_revision`; `evidence_id` is a `policy_decision` proof \u2014 verify: request capture.",
+    "After the draft 201 the page says the draft needs review, reads the policy configurations (following `next_page`, max 4 pages) and shows the \"Mark as validated\" button only because the item lists `validated`; `4307` shows \"Waiting for a reviewer\" and no button; `4308` shows the missing policy decision text \u2014 verify: pages.",
+    "Review sends `POST /api/v1/setup/{case_id}/policy-configurations/90/review` with `{case_revision (from the policy read), state_id, transition}`; \"Make these the hypercare criteria\" opens the confirm dialog first; `revoked` is never offered \u2014 verify: request capture; grep `revoked` in the new files finds no button.",
+    "The \"criteria are now active\" text appears only when the re-read `stability` shows the new `criteria` and `configuration_id`; with a stale re-read the page says it could not confirm \u2014 verify: e2e with a delayed mock.",
+    "Error mapping for the observation, criteria and review POSTs: 409, 403 `csrf_failed` (one session refresh, \"Press the button again\", one POST), 403, 404, 422 with `fields`, 429, 503, network; after each failure no automatic resend; entered values stay \u2014 verify: unit tests counting fetch calls per scenario (`4309`).",
+    "Uncertain effect: after a dropped connection the page re-reads; `4310` (record present) shows it as recorded, `4311` (absent) locks the form with the \"couldn't confirm\" text and unlocks only after the item `revision` changes or a reload \u2014 verify: e2e.",
+    "Press lock: a double click on any form's button sends one request; while one form works, the other forms' buttons are disabled \u2014 verify: e2e request count.",
+    "A `null` `expected_revision` (`4312`) or `case_revision` (`4313`) holds the form with the \"current version\" sentence and sends nothing \u2014 verify: unit test.",
+    "Nothing sends on page load, polling or navigation: the only POSTs are the observation, criteria and review calls, from a press \u2014 verify: e2e asserts zero POSTs on load; `grep -rn \"\\.POST(\\|liveApi.POST\" frontend/src/features/hypercare` shows only F-115's background call and call sites inside the four builders.",
+    "Hidden parts: no \"Log an issue\", no `verify_sample` control, no free-note field on the observation form, no go-live acceptance action, no file upload control, no release form or release-register call \u2014 verify: grep for `release-register`, `acceptance`, `verify_sample`, `fileToEvidence` in `frontend/src/features/hypercare` returns nothing outside tests.",
+    "Wrong user: a viewer whose reads return `observation_owners:[]`, `can_draft_criteria:false` and no review `actions` sees none of the forms and sends no request; a direct server 403 on a crafted POST shows \"You can't do this.\" \u2014 verify: mock accounts; scenario.",
+    "Wrong tenant: a work id the account cannot see (404 from every read) shows \"This record is unavailable.\" and no form \u2014 verify: open an unknown id in the mock; compare with F-115's wording; against live Django use a work id from another organisation.",
+    "Viewport 1440 and 390: forms are one column on the phone, controls 44 px high, no horizontal scroll, no axe violations; the forms use the existing design-system tokens and components \u2014 verify: screenshots; `hypercare-record.spec.ts` axe run.",
+    "No file under `frontend/src/features/workspace` or `frontend/src/features/work-item` is changed, and `HypercareActions` is registered only through the `Actions` field of F-115's adapter \u2014 verify: `git diff --stat origin/main -- frontend/src/features/workspace frontend/src/features/work-item` is empty; a test renders the adapter's `Actions` with the right props.",
+    "Against live Django (8030, the lane-d Postgres fixture, a PM account that is an observation owner on a `delivery-hypercare/v1` item): record one observation, and the `curl` of `/api/v1/work/{id}/stability` shows the new `observations[]` row and an updated `criterion_results[]`; a repeated call with a stale `expected_revision` returns 409 and the page shows the stale text \u2014 verify: curl against the same work id; page.",
+    "`npm run typecheck`, `npm run lint`, `npm test` pass and `api-live-schema-drift.test.ts` passes \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High. Observations and the release record feed the qualified result and the acceptance and closure gates, and a recorded release cannot be quietly undone (`stability/events` 201, `release-register` `observe_release`). Evidence upload (D-1) and the policy-configuration review (criteria) touch records that other decisions depend on, so the surfaces are ui and api, with the review step needing a deliberate authority check. No money or payroll is involved. Sources: `screens-d-delivery-issues-escalation.md` SCR-46, backend answers D-1, D-18 and D-19, the 1.25.0 contract paths `stability`, `stability/events`, `stability/criteria` and `release-register`, and F-115's spec as the binding part-1 boundary."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-115B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +96,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-115B/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +189,28 @@
   "created_at": "2026-11-23T17:39:47Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T20:01:45Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-115B/readiness.md",
+      "delivery/features/F-115B/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
