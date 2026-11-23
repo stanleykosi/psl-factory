@@ -47,6 +47,7 @@ import { resetTemplates, templatesList, templateVersion } from './templates.mjs'
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { workList } from './work-list.mjs';
 import { liveDecideRoute, ownsLiveDecide, resetLiveDecide } from './live-decide.mjs';
+import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
 import { LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
 import { isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
@@ -288,6 +289,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetDelegations();
         alerts.reset();
         resetWorkspace();
+        resetWorkLive();
         resetClients();
         assistant.reset();
         runs.reset();
@@ -297,6 +299,20 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       // F-58: after a logout (cookie psl_mock_session=out) every other read and write answers 401, as a signed-out session does.
       if (url.pathname.startsWith('/api/') && url.pathname !== SESSION_PATH && url.pathname !== LOGOUT_PATH && parseCookies(req.headers.cookie).psl_mock_session === 'out') return send(res, ...SIGNED_OUT_REPLY);
+      // F-64: the live decision desk (live-decide.mjs): integer work and task ids, the live shapes. Not in v7.
+      if (ownsLiveDecide(method, url)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        return send(res, ...liveDecideRoute({ method, url, raw, cookies, scenario: req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario, token: req.headers['x-csrftoken'], me: me[persona], persona }));
+      }
+      // F-85: live work item reads (integer ids only) and the case file upload (work-live.mjs); not in v7. v7 ids and v7 case routes fall through.
+      if (WORK_LIVE_PATH.test(url.pathname) || CASE_FILES_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        return send(res, ...workLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
+      }
+      if (method === 'get' && url.pathname === '/__mock/work-live-log') return send(res, 200, workLiveLog());
       if (method === 'get' && url.pathname === WORKSPACE_LOG_PATH) return send(res, 200, workspaceLog());
       if (method === 'get' && url.pathname === ASSISTANT_LOG_PATH) return send(res, 200, assistant.log());
       // D-161 (proposal, not in v7): the assistant's image upload and its read-back.
@@ -336,12 +352,6 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
           if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
           return send(res, ...roleDashboardRoute({ persona }));
         }
-      }
-      // F-64: the live decision desk (live-decide.mjs): integer work and task ids, the live shapes. Not in v7.
-      if (ownsLiveDecide(method, url)) {
-        const cookies = parseCookies(req.headers.cookie);
-        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
-        return send(res, ...liveDecideRoute({ method, url, raw, cookies, scenario: req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario, token: req.headers['x-csrftoken'], me: me[persona], persona }));
       }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);

@@ -51,7 +51,9 @@ const OWNED = /^\/api\/v1\/(work\/(\d+)(\/history)?|tasks\/(\d+)(\/(claim|decisi
 
 /** True when the live decide mock answers this request. */
 export function ownsLiveDecide(method, url) {
-  if (OWNED.test(url.pathname)) return true;
+  // Work ids 17 to 19 only: the other integer work ids (the F-85 work item fixtures, 41xx) answer from work-live.mjs.
+  const match = OWNED.exec(url.pathname);
+  if (match) return match[2] === undefined || Boolean(WORKS[Number(match[2])]);
   return method === 'get' && url.pathname === '/api/v1/work' && url.searchParams.get('queue') === 'decisions';
 }
 

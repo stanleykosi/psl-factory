@@ -392,3 +392,6 @@ body:has(.sw-phoneslot) .work-barref { right: calc(var(--space-4) + 134px + var(
   .work-linemeta .work-sub { font-size: var(--text-small-size); }
   .work-linemeta .work-linehistory a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; } /* F-52: a 44px tap target on a phone */
 }
+
+/* F-85: the live history list is an ol */
+ol.work-hcards { list-style: none; margin: 0; padding: 0; }
