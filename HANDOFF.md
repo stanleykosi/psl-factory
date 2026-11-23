@@ -6,7 +6,7 @@ Use GitHub `main` and API 1.24.0. Railway production API `d75291ff-9648-4c75-ab4
 
 The screen-by-screen register covers all 224 numbered items. The four remaining PSL policy items concern bid loss reasons, bid price adjustments, go-live milestone mappings and leadership report coverage. The production in-app browser reached health and OpenAPI 1.24.0 and showed `page_retired` at the former login. The frontend developer can connect their app to the versioned API when their origin is ready. [Screen answers](delivery/connect/backend-answers-by-screen-2026-11-23.md) · [Test ledger](BUILD-TESTS.md)
 
-Railway production worker `6388381d-8bb0-4896-ba3c-63bbd1eb095f` and acceptance worker `1adfc80b-99a0-4d08-86f0-51c541543974` started normal queue polls from the matching application build. The existing public Railway service names still include `web`. They now serve the backend API. The Next.js frontend origin has yet to be configured.
+Railway production uses `psl-production-api`, `psl-production-worker`, and `psl-production-postgres`. Design acceptance uses `psl-design-api`, `psl-design-worker`, and `psl-design-postgres`. The design checks service was removed. Both existing public API addresses passed database-backed health checks after the rename. The Next.js frontend origin has yet to be configured. [Railway runbook](docs/runbooks/railway.md)
 
 ## Next.js developer handoff
 
