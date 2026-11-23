@@ -1,7 +1,7 @@
 // Projects (SCR-22 list, SCR-07 journey): view state, the E-PROJECTS query and response checks. Pure functions only.
 import type { operations } from '@/api/schema';
 import { formatDayMonth } from '@/components';
-import { AGENT_NAMES, formatAmount } from '@/features/decide/format';
+import { AGENT_NAMES, formatAmount } from '@/features/decide-v7/format';
 import { RECORD_ID } from '@/features/workspace/labels';
 
 type ListOperation = operations['E-PROJECTS'];

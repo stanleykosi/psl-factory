@@ -6,7 +6,7 @@
 import Link from 'next/link';
 
 import { AgentAvatar, agentKey, EmptyState, formatDayMonth, formatDayTime, Panel, Tag, Unknown, VisuallyHidden, STATE_TAGS, type FactoryState } from '@/components';
-import { AGENT_NAMES } from '@/features/decide/format';
+import { AGENT_NAMES } from '@/features/decide-v7/format';
 import { AGENT_TAGS, STEP_WORDS, stepKind } from '@/features/work-item/labels';
 import { tagTone } from '@/features/workspace/labels';
 

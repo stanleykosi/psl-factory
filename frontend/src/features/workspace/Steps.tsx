@@ -8,7 +8,7 @@ import { useId, type ReactNode, type Ref } from 'react';
 
 import type { WorkItem } from '@/api/types';
 import { Button, buttonClass } from '@/components';
-import { cannotActCopy } from '@/features/decide/DecideStates';
+import { cannotActCopy } from '@/features/decide-v7/DecideStates';
 
 import type { Step } from './labels';
 import { stepKind } from './StepForm';

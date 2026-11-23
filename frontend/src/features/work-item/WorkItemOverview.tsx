@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { Fragment, useId, useState, type ReactNode } from 'react';
 
 import { AgentAvatar, agentKey, buttonClass, Callout, Disclosure, DisclosureLink, FactsStrip as SharedFactsStrip, formatClock, Panel, PersonAvatar, SampleLabel, Table, Tag, useIsPhone, type FactValue } from '@/components';
-import { AmountValue, DecisionRows } from '@/features/decide/DecisionContent';
+import { AmountValue, DecisionRows } from '@/features/decide-v7/DecisionContent';
 
 import { asResponseItem, ReconcilePanel, ResponseEntryLink, responseOf, type ResponseWorkItem } from '@/features/response';
 import { INTERNAL_RECONCILE_LINE } from '@/features/response/labels';

@@ -1,7 +1,7 @@
 // SCR-36 month-end values to the words on the boards. Presentation only: every count, label, tone, restriction and
 // link comes from the response; nothing here counts tasks, buckets states, totals cash or picks a month.
 // Money is read from the decimal string (never a float) and unknown stays Unknown, never 0 (INV-UNKNOWN).
-import { formatAmount } from '@/features/decide/format';
+import { formatAmount } from '@/features/decide-v7/format';
 import { formatClock, STATE_TAGS, type TagTone } from '@/components';
 
 import type { AgentKey, MonthEnd, MonthEndTask, MonthEndTone } from './proposal';

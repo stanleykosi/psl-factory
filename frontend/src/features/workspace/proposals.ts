@@ -1,7 +1,7 @@
 // PROPOSAL (D-LINE-WORKSPACE, contract mock only): two fields the frame reads ahead of the contract. They live in the
 // mock fixtures and in this one typed reader; the generated types and openapi.json do not carry them, and the backend
 // developer may change or refuse either (G-SCR28-1, G-SCR28-3). An absent or malformed value reads as "not supplied".
-import type { Verdict } from '@/features/decide/format';
+import type { Verdict } from '@/features/decide-v7/format';
 import { PROJECT_TABS } from '@/features/projects/model';
 import { AREA_ROUTES } from '@/features/setup/format';
 

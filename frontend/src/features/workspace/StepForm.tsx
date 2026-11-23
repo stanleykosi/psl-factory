@@ -8,7 +8,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 
 import { ApiError } from '@/api/errors';
-import { NOTE_MAX } from '@/features/decide/format';
+import { NOTE_MAX } from '@/features/decide-v7/format';
 import { ProofField, useEvidenceUpload } from '@/features/response';
 import { buildIntake, dependentsOf, parentValue, type FieldValue, type Values } from '@/features/start-work/intake';
 import { IntakeField } from '@/features/start-work/IntakeField';

@@ -13,7 +13,7 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
 
 import { Button, Callout, Select, TextArea, ValidationSummary, type FieldProblem } from '@/components';
-import { NOTE_MAX } from '@/features/decide/format';
+import { NOTE_MAX } from '@/features/decide-v7/format';
 import type { WorkItem } from '@/features/work-item/labels';
 
 import { assignCandidateKind } from './proposals';

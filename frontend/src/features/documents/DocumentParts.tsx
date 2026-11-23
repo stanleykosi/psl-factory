@@ -2,7 +2,7 @@
 // returned banner and the agent's panel. Every value is the response's own; text is rendered as React text, so
 // markup in a section shows as characters.
 import { AGENTS, AgentAvatar, agentKey, Button, Callout, Panel, Tag, Unknown, VisuallyHidden } from '@/components';
-import { When } from '@/features/decide/DecisionContent';
+import { When } from '@/features/decide-v7/DecisionContent';
 
 import {
   agentName,

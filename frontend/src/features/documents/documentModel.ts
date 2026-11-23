@@ -3,7 +3,7 @@
 // sends it: no check, count or diff is computed here, and a part the response lacks is left out or reads Unknown
 // (INV-UNKNOWN). Section text is plain text; nothing here produces markup.
 import type { operations } from '@/api/schema';
-import { AGENT_NAMES, NOTE_MAX, type Verdict } from '@/features/decide/format';
+import { AGENT_NAMES, NOTE_MAX, type Verdict } from '@/features/decide-v7/format';
 
 export type TypedDocument = operations['E-DOCUMENT']['responses'][200]['content']['application/json'];
 
