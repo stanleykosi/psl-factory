@@ -126,6 +126,13 @@ Context: the re-specs on 1.24.0 switch the hidden parts back on; only these pres
 5. "Answered <time>" from `finished_at` on settled cards, not in the boards. Options: (a) show it small under the answer (recommended); (b) leave it out.
 6. Image chips use local thumbnails before send and a remove button. Options: (a) as written (recommended); (b) filename-only chips.
 
+### F-67 · App frame and API client on API 1.24.0 (role words, menu links, one CSRF retry, signed-out downloads)
+Context: A-1 to A-5 and A-55 (backend-answers.md); the menu now varies by account (destinations[].available). Spec `delivery/features/F-67/spec.md`. F-67 builds after the main-green hotfix F-68.
+1. Wording when a keyed write fails `csrf_failed` twice (and for keyless writes). Recommendation: "Your session could not be refreshed. Reload the page and try again. Nothing was changed." in the existing error spot or toast. Alternative: keep the old "Your session was refreshed. Press the action again. Nothing was changed." for keyless writes only.
+2. Role words: recommendation is names only, as the boards draw (A-1 also offers mode and workspace). Alternative: add workspace as small text in the account-menu header.
+3. A 429 or 503 message from the server is shown as the server writes it. Recommendation: show it as is in the existing error or toast spot. Alternative: a fixed PSL sentence with the server text as the reference line.
+4. When a download hits a signed-out session, recommendation: replace the main area with the signed-out callout (as on `/me`). Alternative: a toast with a Sign in link that keeps the page.
+
 ## Lane B
 
 - **F-74 · B1. Setup without a workspace (backend B-21, short-list 4).** Every live Setup read and save needs a workspace; our Setup pages are organisation-wide. How should Setup open?
@@ -366,6 +373,29 @@ The verified and awaiting-reconciliation boards show the invoice through the six
 After a timeout the page locks the release until the item changes version or the server stops listing it. The lock lives in the open page, so reloading clears it and the server's own list decides what is offered again. A release is money-moving and the API has no duplicate key.
 1. **(Recommended)** Keep the lock across a reload (remembered in the browser for that work item and version) until the item changes version or the server stops listing the action, and say why.
 2. Let a reload clear the lock (as for the other work item buttons, F-87); the server still refuses a stale version.
+
+### LC-Q23 · F-91 · History on 1.24.0: counts, version and "Restricted" marks
+The history boards show a count on each filter, a version column and "Restricted" entries. The API serves actor kind, station, status, time, reason and a paging cursor only.
+1. **(Recommended)** Leave out the counts, the version column and the Restricted marks. Keep the filters, the person/agent tag and an "Older events" button.
+2. Keep the version column showing "Not recorded".
+3. Hold the history change until the backend adds the three.
+
+### LC-Q24 · F-91 · The agent card on the work item
+The boards draw the agent's picture and name and a numbered list of steps with the record each read. The API gives one activity line (and the agent's name, and a last-activity summary).
+1. **(Recommended)** Show the one activity line (or progress with its time) and nothing else; no steps, no picture, no name.
+2. Also show the agent's name from the API beside the line.
+3. Also show the last-activity summary ("last did X at Y").
+
+### LC-Q25 · F-91 · Words in the station track and facts strip
+The boards write a detail in each station and a date in each earned fact. The API gives each station's holder name, "unassigned" for a future station, and a time only for Verified. It does not say whether a holder is a person or an agent.
+1. **(Recommended)** Station detail is the holder's name ("Unassigned" for a future station, "Not recorded" if none was recorded); the colour of the current station follows the station and the item's state. Only Verified shows a time.
+2. Same, but every current station is drawn in one neutral colour (no person/agent distinction).
+3. Hold the track until the backend says whether a holder is a person or an agent.
+
+### LC-Q26 · F-91 · Amount and invoice version in the work item header
+The boards' header shows the amount and invoice version. The tracking read has neither; the amount is on the invoice or Finance panel (F-90).
+1. **(Recommended)** Leave them out of the header; add reference, who started it and when to the sub-line. The amount appears only where F-90 draws the invoice block.
+2. Show "Amount: see invoice" with a link to the invoice block.
 
 ## Lane D
 

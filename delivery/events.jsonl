@@ -4316,3 +4316,6 @@
 {"at":"2026-11-23T17:53:30Z","feature":"F-119","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change"],"reviewers":["technical","ux","ui"]}
 {"at":"2026-11-23T17:53:31Z","feature":"F-119","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-23T18:22:41Z","feature":"F-119","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-23T18:24:20Z","feature":"F-94","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T18:25:49Z","feature":"F-78","round":0,"kind":"transition","reason":"Unblocked by D-187 (B31: completion only queues the Finance handoff) and PSL's PMO Lead decision; LB-2 built on the server's can_complete","from":"BLOCKED","to":"PLANNED"}
+{"at":"2026-11-23T18:26:37Z","feature":"F-107B","round":0,"kind":"created","tasks":["FE-FIN-BU"]}
