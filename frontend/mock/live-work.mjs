@@ -44,6 +44,16 @@ const row = ({ id, title, line, state, status_label, owner, sample, minutes }) =
   updated_at: new Date(Date.parse(AS_OF) - minutes * 60000).toISOString(),
   [SERVER_PAGE_LINK]: `/work/${id}/`,
   api_url: `/api/v1/work/${id}`,
+  reference: null,
+  started_at: new Date(Date.parse(AS_OF) - (minutes + 600) * 60000).toISOString(),
+  verified_at: null,
+  queue_output_url: null,
+  exception_code: null,
+  exception_next_step: null,
+  exception_started_at: null,
+  action_kind: null,
+  station: null,
+  agent: null,
 });
 
 const verifiedRows = Array.from({ length: 20 }, (_, i) =>
@@ -78,7 +88,7 @@ const INVALID_QUERY = { code: 'invalid_query', message: 'We could not read that 
 const QUEUE_NOT_OPEN = { code: 'queue_not_open', message: 'This list is not open to your role.' };
 const NOT_FOUND = { code: 'not_found', message: 'We could not find that record.' };
 
-const emptyPage = { items: [], page: 1, next_page: null, as_of: AS_OF, limited: false, lines: [], evaluated: 0, deferred: [], payroll_questions: [] };
+const emptyPage = { items: [], page: 1, next_page: null, as_of: AS_OF, page_size: PAGE_SIZE, total: null, total_coverage: 'incomplete', limited: false, lines: [], evaluated: 0, deferred: [], payroll_questions: [] };
 
 /** GET /api/v1/work for queue verified or exceptions. persona none sees empty lists; Leads-only exceptions refuse pm and hr. */
 export function liveWorkList({ url, persona }) {
@@ -106,6 +116,9 @@ export function liveWorkList({ url, persona }) {
       page,
       next_page: last ? null : page + 1,
       as_of: AS_OF,
+      page_size: PAGE_SIZE,
+      total: null,
+      total_coverage: 'incomplete',
       limited: exceptions && page === 1,
       lines: LINES,
       evaluated: Math.min(page * PAGE_SIZE, source.length),
