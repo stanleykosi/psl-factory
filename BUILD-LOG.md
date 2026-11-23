@@ -1,5 +1,7 @@
 # Build progress log
 
+23 November 2026. PSL answered the last four frontend questions. The completed answer sheet pairs all 224 original questions with their answers and records the three new workflows that need backend alignment. [Backend Answers](delivery/connect/backend-answers.md)
+
 23 November 2026. Renamed the Railway API, worker and database services by environment and role, and removed the exited design checks service. Verified the same API 1.24.0 release, database-backed health, resolved worker configuration and all six running services after the change. [Railway runbook](docs/runbooks/railway.md)
 
 23 November 2026. Published API 1.24.0 to GitHub main and rolled the same application revision to the API and worker in both Railway environments. Verified matching contracts, worker polling and retired Django login routes. Regenerated the frontend handoff API types and left the Next.js deployment and connection to the frontend developer. [Release evidence](BUILD-TESTS.md)

@@ -1,8 +1,8 @@
 # Connection map: frontend screens to the live API
 
-Use the [consolidated PSL answers](backend-answers-2026-11-23.md) for the agreed behavior, the API additions and the implementation still pending. The connection map below records the original comparison.
+Use the [consolidated PSL answers](backend-answers-2026-11-23.md) for the 13 priorities and five follow-up decisions. The connection map below records the original comparison.
 
-The full audit covers all 224 numbered questions with routes, known limits and outstanding backend work. Railway still reported 1.22.0 when checked. The audit identifies answers that depend on the 1.23.0 branch. [Screen-by-screen audit](backend-answers-by-screen-2026-11-23.md)
+The frontend handoff pairs each answered screen question with its API 1.24.0 answer under the original question ID. [Backend Answers](backend-answers.md)
 
 **What this is.** For each of the 59 approved screens, this map lists what the frontend reads and writes today, the live call that replaces each one, how the fields line up, and what has no live source yet. Builders use it to rewire screens without guessing. [backend-questions.md](backend-questions.md) collects everything we need the backend developer to answer.
 

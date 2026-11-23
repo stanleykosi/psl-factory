@@ -1,15 +1,17 @@
 {
   "frontend_backend_questions_20261123": {
-    "status": "backend_deployed_pending_nextjs_connection",
-    "product_decisions": "13 priority questions and 5 follow-ups answered",
+    "status": "backend_deployed_pending_policy_alignment_and_nextjs_connection",
+    "product_decisions": "13 priority questions, 5 follow-ups and 224 screen questions answered",
     "contract": "contracts/psl-factory.openapi.json",
     "evidence": "delivery/connect/backend-answers-2026-11-23.md",
-    "screen_audit": "delivery/connect/backend-answers-by-screen-2026-11-23.md",
+    "screen_audit": "delivery/connect/backend-answers.md",
     "numbered_questions_audited": 224,
-    "questions_requiring_engineering": 0,
-    "questions_awaiting_psl_policy": 4,
+    "questions_requiring_engineering": 3,
+    "questions_awaiting_psl_policy": 0,
     "follow_up": [
-      "Resolve C-1, C-29, D-17 and D-33 when the responsible PSL owner approves the missing rule",
+      "C-29: allow Finance staff to adjust bid pricing lines in NGN and require Finance Lead approval of the revised pricing",
+      "D-17: record the PMO Lead's confirmation of the exact milestone before marking it complete",
+      "D-33: generate Tuesday and monthly leadership reports covering all PSL projects automatically for PMO Lead and Finance Lead",
       "Wire and verify the Next.js screens using the question register",
       "Check a permitted Assistant image with the configured OpenRouter provider after deployment"
     ]

@@ -2,7 +2,7 @@
 
 ## Frontend backend questions · 23 November 2026
 
-The 224-question register now has 113 existing answers, 107 branch answers and four PSL choices where the corresponding approved rule is absent. The branch adds scoped evidence capture, recorded work and exceptions, bid requests and clarifications, issue and milestone links, project and Finance reads, internal alerts, and protected uploads and draft notes. [Screen-by-screen answers](delivery/connect/backend-answers-by-screen-2026-11-23.md)
+The frontend handoff pairs all 224 original screen questions with their answers. PSL settled the last four decisions. API 1.24.0 already accepts a free-text bid loss note. Finance Lead approval for bid adjustments, PMO Lead confirmation of go-live milestones, and automatic all-project coverage for leadership reports need backend work. [Backend Answers](delivery/connect/backend-answers.md)
 
 All 13 priority questions and five follow-ups have PSL answers. OpenAPI 1.24.0 includes private Assistant images, review-only weekly report notes, the in-app daily alert summary, direct PMO Lead approval on eligible Planning exit, and the known amount and source required for new receipts. The OpenRouter image check used a test response. [Consolidated answers](delivery/connect/backend-answers-2026-11-23.md)
 

@@ -12,7 +12,7 @@ Start from the existing [Next.js app](../../frontend/). Both Railway backends se
 | [262-state crosswalk](screen-state-crosswalk.csv) | Filter by state ID or journey to find the design board, shared OpenAPI operations and exact responses tested for that state. |
 | [Per-state Railway results](../../docs/design/api-state-replay-results.csv) | Find the exact test, required and observed API responses, source revision and Railway deployment for every state. |
 | [Detailed API integration notes](../../docs/design/frontend-api.md) | Look up the workflows, scoped inputs, decision pins and receipts behind individual screens. |
-| [Screen-by-screen backend answers](../../delivery/connect/backend-answers-by-screen-2026-11-23.md) | Find the answer to each of the 224 questions, including the four rules still needing PSL approval where absent. |
+| [Backend Answers](../../delivery/connect/backend-answers.md) | Find all 224 questions and answers under their original IDs, including which newly agreed rules need backend changes. |
 
 Many states use the same page and differ by status, available actions, role or source data. The 262 passes apply to API journeys with synthetic data on Railway PostgreSQL. Run a Next.js walkthrough of each mapped state as you connect the designs.
 

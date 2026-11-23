@@ -4,7 +4,7 @@ PSL confirmed these answers on 23 November 2026. The numbers match the developer
 
 ## Screen-by-screen audit
 
-The full register covers all 224 numbered items from GitHub main. It records 113 answers from existing behavior, 107 from the OpenAPI 1.24.0 branch and four that rely on an approved PSL rule. [Screen-by-screen answers](backend-answers-by-screen-2026-11-23.md) · [Questions for PSL](backend-answers-by-screen-2026-11-23.md#questions-for-psl)
+The screen-by-screen sheet pairs all 224 original questions with their answers under the original IDs. It flags agreed behavior that needs a backend change relative to API 1.24.0. [Backend Answers](backend-answers.md)
 
 ## 1. Proof and attachments
 
