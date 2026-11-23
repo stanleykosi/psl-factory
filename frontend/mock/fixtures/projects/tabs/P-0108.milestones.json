@@ -18,6 +18,8 @@
           "owner": null,
           "reference": null,
           "record_id": 3101,
+          "age_days": null,
+          "origin_meeting": null,
           "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
           "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3101"
         }

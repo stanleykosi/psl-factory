@@ -1,22 +1,170 @@
 {
-  "items": [],
-  "as_of": "2026-11-12T15:40:00Z",
-  "money": [
+  "items": [
     {
-      "position": 1,
-      "stage": "Stage 1 · Atlas claims build",
-      "amount": {
-        "amount": "7100000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "invoice_status": "Verified 01 Nov",
-      "paid": {
-        "status": "paid"
-      }
+      "key": "kickoff",
+      "label": "Kick-off",
+      "amount": "3000000.00",
+      "currency": "NGN",
+      "due_date": "2026-10-30",
+      "milestone_id": 3101,
+      "stage_position": 1,
+      "completed_at": "2026-10-27T10:00:00Z",
+      "contract_stage": true,
+      "missing_reason": null,
+      "invoices": [
+        {
+          "id": 398,
+          "reference": "INV-0398",
+          "version": 1,
+          "currency": "NGN",
+          "paid": "2000000.00",
+          "owed": "500000.00",
+          "status": "Delivered",
+          "at": "2026-11-20T09:00:00Z",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107/billing-invoices/398"
+        },
+        {
+          "id": 399,
+          "reference": "INV-0399",
+          "version": 1,
+          "currency": "NGN",
+          "paid": "250000.00",
+          "owed": "250000.00",
+          "status": "Issued",
+          "at": "2026-11-20T09:00:00Z",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107/billing-invoices/399"
+        }
+      ],
+      "sources": [
+        {
+          "label": "Statement of work",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000107/documents/",
+          "at": "2026-09-30T08:00:00Z",
+          "kind": "Signed SOW",
+          "record_id": 198,
+          "reference": "SOW-0198 v2",
+          "api_url": null
+        },
+        {
+          "label": "Kick-off minutes",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000107/documents/",
+          "at": "2026-10-27T10:00:00Z",
+          "kind": "Meeting",
+          "record_id": null,
+          "reference": null,
+          "api_url": null
+        }
+      ],
+      "changes": []
+    },
+    {
+      "key": "uat",
+      "label": "UAT sign-off",
+      "amount": "4250000.00",
+      "currency": "NGN",
+      "due_date": "2026-11-10",
+      "milestone_id": null,
+      "stage_position": 2,
+      "completed_at": "2026-11-11T10:00:00Z",
+      "contract_stage": true,
+      "missing_reason": null,
+      "invoices": [
+        {
+          "id": 412,
+          "reference": "INV-0412",
+          "version": 1,
+          "currency": "NGN",
+          "paid": null,
+          "owed": null,
+          "status": "Delivered",
+          "at": "2026-11-20T09:00:00Z",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107/billing-invoices/412"
+        }
+      ],
+      "sources": [],
+      "changes": []
+    },
+    {
+      "key": "go-live",
+      "label": "Go-live",
+      "amount": null,
+      "currency": "NGN",
+      "due_date": "2026-12-12",
+      "milestone_id": null,
+      "stage_position": 3,
+      "completed_at": null,
+      "contract_stage": true,
+      "missing_reason": "The reviewed stage terms do not state an amount.",
+      "invoices": [
+        {
+          "id": 419,
+          "reference": "INV-0419",
+          "version": 1,
+          "currency": "NGN",
+          "paid": null,
+          "owed": null,
+          "status": "Awaiting Finance decision",
+          "at": "2026-11-20T09:00:00Z",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107/billing-invoices/419"
+        }
+      ],
+      "sources": [],
+      "changes": []
+    },
+    {
+      "key": "hypercare",
+      "label": "Hypercare",
+      "amount": "500000.00",
+      "currency": "NGN",
+      "due_date": null,
+      "milestone_id": null,
+      "stage_position": null,
+      "completed_at": null,
+      "contract_stage": true,
+      "missing_reason": null,
+      "invoices": [],
+      "sources": [
+        {
+          "label": "Statement of work",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000107/documents/",
+          "at": "2026-09-30T08:00:00Z",
+          "kind": "Signed SOW",
+          "record_id": 198,
+          "reference": "SOW-0198 v2",
+          "api_url": null
+        }
+      ],
+      "changes": []
+    },
+    {
+      "key": "invoice-420",
+      "label": "INV-0420 outside any stage",
+      "amount": "1000.00",
+      "currency": "USD",
+      "due_date": null,
+      "milestone_id": null,
+      "stage_position": null,
+      "completed_at": null,
+      "contract_stage": false,
+      "missing_reason": null,
+      "invoices": [
+        {
+          "id": 420,
+          "reference": "INV-0420",
+          "version": 1,
+          "currency": "USD",
+          "paid": "0.00",
+          "owed": "1000.00",
+          "status": "Draft",
+          "at": "2026-11-20T09:00:00Z",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000107/billing-invoices/420"
+        }
+      ],
+      "sources": [],
+      "changes": []
     }
   ],
-  "summary": {
-    "report_id": "R-0107"
-  }
+  "limited": false,
+  "as_of": "2026-11-12T15:40:00Z",
+  "finance_url": "/projects/00000000-0000-4000-8000-000000000107/finance/"
 }
