@@ -4,6 +4,7 @@ import { act, fireEvent, render, renderHook, screen, waitFor, within } from '@te
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { setCsrfToken } from '@/api/client';
+import { ToastProvider } from '@/components';
 import type { LiveWorkItem } from '@/api/types';
 import { makeCommand, registerLineAdapter, type LineActionsProps, type LineAdapter } from '@/features/workspace/adapter';
 import { toFormData, useWorkCommand } from '@/features/workspace/useWorkCommand';
@@ -291,7 +292,7 @@ describe('useWorkCommand', () => {
 });
 
 describe('the controls row on the live page', () => {
-  const open = (id: number) => render(<LiveWorkItemView id={String(id)} tab="overview" />);
+  const open = (id: number) => render(<ToastProvider><LiveWorkItemView id={String(id)} tab="overview" /></ToastProvider>);
   const row = () => screen.queryByRole('group', { name: 'Controls' });
   const buttons = () => within(row()!).getAllByRole('button');
 
@@ -313,7 +314,7 @@ describe('the controls row on the live page', () => {
     scenario = 'ready';
     open(4120);
     fireEvent.click(await screen.findByRole('button', { name: 'Check what happened' }));
-    expect((await screen.findByRole('status')).textContent).toContain('Checked. This item is now: Ready to continue.');
+    expect((await screen.findByText(/Checked\. This item is now/)).textContent).toContain('Checked. This item is now: Ready to continue.');
     expect(document.querySelector('.work-state')?.textContent).toBe('Ready to continue');
     expect(posts()).toEqual(['/api/v1/work/4120/actions']);
     expect(workLiveLog()).toEqual([{ route: 'actions', work_id: 4120, body: { action: 'reconcile', expected_revision: 5 } }]);
@@ -435,7 +436,7 @@ describe('the line write-form slot (Actions)', () => {
   it('a registered Actions renders under the panel with readback, ctx (with state), commands and reload', async () => {
     registerLineAdapter(adapter(true) as LineAdapter);
     withPanel(4121);
-    render(<LiveWorkItemView id="4121" tab="overview" />);
+    render(<ToastProvider><LiveWorkItemView id="4121" tab="overview" /></ToastProvider>);
     await screen.findByText('Line actions for action_needed');
     expect(screen.getByText('Panel text')).toBeTruthy();
     const props = seen.at(-1)!;
@@ -450,7 +451,7 @@ describe('the line write-form slot (Actions)', () => {
   it('without Actions the panel draws as before and nothing extra', async () => {
     registerLineAdapter(adapter(false) as LineAdapter);
     withPanel(4121);
-    render(<LiveWorkItemView id="4121" tab="overview" />);
+    render(<ToastProvider><LiveWorkItemView id="4121" tab="overview" /></ToastProvider>);
     await screen.findByText('Panel text');
     expect(screen.queryByText(/Line actions/)).toBeNull();
   });
@@ -459,7 +460,7 @@ describe('the line write-form slot (Actions)', () => {
     registerLineAdapter({ ...adapter(false), Actions: () => { throw new Error('boom'); } } as LineAdapter);
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
     withPanel(4121);
-    render(<LiveWorkItemView id="4121" tab="overview" />);
+    render(<ToastProvider><LiveWorkItemView id="4121" tab="overview" /></ToastProvider>);
     await screen.findByText(/We couldn’t show these controls/);
     expect(screen.getByText('Panel text')).toBeTruthy();
   });

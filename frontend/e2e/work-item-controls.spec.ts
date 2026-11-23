@@ -39,7 +39,7 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       expect(sent).toEqual([]);
       if (SHOTS) await page.screenshot({ path: `${SHOTS}/4120-${viewport.width}.png`, fullPage: true });
       await main.getByRole('button', { name: 'Check what happened' }).click();
-      await expect(main.getByRole('status')).toContainText('Checked. This item is now: Ready to continue.');
+      await expect(page.getByRole('status').filter({ hasText: 'Checked.' })).toContainText('Checked. This item is now: Ready to continue.');
       await expect(main.locator('.work-state')).toHaveText('Ready to continue');
       expect(sent).toEqual(['POST /api/v1/work/4120/actions {"action":"reconcile","expected_revision":5}']);
       if (SHOTS) await page.screenshot({ path: `${SHOTS}/4120-done-${viewport.width}.png`, fullPage: true });
@@ -87,7 +87,7 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       await loaded(page);
       const main = page.locator('main#main');
       await main.getByRole('button', { name: 'Pause background work' }).click();
-      await expect(main.getByRole('status')).toBeVisible();
+      await expect(page.getByRole('status').filter({ hasText: 'This item is now' })).toBeVisible();
       await main.getByRole('button', { name: 'Continue background work' }).click();
       await expect.poll(() => sent.length).toBe(2);
       expect(sent).toEqual(['POST /api/v1/work/4122/background {"expected_revision":7,"enabled":false}', 'POST /api/v1/work/4122/background {"expected_revision":7,"enabled":true}']);

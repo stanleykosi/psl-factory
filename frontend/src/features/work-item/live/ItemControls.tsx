@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react';
 
 import type { ApiError } from '@/api/errors';
 import type { LiveWorkItem } from '@/api/types';
-import { Button, Callout, Dialog } from '@/components';
+import { Button, Callout, Dialog, useToastWhen } from '@/components';
 import { workItemCommands } from '@/features/workspace/workItemCommands';
 import { useWorkCommand } from '@/features/workspace/useWorkCommand';
 
@@ -15,6 +15,8 @@ export function ItemControls({ item, reload, onAccessLost }: { item: LiveWorkIte
   const commands = useMemo(() => workItemCommands(item), [item]);
   const send = useWorkCommand({ item, reload, onAccessLost });
   const [confirming, setConfirming] = useState(false);
+  // D-151: what a press did is a toast; only a problem stays on the page as a Callout
+  useToastWhen(send.notice?.kind === 'success' ? send.notice.text : null);
   if (commands.length === 0) return null;
   const cancel = commands.find((c) => c.id === 'work.cancel');
 
@@ -41,8 +43,8 @@ export function ItemControls({ item, reload, onAccessLost }: { item: LiveWorkIte
           );
         })}
       </div>
-      {send.notice && (
-        <Callout kind={send.notice.kind === 'success' ? 'success' : 'problem'} className="work-next">
+      {send.notice?.kind === 'error' && (
+        <Callout kind="problem" className="work-next">
           {send.notice.text}
           {send.notice.detail && <> {send.notice.detail}</>}
         </Callout>
