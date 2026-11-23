@@ -20,7 +20,7 @@ case "$2" in
         : > "$2"
         exec sleep 30
         ;;
-    work_outbox|work_factory_progress) : > "$2" ;;
+    work_outbox|work_factory_progress|work_reports) : > "$2" ;;
 esac
 '''
 PROBE = '''
@@ -31,7 +31,7 @@ worker=$!
 trap 'kill "$worker" 2>/dev/null || true; wait "$worker" || true' EXIT
 for attempt in 1 2 3 4 5 6 7 8 9 10; do
     if [ -f work_agent_uploads ] && [ -f work_assistant ] &&
-       [ -f work_outbox ] && [ -f work_factory_progress ]; then
+       [ -f work_outbox ] && [ -f work_factory_progress ] && [ -f work_reports ]; then
         exit 0
     fi
     sleep 1

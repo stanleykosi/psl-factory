@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ApiError } from '@/api/errors';
 import { AppShell } from '@/shell/AppShell';
+import type { Me } from '@/api/types';
 import { hasDestination } from '@/shell/destinations';
 import { DestinationPage } from '@/shell/DestinationPage';
 import { MyWorkPage } from '@/features/my-work/MyWorkPage';
@@ -24,14 +25,14 @@ vi.mock('next/navigation', () => ({
 
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 const SIX = ['my_work', 'projects', 'overview', 'setup', 'clients', 'assistant'];
-const me = (patch: Record<string, unknown> = {}) => ({
+const me = (patch: Partial<Me> = {}): Me => ({
   name: 'Kemi Adebayo',
   work_desk_url: '/retired/',
   destinations: destinationList(SIX),
   startable_lines: ['pmo-weekly-report/v1'],
   csrf_token: 't',
-  assistant_agents: ['tola' as const],
-  positions: [] as { role: 'pmo-lead'; mode: 'lead'; name: string; area: string; focus: string; workspace: string; team: string | null; invite_url: string | null; manage_url: string | null }[],
+  assistant_agents: ['tola'],
+  positions: [],
   ...patch,
 });
 const position = (name: string) => ({ role: 'pmo-lead', mode: 'lead', name, area: name, focus: 'x', workspace: `${name} workspace`, team: null, invite_url: null, manage_url: null });
@@ -78,7 +79,7 @@ describe('the frame on live /me', () => {
   });
 
   it('never uses work_desk_url or django_url as a link, even when they hold real-looking paths', async () => {
-    routes['/api/v1/me'] = () => json(200, me({ work_desk_url: '/desk/', destinations: SIX.map((key) => ({ key, title: key, django_url: `/workspace/${key}/`, url: `/${key}`, available: true })) }));
+    routes['/api/v1/me'] = () => json(200, me({ work_desk_url: '/desk/', destinations: destinationList(SIX).map((item) => ({ ...item, django_url: `/workspace/${item.key}/` })) }));
     renderShell();
     await ready();
     for (const el of document.querySelectorAll('[href], [src]')) expect(`${el.getAttribute('href')}${el.getAttribute('src')}`).not.toMatch(/\/desk\/|\/workspace\//);
@@ -109,9 +110,8 @@ describe('every frame page asks hasDestination', () => {
     routes['/api/v1/me'] = () => json(200, me({ destinations: destinationList(['my_work', 'projects', 'overview', 'setup', 'assistant'].filter((k) => k !== key).concat(key === 'my_work' ? ['clients'] : [])) }));
     renderShell(path, page());
     expect(await screen.findByText('This section isn’t open to your role.')).toBeTruthy();
-    // The assistant frame already starts its own list read before it gates (unchanged by F-57); the other pages make none.
     const own = fetchStub.mock.calls.map(([r]) => new URL(r.url).pathname).filter((p) => !['/api/v1/me', '/api/v1/role-dashboard', '/api/v1/session', '/api/v1/notifications'].includes(p));
-    expect(own).toEqual(key === 'assistant' ? ['/api/v1/assistant/conversations'] : []);
+    expect(own).toEqual([]);
   });
 });
 

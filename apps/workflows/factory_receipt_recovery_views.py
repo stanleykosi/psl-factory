@@ -90,7 +90,7 @@ def review(request,work_id):
     from .factory import access
     from . import readiness
     from apps.agents.factory_coordinator import pending
-    work=get_object_or_404(visible(request.user),pk=work_id);access(request.user,work.case,'factory.manage',work.definition)
+    work=get_object_or_404(visible(request.user, candidates=[work_id]),pk=work_id);access(request.user,work.case,'factory.manage',work.definition)
     readiness.readable(request.user,work.case,True)
     attempt=pending(work)
     form=ReviewForm(request.POST if request.method=='POST' else None,initial={'revision':work.revision,'case_revision':work.case.revision,'attempt':attempt.pk if attempt else None})

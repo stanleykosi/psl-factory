@@ -96,7 +96,7 @@ MONTH_WORK = obj({'title': TEXT, 'workspace_id': UUID, 'workspace': TEXT,
                   'state': choice('done', 'waiting', 'in_progress', 'stopped'), 'label': TEXT,
                   'at': DATETIME, 'url': TEXT})
 CASH_GROUP = obj({'workspace_id': nullable(UUID), 'workspace': nullable(TEXT), 'currency': TEXT,
-                  'basis': TEXT, 'amount': TEXT})
+                  'basis': TEXT, 'amount': TEXT, 'sample': BOOLEAN})
 
 
 @endpoint(response=obj({'month': MONTH, 'as_of': DATETIME, 'workspaces': array(CLOSE, limit=12),
