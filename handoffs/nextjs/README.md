@@ -1,6 +1,6 @@
 # PSL Operations Factory · Next.js handoff
 
-Start from the existing [Next.js app](../../frontend/). The backend release contract is OpenAPI 1.24.0. Django owns sessions, work, approvals, uploads and background work. The [archived Django pages](../../legacy_ui/README.md) are available for local comparison. Use the Railway API through Next.js when that app is connected. [Production OpenAPI](https://psl-web-production.up.railway.app/api/v1/openapi.json) · [Acceptance OpenAPI](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
+Start from the existing [Next.js app](../../frontend/). Both Railway backends serve the same API-only OpenAPI 1.24.0 contract with 401 operations across 284 paths. Django owns sessions, work, approvals, uploads and background work. The [archived Django pages](../../legacy_ui/README.md) are available for local comparison. Use the Railway API through Next.js when that app is connected. [Production OpenAPI](https://psl-web-production.up.railway.app/api/v1/openapi.json) · [Acceptance OpenAPI](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
 
 ## Files to use
 
