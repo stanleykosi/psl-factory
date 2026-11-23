@@ -32,6 +32,8 @@ The first section is the short list. Each item groups the screen questions it an
 - **A-3** `POST` writes: is a 403 `csrf_failed` always safe to retry once after `GET /session` (nothing executed)?
 - **A-4** `GET /me`: will `work_desk_url` and `destinations[].django_url` be removed or left pointing at retired pages? We will not use them.
 - **A-5** Status 429 and 503 `read_limited`: do they carry a retry-after or a `code` we can show?
+- **A-55** File downloads (`/cases/{case}/files/{upload}/` and the other five routes in `config/urls.py`): a signed-out request gets Django's `302` to `/accounts/login/?next=…`, which the API-only server no longer serves. Can these routes answer `401` JSON like `/api/v1`, so the frontend can show its own signed-out state? (F-56 TECH-1-1, 23 Nov 2026)
+- **A-56** `POST /api/v1/session` and `GET /api/v1/role-dashboard` answer 422 "'invite_minutes' is a required property" for a superuser account on a freshly migrated database (local test account `live-admin`, 23 Nov 2026). Is a setup value missing from migrations or seeds, or is this a response-schema bug? (F-57 QA-2-1)
 
 **SCR-01**
 
