@@ -1,0 +1,227 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory-main",
+  "feature_id": "F-70",
+  "outcome": "The project list and project journey read from the live API",
+  "state": "IMPLEMENTING",
+  "task_ids": [
+    "FE-CONNECT-1"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "`/projects` on the live backend lists the projects the signed-in person may see, as returned by `GET /api/v1/projects?status=active` \u2014 verify: sign in as live-lead, open `http://127.0.0.1:4970/projects`; the Network panel shows `status=active` and no `limit` on the request; rows match `curl` of the same URL.",
+    "All I can see sends `status=all`, Closed sends `status=closed`; Active is the page default \u2014 verify: click each tab, read the request; the address shows no `status` for Active, `?status=closed` for Closed.",
+    "Search sends `q` trimmed, never empty, never longer than 120 characters \u2014 verify: type a name, one request has `q=<name>`; clear it, the next has no `q`; paste 200 characters, request `q` length is 120 or less (unit test of `buildProjectsQuery`).",
+    "A row with null `manager` shows \"No manager\"; null `reviews` / `exceptions` show Unknown, not 0; a row with `reviews: 0` shows 0 \u2014 verify: mock fixture rows from the example above; `tests/projects.test.tsx` asserts all three.",
+    "The list has no NEXT MILESTONE column, no count badges on the status tabs, no \"N PROJECTS\" total and no rows-per-page choice; with `next_cursor` set it shows \"N shown, more available\" and \"Show more\" appends the next page \u2014 verify: `tests/projects.test.tsx` and page at 1440 and 390 wide on the mock.",
+    "List error states: 401 shows the signed-out state, 403 the not-open state, 500 / 422 / network the error card with Retry that reloads, empty list and empty search show the texts under SCR-22 \u2014 verify: mock scenarios in `tests/projects.test.tsx`.",
+    "`/projects/{case_id}` for a project the person can see shows the title, client crumb, route line, facts strip and work rows from live `GET /api/v1/projects/{case_id}` \u2014 verify: live-lead opens a project from the list; values equal the `curl` body (`oa.py live GET /api/v1/projects/{case_id} 3` for the shape).",
+    "A title without \" \u00b7 \" shows the whole title and no client crumb \u2014 verify: `tests/projects-model.test.ts` on `clientOf`, and the mock variant.",
+    "The facts strip has exactly four cells (CONTRACT STAGES, WAITING ON PEOPLE, STOPPED, NEXT MILESTONE); with `finance: null` the finance cells read \"Not available\" and no cell reads 0 for an absent value; with `finance.limited: true` \"Figures may be partial.\" appears; INVOICES VERIFIED and PAID never appear \u2014 verify: `tests/projects-journey.test.tsx` for the four fixtures.",
+    "Work rows show line title, reference (only when not null), \"Started \u00b7  Updated\" dates, and one neutral tag with the `state` words as given; changing a state's words changes no colour; the link goes to `/work/{id}` with the integer id \u2014 verify: `tests/projects-journey.test.tsx` (tag class is neutral for \"Waiting\", \"Version 2\" and an unknown word; `href=\"/work/12\"`).",
+    "With `next_page` set, \"Show more\" reads `?page=2`, appends rows, keeps focus on the first new row, and a failed second read keeps the first rows and offers Retry \u2014 verify: `tests/projects-journey.test.tsx`.",
+    "\"What is next\", Tola's summary text, the \"Station n of m\" line, and line count do not appear; the \"Ask me about this project\" link appears only when `assistant[]` is non-empty and the person has the Assistant destination, and goes to `/assistant` without any POST \u2014 verify: test asserts no request to `/api/v1/assistant/conversations`.",
+    "Wrong person / other tenant: 403 and 404 both show \"You can\u2019t open this project\" with no title, id or server message; a project id that does not exist shows the same \u2014 verify: live-none opens a UUID from live-lead's list in the browser; the mock no-access id in both `P-0099` and its UUID form (`tests/projects-journey.test.tsx`).",
+    "401 on the journey shows the signed-out state with the current tab's path as the return path; 500 shows the error card and Retry reloads \u2014 verify: `tests/projects-journey.test.tsx`.",
+    "The tab bar shows only keys in live `tabs[]` that the frontend routes, in the returned order, without counts; the Delivery tab is absent from the bar; a person whose `tabs[]` lacks `money` sees no Money tab \u2014 verify: `tests/project-tabs.test.tsx` with a reduced `tabs[]` fixture.",
+    "`/projects/{case_id}/delivery` shows \"Delivery is not available yet\" and no rows or mock text \u2014 verify: `tests/project-tabs.test.tsx` or `e2e/project-tabs.spec.ts` on the mock.",
+    "The Milestones, Documents, Money, Registers and Actions tabs still load their v7 mock content for a project opened by UUID, and by `P-0101` \u2014 verify: `e2e/project-tabs.spec.ts` and `tests/tab-frames.test.tsx` pass on the mock.",
+    "The mock list and journey bodies validate against the live contract for every persona and state, and `case_id` values are UUIDs; a deliberately invalid fixture (a non-UUID id, or an extra required field missing) makes the test fail \u2014 verify: `npx vitest run tests/mock-live-projects.test.ts`.",
+    "No file under `frontend/src` still reads `operations['E-PROJECTS']` or `operations['E-PROJECT']` for these two screens, and no code in `ProjectsList.tsx` or `ProjectJourney.tsx` reads `pm`, `stage`, `needs_person`, `stopped`, `next_milestone`, `counts`, `total`, `lines`, `tab_counts`, `agent_summary` or `next` \u2014 verify: `grep -rn \"E-PROJECTS\\|E-PROJECT'\" src/features/projects` returns nothing for the list and journey modules; typecheck and lint pass.",
+    "The state words, counts or dates are never inferred: a unit test shows `factText`-style helpers return \"Not available\" for null and never \"0\" for null, and `reviews: null` renders Unknown \u2014 verify: `tests/projects-model.test.ts`.",
+    "On the design engineer's mock (ports 3000/3001 are not touched): the lane's mock server on 4971 shows the list, the journey, the empty list, the no-manager row and the Delivery \"not available\" state for design review \u2014 verify: open `http://127.0.0.1:4971/projects` and `/projects/00000000-0000-4000-8000-000000000101` (Playwright `e2e/projects.spec.ts` covers both)."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. No money, migration or write, and both screens are built, but the project read is shared by every project tab and by the work-row links, and the mock shape change touches the v7 project fixtures that the tabs still use (frontend/src/features/projects, model.ts, useProject.ts, mock fixtures). Surfaces: ui (list, journey, tab bar), api and contract-change (live operations replace v7 ones, mock validated against the contract), product-decision (dropped parts and the readings of B-1 and B-32). Product acceptance is required because what people see changes: counts, next milestone, summary and Delivery content are gone or marked not available."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-70/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [],
+  "reviews": {
+    "technical": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "integrated_qa": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "pmo_acceptance": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-70/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    }
+  },
+  "findings": [],
+  "prior_review_records": [],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "blocked",
+    "evidence_refs": [],
+    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-CONNECT-1",
+    "base_branch": "main",
+    "base_sha": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
+    "task_branch": "fe-connect-1-projects-list-journey",
+    "head_sha": "924e7cdc51c6742b1223ae32d7ee074c6920d5e4",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b",
+    "pr_url": null,
+    "pr_number": null,
+    "pr_author": null,
+    "designated_approver": null,
+    "ci_status": "not_run",
+    "human_approval": "pending",
+    "merge_status": "not_merged",
+    "merge_sha": null,
+    "merge_policy": "not_configured",
+    "changed_paths": []
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": null,
+    "approver": null,
+    "approver_reasons": [],
+    "script_decision": null,
+    "script_reasons": [],
+    "decided_for_head_sha": null,
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-23T13:18:10Z",
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:22:33Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T13:22:43Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-70/readiness.md",
+      "delivery/features/F-70/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 1,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
+  },
+  "blocked": null
+}
