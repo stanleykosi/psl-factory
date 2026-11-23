@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-57",
   "outcome": "The app frame loads from the live API: live types and client, session and error handling, role words from role-dashboard",
-  "state": "IMPLEMENTING",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -80,22 +80,38 @@
       "at": "2026-11-23T08:43:12Z",
       "seconds": 538.0,
       "evidence_ref": "delivery/features/F-57/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T09:24:08Z",
+      "seconds": 846.7,
+      "evidence_ref": "delivery/features/F-57/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA on the current head",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -114,25 +130,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "reviewer-ui",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "reviewer-security",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -149,14 +171,42 @@
         "delivery/features/F-57/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-23T08:47:56Z",
           "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T09:24:08Z",
+          "refs": [
+            "5262fbd4"
+          ],
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T09:26:40Z",
+          "refs": [
+            "`refreshSession` calls `call(..., false)`, so a `csrf_failed` from GET /session throws `kind: csrf` without a second session read. The unit test in `frontend/tests/client.test.ts` (\"does not loop when GET /session itself answers csrf_failed\") checks that exactly one `/api/v1/session` request is made."
+          ],
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5262fbd4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`refreshSession` calls `call(..., false)`, so a `csrf_failed` from GET /session throws `kind: csrf` without a second session read. The unit test in `frontend/tests/client.test.ts` (\"does not loop when GET /session itself answers csrf_failed\") checks that exactly one `/api/v1/session` request is made."
       ]
     },
     {
@@ -264,13 +314,110 @@
         "delivery/features/F-57/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-23T08:47:56Z",
           "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T09:24:08Z",
+          "refs": [
+            "5262fbd4"
+          ],
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-23T09:26:40Z",
+          "refs": [
+            "Mock on port 4971 and `next start` on 4972 from the worktree build (the built CSS holds the unconditional `.psl-nav__who` ellipsis rule), role-dashboard routed with five roles (Finance Lead, PMO Lead, Head of Delivery Operations, Client Services Manager, Administrator). 1440: scrollWidth 1440, who line one line (19.5px) and clipped, Start work right edge 1312 (chevron button visible beyond it), title holds the full text. 1280: scrollWidth 1280, one line, clipped, Start work visible. 390: scrollWidth 390; the menu shows the full roles wrapped under the name. One role (\"Ada Okafor \u00b7 Finance Lead\") is not clipped at 1440 or 1280; name only shows no role and no title. Servers stopped."
+          ],
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5262fbd4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Mock on port 4971 and `next start` on 4972 from the worktree build (the built CSS holds the unconditional `.psl-nav__who` ellipsis rule), role-dashboard routed with five roles (Finance Lead, PMO Lead, Head of Delivery Operations, Client Services Manager, Administrator). 1440: scrollWidth 1440, who line one line (19.5px) and clipped, Start work right edge 1312 (chevron button visible beyond it), title holds the full text. 1280: scrollWidth 1280, one line, clipped, Start work visible. 390: scrollWidth 390; the menu shows the full roles wrapped under the name. One role (\"Ada Okafor \u00b7 Finance Lead\") is not clipped at 1440 or 1280; name only shows no role and no title. Servers stopped."
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The full role list is only in a mouse-hover title. Keyboard and touch users who have more roles than fit cannot see the cut-off ones in the bar. This is an edge case, since most people have one or two positions. A later release could show the full list in a menu or on the profile page.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T09:26:02Z",
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "owner": "backend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Live account `live-admin` (superuser): `POST /api/v1/session` signs in but answers 422 `action_unavailable` \"'invite_minutes' is a required property\", and `GET /api/v1/role-dashboard` answers 422 the same way (Django log). Expected 200 matching the contract. Effect on F-57: the frame degrades as designed to the name alone, so the \"Admin\" role word the spec expects for administrators is not shown and that path is unproved live. Reproduce: `POST /api/v1/session {\"username\":\"live-admin\",...}` with a token from GET /session.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T09:36:07Z",
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 800px wide the top bar no longer clips the role line (`scrollWidth` equals `clientWidth` with five long names) and the page does not scroll sideways; Start work stays inside the viewport. Noted only as evidence, no change asked. (Informational; remove if not wanted.)",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T09:36:07Z",
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732"
         }
       ]
     }
@@ -363,7 +510,7 @@
     "base_branch": "main",
     "base_sha": "e80c3276f76baebf4b42e5eadf95ea535fb62820",
     "task_branch": "fe-connect-1-live-client",
-    "head_sha": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+    "head_sha": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
     "worktree": "/Users/Hunchoo/psl-factory",
     "pr_url": null,
     "pr_number": null,
@@ -421,6 +568,7 @@
       "frontend/src/shell/TopNav.tsx",
       "frontend/src/shell/destinations.ts",
       "frontend/src/shell/useRoleWords.ts",
+      "frontend/src/styles/shell.css",
       "frontend/tests/alerts-bell.test.tsx",
       "frontend/tests/alerts-settings.test.tsx",
       "frontend/tests/alerts.test.tsx",
@@ -532,6 +680,30 @@
       "round": 2,
       "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-23T09:24:20Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-23T09:26:40Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-23T09:36:07Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
     }
   ],
   "routing": {
@@ -549,9 +721,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732"
   },
   "blocked": null
 }
