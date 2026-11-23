@@ -189,7 +189,7 @@ export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: 
           ) : (
             <Table className="ptabs__table" tableClassName={hasChanges(stages) ? 'ptabs__ms ptabs__ms--6' : 'ptabs__ms ptabs__ms--5'} caption="Milestones" columns={columns(stages, rows, proof)} rows={stages} rowKey={(item) => item.key} empty="No milestones on this project yet." />
           ))}
-        {refusedMoney && <p className="ptabs__note">{NO_FINANCE}</p>}
+        {refusedMoney && <p className="ptabs__line">{NO_FINANCE}</p>}
         {money.status === 'error' && !refusedMoney && <WorkErrorCard message="We couldn’t load this project’s milestones. Your work is safe; nothing was changed." error={money.error} onRetry={() => void retryMoney()} />}
       </div>
       {completions.status === 'ready' && (
@@ -198,7 +198,7 @@ export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: 
             Recorded completions
           </h2>
           {rows.length === 0 ? (
-            <p className="ptabs__note">No completions recorded yet.</p>
+            <p className="ptabs__line">No completions recorded yet.</p>
           ) : (
             <ul ref={listRef} className="ptabs__completionlist">
               {rows.map((row) => (
@@ -207,7 +207,7 @@ export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: 
             </ul>
           )}
           {more === 'error' && (
-            <p className="ptabs__note" role="alert">
+            <p className="ptabs__line" role="alert">
               We couldn&rsquo;t load more. Choose Show more to try again.
             </p>
           )}

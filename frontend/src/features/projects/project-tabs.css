@@ -23,7 +23,7 @@
 .ptabs__noaccess { max-width: 720px; }
 
 /* under the rows: Show more, the time the figures are as of, the rule the page restates */
-.ptabs__asof, .ptabs__note { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
+.ptabs__asof, .ptabs__note, .ptabs__line { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
 
 /* phone cards */
 .ptabs__cards { display: flex; flex-direction: column; gap: var(--space-3); }
