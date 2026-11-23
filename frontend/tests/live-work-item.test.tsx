@@ -242,7 +242,7 @@ describe('history (AC12 to AC14)', () => {
   });
 
   it('empty says "No changes recorded yet."', async () => {
-    answer = (url) => (url.pathname.endsWith('/history') ? { status: 200, body: { items: [], as_of: '2026-11-23T09:00:00Z' } } : mock(url.pathname));
+    answer = (url) => (url.pathname.endsWith('/history') ? { status: 200, body: { items: [], as_of: '2026-11-23T09:00:00Z', next_before: null } } : mock(url.pathname));
     open('4101', 'history');
     expect(await screen.findByText('No changes recorded yet.', {}, { timeout: 8000 })).toBeTruthy();
   });
@@ -274,8 +274,8 @@ describe('the mappers', () => {
     expect(decisionHref(4103, task[0])).toBe('/work/4103/decide?task=9101');
     expect(decisionHref(4103, task[1])).toBeNull();
     expect(decisionHref(4103, { ...task[1], can_claim: true })).toBe('/work/4103/decide?task=9102');
-    expect(historyLine({ at: 'a', station: 'zz_odd', status: 'weird' })).toEqual({ at: 'a', station: 'Zz odd', status: 'Weird', actor: null, reason: null, evidenceId: null });
-    expect(historyLine({ at: 'a', station: 's', status: 't', evidence_id: null }).evidenceId).toBeNull();
+    expect(historyLine({ at: 'a', station: 'zz_odd', status: 'weird', actor_kind: 'worker', entry_id: 1 })).toEqual({ at: 'a', station: 'Zz odd', status: 'Weird', actor: null, reason: null, evidenceId: null });
+    expect(historyLine({ at: 'a', station: 's', status: 't', actor_kind: 'person', entry_id: 2, evidence_id: null }).evidenceId).toBeNull();
     expect(historyCaption(30)).toBe('Showing the latest 30 changes.');
     expect(historyCaption(29)).toBe('Showing all changes.');
   });
