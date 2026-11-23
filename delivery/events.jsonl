@@ -4033,3 +4033,20 @@
 {"at":"2026-11-23T13:22:33Z","feature":"F-70","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
 {"at":"2026-11-23T13:22:43Z","feature":"F-70","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
 {"at":"2026-11-23T13:23:39Z","feature":"F-64","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T13:24:09Z","feature":"F-72","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","product-decision"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-23T13:24:10Z","feature":"F-72","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T13:24:10Z","feature":"F-73","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","product-decision"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-23T13:24:10Z","feature":"F-73","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T13:24:10Z","feature":"F-74","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","product-decision"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-23T13:24:10Z","feature":"F-74","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T13:24:20Z","feature":"F-65","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T13:24:20Z","feature":"F-66","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T13:24:24Z","feature":"F-85","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","security","contract-change"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T13:24:25Z","feature":"F-85","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T13:24:35Z","feature":"F-85","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-23T13:24:41Z","feature":"F-77","round":0,"kind":"transition","reason":"NOT-READY: waits on PSL decision D-COSTING-RULE and backend B-50 to B-53 (no organisation-wide costing rule read); no read-only slice worth building","from":"PLANNED","to":"BLOCKED"}
+{"at":"2026-11-23T13:24:41Z","feature":"F-78","round":0,"kind":"transition","reason":"NOT-READY: live 1.22.0 now has POST /projects/{case_id}/milestones/completions, but PSL has not said who may mark a milestone complete or whether it starts the invoice draft; backend B-28 to B-31 also open","from":"PLANNED","to":"BLOCKED"}
+{"at":"2026-11-23T13:25:06Z","feature":"F-88","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","product-decision"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-23T13:25:06Z","feature":"F-88","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T13:26:07Z","feature":"F-79","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","product-decision"],"reviewers":["technical","ux","ui"]}
+{"at":"2026-11-23T13:26:08Z","feature":"F-79","round":0,"kind":"transition","from":"PLANNED","to":"READY"}

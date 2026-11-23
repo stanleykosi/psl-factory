@@ -25,6 +25,17 @@ Context: live `GET /notifications` and `/me/alert-preferences` are much smaller 
 6. Wording of the receipt states. (a) Recommended: Queued, Not confirmed, Delivered, Held. (b) Waiting to send, Could not confirm, Delivered, On hold. (c) Your own wording.
 7. D-ALERTS-ENTRY, the part still open: the account menu's "My roles" and "Delegate while away" links lead nowhere, and no phone board shows how the account page (password change, SCR-15 account boards) opens. (a) Recommended: for now the account menu shows only the person's name and Sign out (as F-58 built it), and the phone menu gets an "Account" row opening `/settings/account`; draw "My roles" and "Delegate while away" later. (b) Draw both links now, pointing at the setup screens. (c) Leave the account tab unbuilt this release.
 
+### F-62 · Verified outputs and All exceptions on live GET /work (SCR-14, SCR-10)
+Context: live `GET /work` rows carry no proof, reference, kind or totals (spec `delivery/features/F-62/spec.md`, "Conflicts with the boards"). F-62 is parked until these are answered; F-63 (My work) reuses its list adapter.
+1. How do people reach Verified outputs? (a) Recommended: a "Verified" link under the My work heading area for now (a tab-style link to `/verified`; F-63 decides the final place), no top-bar change. (b) Add "Verified" to the top bar for everyone (shell change, the boards' top bar has no such item). (c) Leave `/verified` URL-only until F-63.
+2. SCR-14 Facts earned and Proof columns, no data in the list. (a) Recommended: hide both and rely on Open output. (b) Show the column headers with "Open the item to see" text (adds clutter). (c) Read each row's work item to fill them (up to 8 extra reads per page, slow, partial).
+3. Heading counts "6 of 28" (SCR-14) and the open-exceptions count (SCR-10). (a) Recommended: show "{n} shown" only, plus "so far" while more pages exist. (b) Hide any count. (c) Count only the loaded rows and call it the total (wrong when more exist).
+4. "Since 11:02" on exceptions becomes "Last updated". (a) Recommended: keep the board's position under the tag, wording "Last updated 11:02". (b) Drop the time from the tag cell and keep one "Last updated" column. (c) Keep the word "since" (misleading).
+5. Exception kind filter chip. (a) Recommended: remove; line filter only. (b) Keep a state filter applied to loaded rows only (hides rows that exist on later pages). (c) Wait for A-38 before building the filter at all.
+6. Coverage line ("may be incomplete", "n more items are still being checked") appears on both pages, not drawn. (a) Recommended: a quiet secondary line under the list. (b) A callout above the list. (c) Hide it (the list then looks complete when it is not).
+7. Exception rows that are not exceptions (ready, waiting, verified) can come back on this queue. (a) Recommended: show them with their own tag. (b) Hide them on the client (the list then differs from what the server reports and the "shown" count undercounts). (c) Show a "Not an exception" tag.
+8. `action_needed` tag word. (a) Recommended: "Action needed", the existing state-tag word and the board's. (b) "Blocked", the old v7 wording (no board draws it).
+
 ## Lane B
 
 - **F-74 · B1. Setup without a workspace (backend B-21, short-list 4).** Every live Setup read and save needs a workspace; our Setup pages are organisation-wide. How should Setup open?
@@ -61,6 +72,26 @@ Context: live `GET /notifications` and `/me/alert-preferences` are much smaller 
   1. (Recommended) Accept all: project list loses the next-milestone column, reference, count badges and rows-per-page (shows "N shown, more available"); the journey loses "What is next", Tola's summary and "Station n of m"; the facts strip has four cells (invoices verified and paid have no live source) with "Figures may be partial." when finance is partial; the Delivery tab is hidden and its address says "not available yet"; work tags are one neutral colour with the live words; no tab counts; started and updated times are shown on each work row.
   2. Keep the missing parts as "Not available" placeholders instead of removing them.
   Context: each gap has a backend question (B-2 to B-6, B-33, B-34); we switch them on when answered.
+
+- **F-74 · B10. Setup board changes from live data.** Full list in `delivery/features/F-74/spec.md` ("Conflicts with the boards"). We build option 1.
+  1. (Recommended) Accept all: workspace picker in the header (B2); edit controls visible but disabled (B3); templates lose line, TEST TEMPLATE tag, updated by, version count and kind; delegation is a read-only list of role, names and dates (no reason or status); rules lose per-row Edit, "holds N pieces of work", effective from, used by and the roles count ("not set" stays); a new "You can't open this workspace's Setup" state on each tab.
+  2. Keep the missing parts as "Not available" placeholders.
+- **F-73 · B11. Clients board changes from live data.** Full list in `delivery/features/F-73/spec.md`. We build option 1.
+  1. (Recommended) Accept all: owed column, money panel and blocked lines removed (B4); the list mixes client groups and projects with no group, same row design; a client group has no single billing contact until the backend answers (each project links to its own contacts); small read-only "Project contacts" and "Show history" blocks; the billing contact form is disabled with its reason (B6); an "Unknown" state tag in the neutral style.
+  2. Leave out the added "Project contacts" and "Show history" blocks.
+
+- **F-72 · B12. Document review small board changes.** Details in `delivery/features/F-72/spec.md`. We build option 1.
+  1. (Recommended) Accept all: on phone, Approve opens the same note sheet as Return (live needs a note on approve); the desktop note label becomes "Note for the PM"; a blockers list shows only when live reports blockers (explains why approve is refused); a "Not the current version" tag shows only on an older version.
+  2. One-tap Approve on phone with a fixed note (not recommended: the note would not be the person's words).
+
+- **F-76 · B13. Staff accounts: a read-only list now?** Who holds Admin (D-ADMIN-AUTHORITY) is still waiting for PSL, so invite, deactivate, restore and role changes cannot be built. Live can list staff and open one person.
+  1. (Recommended) Build a read-only staff list and person page now, with no write controls. The board's people count, "Last signed in", invite and deactivation dates and "role per workspace" wording have no live source and are left out. Who may open it follows the server's answer (backend A-53).
+  2. Wait for PSL's Admin decision and build the whole screen at once.
+- **F-77 and F-78 (for PSL, no action from you):** the costing rule page waits on D-COSTING-RULE, and "Mark a milestone complete" waits on who may press it and whether it starts the invoice draft (the live command now exists). Both are parked as BLOCKED.
+
+- **F-79 · B14 to B17. Month-end and payments list board changes.** Details in `delivery/features/F-79/spec.md`. We build option 1 of each.
+  1. (Recommended) Accept all: B14 the agent notes, next-action button, "received this month", bank-data date, coverage sentence, row and filter counts, milestone label, per-row colour and month-end "N of M" are hidden (no live source), the strip gains a "data as of" cell and the State filter keeps the five live states; B15 "overdue by" becomes AGE ("N days") until the backend says what overdue means; B16 a "Partial result" notice when the data is partial, the basis beside each figure, one total per currency and basis, and month-end cash reads "By project" when it is not one figure; B17 the reminder, record-payment and review-payment actions show disabled with a reason when the server gives no link.
+  2. Keep the missing parts as "Not available" placeholders.
 
 ## Lane C
 
