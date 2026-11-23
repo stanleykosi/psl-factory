@@ -63,7 +63,7 @@ describe('the fixtures are the live shape', () => {
       expect(row.item.case_id, row.id).toBe(uuid(row.id.slice(2)));
       expect(UUID.test(row.item.case_id)).toBe(true);
     }
-    expect(validList({ items: rows.map((r) => r.item), next_cursor: null, as_of: '2026-11-23T09:00:00Z' }), ajv.errorsText(validList.errors)).toBe(true);
+    expect(validList({ items: rows.map((r) => r.item), next_cursor: null, as_of: '2026-11-23T09:00:00Z', totals: { all: rows.length, active: rows.filter((r) => r.status === 'active').length, closed: rows.filter((r) => r.status === 'closed').length } }), ajv.errorsText(validList.errors)).toBe(true);
     for (const name of [...journeyFiles, '../E-PROJECT.json']) {
       const body = readJson(join(fixtures, 'projects', name));
       expect(validJourney(body), `${name}: ${ajv.errorsText(validJourney.errors)}`).toBe(true);
@@ -95,11 +95,11 @@ describe('GET /projects', () => {
     expect(closed.body.items.every((i) => rows.find((r) => r.item.case_id === i.case_id)?.status === 'closed')).toBe(true);
   });
 
-  it('the default is all, as live; there are no counts, total or limit', async () => {
+  it('the default is all, as live; there are no limit', async () => {
     const all = await list('');
     const explicit = await list('status=all');
     expect(all.body).toEqual(explicit.body);
-    expect(Object.keys(all.body).sort()).toEqual(['as_of', 'items', 'next_cursor']);
+    expect(Object.keys(all.body).sort()).toEqual(['as_of', 'items', 'next_cursor', 'totals']);
   });
 
   it('pages with next_cursor: every visible row once, 20 a page; a limit is ignored', async () => {

@@ -76,7 +76,8 @@ function projectList(url, persona) {
     .filter((item) => !needle || item.title.toLowerCase().includes(needle));
   const page = items.slice(offset, offset + PAGE_SIZE);
   const nextCursor = offset + PAGE_SIZE < items.length ? `o${offset + PAGE_SIZE}` : null;
-  return { status: 200, body: { items: page, next_cursor: nextCursor, as_of: list.as_of } };
+  const totals = { all: visible.length, active: visible.filter((row) => row.status === 'active').length, closed: visible.filter((row) => row.status === 'closed').length };
+  return { status: 200, body: { items: page, next_cursor: nextCursor, as_of: list.as_of, totals } };
 }
 
 /** One page of a journey body: the fixture holds every work item; 20 go out a page with page and next_page. */
