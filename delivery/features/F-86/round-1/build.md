@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 540892b4854b29d8003e199f9ebca9e40b30f3c0
+COMMIT: da0d7b698a60bd7f5800ea238bb7468591ced77a
 BUILDER: builder
 LANE: full
 
@@ -70,3 +70,6 @@ Run on 4980/4981 from the lane worktree (production build, the project's Playwri
 - `tests/start-work-ppe-forecast.test.tsx`, `e2e/start-work-ppe-forecast.spec.ts`: PPE and forecast line forms (gone until those lines get live forms; unavailable now).
 - `tests/start-work-prefill.test.tsx`: the assistant's prefilled draft form (gone for v7 keys: a draft for a line with no live form shows "You can't start this here.", tested; prefilling weekly values is not built because the spec asks for none).
 - `tests/rfp-intake.test.tsx`, `e2e/rfp-intake.spec.ts`: "Log a received RFP" start from the drawer (gone until F-88 registers its form; `rfp-intake-mock.test.ts` still runs).
+
+## Coordinator note (lane C, 23 Nov)
+Head moved from the builder's 540892b4 to da0d7b69 only by the coordinator merging F-85's head cdea4f98 (F-85 round 2 plus main e6c24e70, API 1.26.0). One conflict, in the `tests/next-config.test.ts` allow-list: main's entries were kept and F-86's three added. typecheck: 0 errors. Start work and weekly tests: 192 passed. The recorded base moved to cdea4f98, so the review diff is F-86 only.

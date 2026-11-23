@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 436e9de26df0289e533d4f986de29cc9ae9400b4
+COMMIT: cdea4f987fb2e1d59cf051a8bdf96dd7197cf6e9
 BUILDER: builder
 LANE: full
 
@@ -25,3 +25,6 @@ LANE: full
 
 ## Blocked
 None.
+
+## Coordinator note (lane C, 23 Nov)
+Head moved from the builder's 436e9de2 to cdea4f98 only by the coordinator merging origin/main e6c24e70 (API 1.26.0, green per lane A: typecheck 0 errors, 3810 tests). The merge was clean, with no conflicts and no F-85 code change.
