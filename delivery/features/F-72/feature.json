@@ -3,26 +3,60 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-72",
-  "outcome": "Document review reads the document and its versions from the live API and records the review decision through the live work item",
-  "state": "PLANNED",
+  "outcome": "Document review reads and records its decision through the live document-review API",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "The page reads the live preview by integer id and shows title, `v{version}`, audience and each `preview[]` item as a numbered section \u2014 verify: on the mock, open `/projects/P-0101/documents/2901`; the page shows \"Statement of work \u00b7 v2\", the audience, and sections \"Scope\" and \"Fees\" with text as plain characters (a `<b>` in a fixture section shows literally); `tests/document-review.test.tsx` asserts the request path `/api/v1/projects/<case>/document-reviews/2901`.",
+    "An invalid id (`abc`, `0`, `2.5`, `02`, 20 digits) sends no request and shows \"You can't open this document\" \u2014 verify: `tests/document-review.test.tsx` asserts no fetch; `/projects/P-0101/documents/abc` in the browser.",
+    "403 and 404 look identical and reveal nothing \u2014 verify: live as `live-none`, open a document URL of `live-lead`'s project (real case UUID and version id from the live Documents tab or database); and the mock no-access id; both show the same text with no title or id.",
+    "Controls follow `decisions[]` only \u2014 verify: with `[\"approve\",\"return\"]` both buttons show; with `[\"return\"]` only Return; with `[]` no controls and \"No decision is open to you on this version.\"; a test with `[\"approve\",\"return\",\"reject\"]` shows no Reject button.",
+    "Approve sends exactly `{expected_revision, verdict:\"approve\", delegated:false, note}` to `POST .../document-reviews/{id}` and nothing is sent to `/tasks/*`, `/work/*` or any claim endpoint \u2014 verify: `tests/document-review.test.tsx` captures the body (all four keys, `delegated === false`, `expected_revision` equals the GET `revision`) and asserts no other POST.",
+    "The note is required for Approve and Return; checked before any request \u2014 verify: pressing Approve with an empty or blank note shows \"Add a note to record your decision.\" beside the note field, focuses it and sends nothing; a 4001-character note shows the 4000 message and sends nothing (`tests/document-review-model.test.ts` for `noteProblem`, `tests/document-review.test.tsx` for the page). On a phone width (390) Approve opens the same note sheet as Return (see Conflicts).",
+    "After a 200, the page re-reads and shows the live result \u2014 verify: mock decidable then approve; a toast \"You approved v2. Not sent to the client.\" shows, the next GET returns empty `decisions[]`, and the controls are gone and the status tag shows the new `review_status`. Return does the same with \"You returned v2.\"",
+    "409 stale keeps the note and records nothing \u2014 verify: mock scenario with a stale `revision`; the callout \"This document changed while you were reading it...\" shows, the page now carries the new revision, the note box still holds the typed text, and a second press sends the new `expected_revision`.",
+    "422 `action_unavailable` shows its message and refreshes the controls \u2014 verify: mock blocked-after-load scenario; message shows, controls follow the new `decisions[]`, and `findings[]` sentences list under \"Not ready to decide yet\". A 422 with a `note` field error shows on the note field.",
+    "403 on the write and an expired-CSRF write record nothing and say so \u2014 verify: mock 403 and `csrf_failed` scenarios in `tests/document-review.test.tsx`; the 403 shows \"You can't record a decision on this document.\"",
+    "A network or 5xx failure on the write shows the uncertain notice, keeps the buttons off, and Try again only re-reads \u2014 verify: test counts POSTs (exactly one) and GETs after pressing Try again.",
+    "Double press sends one write \u2014 verify: test presses Approve twice quickly; one POST.",
+    "A failed publication read does not break the page \u2014 verify: test with `.../publication` answering 500; the document, sections and controls still show, without a status tag.",
+    "Dropped parts are gone and nothing replaces them \u2014 verify: `tests/document-review.test.tsx` asserts no TEST TEMPLATE text, no \"changed since\", no Compare control, no per-check Done/Held/Blocked list, no returned person/time/note, and no reference in the crumb; `matchingSources` (from `frontend/tests/source-files.ts`) finds no use of `django_url` in `src/features/documents`.",
+    "Crumb is the project title and \"Documents\" only, no reference \u2014 verify: mock page at 1440 and 390; the phone back link reads the project title with no reference note. If the project read fails the crumb is \"Documents\" alone and the page still works.",
+    "`current: false` shows \"Not the current version\" and `review_status` text shows in the status tag as sent, unquoted and unparsed \u2014 verify: mock not-current and returned scenarios.",
+    "A Documents-tab row links to review only when its `api_url` is exactly `/api/v1/projects/{this case}/document-reviews/{n}`; any other row is plain text, with a test for a row whose `api_url` names another case, another path, `//host/...` or null \u2014 verify: `tests/project-tabs.test.tsx` (or a new `tests/documents-link.test.ts`); live Documents tab run recorded in `build.md`.",
+    "The mock bodies validate against the live contract and a deliberately wrong fixture fails \u2014 verify: `npx vitest run tests/mock-live-document-review.test.ts` passes; adding a forbidden field to one fixture makes it fail.",
+    "Live end to end (integration owner) \u2014 verify: against Django 8010, as `live-lead` open a real document version URL, read it, and record one Return with a note; the next GET changes `decisions[]`/`review_status` and the database or API shows one new review; `live-none` gets the no-access state; record the commands and results in `build.md`. If no seeded document version exists in the live database, record that and mark this criterion held for a seeded fixture (backend), without faking data.",
+    "The E2E flow still passes on the mock \u2014 verify: `e2e/document-review.spec.ts` (rewritten) at 1440 and 390 covers read, return with note, approve with note, stale and no-access."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. It is a cross-layer contract change from v7 `/tasks/{id}/decision` to the live document-review contract (integer version id, required `delegated`, `reject` verdict in the API), and the write records a review decision that affects the document's publication state. It is not high: no money, identity or migration, one write call, and `expected_revision` guards against races. Surfaces are ui and api, plus contract-change and product-decision, because the dropped parts, the note rule and the `delegated` default are choices the client must accept."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-72/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +93,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-72/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +186,28 @@
   "created_at": "2026-11-23T13:18:20Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:24:10Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-72/readiness.md",
+      "delivery/features/F-72/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

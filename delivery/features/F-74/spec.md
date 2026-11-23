@@ -6,7 +6,7 @@
 - Setup opens on one chosen workspace (a project). A picker in the Setup header lists the person's active projects, and the choice stays in the address (`?workspace=<case_id>`) so reload and shared links work.
 - Rules, Delegation and Templates read live data for that workspace: `GET /setup/{case_id}/rules`, `.../delegations`, `.../delegations/options`, `GET /setup/primary-roles`, `GET /projects/{case_id}/templates`.
 - A workspace where `GET /setup/{case_id}/rules` returns 404 shows a plain "no access to this workspace" state. Nothing about hidden rules is shown.
-- Every write is held: Edit a rule, Add a delegation and Upload a template version render disabled with the reason "Saving rules is not available yet". No write call is made.
+- Every write is held: Edit a rule, Add a delegation and Upload a template version render disabled with the reason "Changes open once proof upload is connected". No write call is made.
 - The v7 mock keeps working for design review: the mock serves the live shapes for these reads.
 
 ## Context
@@ -42,13 +42,13 @@ Today Setup is organisation-wide and reads v7 operations through the generated `
 - `options` 200 (called once without `role`): `revision`, `roles[]`, `people[]` {`id`, `label`}, `proofs[]`, `source_configuration`, `limited`. Names come from `people[]` by id. An id not in `people[]` shows "Person not listed", never a guessed name. `limited: true` shows the note "Names shown are limited to what you may see."
 - Row shows role, "From" name, "To" name, valid from, valid until. No reason and no status column.
 - Empty `items[]` → existing empty state. Error and access states as above; a 404 on `delegations` is treated like the rules 404.
-- Held: `POST /setup/{case_id}/delegations/drafts`. The Add delegation control is disabled with "Saving rules is not available yet"; `DelegationForm` does not open.
+- Held: `POST /setup/{case_id}/delegations/drafts`. The Add delegation control is disabled with "Changes open once proof upload is connected"; `DelegationForm` does not open.
 
 ### Templates (SCR-34): `GET /api/v1/projects/{case_id}/templates?templates=<cursor>`
 - 200: `revision`, `can_upload`, `cursor`, `items[]` {`id`, `name`, `version`, `download_url`}, `proofs[]`. The next page is requested with the query value `templates` set to the returned `cursor`; `cursor` null/absent means the last page.
 - Row shows `name` and "Version N". Absent and not drawn: line, test-template tag and banner, updated-by, versions count, kind.
 - "Show more" appends pages in order (existing `useSetupPaging`). A failed later page keeps loaded rows and says so.
-- Held: `POST /projects/{case_id}/templates/replacements` and first-template `POST /projects/{case_id}/templates`. The Upload control shows disabled with "Saving rules is not available yet" whether or not `can_upload` is true; `TemplateUploadPanel` does not open.
+- Held: `POST /projects/{case_id}/templates/replacements` and first-template `POST /projects/{case_id}/templates`. The Upload control shows disabled with "Changes open once proof upload is connected" whether or not `can_upload` is true; `TemplateUploadPanel` does not open.
 - Access: 404/403 → the no-access state; empty `items[]` → "No templates to show."
 
 ### Held writes (listed in the PR description)
@@ -74,7 +74,7 @@ Each of the three tabs and the picker has loading, empty, error, no-access and s
 7. A signed-out session shows the signed-out state, not the access text. — verify: clear the session cookie and reload.
 8. Delegation rows show names from `options.people`; an id that is not listed shows "Person not listed". — verify: mock fixture row with delegate id 9.
 9. Templates show name and version, load further pages with Show more using `templates=<cursor>`, and show no line, test-template tag, updated-by or versions. — verify: network log shows a second request with `?templates=` equal to the first response's `cursor`.
-10. Edit rule, Add delegation and Upload version are disabled and show "Saving rules is not available yet"; clicking them opens no panel and sends no request. — verify: Playwright asserts no `POST`, `PUT` or `PATCH` request to `/api/v1` after clicking each control on the three tabs.
+10. Edit rule, Add delegation and Upload version are disabled and show "Changes open once proof upload is connected"; clicking them opens no panel and sends no request. — verify: Playwright asserts no `POST`, `PUT` or `PATCH` request to `/api/v1` after clicking each control on the three tabs.
 11. Unit test: `saveRule`, `addDelegation`, `uploadTemplateVersion` and `uploadEvidence` are not imported by any component in `src/features/setup` after the change. — verify: `npm test` (new vitest) greps the feature sources, or the equivalent import check.
 12. A 500 or network failure on any read shows "We couldn’t load the …" with Retry and does not show the access text; Retry re-reads. — verify: mock failure fixture or blocked request in Playwright.
 13. An empty workspace list shows "No workspaces to show." and makes no `/setup/{case_id}/…` request. — verify: mock with no projects.
@@ -92,7 +92,7 @@ Each of the three tabs and the picker has loading, empty, error, no-access and s
 ## Assumptions
 - B1 default: Setup always opens on a chosen workspace; reason: recommended option in `questions-batch.md`; product acceptance confirms or changes it.
 - B2 default: a simple picker in the Setup header with the choice in the address; reason: recommended option; not yet drawn.
-- B3 default: reads only, controls disabled; reason: recommended option. Wording is "Saving rules is not available yet" (from readiness) rather than the batch text "Changes open once proof upload is connected"; the approver may pick one.
+- B3 default: reads only, controls disabled; reason: recommended option. Wording is "Changes open once proof upload is connected" (the batch B3 text, chosen by the coordinator).
 - The address key is the query value `workspace`, not a route segment; reason: keeps the five existing routes unchanged.
 - With no workspace in the address, the first active project is chosen; reason: avoids probing every workspace for `policy.read`; the cost is that the first project may show "no access".
 - The picker lists active projects only (`status=active`) and follows `next_cursor` up to 10 pages; reason: readiness names that endpoint; no other source of workspaces exists.

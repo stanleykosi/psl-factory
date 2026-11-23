@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-78",
   "outcome": "A person can mark a milestone complete from the Milestones tab with proof, through the live command, once PSL has said who may do it",
-  "state": "PLANNED",
+  "state": "BLOCKED",
   "task_ids": [
     "FE-MILESTONE-COMPLETE"
   ],
@@ -138,7 +138,16 @@
   "created_at": "2026-11-23T13:22:10Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "BLOCKED",
+      "at": "2026-11-23T13:24:41Z",
+      "round": 0,
+      "head": null,
+      "reason": "NOT-READY: live 1.22.0 now has POST /projects/{case_id}/milestones/completions, but PSL has not said who may mark a milestone complete or whether it starts the invoice draft; backend B-28 to B-31 also open"
+    }
+  ],
   "routing": null,
   "gate": {
     "round": 0,
@@ -146,5 +155,9 @@
     "verdict": null,
     "commit": null
   },
-  "blocked": null
+  "blocked": {
+    "from": "PLANNED",
+    "reason": "NOT-READY: live 1.22.0 now has POST /projects/{case_id}/milestones/completions, but PSL has not said who may mark a milestone complete or whether it starts the invoice draft; backend B-28 to B-31 also open",
+    "at": "2026-11-23T13:24:41Z"
+  }
 }

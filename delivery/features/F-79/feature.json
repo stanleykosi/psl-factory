@@ -3,26 +3,55 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-79",
-  "outcome": "Month-end and the payments list read from the live month-end and payments operations, with unknown money kept unknown",
-  "state": "PLANNED",
+  "outcome": "Month-end and the payments list read the live Finance data",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Month-end calls the live path with the chosen month \u2014 verify: with the mock running, open `/finance/month-end?period=2026-10`; the request log shows `GET /api/v1/month-end?month=2026-10` and no `/api/v1/finance/month-end`; `?period=2026-13` sends no request and shows the existing \"month not recognised\" state.",
+    "Task rows come from `work[]` with label, workspace and time, and counts include Stopped \u2014 verify: page shows the fixture's rows, tags read the returned `label`, and the counts read Done 2, Waiting 1, In progress 3, Stopped 1; no \"of N\" total appears.",
+    "Show more appends the next page \u2014 verify: with `next_page: 2` the page requests `page=2`, appends rows, keeps page 1's counts; the control disappears when `next_page` is null.",
+    "Cash is never 0 and never summed \u2014 verify: fixture with a `cash_unavailable` workspace shows \"By project\" and that workspace's line reads \"Unknown\"; the two-currency fixture shows two lines and no combined figure; `more_cash_groups: true` shows \"More projects are not shown here\"; a unit test of the cash view asserts no path returns \"0\" or \"\u20a60\" for a missing, unavailable or malformed amount.",
+    "Hidden parts are absent \u2014 verify: month-end shows no agent note, no next-action button and no restricted-row text; payments shows no RECEIVED THIS MONTH, BANK DATA TO, \"N INVOICES\" or note panel (assert in tests).",
+    "Payments calls the live path \u2014 verify: `/finance/payments?q=kora&status=overdue` requests `GET /api/v1/payments?q=kora&state=overdue`; \"Show more\" requests `cursor=c2` and appends; `status=bogus` sends no `state`; no request goes to `/api/v1/finance/invoices`.",
+    "Unknown money shows Unknown with its basis \u2014 verify: the `owed: null` row shows \"Unknown\" in STILL OWED (not \"0.00\"), and the `totals[].owed` null shows \"Unknown\" in OWED TO PSL; known amounts show currency and basis; a two-currency `totals` shows two values, not one sum.",
+    "`limited` shows the partial-result callout \u2014 verify: fixture with `limited: true` shows \"Partial result. This list and its totals may not include every invoice.\"; with `false` it is absent.",
+    "Action links follow the API \u2014 verify: a row with `reminder_url` shows \"Open the reminder\" linking to that URL; a row with null `record_payment_url` shows \"Record a payment\" disabled with \"Not available to you for this invoice\" and it is not an anchor; pressing it does nothing; no test or page code calls `/api/v1/finance/invoices/*` or `/api/v1/work` for these actions.",
+    "AGE is not worded as overdue \u2014 verify: the column header reads AGE and rows read \"9 days\"; no cell or card says \"overdue by\" or \"days overdue\".",
+    "Wrong user and failures \u2014 verify: persona without finance access gets 403 on both pages and shows the no-access card with no invoice or task data; 401 shows the signed-out state; mock `error` variant shows the error card, and Try again re-reads; a failed \"Show more\" keeps the rows and shows an inline retry; a 200 body missing `items` or `counts` shows the error card.",
+    "Both mock routes match the live contract \u2014 verify: `npx vitest run tests/mock-live-finance.test.ts` validates every month-end and invoices fixture and each served variant against the live `200` schemas of `/api/v1/month-end` and `/api/v1/payments` with Ajv (`strict: true`, `ajv-formats`, as `tests/mock-live-me.test.ts`), and asserts no field outside the contract is served (`additionalProperties: false`).",
+    "No writes \u2014 verify: grep the two feature folders for `api.POST`, `liveApi.POST`, `receipts`, `/receivables`, `/payments/` with a path parameter: none; both pages send only GET.",
+    "The existing design checks still pass \u2014 verify: `python3 delivery/design.py check` (run from the worktree's project root as the gate does) and the existing SCR-36 and SCR-20 fidelity checks show the same layout, with only the parts hidden by the defaults missing.",
+    "Against Django 8010 (integration owner, recorded in `build.md`) \u2014 verify: signed in as a Finance user, `/finance/month-end` and `/finance/payments` render the live data without console errors; as a non-Finance user both show the no-access card."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The change is read-only and conforms to boards that are already approved. It still replaces a v7 route and response with a different live shape on two built Finance pages, which is a cross-layer contract change. The null-to-Unknown rule is a correctness risk if mapped wrong, because Unknown must never become 0. The high-risk writes (payments, allocation, short-payment, receivables capture) are excluded. Surfaces: ui, api, contract-change, and product-decision for the hidden-field defaults and the `limited` and `age_days` wording. Product acceptance is required because the client sees changed pages with fewer figures."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-79/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +88,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-79/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +181,28 @@
   "created_at": "2026-11-23T13:22:10Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:26:08Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-79/readiness.md",
+      "delivery/features/F-79/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

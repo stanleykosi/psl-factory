@@ -3,26 +3,56 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-74",
-  "outcome": "Setup opens on a chosen workspace and reads and saves rules, delegation and templates through the live workspace-scoped operations",
-  "state": "PLANNED",
+  "outcome": "Setup connected to the live API for reading: workspace picker, rules, delegation and templates",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Opening `/setup/rules` with no `workspace` shows the picker, selects the first active project and rewrites the address to `?workspace=<case_id>`. \u2014 verify: open the page with `live-admin` signed in; the address contains `workspace=`, the picker shows the project title, and the rules list shows that workspace's ten rules.",
+    "Reloading the page or opening the saved link keeps the workspace; changing the picker re-reads the open tab and updates the address. \u2014 verify: select a second workspace; the address and the rows change; reload; the same workspace is selected.",
+    "Tab links (Rules, Delegation, Templates) keep `workspace`. \u2014 verify: click each tab; the address still holds the same `workspace`.",
+    "Rules show `label`, area, version, value or roles and a status text for every row; MISSING rows count in the \"not set\" badge; UNKNOWN, UNAVAILABLE and INVALID are not counted as set or not set. \u2014 verify: mock fixture and the live read in the browser; badge equals the MISSING row count.",
+    "`/setup/rules/finance` and `/setup/rules/delivery` list only rows with area \"Finance\" / \"Delivery\". \u2014 verify: open each page.",
+    "A workspace whose rules read returns 404 shows \"You don\u2019t have access to this workspace\u2019s setup. Choose another workspace.\" with the picker usable, and shows no rule, delegation or template content. \u2014 verify: pick a workspace the account has no `policy.read` on (live-none or live-lead; or the mock \"Beta Pilot\"); the same text shows on all three tabs; network log shows no other Setup read succeeding for it.",
+    "A signed-out session shows the signed-out state, not the access text. \u2014 verify: clear the session cookie and reload.",
+    "Delegation rows show names from `options.people`; an id that is not listed shows \"Person not listed\". \u2014 verify: mock fixture row with delegate id 9.",
+    "Templates show name and version, load further pages with Show more using `templates=<cursor>`, and show no line, test-template tag, updated-by or versions. \u2014 verify: network log shows a second request with `?templates=` equal to the first response's `cursor`.",
+    "Edit rule, Add delegation and Upload version are disabled and show \"Changes open once proof upload is connected\"; clicking them opens no panel and sends no request. \u2014 verify: Playwright asserts no `POST`, `PUT` or `PATCH` request to `/api/v1` after clicking each control on the three tabs.",
+    "Unit test: `saveRule`, `addDelegation`, `uploadTemplateVersion` and `uploadEvidence` are not imported by any component in `src/features/setup` after the change. \u2014 verify: `npm test` (new vitest) greps the feature sources, or the equivalent import check.",
+    "A 500 or network failure on any read shows \"We couldn\u2019t load the \u2026\" with Retry and does not show the access text; Retry re-reads. \u2014 verify: mock failure fixture or blocked request in Playwright.",
+    "An empty workspace list shows \"No workspaces to show.\" and makes no `/setup/{case_id}/\u2026` request. \u2014 verify: mock with no projects.",
+    "The mock (`npm run dev`) shows the same three tabs and the picker with the fixtures above, with no live backend. \u2014 verify: run the mock from the lane worktree `frontend/` on its port and open `/setup/rules`.",
+    "New and updated tests: unit tests for the status-to-badge count and the id-to-name lookup, and Playwright specs for criteria 1, 2, 6, 9 and 10, updating `e2e/setup.spec.ts`, `setup-delegation.spec.ts`, `setup-templates.spec.ts`. \u2014 verify: `npm run typecheck`, `npm run lint`, `npm test`, `npm run test:e2e -- setup` from the worktree `frontend/`.",
+    "Live check: with Django on 8010 and Next.js on 4970 (LANES.md \"Live backend for checks\"), signed in as `live-admin`, `/setup/rules`, `/setup/delegation` and `/setup/templates` show the live data for a workspace the account can read, and `live-none` sees the no-access state. \u2014 verify: browser, as above."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Reads only, so no data change. Medium because the workspace scope for organisation-wide Setup is an unconfirmed default (B-21, B-27, B-38), the contract is cross-layer (several endpoints, plus 404-as-no-access handling), and the rules screens expose approval-authority data, so an access leak is possible. Surfaces: ui, api, contract-change, product-decision (the picker and the reads-only default). Risk drops from r1's high because the evidence_id and draft-activate paths are no longer in scope."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-74/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +89,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-74/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +182,28 @@
   "created_at": "2026-11-23T13:18:20Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:24:10Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-74/readiness.md",
+      "delivery/features/F-74/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

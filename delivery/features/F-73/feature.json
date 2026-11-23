@@ -3,26 +3,59 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-73",
-  "outcome": "Clients and client details read live client groups of workspaces, and adding a billing contact sends the live command with its proof",
-  "state": "PLANNED",
+  "outcome": "Clients and client details read live client groups and workspace contacts",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/clients` against live shows one row per group and one per ungrouped project, groups first, in the order returned \u2014 verify: open `/clients` as live-lead on port 4970 (API_ORIGIN Django 8010) and compare the rows with `curl` of `GET /api/v1/clients` with the same session.",
+    "A group row shows `project_count` as PROJECTS and links to `/clients/<key>`; an ungrouped project row links to `/clients/<case_id>` \u2014 verify: page shows the rows; read the `href` of the first group and first project link.",
+    "A project with `billing: \"unknown\"` reads \"Unknown\" in the billing cell and state tag, never \"Set\" or \"Missing\"; `recorded` reads \"Set\"; `needed` reads \"Billing contact missing\" \u2014 verify: mock fixtures and `tests/clients.test.tsx` cases for the three values.",
+    "A group with `contacts_needed` of 2 reads \"2 billing contacts needed\" with the missing tag; `0` reads \"None needed\" \u2014 verify: component test.",
+    "No OWED column, no owed text on phone cards, no money panel and no \"blocked\" callout appears on `/clients` or `/clients/<id>`; no \"0\" or \"\u20a60\" appears as an amount \u2014 verify: component tests assert absence, and open both pages at 1440 and 390.",
+    "\"Show more\" fetches the next group page, then the next project page, and never repeats a row \u2014 verify: mock `many` state test with two group pages and two project pages; request log shows the `clients_page` and `page` values used.",
+    "`/clients?billing=needed` and `?q=<text>` send those query values on the request \u2014 verify: unit test of the request URL in `api.ts` tests.",
+    "`/clients/<group key>` shows the label, its projects with billing tags and links to `/projects/<case_id>`, and \"Show more\" while `next_page` is set \u2014 verify: mock group fixture with two pages.",
+    "`/clients/<case_id>` shows billing contacts (customer, name, email, role) read only, a separate \"Project contacts\" block, and the sample label when `sample` is true \u2014 verify: mock workspace fixture.",
+    "\"Show history\" lists versions newest first from `contacts/history?purpose=billing`, pages with \"Show more\", and a failed history call shows a retry without clearing the page \u2014 verify: test with a 503 on history.",
+    "The billing contact form is visible and disabled with the reason \"Waiting for the evidence picker and the backend answer.\"; clicking Save and pressing Enter send no request \u2014 verify: test asserts `fetch` calls contain no `PUT /billing-contact` and no `POST /clients/*/contacts`; `grep -rn \"billing-contact\" frontend/src` finds no live call.",
+    "Wrong user: a 404 or 403 on a group key or a case id shows `ClientNoAccess` with no name, title or contact in the page or the tab title \u2014 verify: mock 404 and 403 tests. Wrong tenant: a case id from another tenant returns 404 from Django 8010 and shows the same state \u2014 verify: open it as live-none.",
+    "A 401 on either page shows the signed-out state with a return path to the same URL; a 503 or network failure shows \"We couldn't load the clients/this client. Your work is safe; nothing was changed.\" with a working Retry \u2014 verify: tests with injected failures.",
+    "Invalid input: `/clients?billing=bogus` is not sent on the request (the filter is ignored) and the list loads; a 400 or 422 reply shows the error card \u2014 verify: unit test.",
+    "A group key with special characters (`/`, `%`) is sent URL-encoded once, not twice \u2014 verify: test on the request path.",
+    "The mock's four clients operations validate against the live contract schemas, and a deliberately wrong shape fails the validator \u2014 verify: `tests/clients-mock.test.ts` updated, in the style of `tests/mock-live-me.test.ts`.",
+    "The v7 mock still serves the other screens; design review of `/clients` and `/clients/<id>` works with `npm run mock` on 4971 \u2014 verify: open both pages on 4970 against the mock.",
+    "Layout stays on the approved boards at 1440 and 390 apart from the listed conflicts \u2014 verify: `design.py check` passes and the fidelity run (one run, layout changed) shows only the listed exceptions.",
+    "`src/api/client.ts` and `src/api/schema.d.ts` are unchanged unless named in `build.md` as a separate commit; `delivery/checks.sh`, `delivery/config.json`, `delivery/merge-policy.json` are unchanged \u2014 verify: `git diff --stat origin/main`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The change is read-only and conforms to the approved design. It is still a cross-layer contract change, and the meaning of \"client\" changes from a record to a group in src/features/clients and in the route id. Per-record access applies to the reads. The high-risk billing-contact write is excluded. Surfaces: ui, api, contract-change, and product-decision for the B4 and B5 defaults. Product acceptance is required because the client sees a changed list, a changed detail page and a disabled contact form."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-73/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +92,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-73/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +185,28 @@
   "created_at": "2026-11-23T13:18:20Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:24:10Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-73/readiness.md",
+      "delivery/features/F-73/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
