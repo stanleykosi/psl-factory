@@ -99,6 +99,33 @@ Context: the reset boards draw only "ask" and "Check your email."; live gives no
 Context: every review passed on head `57ae81e8` (see merge-batch.md). Product acceptance is yours to give.
 1. Accept F-58 sign-in and sign-out as built on `57ae81e8`? (a) Recommended: accept, and approve the merge. (b) Accept, but first make sign-out load `/sign-in` fresh (SEC-1-1, a small fix round). (c) Request changes (say which).
 
+### Lane A · API 1.24.0 presentation questions (D-185)
+Context: the re-specs on 1.24.0 switch the hidden parts back on; only these presentation choices are new. Each has a recommendation first. F-60 has no new question (its ready state is D-182 F-60 Q4).
+
+**F-59 (forgotten password)**
+8. Where the 30-minute and 12-character figures come from (new with 1.24.0; presentation only).
+   - (a) Recommended: show them as the board draws, kept in one constants file that names backend answer A-47, because the API returns no value for either. The page never enforces them.
+   - (b) Show them only once the backend returns them in a response (the figures stay hidden; the board's lines are missing until then; not recommended since PSL has stated the policy).
+
+**F-61 (alerts)**
+7. Wording of the daily summary line (new, A-44; presentation only). Options: (a) recommended: "Today, 23 Nov: 3 need you, 2 new updates, 1 older unread" as one quiet line above the groups, plain text, no card; (b) a small three-figure strip (Need you / New today / Older unread); (c) show only the "need you" figure.
+8. Paging control on `/notifications`. Options: (a) recommended: a "Load more" button under the list with "Showing N loaded, M unread"; (b) numbered pages using `page`; (c) infinite scroll.
+9. Rows with no agent or time (reminders and older alerts). Options: (a) recommended: neutral avatar slot and no time, so the row alignment holds; (b) no avatar and no time (compact rows); (c) show "Earlier" instead of a time.
+
+**F-65 (Overview)**
+7. Totals and squares are sampled from the 50 most recent items. (a) Recommended: show "at least N" and a coverage line "Counted from the 50 most recent items you can see" when limited. (b) Show the number plain with a small "(sample)" mark. (c) Hide the four totals when limited.
+8. The row tag is still not supplied, but `stopped` and `needs_person` are now known per line. (a) Recommended: keep the neutral "Not available yet" tag until the backend gives a status. (b) Derive the tag in the page: "Stopped" if `stopped` > 0, "Waiting" if `needs_person` > 0, else none. (c) Hide the tag column.
+9. The floor number (exact, open work) and the station squares (sampled) can disagree. (a) Recommended: show both with the footnote saying station figures come from recent items. (b) Show the floor number only when station figures are not limited. (c) Show the sum of station counts as the floor number, with the same "at least" rule.
+
+
+**F-66 (Assistant)**
+1. Sent images in the thread. The API returns only image ids on a message. Options: (a) "<n> images attached" text (recommended); (b) fetch the case file list and show thumbnails from `download_url`, one extra read per thread; (c) show nothing after send.
+2. "Drafted" in the list. The list status cannot say drafted. Options: (a) no Drafted badge in the list, only in the thread (recommended); (b) show "Answered" with a small draft mark after opening; (c) read each thread (up to 25 extra reads).
+3. Department thread entry. Options: (a) a "Whole department" switch on the new-conversation sheet, default off, with the chosen project as the anchor (recommended); (b) a separate "Department chat" button; (c) hide department scope.
+4. `held` wording. The backend gives no reason. Options: (a) one fixed sentence "I couldn't complete this. Try again, or check that you still have access to this project." (recommended); (b) shorter "I couldn't answer this."; (c) show the raw status.
+5. "Answered <time>" from `finished_at` on settled cards, not in the boards. Options: (a) show it small under the answer (recommended); (b) leave it out.
+6. Image chips use local thumbnails before send and a remove button. Options: (a) as written (recommended); (b) filename-only chips.
+
 ## Lane B
 
 - **F-74 · B1. Setup without a workspace (backend B-21, short-list 4).** Every live Setup read and save needs a workspace; our Setup pages are organisation-wide. How should Setup open?
