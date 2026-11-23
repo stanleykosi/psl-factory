@@ -1,27 +1,98 @@
 {
-  "case_id": "P-0124",
+  "case_id": "00000000-0000-4000-8000-000000000124",
   "title": "Rivers Media · content hub",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
-      "line": "RFP response",
-      "state": "verified",
-      "work_id": "W-1756"
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000124/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000124"
     },
     {
-      "line": "Plan a project",
-      "state": "verified",
-      "work_id": "W-1757"
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000124/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000124/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000124/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000124/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000124/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000124/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000124/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000124/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000124/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000124/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000124/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000124/actions"
     }
   ],
-  "next": "Archive · records kept: the PM Sola Martins confirms the next step.",
-  "pm": {
-    "name": "Sola Martins",
-    "role": "Project manager"
+  "items": [
+    {
+      "id": 1756,
+      "line": "RFP response",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1756/",
+      "api_url": "/api/v1/work/1756"
+    },
+    {
+      "id": 1757,
+      "line": "Plan a project",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1757/",
+      "api_url": "/api/v1/work/1757"
+    }
+  ],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 2,
+    "waiting": 0,
+    "stopped": 0,
+    "finance": {
+      "stages": 4,
+      "delivered": null,
+      "next": null,
+      "limited": false
+    },
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0124",
+      "manager": "Sola Martins"
+    }
   },
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 3,
-    "registers": 2,
-    "actions": 4
-  }
+  "assistant": [
+    {
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
+    }
+  ]
 }

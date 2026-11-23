@@ -1,32 +1,93 @@
 {
-  "case_id": "P-0106",
+  "case_id": "00000000-0000-4000-8000-000000000106",
   "title": "Ojo Foods · ordering app",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
-      "line": "RFP response",
-      "state": "verified",
-      "work_id": "W-1720"
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106"
     },
     {
-      "line": "Weekly client update",
-      "state": "waiting",
-      "work_id": "W-1721"
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/milestones"
     },
     {
-      "line": "Plan a project",
-      "state": "waiting",
-      "work_id": "W-2603"
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/actions"
     }
   ],
-  "next": "Planning · held: the PM Sola Martins confirms the next step.",
-  "pm": {
-    "name": "Sola Martins",
-    "role": "Project manager"
+  "items": [
+    {
+      "id": 1720,
+      "line": "RFP response",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1720/",
+      "api_url": "/api/v1/work/1720"
+    },
+    {
+      "id": 1721,
+      "line": "Weekly client update",
+      "reference": null,
+      "state": "Waiting",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1721/",
+      "api_url": "/api/v1/work/1721"
+    },
+    {
+      "id": 2603,
+      "line": "Plan a project",
+      "reference": null,
+      "state": "Waiting",
+      "started": "2026-05-12T09:00:00Z",
+      "updated": "2026-11-07T14:30:00Z",
+      "django_url": "/work/2603/",
+      "api_url": "/api/v1/work/2603"
+    }
+  ],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 3,
+    "waiting": 0,
+    "stopped": 1,
+    "finance": null,
+    "engagement": null
   },
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 3,
-    "registers": 2,
-    "actions": 4
-  }
+  "assistant": []
 }

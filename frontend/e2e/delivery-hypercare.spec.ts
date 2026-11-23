@@ -48,12 +48,6 @@ for (const [label, viewport] of [
   test.describe(label, () => {
     test.use({ viewport, reducedMotion: 'reduce', ...(phone ? { hasTouch: true, isMobile: true } : {}) });
 
-    test('the Delivery tab links Hypercare to W-3101', async ({ page }) => {
-      await page.goto('/projects/P-0101/delivery');
-      await loaded(page);
-      await expect(page.getByRole('link', { name: 'Hypercare' }).first()).toHaveAttribute('href', '/work/W-3101');
-    });
-
     for (const id of ['W-3101', 'W-3102', 'W-3103', 'W-3104', 'W-3109', 'W-3111']) {
       test(`${id}: one column, no sideways scroll, controls 44px, no axe violations`, async ({ page }) => {
         await page.goto(`/work/${id}`);

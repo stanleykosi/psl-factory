@@ -74,13 +74,13 @@ for (const [label, viewport] of [
   test.describe(label, () => {
     test.use({ viewport, ...(phone ? { hasTouch: true, isMobile: true } : {}) });
 
-    test('list default (Active): 10 projects, Filter, Show more, rows per page; tabs, total and note from 720px', async ({ page }) => {
+    test('list default (Active): 20 projects, Filter, Show more; tabs, result text and note from 720px', async ({ page }) => {
       await page.goto('/projects');
       await listLoaded(page);
-      await expect(projectLinks(page)).toHaveCount(10);
-      await expect(projectLinks(page).first()).toHaveAttribute('href', '/projects/P-0101');
-      await expect(page.getByRole('button', { name: /^Show (more|\d+ more)$/ })).toBeVisible();
-      await expect(page.getByRole('radiogroup', { name: 'Rows per page' })).toBeVisible();
+      await expect(projectLinks(page)).toHaveCount(20);
+      await expect(projectLinks(page).first()).toHaveAttribute('href', '/projects/00000000-0000-4000-8000-000000000101');
+      await expect(page.getByRole('button', { name: 'Show more' })).toBeVisible();
+      await expect(page.getByRole('radiogroup', { name: 'Rows per page' })).toHaveCount(0);
       await expect(page.getByRole('button', { name: 'Filter' })).toBeVisible();
       if (phone) {
         await expect(page.getByRole('table')).toHaveCount(0);
@@ -89,15 +89,14 @@ for (const [label, viewport] of [
         await expectTouchTargets([
           page.getByRole('searchbox', { name: 'Search' }),
           page.getByRole('button', { name: 'Filter' }),
-          ...(await page.getByRole('radio').all()),
-          page.getByRole('button', { name: /^Show (more|\d+ more)$/ }),
+          page.getByRole('button', { name: 'Show more' }),
           ...(await projectLinks(page).all()).slice(0, 3),
         ]);
       } else {
         await expect(page.locator('.projects__eyebrow')).toHaveText('PROJECTS');
-        await expect(page.getByRole('tab')).toHaveText(['Active 22', 'Closed 2', 'All I can see 24']);
-        await expect(page.locator('.psl-resultcount')).toHaveText('22 PROJECTS');
-        await expect(page.getByRole('columnheader')).toHaveText(['PROJECT', 'PM', 'WHERE IT IS', 'NEXT MILESTONE', 'NEEDS A PERSON', 'STOPPED']);
+        await expect(page.getByRole('tab')).toHaveText(['Active', 'Closed', 'All I can see']);
+        await expect(page.locator('.psl-resultcount')).toHaveText('20 shown, more available');
+        await expect(page.getByRole('columnheader')).toHaveText(['PROJECT', 'PM', 'WHERE IT IS', 'NEEDS A PERSON', 'STOPPED']);
         await expect(page.getByText('You see projects your roles cover. Open one for its journey, documents, money and registers.')).toBeVisible();
       }
       expect(await noHorizontalScroll(page)).toBe(true);
@@ -112,8 +111,8 @@ for (const [label, viewport] of [
       await expect(page.getByRole('heading', { name: 'No projects match' })).toBeVisible();
       await expectNoAxeViolations(page);
       await shot(page, `projects-${w}-no-results`);
-      await page.getByRole('button', { name: 'Clear search' }).click();
-      await expect(projectLinks(page)).toHaveCount(10);
+      await page.getByRole('button', { name: 'Show all projects' }).click();
+      await expect(projectLinks(page)).toHaveCount(20);
       await expect(page).toHaveURL(/\/projects$/);
 
       let fail = true;
@@ -149,19 +148,17 @@ for (const [label, viewport] of [
       expect((await motion(page)).running).toBe(0);
     });
 
-    test('journey default: P-0101 as drawn, every line in order with its tag', async ({ page }) => {
+    test('journey default: P-0101 as drawn, every piece of work in order with its state', async ({ page }) => {
       await page.goto('/projects/P-0101');
       await journeyLoaded(page);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lagoon Health · patient app');
       const tabs = projectTabs(page);
       // Phones draw the tabs without counts.
-      await expect(tabs).toHaveText(phone ? ['Journey', 'Delivery', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions'] : ['Journey', 'Delivery', 'Milestones 4', 'Documents 6', 'Money', 'Registers 6', 'Actions 9'], {
-        useInnerText: phone,
-      });
+      await expect(tabs).toHaveText(['Journey', 'Milestones', 'Documents', 'Money', 'Registers', 'Actions']);
       await expect(tabs.first()).toHaveAttribute('aria-selected', 'true');
-      await expect(page.locator('.projects__next')).toContainText('What is next');
+      await expect(page.locator('.projects__next')).toHaveCount(0);
       await expect(lineLinks(page)).toHaveCount(8);
-      await expect(lineLinks(page).nth(6)).toHaveAttribute('href', '/work/W-1001');
+      await expect(lineLinks(page).nth(6)).toHaveAttribute('href', '/work/1001');
       if (phone) {
         await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toBeHidden();
         await expect(page.getByRole('link', { name: 'Back to Projects', exact: true })).toBeVisible();
@@ -172,9 +169,11 @@ for (const [label, viewport] of [
       } else {
         await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText('Projects / Lagoon Health');
         await expect(page.getByRole('link', { name: 'Back to Projects', exact: true })).toBeHidden();
-        await expect(page.locator('.projects__route')).toHaveText('PM Tunde Bello · Route A from RFP-0031 · 8 pieces of work across 6 lines');
+        await expect(page.locator('.projects__route')).toHaveText('PM Tunde Bello · Route A · 8 pieces of work');
         await expect(page.getByRole('region', { name: 'Facts earned' })).toBeVisible();
-        await expect(page.getByRole('complementary', { name: "Tola's summary" })).toContainText('Lagoon Health is moving.');
+        await expect(page.locator('.psl-fact b')).toHaveText(['CONTRACT STAGES', 'WAITING ON PEOPLE', 'STOPPED', 'NEXT MILESTONE']);
+        await expect(page.getByText('Figures may be partial.')).toBeVisible();
+        await expect(page.getByRole('complementary', { name: 'Assistant' })).toContainText('Ask me about this project');
       }
       const tagWraps = await page.locator('ol.projects__lines .psl-tag').evaluateAll((els) => els.filter((el) => el.getBoundingClientRect().height > 30).length);
       expect(tagWraps).toBe(0);
@@ -184,10 +183,11 @@ for (const [label, viewport] of [
       await expectNoAxeViolations(page);
     });
 
-    test('journey empty: P-0105', async ({ page }) => {
-      await page.goto('/projects/P-0105');
+    test('journey empty: P-0125, no client, finance not available', async ({ page }) => {
+      await page.goto('/projects/P-0125');
       await journeyLoaded(page);
-      await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sabi Market · web store');
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('Standalone fit-out');
+      await expect(page.locator('.psl-fact strong')).toHaveText(['Not available', '0', '0', 'Not available']);
       await expect(page.getByRole('tablist', { name: 'Project' })).toBeVisible();
       await expect(page.getByText('No work on this project yet.')).toBeVisible();
       await expect(page.locator('main ol')).toHaveCount(0);
@@ -196,7 +196,9 @@ for (const [label, viewport] of [
       await expectNoAxeViolations(page);
     });
 
-    test('journey no access: P-0099 names nothing', async ({ page }) => {
+    test('journey no access: P-0099 names nothing, in both forms', async ({ page }) => {
+      await page.goto('/projects/00000000-0000-4000-8000-000000000099');
+      await expect(page.getByRole('heading', { level: 1, name: 'You can’t open this project' })).toBeVisible();
       await page.goto('/projects/P-0099');
       await expect(page.getByRole('heading', { level: 1, name: 'You can’t open this project' })).toBeVisible();
       await expect(page.getByRole('link', { name: 'Back to projects', exact: true })).toHaveAttribute('href', '/projects');
@@ -215,7 +217,7 @@ for (const [label, viewport] of [
       await page.goto('/projects/P-0101/documents');
       await journeyLoaded(page);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lagoon Health · patient app');
-      await expect(projectTabs(page).nth(3)).toHaveAttribute('aria-selected', 'true');
+      await expect(projectTabs(page).nth(2)).toHaveAttribute('aria-selected', 'true');
       await expect(page.getByText('Statement of work').first()).toBeVisible();
       await expect(lineLinks(page)).toHaveCount(0);
       expect(await page.title()).toBe('Project · PSL Factory');
@@ -223,6 +225,7 @@ for (const [label, viewport] of [
       await shot(page, `project-documents-${w}`);
       await expectNoAxeViolations(page);
       await projectTabs(page).first().click();
+      // the tab links keep the id the page was opened with
       await expect(page).toHaveURL(/\/projects\/P-0101$/);
       await expect(lineLinks(page)).toHaveCount(8);
     });
@@ -247,47 +250,34 @@ test.describe('desktop 1440 details', () => {
     await listLoaded(page);
     const request = page.waitForRequest((r) => r.url().includes('/api/v1/projects?') && r.url().includes('q=lagoon'));
     await page.getByRole('searchbox', { name: 'Search' }).fill('lagoon');
-    expect(new URL((await request).url()).search).toBe('?limit=10&q=lagoon');
+    expect(new URL((await request).url()).search).toBe('?status=active&q=lagoon');
     await expect(page).toHaveURL(/\/projects\?q=lagoon$/);
     await expect(projectLinks(page)).toHaveText(['Lagoon Health · patient app']);
-    await expect(page.locator('.psl-resultcount')).toHaveText('1 PROJECT');
+    await expect(page.locator('.psl-resultcount')).toHaveText('1 shown');
     await page.getByRole('searchbox', { name: 'Search' }).fill('zzz');
     await expect(page.getByRole('heading', { name: 'No projects match' })).toBeVisible();
-    await page.getByRole('button', { name: 'Clear search' }).click();
-    await expect(projectLinks(page)).toHaveCount(10);
+    await page.getByRole('button', { name: 'Show all projects' }).click();
+    await expect(projectLinks(page)).toHaveCount(20);
   });
 
-  test('paging: Show more appends; 20 rows per page is kept across a reload; ?limit=7 falls back to 10', async ({ page }) => {
+  test('paging: Show more appends with the cursor and keeps focus on the first new row; no rows-per-page choice; ?limit= is ignored', async ({ page }) => {
     await page.goto('/projects');
     await listLoaded(page);
+    await expect(page.locator('.psl-resultcount')).toHaveText('20 shown, more available');
     const more = page.waitForRequest((r) => r.url().includes('cursor='));
-    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
-    expect(new URL((await more).url()).search).toBe('?limit=10&cursor=o10');
-    await expect(projectLinks(page)).toHaveCount(20);
-    await expect(projectLinks(page).nth(10)).toBeFocused();
-    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
-    await expect(projectLinks(page)).toHaveCount(22);
-    await expect(page.locator('.psl-showmore').first()).toContainText('All 22 showing');
-    await expect(page.getByRole('button', { name: /^Show (more|\d+ more)$/ })).toHaveCount(0);
+    await page.getByRole('button', { name: 'Show more' }).click();
+    expect(new URL((await more).url()).search).toBe('?status=active&cursor=o20');
+    await expect(projectLinks(page)).toHaveCount(23);
+    await expect(projectLinks(page).nth(20)).toBeFocused();
+    await expect(page.locator('.psl-resultcount')).toHaveText('23 shown');
+    await expect(page.getByRole('button', { name: 'Show more' })).toHaveCount(0);
+    await expect(page.getByRole('radio')).toHaveCount(0);
 
-    await page.getByRole('radio', { name: '10' }).click();
-    await expect(page).toHaveURL(/\/projects$/);
-    await expect(projectLinks(page)).toHaveCount(10);
-    await page.getByRole('radio', { name: '20' }).click();
-    await expect(page).toHaveURL(/\?limit=20$/);
-    await expect(projectLinks(page)).toHaveCount(20);
-    await page.reload();
-    await listLoaded(page);
-    await expect(projectLinks(page)).toHaveCount(20);
-    await expect(page.getByRole('radio', { name: '20' })).toHaveAttribute('aria-checked', 'true');
-    await page.getByRole('radio', { name: '20' }).focus();
-    await page.keyboard.press('ArrowLeft');
-    await expect(page).toHaveURL(/\/projects$/);
-    await expect(page.getByRole('radio', { name: '10' })).toBeFocused();
-
+    const limited = page.waitForRequest((r) => r.url().includes('/api/v1/projects?'));
     await page.goto('/projects?limit=7');
+    expect(new URL((await limited).url()).search).toBe('?status=active');
     await listLoaded(page);
-    await expect(projectLinks(page)).toHaveCount(10);
+    await expect(projectLinks(page)).toHaveCount(20);
   });
 
   test('a failed Show more keeps the rows and shows the inline problem', async ({ page }) => {
@@ -296,30 +286,28 @@ test.describe('desktop 1440 details', () => {
     await page.route('**/api/v1/projects?*cursor=*', (route) =>
       route.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }),
     );
-    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
-    await expect(page.getByText('We couldn’t load more. Choose Show more to try again.')).toBeVisible();
-    await expect(projectLinks(page)).toHaveCount(10);
+    await page.getByRole('button', { name: 'Show more' }).click();
+    await expect(page.getByText(/We couldn’t load more/)).toBeVisible();
+    await expect(projectLinks(page)).toHaveCount(20);
   });
 
-  test('a journey line opens its work item: Invoice · Milestone 2 is W-1001', async ({ page }) => {
+  test('a journey row opens its work item by its integer id: Invoice · Milestone 2 is 1001', async ({ page }) => {
     await page.goto('/projects');
     await listLoaded(page);
     await projectLinks(page).first().click();
-    await expect(page).toHaveURL(/\/projects\/P-0101$/);
+    await expect(page).toHaveURL(/\/projects\/00000000-0000-4000-8000-000000000101$/);
     await journeyLoaded(page);
-    await lineLinks(page).nth(6).click();
-    await expect(page).toHaveURL(/\/work\/W-1001$/);
-    await expect(page.getByRole('heading', { level: 1, name: 'Lagoon Health · Milestone 2 invoice' })).toBeVisible();
+    await expect(lineLinks(page).nth(6)).toHaveAttribute('href', '/work/1001');
   });
 
   test('tabs: Closed and All I can see change the request and the URL; Filter says filters come next', async ({ page, context }) => {
     await setCookies(context, { psl_mock_persona: 'pm' });
     await page.goto('/projects');
     await listLoaded(page);
-    await expect(projectLinks(page)).toHaveCount(4);
+    await expect(projectLinks(page)).toHaveCount(5);
     const closed = page.waitForRequest((r) => r.url().includes('status=closed'));
     await page.getByRole('tab', { name: /Closed/ }).click();
-    expect(new URL((await closed).url()).search).toBe('?limit=10&status=closed');
+    expect(new URL((await closed).url()).search).toBe('?status=closed');
     await expect(page).toHaveURL(/\?status=closed$/);
     await expect(projectLinks(page)).toHaveText(['Sabi Market · web store']);
     await page.getByRole('tab', { name: /Closed/ }).focus();
@@ -327,7 +315,7 @@ test.describe('desktop 1440 details', () => {
     await expect(page.getByRole('tab', { name: /All I can see/ })).toBeFocused();
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(/\?status=all$/);
-    await expect(projectLinks(page)).toHaveCount(5);
+    await expect(projectLinks(page)).toHaveCount(6);
     await expect(page.getByRole('tab', { name: /All I can see/ })).toBeFocused();
     await page.getByRole('button', { name: 'Filter' }).click();
     await expect(page.getByRole('dialog', { name: 'Filter projects' })).toContainText('Filters come next');
@@ -343,11 +331,11 @@ test.describe('desktop 1440 details', () => {
     await expect(page.getByRole('tablist', { name: 'Project' })).toHaveCount(0);
   });
 
-  test('pm: the four active board projects, never P-0104; P-0104 opens as no access', async ({ page, context }) => {
+  test('pm: the five active projects, never P-0104; P-0104 opens as no access', async ({ page, context }) => {
     await setCookies(context, { psl_mock_persona: 'pm' });
     await page.goto('/projects');
     await listLoaded(page);
-    await expect(projectLinks(page)).toHaveCount(4);
+    await expect(projectLinks(page)).toHaveCount(5);
     await expect(page.locator('main')).not.toContainText('Delta Foods');
     await page.goto('/projects/P-0104');
     await expect(page.getByRole('heading', { level: 1, name: 'You can’t open this project' })).toBeVisible();
@@ -380,10 +368,10 @@ test.describe('desktop 1440 details', () => {
 
   test('journey error: 500 then Try again recovers', async ({ page }) => {
     let fail = true;
-    await page.route('**/api/v1/projects/P-0101', (route) =>
+    await page.route('**/api/v1/projects/00000000-0000-4000-8000-000000000101', (route) =>
       fail ? route.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }) : route.continue(),
     );
-    await page.goto('/projects/P-0101');
+    await page.goto('/projects/00000000-0000-4000-8000-000000000101');
     const card = page.getByRole('main').getByRole('alert');
     await expect(card).toContainText('We couldn’t load this project. Your work is safe; nothing was changed.');
     await expect(card).toContainText('Reference server_error for support.');
@@ -401,8 +389,7 @@ test.describe('desktop 1440 details', () => {
       page.getByRole('searchbox', { name: 'Search' }),
       page.getByRole('button', { name: 'Filter' }),
       projectLinks(page).first(),
-      page.getByRole('radio', { name: '10' }),
-      page.getByRole('button', { name: /^Show (more|\d+ more)$/ }),
+      page.getByRole('button', { name: 'Show more' }),
     ]) {
       expect(await keyboardRing(page, target)).toEqual({ style: 'solid', width: '2px' });
     }
