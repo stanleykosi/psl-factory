@@ -106,8 +106,8 @@ export function useMilestones(caseId: string) {
 
   useEffect(() => {
     // The effect only starts the requests; a new case drops the proofs of the old one.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     caseRef.current = caseId;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProofs({});
     void loadMoney();
     void loadCompletions();

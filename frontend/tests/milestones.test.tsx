@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { setImmediate as realImmediate } from 'node:timers';
 
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { useMemo, useSyncExternalStore } from 'react';
@@ -123,7 +122,6 @@ async function open(caseId: string, search = '') {
 
 const text = () => document.body.textContent ?? '';
 const rowsOf = () => [...document.querySelectorAll('tbody tr')].map((tr) => [...tr.children].map((c) => c.textContent));
-const cardsOf = () => [...document.querySelectorAll('.ptabs__card')].map((c) => c.textContent);
 const phone = () =>
   vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('max-width'), media: q, addEventListener: () => {}, removeEventListener: () => {} }));
 
