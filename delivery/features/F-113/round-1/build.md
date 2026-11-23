@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 006cd6e40c6a770b60b31665d70c94d955523cd2
+COMMIT: 0517372f2319ecf958c8db0123b884264ab748f6
 BUILDER: builder
 LANE: full
 
@@ -52,3 +52,6 @@ None (round 1).
 - Q5 sentence: shown at desktop width only (useIsPhone, below 720px hidden), per the mobile board.
 - The 403/404 panel is the full-page ProjectNoAccess, as the spec says, so a heading repeats the frame inside the tab.
 - effect_uncertain uses the existing amber waiting tag (no red tag exists).
+
+## Coordinator: sync with main
+The coordinator merged origin/main (e6c24e70, API 1.26.0, green per lane A) into the branch after the build, on lane A's word. Merge commit 0517372f. The builder's last commit was 006cd6e4. The feature's own code is unchanged.

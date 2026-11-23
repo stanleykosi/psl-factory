@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 9992f8c8b2b8b1cd06f6c24065d290056ec2ab5b
+COMMIT: de279c08b01dca4c09872c4a4eb68a25c71e6ad4
 BUILDER: builder
 LANE: full
 
@@ -77,3 +77,6 @@ The run is on the dev server because the production build is blocked (above). Re
 
 ## Blocked
 Not blocked. Open: criterion 21 (live Django check) needs credentials; typecheck/build need lane A's `tests/shell-live.test.tsx` fix.
+
+## Coordinator: sync with main
+The coordinator merged origin/main (e6c24e70, API 1.26.0, green per lane A) into the branch after the build, on lane A's word. Merge commit de279c08. The builder's last commit was 9992f8c8. The feature's own code is unchanged.
