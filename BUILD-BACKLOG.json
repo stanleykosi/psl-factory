@@ -1,13 +1,15 @@
 {
   "frontend_backend_questions_20261123": {
     "status": "implemented_in_part_pending_frontend_and_live_verification",
+    "product_decisions": "13 priority questions and 5 follow-ups answered",
     "contract": "contracts/psl-factory.openapi.json",
     "evidence": "delivery/connect/backend-answers-2026-11-23.md",
     "follow_up": [
-      "Workflow-specific proof types, complete specialist tracking and panel options",
+      "Direct PMO Lead approval on eligible steps, workflow-specific proof types, complete specialist tracking and panel options",
       "Whole-queue counts for queues that require evaluating each authorised item",
-      "Per-section agent notes and image attachments in assistant chat",
-      "Alert schedule and per-event settings with deferred external delivery",
+      "Review-only notes beside report sections and OpenRouter reading for images attached to assistant questions",
+      "In-app daily alert summary. Email and WhatsApp delivery remain deferred.",
+      "Require the known amount and payment source for new Finance receipts and connect the receipt entry point in Next.js",
       "Next.js host and live contract verification"
     ]
   },

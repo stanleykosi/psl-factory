@@ -2,6 +2,8 @@
 
 ## Frontend backend questions · 23 November 2026
 
+All 13 priority questions and five follow-ups now have PSL answers. The remaining implementation includes images in Assistant, review-only section notes, the in-app daily alert summary, direct PMO Lead approval for eligible steps, and required amount and source for new Finance receipts. The existing API already supports the invoice-linked receipt intake. The handoff identifies each feature’s current implementation status. [Consolidated answers](delivery/connect/backend-answers-2026-11-23.md)
+
 The backend work against GitHub main includes API-only sign-in and downloads, work tracking and proof, typed intake and panel links, Setup discovery, Finance totals, and the Delivery and document changes listed in the answer sheet. The sheet identifies features that still need implementation or live verification. [PSL answers and API changes](delivery/connect/backend-answers-2026-11-23.md)
 
 ## Django page separation

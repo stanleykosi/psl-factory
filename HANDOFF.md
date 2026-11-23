@@ -2,7 +2,7 @@
 
 ## Frontend connection questions · 23 November 2026
 
-Use `codex/backend-handoff-answers` for API 1.23.0. Read the numbered answers beside the developer’s original questions. They name the implemented operations, decisions and remaining gaps. Deploy the matching contract only when the new backend revision is released. Staff sign in through Next.js. [Backend answers](delivery/connect/backend-answers-2026-11-23.md)
+Use `codex/backend-handoff-answers` for API 1.23.0. The numbered handoff contains the developer’s 13 questions and PSL’s five follow-up decisions, with the implemented API and remaining work beside each answer. Verify the deployed contract before wiring the new routes in Next.js. [Consolidated backend answers](delivery/connect/backend-answers-2026-11-23.md)
 
 ## Next.js developer handoff
 

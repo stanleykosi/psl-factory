@@ -1,5 +1,7 @@
 # Build progress log
 
+23 November 2026. Consolidated PSL’s five follow-up answers into the numbered frontend handoff and updated the approved behavior for proof, receipts and the Assistant, report review and alert screens.
+
 23 November 2026. Recorded PSL’s answers against the frontend checklist and prepared API 1.23.0 on a branch from GitHub main. Fixed A-55 download responses and A-56 Admin sign-in and role reads. Added the new proof, tracking, forms, Setup, Finance and Delivery operations described in the handoff. [Backend answers](delivery/connect/backend-answers-2026-11-23.md)
 
 22 November 2026. Moved the Django page routes and assets into `legacy_ui/`. Made the Railway image API-only and documented how Next.js takes over navigation, account links and private file access. [Test ledger](BUILD-TESTS.md)
