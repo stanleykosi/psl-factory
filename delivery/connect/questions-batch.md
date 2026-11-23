@@ -382,9 +382,8 @@ The history boards show a count on each filter, a version column and "Restricted
 
 ### LC-Q24 · F-91 · The agent card on the work item
 The boards draw the agent's picture and name and a numbered list of steps with the record each read. The API gives one activity line (and the agent's name, and a last-activity summary).
-1. **(Recommended)** Show the one activity line (or progress with its time) and nothing else; no steps, no picture, no name.
-2. Also show the agent's name from the API beside the line.
-3. Also show the last-activity summary ("last did X at Y").
+1. **(Recommended by the lane C coordinator, per D-185)** Draw the agent card as the board does with what the API serves: the agent's name (`item.agent`) and picture by that name, the activity line (or progress with its time) and the last-activity summary (`tracking.last_activity`). Leave out only the numbered steps, which nothing serves.
+2. Show the one activity line (or progress with its time) and nothing else (the spec writer's first pick; it hides served data, against D-185).
 
 ### LC-Q25 · F-91 · Words in the station track and facts strip
 The boards write a detail in each station and a date in each earned fact. The API gives each station's holder name, "unassigned" for a future station, and a time only for Verified. It does not say whether a holder is a person or an agent.
@@ -396,6 +395,12 @@ The boards write a detail in each station and a date in each earned fact. The AP
 The boards' header shows the amount and invoice version. The tracking read has neither; the amount is on the invoice or Finance panel (F-90).
 1. **(Recommended)** Leave them out of the header; add reference, who started it and when to the sub-line. The amount appears only where F-90 draws the invoice block.
 2. Show "Amount: see invoice" with a link to the invoice block.
+
+### LC-Q23 · F-93 · Confirm what happened: more than one send, and what shows after recording
+The approved panel draws one set of choices and no "after" state. Live can list more than one uncertain send for the same item, and after recording the backend only returns the saved choice and its time.
+1. **(Recommended)** Draw one panel per uncertain send, headed by its plain job name (never the job number); after recording, replace that panel's inputs with "Recorded: It arrived, 23 Nov 14:05." (the choice and time from the API), with the reason for any disabled button written beside it. Say nothing about resending, reminders or checking.
+2. Show only the first uncertain send. (Not recommended: it hides a send nobody has settled.)
+3. Hold the panel until the design engineer draws these states.
 
 ## Lane D
 

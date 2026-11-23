@@ -3,26 +3,61 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-91",
-  "outcome": "The work item shows what API 1.24.0 now supplies as the SCR-02 boards draw it (D-185): the station track with who holds each station, the six facts, agent activity, the reference and who started it, and history with actor kind and paging from tracking_url",
-  "state": "PLANNED",
+  "outcome": "The work item shows its station track, six facts, agent activity, reference, who started it and paged history",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4102` (mock: Next 4980, mock 4981) shows the station track with five stations in order, the holder under each (\"Tunde Bello\", \"Tola\", \"Unassigned\"), and the execution station marked as the current one \u2014 verify: open the page; `frontend/e2e/work-item-tracking.spec.ts` asserts the list items and `aria-current=\"step\"`.",
+    "A future station whose `owner` is null reads \"Unassigned\" and no name; a `recorded` station with null owner reads \"Not recorded\"; an `unknown` station reads \"Unknown\" and is not drawn as done \u2014 verify: unit test `stationsOf`.",
+    "The six facts strip shows `true` as earned, `false` as \"Not yet\", and `null` as \"Unknown\"; on `/work/4102` the Drafted box reads Unknown and no box reads \"No\" or 0 \u2014 verify: e2e on 4102 and 4103; unit test mapping `{drafted:null}`.",
+    "Only the Verified box shows a time, taken from `verified_at`; the other earned facts show no time \u2014 verify: e2e on `/work/4101`.",
+    "Reference shows beside the id when `reference` is a string; `/work/4104` (`reference:null`) shows \"Work 4104\" only \u2014 verify: e2e on both.",
+    "\"Started by {name} \u00b7 {date}\" shows from tracking; with `tracking_url:null` (`/work/4105`) no started line, no track, no facts strip, no empty heading or gap, and the rest of the page loads \u2014 verify: e2e on 4105.",
+    "When tracking answers 503 (`/work/4107`) the page shows the title, tag and next step plus \"We couldn\u2019t load where this work is held.\" with Try again; Try again re-reads tracking only \u2014 verify: e2e; network panel shows one extra `GET .../tracking`.",
+    "Tracking is re-read on each item poll while `current_activity.watching` is true, and is read once otherwise; a failed poll keeps the last good track \u2014 verify: unit test `useLiveTracking` with fake timers.",
+    "A 404 or 403 on a tracking poll shows the F-85 unavailable or no-access state and stops polling; a 401 shows the signed-out state \u2014 verify: unit test with a mocked client.",
+    "The agent area shows `current_activity.label` or `progress.status` with its time, and nothing else: no numbered steps, no \"Read:\" lines, no agent name; with neither it draws no heading \u2014 verify: e2e on 4102 and 4101; grep that no step list is built.",
+    "History rows (`/work/4101/history`) show the PERSON or AGENT tag from `actor_kind`, the actor when present, station and status words, reason, and an evidence link only when `evidence_id` is not null; a `worker` row with no `actor` shows the AGENT tag alone \u2014 verify: unit test on `historyLine`; e2e.",
+    "An unknown station (\"recheck_queue\") shows as raw text with underscores read as spaces and is not dropped \u2014 verify: unit test.",
+    "The tabs call history with `kind=decision`, `worker`, `evidence`; All sends no `kind`; no counts and no version column are drawn \u2014 verify: unit test and network panel.",
+    "With `next_before` set, \"Older events\" is shown; pressing it requests `before=<next_before>` with the same `kind`, appends rows (31 to 60 total on 4101), no row is drawn twice (same `entry_id`), and the button is gone when `next_before` is null \u2014 verify: e2e on 4101 and unit test on the merge.",
+    "Changing the filter after paging resets to the first page, and a slow answer for the earlier filter or page never replaces the rows \u2014 verify: unit test with delayed mock responses.",
+    "A failed \"Older events\" keeps the rows already shown, shows the mapped message with Try again, and makes no automatic second request \u2014 verify: unit test counts calls.",
+    "Caption reads \"Showing the latest N changes. As of \u2026\" while more pages exist and \"Showing all changes. As of \u2026\" when `next_before` is null; empty history reads \"No changes recorded yet.\" \u2014 verify: unit and e2e.",
+    "A history 404 shows \"This record is unavailable.\"; a 401 shows the signed-out state with `?next=` the history path; a 403 `csrf_failed` is not shown as no access \u2014 verify: unit tests.",
+    "Nothing on the page sends a write because of this feature; no new `liveApi.POST` appears in files this feature adds or changes \u2014 verify: `git diff` grep of `POST` in the diff; e2e asserts no request other than GET.",
+    "Against live Django (8020, account live-lead) for a real work id, the station names, owners, six facts, `started_by` and first history page equal `GET /api/v1/work/{id}/tracking` and `/history` \u2014 verify: compare the page with `oa.py live GET` output; a fact that is null in the JSON reads Unknown on the page.",
+    "Viewport check at 1440 and 390: track, facts strip, history rows and \"Older events\" match the SCR-02 artboards for the parts drawn, with no overlap, track scrolling sideways on the phone, and no empty gap or heading where a part is absent \u2014 verify: screenshots at both widths reviewed against `design/screens.md` SCR-02 artboards.",
+    "`live-schema.d.ts` matches contract 1.24.0 (`api-live-schema-drift.test.ts` passes) and the page imports no v7 `WorkItem`, `stations` or `facts` types \u2014 verify: `delivery/checks.sh`; `grep -rn \"api/schema'\" frontend/src/features/work-item/live` is empty."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. It changes how a status the client relies on is shown (a fact shown as done when it is only unknown would mislead), and it touches the shared work-item code that F-85 and other lanes use, with a typed contract change to 1.24.0. It has no writes and does not touch money, identity or migrations. Product acceptance is required because the client sees parts that were hidden before."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-91/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +94,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-91/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +187,28 @@
   "created_at": "2026-11-23T17:38:19Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T18:28:14Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-91/readiness.md",
+      "delivery/features/F-91/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
