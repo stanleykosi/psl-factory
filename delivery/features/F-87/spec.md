@@ -141,3 +141,11 @@ Entered in `delivery/connect/questions-batch.md` under "## Lane C" as LC-Q12 and
 2. No approved board draws Resume, Cancel or Pause/Continue buttons on SCR-02 (the cancelled board shows the result only). This spec adds a controls row under the header, shown only for listed controls, plus a Cancel confirmation dialog. Recommendation: LC-Q12 option 1 (the row, as written here).
 3. Pause and Continue are two buttons because live does not say which applies. Recommendation: LC-Q13 option 1.
 4. The effect-uncertain board's "Checked 2 times; next check at 11:10" and "Sent at" facts have no live source and are not drawn (same as F-85's hidden parts).
+
+## Coordinator note (lane C, 23 Nov): F-85 low findings carried into F-87
+F-85 passed every review with non-blocking findings. F-87 fixes these first, in its own commit, because it already changes `makeCommand` and the work item header:
+- TECH-1-1: `body()` spreads `inputs` last, so an input could override `action`, the revision tokens or the idempotency key. Make the descriptor's own fields win (spread inputs first) and test it.
+- SEC-1-1: `output_url` is put in an anchor `href` with no scheme check. Allow only http(s) or a same-origin path; otherwise show no link.
+- UI low: the breadcrumb shows raw identifiers such as WEEKLY_REPORT; show the line's plain name (from `GET /lines` or the line label map), never the key.
+- UI low: the state tag is not right-aligned as on the SCR-02 board.
+- TECH-1-2 (history evidence id as text) and the UX lows in delivery/features/F-85/round-1/review-ux.md: fix if small, otherwise list them in build.md.
