@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-56",
   "outcome": "Remove the Django embed: the shell always draws our own frame, and the proxy forwards only the API and file downloads",
-  "state": "IMPLEMENTING",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -76,25 +76,31 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "qa",
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "pmo-acceptance",
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
@@ -106,28 +112,173 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
+      "status": "passed",
+      "reviewer": "reviewer-ui",
       "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "reviewer-security",
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/review-security.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Criterion 11 expected Django's own 401/403/404 for an unauthenticated download. Django answers 302 to `/accounts/login/` because of `@login_required` (`apps/agents/upload_views.py:57,118`). The browser then lands on a Next 404 until SCR-17. This is existing backend behaviour, outside this feature's lane, and the builder recorded it. It needs a backend or F-57 follow-up so downloads answer an API-form 401. Do not change it here.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T00:27:36Z",
+          "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`next-config.test.ts` accepts `afterFiles` entries whose destination includes the `:param` names, but it never asserts the exact destination of each download, for example `${API}/work/:work/invoice-proof/:proof/`. The trailing-slash and no-parenthesis checks are enough to catch regressions, so this is only a hardening idea.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T00:27:36Z",
+          "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A download without a session is a 302 to `/accounts/login/?next=...`, which is a Django 404 `page_retired` in API-only mode (`PSL_DJANGO_UI=0`) and a Next 404 through the proxy. Spec criterion 11 expected an API-form 401/403/404. This is the same as TECH-1-1 and is accepted under D-172. The follow-up is for the backend to answer the download routes with an API-form 401.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T00:29:46Z",
+          "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-2",
+      "round": 1,
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A trailing-slash request such as `/cases/<uuid>/files/1/` or `/cases/not-a-uuid/files/1/` gets a Next 308 to the slash-less path before any rewrite. The redirected request is the one proxied, and it reaches Django with the slash added. This works. The only effect is that `curl` without `-L` shows 308, not Django's answer, for the spec's slash example (criterion 11).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T00:29:46Z",
+          "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-1",
+      "round": 1,
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Scope the technical and QA reviews left unproved (see Verified-scope table below) must be carried to the named owners and not read as proved. Evidence: review-qa.md \"Not proved\", build.md criterion 8.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T00:30:45Z",
+          "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-2",
+      "round": 1,
+      "snapshot_ref": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The branch also carries a commit outside the spec's lanes: the `frontend/tests/assistant-dictation.test.ts` repair (path fix plus a holder object in place of the `this` alias). The coordinator requested it, it is a test-only change, and the technical review found no assertion relaxed. It was needed for the gate to pass. Record it in the merge note as a separate item. Other changed paths (architecture v8 package, decisions files, F-57 record, design/review.json) are the planning commits for D-172 and D-173, not feature code.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-56/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T00:30:45Z",
+          "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -153,11 +304,11 @@
     "task_branch": "fe-connect-1-foundation",
     "head_sha": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
     "worktree": "/Users/Hunchoo/psl-factory",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/96",
+    "pr_number": 96,
+    "pr_author": "hunchoweb",
+    "designated_approver": "hunchoweb",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -244,6 +395,38 @@
       "at": "2026-11-22T23:52:08Z",
       "round": 1,
       "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-23T00:26:24Z",
+      "round": 1,
+      "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-23T00:27:44Z",
+      "round": 1,
+      "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-23T00:29:52Z",
+      "round": 1,
+      "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-23T00:31:19Z",
+      "round": 1,
+      "head": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
       "reason": null
     }
   ],
