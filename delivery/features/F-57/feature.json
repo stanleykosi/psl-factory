@@ -68,7 +68,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T08:43:12Z",
+      "seconds": 538.0,
+      "evidence_ref": "delivery/features/F-57/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -122,8 +135,212 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`refreshSession()` calls `call()`, and `call()` calls `refreshSession()` on a `csrf` error (`frontend/src/api/client.ts:46-65`). If `GET /session` ever answered 403 `csrf_failed`, the two would recurse without end. The live contract does not allow this today. A raw `liveApi.GET` inside `refreshSession`, or a guard flag, would remove the risk.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock `startable_lines` keep the v7 keys instead of live keys such as `pmo-weekly-report/v1` (`frontend/mock/fixtures/me.*.json`). `spec.md` says the fixtures use real live keys. The builder disclosed this, and the frame only tests `length > 0`, so nothing breaks. It needs a follow-up when the per-line adapter lands.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`useRoleWords` reads once per mount of the layout (`frontend/src/shell/useRoleWords.ts`). \"Try again\" after a `/me` error does not re-read it, and a sign-in in the same page session (SCR-17, wave 1) would not refresh it. This matches `spec.md` (\"once per page load\"). SCR-17 will need to re-trigger it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The design engineer's running app on port 3000 does not serve this head: its mock (pid 89457 on 3001, started Sun 22 Nov 00:12) still answers the old `/me` shape (`roles[]`, string destinations) and has no `/role-dashboard`, so every persona shows only \"No sections are open to your role yet.\" with no menu, name only, until the mock is restarted. Restart `node mock/server.mjs` on 3001 from this head before the design engineer reviews.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "When `/me` answers `csrf_failed` twice the card shows \"Reference csrf_failed for support.\" (same for `not_found` on a 404); the csrf wording \"press the action again\" is not used here. Acceptable (a frame load is not an action), a plainer line could follow later.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Long role words break the desktop top bar. With positions named Finance Lead, PMO Lead, Head of Delivery Operations, Client Services Manager, Administrator the `.shell-who-role` text does not truncate at 1440: Start work is clipped at the right edge and the document is 90px wider than the viewport. The spec allows up to 50 positions, de-duplicated by name, and asks that long role words not overflow. Expected: the name stays whole and the role words shorten with an ellipsis (full text stays in the accessible name or a title), with Start work and the bell always visible. Actual: `.psl-nav__who` only gets `min-width:0; overflow:hidden; text-overflow:ellipsis` below 1080px (frontend/src/styles/shell.css:63); at 1080px and above it has no cap, so the line grows. Fix by capping the role span on the bar (for example `white-space:nowrap; overflow:hidden; text-overflow:ellipsis` with `min-width:0` on `.psl-nav__who` at all widths), not by changing the design.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+          "evidence_refs": [
+            "delivery/features/F-57/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-57/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+          "evidence_refs": [
+            "delivery/features/F-57/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "reviewer-ui",
+          "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+          "evidence_refs": [
+            "delivery/features/F-57/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "reviewer-security",
+          "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+          "evidence_refs": [
+            "delivery/features/F-57/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -146,7 +363,7 @@
     "base_branch": "main",
     "base_sha": "e80c3276f76baebf4b42e5eadf95ea535fb62820",
     "task_branch": "fe-connect-1-live-client",
-    "head_sha": "e80c3276f76baebf4b42e5eadf95ea535fb62820",
+    "head_sha": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
     "worktree": "/Users/Hunchoo/psl-factory",
     "pr_url": null,
     "pr_number": null,
@@ -157,7 +374,90 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/document-review.spec.ts",
+      "frontend/e2e/exceptions.spec.ts",
+      "frontend/e2e/frame.spec.ts",
+      "frontend/e2e/setup.spec.ts",
+      "frontend/mock/fixtures/me.admin.json",
+      "frontend/mock/fixtures/me.ceo.json",
+      "frontend/mock/fixtures/me.finance_lead.json",
+      "frontend/mock/fixtures/me.hr.json",
+      "frontend/mock/fixtures/me.hr_lead.json",
+      "frontend/mock/fixtures/me.none.json",
+      "frontend/mock/fixtures/me.pm.json",
+      "frontend/mock/fixtures/me.pmo_lead.json",
+      "frontend/mock/fixtures/role-dashboard.admin.json",
+      "frontend/mock/fixtures/role-dashboard.ceo.json",
+      "frontend/mock/fixtures/role-dashboard.finance_lead.json",
+      "frontend/mock/fixtures/role-dashboard.hr.json",
+      "frontend/mock/fixtures/role-dashboard.hr_lead.json",
+      "frontend/mock/fixtures/role-dashboard.none.json",
+      "frontend/mock/fixtures/role-dashboard.pm.json",
+      "frontend/mock/fixtures/role-dashboard.pmo_lead.json",
+      "frontend/mock/line-runs.mjs",
+      "frontend/mock/response.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/mock/session.mjs",
+      "frontend/mock/start-work.mjs",
+      "frontend/package.json",
+      "frontend/src/api/client.ts",
+      "frontend/src/api/errors.ts",
+      "frontend/src/api/live-schema.d.ts",
+      "frontend/src/api/types.ts",
+      "frontend/src/features/assistant/AssistantFrame.tsx",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/my-work/MyWorkPage.tsx",
+      "frontend/src/features/overview/OverviewPage.tsx",
+      "frontend/src/features/projects/MoneyTab.tsx",
+      "frontend/src/features/projects/ProjectJourney.tsx",
+      "frontend/src/features/projects/ProjectsPage.tsx",
+      "frontend/src/features/setup/SetupFrame.tsx",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/DestinationPage.tsx",
+      "frontend/src/shell/FrameStates.tsx",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/shell/TopNav.tsx",
+      "frontend/src/shell/destinations.ts",
+      "frontend/src/shell/useRoleWords.ts",
+      "frontend/tests/alerts-bell.test.tsx",
+      "frontend/tests/alerts-settings.test.tsx",
+      "frontend/tests/alerts.test.tsx",
+      "frontend/tests/api-live-schema-drift.test.ts",
+      "frontend/tests/assistant-bridge.ts",
+      "frontend/tests/bell-feed.ts",
+      "frontend/tests/cash-forecast.test.tsx",
+      "frontend/tests/client-types.test.ts",
+      "frontend/tests/client.test.ts",
+      "frontend/tests/clients.test.tsx",
+      "frontend/tests/decide-board.test.tsx",
+      "frontend/tests/decide.test.tsx",
+      "frontend/tests/delivery-overview.test.tsx",
+      "frontend/tests/destinations.ts",
+      "frontend/tests/document-review.test.tsx",
+      "frontend/tests/hr-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-live-me.test.ts",
+      "frontend/tests/money.test.tsx",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/next-config.test.ts",
+      "frontend/tests/payments.test.tsx",
+      "frontend/tests/project-tabs.test.tsx",
+      "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/projects.test.tsx",
+      "frontend/tests/response.test.tsx",
+      "frontend/tests/rfp.test.tsx",
+      "frontend/tests/setup-delegation.test.tsx",
+      "frontend/tests/setup-rules.test.tsx",
+      "frontend/tests/setup-templates.test.tsx",
+      "frontend/tests/shell-live.test.tsx",
+      "frontend/tests/shell-no-embed.test.tsx",
+      "frontend/tests/shell.test.tsx",
+      "frontend/tests/start-work-mock.test.ts",
+      "frontend/tests/start-work-proof.test.tsx",
+      "frontend/tests/start-work.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -190,7 +490,7 @@
     }
   },
   "created_at": "2026-11-22T23:46:51Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -208,6 +508,30 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-23T08:43:25Z",
+      "round": 1,
+      "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-23T08:48:04Z",
+      "round": 1,
+      "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T08:48:04Z",
+      "round": 2,
+      "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "reason": null
     }
   ],
   "routing": {
@@ -224,7 +548,7 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null
