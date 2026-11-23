@@ -513,3 +513,7 @@ Every recommended option above is accepted ("Hide, accept all recs"), including 
 ## Answers, batch 2 (23 Nov 2026, D-183)
 
 F-58: accepted, merge approved. All recommended options accepted for F-59 Q1 to Q7, B18, LC-Q10 to LC-Q16 (LC-Q16 "Hold Approve", the recommendation), and LC-Q14 "Add Refuse".
+
+## Answers, batch 3 (23 Nov 2026, D-187)
+
+Every recommended option is accepted: lane A 1.24.0 questions, B19 to B30, LC-Q17 to LC-Q22, and all lane D specs (LD-Q2). LD-Q1: build SCR-57 on what the API serves; the merge goes to the design engineer. B31: completion only queues the Finance handoff; Finance starts the invoice.

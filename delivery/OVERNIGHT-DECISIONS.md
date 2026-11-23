@@ -473,3 +473,8 @@ The backend published answers to all 224 frontend questions and PSL's decisions 
 
 ## D-186 (23 Nov 2026): a fourth lane
 Disk freed to about 25 GB after the clean-up the design engineer approved. Asked whether to add a fourth lane for the Finance and delivery lines, they answered "Yes, add lane D". Lane D (worktree `lane-d`, features F-100 to F-120, ports 4990, 4991 and 8030) takes the Finance line workspaces (SCR-32, 53 to 58, payroll SCR-09, 18, 37, 59) from lane B and the delivery lines (SCR-30, 31, 33, 43 to 49) from lane C. Its line workspaces build on lane C's shared adapter (F-85) once it merges. Until then lane D writes readiness and specs on API 1.24.0.
+
+## D-187 (23 Nov 2026): batch 3 answered
+- "Accept all recs": every recommended option in batch 3 is accepted. That covers lane A's 1.24.0 presentation questions (F-59 Q8, F-61 Q7 to Q9, F-65 Q7 to Q9, F-66 Q1 to Q6), lane B's B19 to B30, lane C's LC-Q17 to LC-Q22, and every recommended option in the lane D specs listed under LD-Q2.
+- LD-Q1, "Build on the API": SCR-57 business-unit totals (F-107) show exactly what the API serves each person. Its merge goes to the design engineer.
+- B31, "Handoff only, Finance starts it": marking a milestone complete only queues the Finance handoff, and Finance starts the invoice. This matches the backend's current behaviour. It was answered by the design engineer, and PSL can still overrule it. F-78 (mark a milestone complete) is unblocked on this point.
