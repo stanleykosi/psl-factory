@@ -3,26 +3,56 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-93",
-  "outcome": "An authorised person records what happened after an uncertain send from the work item, as the SCR-02 awaiting-reconciliation board draws it: outcome, reason and proof through POST /work/{id}/delivery-observations next to the lookup (API 1.24.0, D-185); criteria 3 and 23 to 32 of F-87 spec",
-  "state": "PLANNED",
+  "outcome": "An authorised person can record what happened to an uncertain send from the work item, live",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4112` (mock) shows the CONFIRM WHAT HAPPENED panel with three radios (none selected), a Reason box, the proof picker and \"Record and continue\" disabled; `/work/4114` (flag false) and `/work/4107` show no panel, no heading and no gap \u2014 verify: e2e in `frontend/e2e/work-item-controls.spec.ts` by role and name; on `/work/4107` the DOM has no radio or file input.",
+    "\"Record and continue\" stays disabled with \"Choose what happened.\", \"Write a reason.\" or \"Attach proof first.\" until each is done, and a 4001-character reason is refused in the box \u2014 verify: unit test of the panel and e2e.",
+    "With \"It didn't arrive\", a reason and a PDF, one press sends `POST /api/v1/work/4112/proofs` `{\"kind\":\"pdf_copy\",\"upload_id\":<id>,\"case_revision\":9}` then one `POST /api/v1/work/4112/delivery-observations` `{\"expected_revision\":5,\"case_revision\":9,\"outcome\":\"not_delivered\",\"effect\":{\"job_id\":731,\"job_type\":\"invoice_delivery\"},\"proof_id\":55,\"reason\":\"...\"}`; the page then shows \"Recorded: It didn't arrive, ...\" \u2014 verify: e2e captures both bodies in order; unit test on the descriptor body.",
+    "The page claims no resend, reminder, verification or approval anywhere in or beside the panel, and the sublines and footer match the contract above \u2014 verify: e2e text search of the page for \"resend\", \"remind\", \"verif\"; the footer reads \"Your choice is recorded with your name.\"",
+    "If the observation POST fails after the proof was attached (422 or 409), a retry sends only the observation and no second proof \u2014 verify: unit test counts proof and observation POSTs.",
+    "A 403 shows \"You can't do this.\" with the server message; a 409 re-reads item and tracking and shows the server message; a 422 shows the server message and first field message; a 403 `csrf_failed` refreshes the session once, says \"Press the button again\" and sends nothing more; 429 and 503 say \"Try again shortly.\" and send nothing by themselves \u2014 verify: e2e scenarios; unit test counts POSTs and session calls over 30 s of fake time.",
+    "After a dropped connection or 500 on the observation POST, the page reads the observations list: when the list holds the same effect, outcome, proof and reason it shows Recorded; when not, or when the read fails, it shows \"We couldn't confirm that this was recorded. Check the page before trying again.\", disables the button, and sends nothing by itself for 60 s of fake time; it unlocks only when the list or the item `revision` changes or the page is reloaded \u2014 verify: unit test with both list answers and a failing list.",
+    "After a dropped connection on the proof POST, no second proof is sent until the proofs list is read and does not hold that file \u2014 verify: unit test counts proof POSTs.",
+    "`/work/4115` (null `case_revision`) draws the panel with \"Record and continue\" disabled and the version-missing reason beside it; no body holds null or 0 for a revision; the same for a null `revision` \u2014 verify: e2e and unit test.",
+    "`/work/4113` draws one panel per uncertain effect, each recording its own effect, and the raw job id is not shown \u2014 verify: e2e with request capture for each panel.",
+    "The page never sends an observation or proof on load, poll or navigation and never sends `outcome` from a default; the lookup button and the panel are independent (pressing one sends nothing for the other); a double press sends one request \u2014 verify: e2e asserts zero POSTs on load and after each single press; `grep -rn \"liveApi.POST\" frontend/src/features/work-item frontend/src/features/workspace` shows the new calls only in `useWorkCommand` and `deliveryObservation.ts`.",
+    "Against live Django (8020, Postgres 55433, account live-lead), on an item whose tracking read has `can_record_delivery_observation: true`, one observation recorded with proof returns 201 and `GET .../delivery-observations` lists it; a person without recovery authority sees no panel or gets the server's 403 shown as given; a wrong-tenant or unknown id shows \"This record is unavailable.\" \u2014 verify: record the JSON of each with `oa.py live`. If no such item exists locally, say so in build.md as unproved rather than assumed.",
+    "Viewport check at 1440 and 390: the panel has no overlap, the radios, Reason and button fit on the phone, no empty gap when absent \u2014 verify: screenshots against the SCR-02 awaiting-reconciliation artboards.",
+    "F-87 behaviour is unchanged: its controls, locking and `useWorkspaceStep` tests pass without edits, and `/work/W-xxxx` pages behave as before \u2014 verify: `npm test`, `frontend/e2e/workspace.spec.ts`, `work-item.spec.ts`.",
+    "Unit tests exist for `work.observe` (gate, url, body, null-token hold) and the panel (criteria 2, 5, 7, 8) \u2014 verify: `npm test` lists them; `api-live-schema-drift.test.ts` still passes (`delivery/checks.sh`)."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High because it writes a business record about invoice delivery (money) that cannot be undone from the page. The POST has no idempotency key, so uncertain results must be settled by reading the list (`useWorkCommand`). It depends on server-side recovery authority (`auth`). It adds a new contract call, a proof upload step, and a product-decision copy change from D-187."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-93/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +89,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-93/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +189,29 @@
   "created_at": "2026-11-23T17:42:25Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T18:28:51Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-93/readiness.md",
+      "delivery/features/F-93/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

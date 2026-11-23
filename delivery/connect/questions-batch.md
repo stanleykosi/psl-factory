@@ -396,7 +396,7 @@ The boards' header shows the amount and invoice version. The tracking read has n
 1. **(Recommended)** Leave them out of the header; add reference, who started it and when to the sub-line. The amount appears only where F-90 draws the invoice block.
 2. Show "Amount: see invoice" with a link to the invoice block.
 
-### LC-Q23 · F-93 · Confirm what happened: more than one send, and what shows after recording
+### LC-Q27 · F-93 · Confirm what happened: more than one send, and what shows after recording
 The approved panel draws one set of choices and no "after" state. Live can list more than one uncertain send for the same item, and after recording the backend only returns the saved choice and its time.
 1. **(Recommended)** Draw one panel per uncertain send, headed by its plain job name (never the job number); after recording, replace that panel's inputs with "Recorded: It arrived, 23 Nov 14:05." (the choice and time from the API), with the reason for any disabled button written beside it. Say nothing about resending, reminders or checking.
 2. Show only the first uncertain send. (Not recommended: it hides a send nobody has settled.)

@@ -92,14 +92,14 @@ Whether a person may record is the server's answer: the panel is shown only on t
 - No key field exists on the proof or observation bodies (`additionalProperties:false`), so duplicates are prevented by locks, the revision check and reading the list, not a key. Reason: contract 1.24.0.
 - Gate is the tracking flag, a same-origin URL and at least one effect, not the state name. Reason: A-13; the flag is the only served answer on recovery authority.
 - Proof is a PDF through `EvidencePicker` only. Reason: the board draws only an upload and the contract needs `proof_id` for all three outcomes.
-- One panel per uncertain effect. Reason: the schema allows an array; picking one would hide an effect (LC-Q23).
+- One panel per uncertain effect. Reason: the schema allows an array; picking one would hide an effect (LC-Q27).
 - The exact subline words are mine, within D-187's "plain sublines that promise nothing the backend does not do". Reason: the answer fixed the rule, not the words.
 - Uncertain proof upload is settled from `GET {proofs_url}`. Reason: the proof POST also has no key; reading the list is the only served proof of a recording.
 - "Different `revision` or changed list" is what unlocks after an uncertain observation. Reason: no reconcile token is served.
-- The Recorded line and the disabled-reason texts are mine. Reason: no board draws them (LC-Q23).
+- The Recorded line and the disabled-reason texts are mine. Reason: no board draws them (LC-Q27).
 
 ## Conflicts with the boards
-LC-Q19 (accepted under D-187) covers the sublines, the Reason box, always-shown proof and the footer. New item LC-Q23 is in `delivery/connect/questions-batch.md` under "## Lane C".
+LC-Q19 (accepted under D-187) covers the sublines, the Reason box, always-shown proof and the footer. New item LC-Q27 is in `delivery/connect/questions-batch.md` under "## Lane C".
 1. Sublines, Reason box, proof for every outcome, footer: recommended and accepted (LC-Q19, D-187). The board's first paragraph numbers ("checked 6 times over 2 hours", "No receipt found after 6 checks") and "Chidi" have no source and are replaced by the facts-only paragraph.
-2. The board draws one panel; more than one uncertain effect gives one per effect, the "Recorded: ..." line replaces the inputs after success, and the disabled reasons sit beside the button (LC-Q23). Recommendation: keep.
+2. The board draws one panel; more than one uncertain effect gives one per effect, the "Recorded: ..." line replaces the inputs after success, and the disabled reasons sit beside the button (LC-Q27). Recommendation: keep.
 3. The lookup button lives in F-87's controls row, not on the board (LC-Q12, unchanged).
