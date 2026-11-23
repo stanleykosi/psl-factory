@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-23T12:16:13.165Z",
+  "generatedAt": "2026-11-23T12:30:27.030Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-17-mobile-error.dc.html",
   "boardName": "SCR-17-mobile-error.dc.html",
   "pageUrl": "http://127.0.0.1:4960/sign-in",
@@ -15,28 +15,28 @@
     "threshold": 0.8,
     "strictPosition": false
   },
-  "exceptionsPath": null,
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-58/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "5 board item(s) are missing from the page and are not approved exceptions (coverage 54.5% with exceptions, needs 100%).",
-    "Visual match 56.4 is below 90.",
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 59.3 is below 90.",
     "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 54.5,
-    "coverageWithExceptions": 54.5,
-    "visual": 56.4
+    "coverageWithExceptions": 100,
+    "visual": 59.3
   },
   "visual": {
-    "score": 56.4,
-    "allCellsScore": 75.2,
+    "score": 59.3,
+    "allCellsScore": 77.5,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
-    "contentCells": 1335,
-    "mismatchedCells": 582
+    "contentCells": 1296,
+    "mismatchedCells": 527
   },
   "coverage": {
     "total": 11,
@@ -61,7 +61,7 @@
           "x": 20,
           "y": 16,
           "w": 156,
-          "h": 26
+          "h": 20
         }
       },
       {
@@ -80,9 +80,9 @@
         },
         "pageBox": {
           "x": 0,
-          "y": 58,
+          "y": 52,
           "w": 390,
-          "h": 787
+          "h": 792
         }
       },
       {
@@ -101,7 +101,7 @@
         },
         "pageBox": {
           "x": 20,
-          "y": 86,
+          "y": 80,
           "w": 350,
           "h": 28
         }
@@ -124,7 +124,7 @@
         },
         "pageBox": {
           "x": 20,
-          "y": 305,
+          "y": 299,
           "w": 350,
           "h": 48
         }
@@ -149,7 +149,7 @@
         },
         "pageBox": {
           "x": 20,
-          "y": 378,
+          "y": 372,
           "w": 20,
           "h": 20
         }
@@ -171,7 +171,7 @@
         },
         "pageBox": {
           "x": 20,
-          "y": 429,
+          "y": 423,
           "w": 350,
           "h": 50
         }
@@ -191,7 +191,10 @@
           "w": 350,
           "h": 38
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: it would show a record name to a signed-out person (G-SCR17-2); left out with no replacement.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       },
       {
         "kind": "alert",
@@ -205,7 +208,10 @@
           "w": 350,
           "h": 56
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: the API gives no attempt count or pause time (A-46, A-47); the callout reads \"That email and password don't match.\".",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       },
       {
         "kind": "Text field",
@@ -219,7 +225,10 @@
           "w": 350,
           "h": 52
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: the API accepts a work email or a sign-in name, so the first field reads \"Work email or sign-in name\".",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       },
       {
         "kind": "Link",
@@ -233,7 +242,10 @@
           "w": 152,
           "h": 44
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: until F-59 it is plain text, \"Forgot your password? Reset opens in a later release. Ask your administrator for help.\", centred where the link sits (D-178).",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       },
       {
         "kind": "Text",
@@ -247,7 +259,10 @@
           "w": 350,
           "h": 34
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: it states an admission rule the backend owns (A-48); left out with no replacement.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       }
     ],
     "misplaced": [
@@ -265,7 +280,7 @@
           "x": 20,
           "y": 16,
           "w": 156,
-          "h": 26
+          "h": 20
         },
         "reasons": [
           "inside the main area on the board, inside a side panel on the page"
@@ -283,9 +298,9 @@
         },
         "pageBox": {
           "x": 0,
-          "y": 58,
+          "y": 52,
           "w": 390,
-          "h": 787
+          "h": 792
         },
         "reasons": [
           "order: on the board it comes after Text field \"Password\"; on the page it comes after Checkbox \"Keep me signed in on this phone\""
@@ -300,7 +315,7 @@
         "container": "form",
         "pageBox": {
           "x": 20,
-          "y": 130,
+          "y": 124,
           "w": 350,
           "h": 41
         }
@@ -312,7 +327,7 @@
         "container": "form",
         "pageBox": {
           "x": 50,
-          "y": 377,
+          "y": 371,
           "w": 203,
           "h": 21
         }
@@ -324,13 +339,13 @@
         "container": "form",
         "pageBox": {
           "x": 20,
-          "y": 495,
+          "y": 489,
           "w": 350,
           "h": 39
         }
       }
     ],
-    "unexcepted": 5
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."

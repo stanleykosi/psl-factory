@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-23T12:15:57.671Z",
+  "generatedAt": "2026-11-23T12:30:13.125Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-17-desktop.dc.html",
   "boardName": "SCR-17-desktop.dc.html",
   "pageUrl": "http://127.0.0.1:4960/sign-in",
@@ -15,28 +15,28 @@
     "threshold": 0.8,
     "strictPosition": false
   },
-  "exceptionsPath": null,
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-58/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "3 board item(s) are missing from the page and are not approved exceptions (coverage 70% with exceptions, needs 100%).",
-    "Visual match 85.7 is below 90.",
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 86.9 is below 90.",
     "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 70,
-    "coverageWithExceptions": 70,
-    "visual": 85.7
+    "coverageWithExceptions": 100,
+    "visual": 86.9
   },
   "visual": {
-    "score": 85.7,
-    "allCellsScore": 93,
+    "score": 86.9,
+    "allCellsScore": 93.6,
     "width": 1440,
     "height": 760,
     "boardHeight": 760,
     "pageHeight": 760,
     "cell": 12,
-    "contentCells": 3781,
-    "mismatchedCells": 540
+    "contentCells": 3760,
+    "mismatchedCells": 491
   },
   "coverage": {
     "total": 10,
@@ -55,7 +55,7 @@
           "x": 48,
           "y": 48,
           "w": 712,
-          "h": 23
+          "h": 22
         },
         "pageBox": {
           "x": 48,
@@ -74,9 +74,9 @@
         "looks": [],
         "boardBox": {
           "x": 48,
-          "y": 694,
+          "y": 693,
           "w": 712,
-          "h": 18
+          "h": 19
         },
         "pageBox": {
           "x": 48,
@@ -139,7 +139,7 @@
         ],
         "boardBox": {
           "x": 864,
-          "y": 285,
+          "y": 288,
           "w": 520,
           "h": 52
         },
@@ -164,7 +164,7 @@
         ],
         "boardBox": {
           "x": 868,
-          "y": 365,
+          "y": 368,
           "w": 20,
           "h": 20
         },
@@ -186,7 +186,7 @@
         "looks": [],
         "boardBox": {
           "x": 864,
-          "y": 413,
+          "y": 416,
           "w": 520,
           "h": 50
         },
@@ -210,9 +210,12 @@
           "x": 864,
           "y": 115,
           "w": 520,
-          "h": 18
+          "h": 19
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: it would show a record name to a signed-out person (G-SCR17-2); left out with no replacement.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       },
       {
         "kind": "Text field",
@@ -222,11 +225,14 @@
         "container": "form",
         "boardBox": {
           "x": 864,
-          "y": 183,
+          "y": 185,
           "w": 520,
           "h": 52
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: the API accepts a work email or a sign-in name, so the first field reads \"Work email or sign-in name\".",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       },
       {
         "kind": "Link",
@@ -236,11 +242,14 @@
         "container": "form",
         "boardBox": {
           "x": 864,
-          "y": 479,
+          "y": 482,
           "w": 520,
-          "h": 18
+          "h": 19
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: until F-59 it is plain text, \"Forgot your password? Reset opens in a later release. Ask your administrator for help.\", centred where the link sits (D-178).",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       }
     ],
     "misplaced": [
@@ -252,7 +261,7 @@
           "x": 48,
           "y": 48,
           "w": 712,
-          "h": 23
+          "h": 22
         },
         "pageBox": {
           "x": 48,
@@ -281,7 +290,7 @@
           "h": 760
         },
         "reasons": [
-          "order: on the board it comes after Checkbox \"Keep me signed in\"; on the page it comes after Link \"Sign in\""
+          "order: on the board it comes after Text field \"Password\"; on the page it comes after Link \"Sign in\""
         ]
       },
       {
@@ -290,9 +299,9 @@
         "name": "Work you can see moving, from first draft to verified.",
         "boardBox": {
           "x": 48,
-          "y": 694,
+          "y": 693,
           "w": 712,
-          "h": 18
+          "h": 19
         },
         "pageBox": {
           "x": 48,
@@ -331,11 +340,10 @@
         }
       }
     ],
-    "unexcepted": 3
+    "unexcepted": 0
   },
   "warnings": [
-    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped).",
-    "Fonts: Google Fonts could not be reached (fonts.gstatic.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
   ],
   "images": {
     "board": "board.png",

@@ -1,0 +1,39 @@
+{
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "You'll go straight to INV-0412, waiting for your review.",
+      "category": "removed content",
+      "reason": "D-177: it would show a record name to a signed-out person (G-SCR17-2); left out with no replacement.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+    },
+    {
+      "role": "textbox",
+      "name": "Work email",
+      "category": "label wording",
+      "reason": "D-177: the API accepts a work email or a sign-in name, so the first field reads \"Work email or sign-in name\".",
+      "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+    },
+    {
+      "role": "link",
+      "name": "Forgot your password?",
+      "category": "plain text until F-59",
+      "reason": "D-177: until F-59 it is plain text, \"Forgot your password? Reset opens in a later release. Ask your administrator for help.\", centred where the link sits (D-178).",
+      "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+    },
+    {
+      "role": "text",
+      "name": "Only PMO, Finance, HR and leadership roles have accounts. Ask your admin if you need one.",
+      "category": "removed content",
+      "reason": "D-177: it states an admission rule the backend owns (A-48); left out with no replacement.",
+      "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+    },
+    {
+      "role": "alert",
+      "name": "That email and password don't match. 3 tries left before sign-in pauses for 15 minutes.",
+      "category": "error text",
+      "reason": "D-177: the API gives no attempt count or pause time (A-46, A-47); the callout reads \"That email and password don't match.\".",
+      "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+    }
+  ]
+}

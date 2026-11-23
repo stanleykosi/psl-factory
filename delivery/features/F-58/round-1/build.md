@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 5076c040184c99a634e32d3202e375915c9900d8
+COMMIT: 473090df18b54f3897f876ef417cac262980974e
 BUILDER: builder
 LANE: full
 
@@ -19,7 +19,9 @@ LANE: full
 - Shared files touched: `AppShell`, `FrameStates`, `TopNav`, `PhoneBar`, `shell.css` (all frame-wide, as the spec says).
 
 ## Fixes
-None (round 1).
+- D-178-1 | 473090df18b54f3897f876ef417cac262980974e | the forgot-password sentence is centred at both widths
+- D-178-2 | 473090df18b54f3897f876ef417cac262980974e | phone brand bar on /sign-in is 52px, the board's height (wordmark line-height uses --text-fact-line); the frame phone bar is untouched (CSS is scoped to .signin-wordmark)
+- D-178-3 | 473090df18b54f3897f876ef417cac262980974e | delivery/features/F-58/fidelity-exceptions.json written (INV-0412 line, Work email label, error attempt count, phone footer, forgot link); the boards' sample values are not in the tool's missing lists, so they are not listed
 
 ## Acceptance criteria
 1. [x] `/sign-in`: no `/me`, no bars. Unit `sign-in.test.tsx` (spy fetch: only `GET /api/v1/session`); e2e (no navigation, no "My work" link).
@@ -54,21 +56,21 @@ None (round 1).
 
 ## Validation
 - `npx tsc --noEmit`, `npm run lint`: clean.
-- `npx vitest run`: 158 files, 3823 tests; one failure on the first full run (cash-forecast branch-diff `/me` guard) was fixed and that file re-run (43 pass); the other 157 files passed on the same run.
-- `npx playwright test` (E2E_PORT=4960 MOCK_PORT=4961) on sign-in, frame, alerts-bell, alerts, projects, exceptions, setup, document-review: 197 passed. One failure then (alerts-bell 760px bar width with the caret) fixed by hiding the caret below 900px; that spec was not re-run after the change, nor were frame.spec at 720 to 899px beyond the earlier passing run. The later CSS changes (menu text colour, sign-in column widths) were checked by screenshot only.
+- `npx vitest run`: one clean full pass, 158 files, 3823 tests.
+- Playwright sign-in, frame, alerts-bell on 4960/4961 after the last CSS changes: 91 passed. Earlier wider run (also alerts, projects, exceptions, setup, document-review): 197 passed. One failure then (alerts-bell 760px bar width with the caret) fixed by hiding the caret below 900px; that spec was not re-run after the change, nor were frame.spec at 720 to 899px beyond the earlier passing run. The later CSS changes (menu text colour, sign-in column widths) were checked by screenshot only.
 - `npm run build` (production, mock origin and live origin): succeeded.
 - I did not run `delivery/checks.sh` itself because it runs `npm ci`, which the notes said not to do; its other steps (django check, lint, typecheck, test, build) were run individually. `manage.py check` was not run separately.
 - Servers I started on 4960, 4961, 8000 and 3100 are stopped; I left 3000 and 3001 alone.
 
-## Fidelity (one run per board, production build on the mock, both sizes)
-Tool: a scratchpad copy of `fidelity.mjs` with one added step for the error boards (type a wrong pair and press Sign in so the callout is showing). Reports and side-by-side images are in `round-1/fidelity/`.
-| Board | Coverage | Visual |
+## Fidelity (re-run once per board with fidelity-exceptions.json, production build on the mock)
+Reports and side-by-side images replaced in `round-1/fidelity/`.
+| Board | Coverage (with exceptions) | Visual |
 |---|---|---|
-| SCR-17-desktop @1440 | 70% | 85.7 |
-| SCR-17-mobile @390 | 60% | 56.7 |
-| SCR-17-desktop-error @1440 | 63.6% | 81.9 |
-| SCR-17-mobile-error @390 | 54.5% | 56.4 |
-Not at 100% or visual 90, and no exceptions file exists yet. The gaps are the D-177 decisions: missing "You'll go straight to INV-0412" line, "Work email" label (mine reads "Work email or sign-in name"), "Forgot your password?" link (plain sentence until F-59), the mobile footer sentence, the attempt count in the error text; the pre-filled email and password and the ticked checkbox in the boards; and layout shifts below the removed INV line (the phone board is the lowest because everything under the heading sits about 25px higher). I need an exceptions file approved for those; I did not write one. I fixed one real layout difference first (form column width, wordmark width); the desktop visual went 71 to 85.7 after that. Open design question: the phone bar is 6px taller than the board.
+| SCR-17-desktop @1440 | 100% | 86.9 |
+| SCR-17-mobile @390 | 100% | 65.1 |
+| SCR-17-desktop-error @1440 | 100% | 81.9 |
+| SCR-17-mobile-error @390 | 100% | 59.3 |
+Coverage is 100% on all four. Phone visual (65.1, 59.3) is the approved waiver for the removed content. Desktop visual (86.9, 81.9) is also under 90 and needs a waiver or decision from the design engineer: the remaining difference is the removed INV line moving the form up, empty fields where the boards show pre-filled values and a ticked box, and the longer label. Phone bar measured 52px.
 
 ## Notes for the coordinator
 - Shared bug fixed once: none found in shared code.
@@ -78,3 +80,6 @@ Not at 100% or visual 90, and no exceptions file exists yet. The gaps are the D-
 
 ## Blocked
 Not blocked.
+
+## Worktree note
+A stray untracked `node_modules/` (only `.vite` and `.vitest-cache`) appeared at the worktree root when a mistyped command ran vitest from there; the permission system refused my `rm -rf` of it, so it is still there. Delete `/Users/Hunchoo/psl-factory/node_modules` before the gate (`git status --porcelain` shows only that). A stray vitest process from that command may also still be running (task b3sq5zc2h).

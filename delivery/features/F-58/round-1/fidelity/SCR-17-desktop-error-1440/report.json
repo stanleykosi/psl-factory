@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-23T12:16:08.423Z",
+  "generatedAt": "2026-11-23T12:30:22.903Z",
   "boardPath": "/Users/Hunchoo/psl-factory/design/canvas/project/SCR-17-desktop-error.dc.html",
   "boardName": "SCR-17-desktop-error.dc.html",
   "pageUrl": "http://127.0.0.1:4960/sign-in",
@@ -15,28 +15,28 @@
     "threshold": 0.8,
     "strictPosition": false
   },
-  "exceptionsPath": null,
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-58/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "4 board item(s) are missing from the page and are not approved exceptions (coverage 63.6% with exceptions, needs 100%).",
+    "Every board item is on the page or approved as an exception (100%).",
     "Visual match 81.9 is below 90.",
     "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 63.6,
-    "coverageWithExceptions": 63.6,
+    "coverageWithExceptions": 100,
     "visual": 81.9
   },
   "visual": {
     "score": 81.9,
-    "allCellsScore": 91.2,
+    "allCellsScore": 91.1,
     "width": 1440,
     "height": 760,
     "boardHeight": 760,
     "pageHeight": 760,
     "cell": 12,
     "contentCells": 3760,
-    "mismatchedCells": 679
+    "mismatchedCells": 680
   },
   "coverage": {
     "total": 11,
@@ -212,7 +212,10 @@
           "w": 520,
           "h": 19
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: it would show a record name to a signed-out person (G-SCR17-2); left out with no replacement.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       },
       {
         "kind": "alert",
@@ -226,7 +229,10 @@
           "w": 520,
           "h": 56
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: the API gives no attempt count or pause time (A-46, A-47); the callout reads \"That email and password don't match.\".",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       },
       {
         "kind": "Text field",
@@ -240,7 +246,10 @@
           "w": 520,
           "h": 52
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: the API accepts a work email or a sign-in name, so the first field reads \"Work email or sign-in name\".",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       },
       {
         "kind": "Link",
@@ -254,7 +263,10 @@
           "w": 520,
           "h": 19
         },
-        "exception": null
+        "exception": {
+          "reason": "D-177: until F-59 it is plain text, \"Forgot your password? Reset opens in a later release. Ask your administrator for help.\", centred where the link sits (D-178).",
+          "approved_by": "design engineer, 23 Nov 2026 — D-177, D-178"
+        }
       }
     ],
     "misplaced": [
@@ -357,7 +369,7 @@
         }
       }
     ],
-    "unexcepted": 4
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory/design/mascots/canvas-assets.json (19 mapped)."
