@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-119",
   "outcome": "A person records the project retrospective as a saved version and sees where it stands in the closure checklist",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -81,7 +81,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -97,7 +97,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-119/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -139,11 +139,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-DELIVERY-CLOSURE",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "main",
+    "base_sha": "d906028a759d42bc124e6c935b91c225ca09b2ae",
+    "task_branch": "fe-delivery-closure-retrospective",
+    "head_sha": "d906028a759d42bc124e6c935b91c225ca09b2ae",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d2",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -153,7 +153,7 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": []
   },
   "parallel_execution": {
     "enabled": false,
@@ -186,14 +186,22 @@
     }
   },
   "created_at": "2026-11-23T17:35:28Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-23T17:53:31Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T18:22:41Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -211,7 +219,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null
