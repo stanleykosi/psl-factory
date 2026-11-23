@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-57",
   "outcome": "The app frame loads from the live API: live types and client, session and error handling, role words from role-dashboard",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -523,9 +523,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -544,9 +544,9 @@
     "pr_author": "hunchoweb",
     "designated_approver": "hunchoweb",
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "44878365c9d1e71bb56a3e9b3cd8a0d7ddbb240a",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/document-review.spec.ts",
@@ -746,6 +746,38 @@
       "from": "READY_FOR_ACCEPTANCE",
       "to": "PR_OPEN",
       "at": "2026-11-23T09:40:36Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-23T09:43:38Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-23T09:43:39Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-23T09:44:13Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-23T09:44:14Z",
       "round": 2,
       "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
       "reason": null

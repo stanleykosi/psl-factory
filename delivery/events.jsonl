@@ -3985,3 +3985,9 @@
 {"at":"2026-11-23T09:40:58Z","feature":"F-57","round":2,"kind":"fields","fields":{"git.ci_status":"passed"}}
 {"at":"2026-11-23T09:41:45Z","feature":"F-57","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"5262fbd45ea1","reasons":["risk 'medium' is not auto-mergeable","surface 'auth' always needs a human","surface 'contract-change' always needs a human","surface 'product-decision' always needs a human","surface 'security' always needs a human","83 changed files exceed the auto-merge limit of 15","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
 {"at":"2026-11-23T09:41:45Z","feature":"F-57","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
+{"at":"2026-11-23T09:43:37Z","feature":"F-57","round":2,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-23T09:43:38Z","feature":"F-57","round":2,"kind":"transition","head":"5262fbd45ea1","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-23T09:43:39Z","feature":"F-57","round":2,"kind":"transition","head":"5262fbd45ea1","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-23T09:44:12Z","feature":"F-57","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"44878365c9d1e71bb56a3e9b3cd8a0d7ddbb240a"}}
+{"at":"2026-11-23T09:44:13Z","feature":"F-57","round":2,"kind":"transition","head":"5262fbd45ea1","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-23T09:44:14Z","feature":"F-57","round":2,"kind":"transition","head":"5262fbd45ea1","from":"MERGED","to":"DONE"}
