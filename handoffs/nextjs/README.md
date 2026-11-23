@@ -1,12 +1,12 @@
 # PSL Operations Factory · Next.js handoff
 
-Start from the existing [Next.js app](../../frontend/). This handoff uses the API-only OpenAPI 1.25.0 contract with 401 operations across 284 paths. Django owns sessions, work, approvals, uploads and background work. The [archived Django pages](../../legacy_ui/README.md) are available for local comparison. Use the Railway API through Next.js when that app is connected. [Production OpenAPI](https://psl-web-production.up.railway.app/api/v1/openapi.json) · [Acceptance OpenAPI](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
+Start from the existing [Next.js app](../../frontend/). This handoff uses the API-only OpenAPI 1.26.0 contract with 401 operations across 284 paths. Django owns sessions, work, approvals, uploads and background work. The [archived Django pages](../../legacy_ui/README.md) are available for local comparison. Use the Railway API through Next.js when that app is connected. [Production OpenAPI](https://psl-web-production.up.railway.app/api/v1/openapi.json) · [Acceptance OpenAPI](https://psl-design-web-design-acceptance.up.railway.app/api/v1/openapi.json)
 
 ## Files to use
 
 | File | Use it for |
 | --- | --- |
-| [OpenAPI 1.25.0 snapshot](psl-factory.openapi.json) | Inspect request fields, status codes and response shapes. The snapshot matches the [canonical contract](../../contracts/psl-factory.openapi.json) at the handoff revision. |
+| [OpenAPI 1.26.0 snapshot](psl-factory.openapi.json) | Inspect request fields, status codes and response shapes. The snapshot matches the [canonical contract](../../contracts/psl-factory.openapi.json) at the handoff revision. |
 | [Generated TypeScript types](live-schema.d.ts) | Type the first connected pages. Regenerate from the canonical contract when it changes. |
 | [Screen-to-API map](factory-api-screen-map.json) | Find the mounted operations and Django reference routes for each of the 59 screen groups. |
 | [262-state crosswalk](screen-state-crosswalk.csv) | Filter by state ID or journey to find the design board, shared OpenAPI operations and exact responses tested for that state. |

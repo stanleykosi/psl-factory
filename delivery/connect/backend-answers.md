@@ -2,7 +2,7 @@
 
 **224 answered screen questions**
 
-Each entry keeps the frontend developer's original question and ID. The questions reflect API 1.22.0, which was live when the frontend team wrote them. The answers describe API 1.25.0. Paths in the answers are relative to `/api/v1`.
+Each entry keeps the frontend developer's original question and ID. The questions reflect API 1.22.0, which was live when the frontend team wrote them. The answers describe API 1.26.0. Paths in the answers are relative to `/api/v1`.
 
 [Original frontend questions](backend-questions.md) · [13 priority answers and five follow-ups](backend-answers-2026-11-23.md) · [OpenAPI contract](../../contracts/psl-factory.openapi.json) · [Production API](https://psl-web-production.up.railway.app/api/v1/openapi.json)
 
@@ -1246,9 +1246,9 @@ Each entry keeps the frontend developer's original question and ID. The question
 
 **Question**  Can the intake offer "all projects I can see" (flag `all_projects_available`) without listing every record id?
 
-**Answer**  The PMO Lead and Finance Lead can generate leadership reports covering all PSL projects. The Tuesday and monthly reports both include all projects automatically. Show the reporting period and report type and let the backend determine the project list. Existing permissions continue to govern the information each lead can see for those projects.
+**Answer**  The PMO Lead and Finance Lead can generate either format whenever they need it. The Factory’s AI workers use the current records each lead can access across all PSL projects. Show when the report gathered its information. Staff can generate the report without choosing dates or waiting for a day of the week.
 
-**API 1.25.0**  `GET /projects/{case_id}/leadership-report-intake` returns `automatic_project_scope: true` for either current lead. Start the Tuesday or monthly report with its period, audience and template. The backend fills in the project list and eligible evidence. `GET /work/{work_id}/leadership-report` returns the captured list under `coverage.project_register`, with counts and unavailable areas. Existing report reviews and recipient checks still apply.
+**API 1.26.0**  `GET /projects/{case_id}/leadership-report-intake` returns `automatic_project_scope: true` for either current lead. Start either format with the report type, audience and template. Omit `start_at` and `end_at` for the information available at the time of the request. Use `background: true` to queue the agent work. When model reading is enabled for the report, the specialist receives a checked summary of the permitted project records. Read the capture time under `coverage.captured_at` and the project list under `coverage.project_register`. Existing report reviews and recipient checks still apply.
 
 #### D-34
 

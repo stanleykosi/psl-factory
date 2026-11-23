@@ -7982,9 +7982,9 @@ export interface operations {
                         template_id: number | null;
                         content_id?: number | null;
                         /** Format: date-time */
-                        start_at: string;
+                        start_at?: string;
                         /** Format: date-time */
-                        end_at: string;
+                        end_at?: string;
                         /** @constant */
                         kind: "internal_tuesday";
                         /** @enum {unknown} */
@@ -8038,9 +8038,9 @@ export interface operations {
                         template_id: number | null;
                         content_id?: number | null;
                         /** Format: date-time */
-                        start_at: string;
+                        start_at?: string;
                         /** Format: date-time */
-                        end_at: string;
+                        end_at?: string;
                         /** @constant */
                         kind: "monthly_executive";
                         /** @enum {unknown} */
@@ -9036,8 +9036,8 @@ export interface operations {
                         inputs: {
                             template_id: number | null;
                             content_id: number | null;
-                            start_at: string;
-                            end_at: string;
+                            start_at?: string;
+                            end_at?: string;
                             /** @enum {unknown} */
                             kind: "internal_tuesday" | "monthly_executive";
                             /** @enum {unknown} */
@@ -9050,7 +9050,7 @@ export interface operations {
                                 changes: number[];
                                 escalations: number[];
                             };
-                            scope?: {
+                            scope: {
                                 /** @constant */
                                 mode: "all_authorised_projects";
                                 actor: number;
@@ -9062,6 +9062,8 @@ export interface operations {
                                 actor: number;
                                 domains: ("meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations")[];
                                 register_id: number | null;
+                                /** @constant */
+                                basis?: "current_information";
                             };
                         };
                     };
@@ -12594,8 +12596,8 @@ export interface operations {
                         inputs: {
                             template_id: number | null;
                             content_id: number | null;
-                            start_at: string;
-                            end_at: string;
+                            start_at?: string;
+                            end_at?: string;
                             /** @enum {unknown} */
                             kind: "internal_tuesday" | "monthly_executive";
                             /** @enum {unknown} */
@@ -12608,7 +12610,7 @@ export interface operations {
                                 changes: number[];
                                 escalations: number[];
                             };
-                            scope?: {
+                            scope: {
                                 /** @constant */
                                 mode: "all_authorised_projects";
                                 actor: number;
@@ -12620,6 +12622,8 @@ export interface operations {
                                 actor: number;
                                 domains: ("meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations")[];
                                 register_id: number | null;
+                                /** @constant */
+                                basis?: "current_information";
                             };
                         };
                     };
@@ -21207,6 +21211,8 @@ export interface operations {
                                 actor: number;
                                 domains: ("meetings" | "actions" | "milestones" | "issues" | "changes" | "escalations")[];
                                 register_id: number | null;
+                                /** @constant */
+                                basis?: "current_information";
                             };
                         };
                         coverage: {
@@ -21338,9 +21344,9 @@ export interface operations {
                         template_id: number | null;
                         content_id?: number | null;
                         /** Format: date-time */
-                        start_at: string;
+                        start_at?: string;
                         /** Format: date-time */
-                        end_at: string;
+                        end_at?: string;
                         /** @constant */
                         kind: "internal_tuesday";
                         /** @enum {unknown} */
@@ -21391,9 +21397,9 @@ export interface operations {
                         template_id: number | null;
                         content_id?: number | null;
                         /** Format: date-time */
-                        start_at: string;
+                        start_at?: string;
                         /** Format: date-time */
-                        end_at: string;
+                        end_at?: string;
                         /** @constant */
                         kind: "monthly_executive";
                         /** @enum {unknown} */
@@ -23505,6 +23511,7 @@ export interface operations {
                             currency: string;
                             basis: string;
                             amount: string;
+                            sample: boolean;
                         }[];
                         more_cash_groups: boolean;
                         counts: {

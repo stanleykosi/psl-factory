@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PSL Operations Factory live API",
-    "version": "1.25.0",
+    "version": "1.26.0",
     "description": "Use the current same-origin Django session. Read the CSRF token from GET /api/v1/session or GET /api/v1/me. Use the typed API routes for the Next.js app."
   },
   "security": [
@@ -9264,8 +9264,6 @@
                         },
                         "required": [
                           "template_id",
-                          "start_at",
-                          "end_at",
                           "kind",
                           "audience"
                         ],
@@ -9612,8 +9610,6 @@
                         },
                         "required": [
                           "template_id",
-                          "start_at",
-                          "end_at",
                           "kind",
                           "audience"
                         ],
@@ -13193,6 +13189,9 @@
                                             "type": "null"
                                           }
                                         ]
+                                      },
+                                      "basis": {
+                                        "const": "current_information"
                                       }
                                     },
                                     "required": [
@@ -13208,11 +13207,10 @@
                             "required": [
                               "template_id",
                               "content_id",
-                              "start_at",
-                              "end_at",
                               "kind",
                               "audience",
-                              "selections"
+                              "selections",
+                              "scope"
                             ],
                             "additionalProperties": false
                           }
@@ -26290,6 +26288,9 @@
                                             "type": "null"
                                           }
                                         ]
+                                      },
+                                      "basis": {
+                                        "const": "current_information"
                                       }
                                     },
                                     "required": [
@@ -26305,11 +26306,10 @@
                             "required": [
                               "template_id",
                               "content_id",
-                              "start_at",
-                              "end_at",
                               "kind",
                               "audience",
-                              "selections"
+                              "selections",
+                              "scope"
                             ],
                             "additionalProperties": false
                           }
@@ -59048,6 +59048,9 @@
                                       "type": "null"
                                     }
                                   ]
+                                },
+                                "basis": {
+                                  "const": "current_information"
                                 }
                               },
                               "required": [
@@ -59942,8 +59945,6 @@
                         },
                         "required": [
                           "template_id",
-                          "start_at",
-                          "end_at",
                           "kind",
                           "audience"
                         ],
@@ -60281,8 +60282,6 @@
                         },
                         "required": [
                           "template_id",
-                          "start_at",
-                          "end_at",
                           "kind",
                           "audience"
                         ],
@@ -67758,6 +67757,9 @@
                           "amount": {
                             "type": "string",
                             "minLength": 1
+                          },
+                          "sample": {
+                            "type": "boolean"
                           }
                         },
                         "required": [
@@ -67765,7 +67767,8 @@
                           "workspace",
                           "currency",
                           "basis",
-                          "amount"
+                          "amount",
+                          "sample"
                         ],
                         "additionalProperties": false
                       },

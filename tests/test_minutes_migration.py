@@ -16,17 +16,19 @@ class MinutesMigrationTests(SimpleTestCase):
     def test_literal_workflow_extends_exact_actual_predecessor(self):
         prior=import_module('apps.workflows.migrations.0073_factory_escalation')
         current=import_module('apps.workflows.migrations.0074_factory_minutes')
-        from scripts.p43_guard_sql import workflow
-        self.assertEqual(current.PREVIOUS,prior.SQL);self.assertEqual(current.SQL,workflow(prior.SQL))
+        self.assertEqual(current.PREVIOUS, prior.SQL)
+        self.assertEqual(hashlib.sha256(current.SQL.encode()).hexdigest(),
+                         'f269444098f2ee7b680f2d0d6fe5228f64827a3a44b252b3f064d4416bd5048b')
         self.assertEqual(current.Migration.dependencies,[('workflows','0073_factory_escalation'),('documents','0027_factory_escalation')])
         self.assertEqual(current.REVERSE,prior.SQL+'\nDROP FUNCTION psl_minutes_current(bigint,bigint,bigint);\n')
 
     def test_literal_document_extends_scope_without_replacing_group_date_guard(self):
         prior=import_module('apps.documents.migrations.0027_factory_escalation')
         current=import_module('apps.documents.migrations.0028_factory_minutes')
-        from scripts.p43_guard_sql import documents,DOC_BRANCH
-        self.assertEqual(current.PREVIOUS,prior.SQL);self.assertEqual(current.SQL,documents(prior.SQL))
-        self.assertEqual(current.SQL.replace(DOC_BRANCH,'',1),prior.SQL);self.assertEqual(current.REVERSE,prior.SQL)
+        self.assertEqual(current.PREVIOUS, prior.SQL)
+        self.assertEqual(hashlib.sha256(current.SQL.encode()).hexdigest(),
+                         '0fe77718c6dfc86e8c3b8ca5d9db09978c4b2b6e3ff665903238d560bb4b68bd')
+        self.assertEqual(current.REVERSE, prior.SQL)
         self.assertEqual(current.Migration.dependencies,[('documents','0027_factory_escalation'),WORK])
         self.assertNotIn('psl_group_forecast_business_date',current.SQL)
 

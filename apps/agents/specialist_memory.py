@@ -54,6 +54,23 @@ def lines_for(source):
     return lines if len(lines) <= 100 and all(len(v) <= 1000 for v in lines.values()) else {}
 
 
+def leadership_observations(projects):
+    from apps.pmo.models import ActionState, ChangeVersion, IssueState, MeetingVersion, Milestone
+
+    for domain, model, fields in (
+        ("meetings", MeetingVersion, ("purpose", "summary")),
+        ("actions", ActionState, ("status", "description")),
+        ("milestones", Milestone, ("name", "completed_at")),
+        ("issues", IssueState, ("status", "title")),
+        ("changes", ChangeVersion, ("category", "module")),
+    ):
+        pins = {revision: (project["name"], evidence)
+                for project in projects for _, revision, evidence in project["inventory"][domain]}
+        for revision, first, second in model.objects.filter(pk__in=pins).order_by("-pk").values_list("pk", *fields)[:5]:
+            name, evidence = pins[revision]
+            yield f"{name} · {domain} record {evidence} · {first} · {str(second)[:350]}"
+
+
 def inputs_for(work, sources, profile, actor, process):
     if work.definition == "process-handoff/v1":
         from apps.workflows.native_stations import PROJECTION, checked_work
@@ -92,6 +109,38 @@ def inputs_for(work, sources, profile, actor, process):
                     lines[str(n)] = field + ": " + ("unknown" if value is None else str(value))
             if all(len(line) <= 1000 for line in lines.values()):
                 yield row.evidence, "delivery_progress_observation", lines
+        return
+    if work.definition == "pmo-leadership-report/v1" and process in ("P40", "P42"):
+        from apps.pmo import leadership_project_scope as coverage
+        from apps.workflows import factory_leadership as leadership
+        from apps.workflows.factory_processes import process_for
+
+        if work.source_head != sources.get(leadership.KIND) or process != process_for(work, "ACT04", {}, profile):
+            return
+        data = leadership.source(work, actor)
+        manifest = data["manifest"]
+        scope = manifest.get("project_scope", {})
+        if scope.get("mode") != coverage.LEAD_MODE:
+            return
+        # The report manifest already checks each project's evidence permissions.
+        # Submit a bounded projection of that exact view to the model.
+        statements = [
+            f"Current accessible records for {len(scope['projects'])} PSL projects.",
+            *(f"{domain}: {count} accessible records." for domain, count in scope["record_counts"].items()),
+        ]
+        for project in scope["projects"][:60]:
+            inventory = project["inventory"]
+            counts = ", ".join(f"{len(inventory[domain])} {domain}" for domain in scope["domains"]
+                               if domain not in project["unavailable_domains"] and inventory[domain])
+            unknowns = ", ".join(project["unavailable_domains"])
+            entry = f"{project['name']}. Recorded facts: {counts or 'none in this view'}."
+            if unknowns:
+                entry += f" Unavailable areas: {unknowns}."
+            statements.append(entry)
+        if len(scope["projects"]) > 60:
+            statements.append("The named examples cover 60 projects. The overall counts include the full register.")
+        statements.extend(leadership_observations(scope["projects"]))
+        yield work.source_head, leadership.KIND, {str(index): line for index, line in enumerate(statements, 1)}
         return
     kinds = set(profile["required_evidence_kinds"])
     if work.definition == "engagement/v1":
@@ -370,7 +419,7 @@ def run_once():
             size=len(data),
             citation_lines=citations,
             anchors=anchors,
-            disposition=answer["assessment"],
+            disposition="insufficient" if answer["gaps"] and answer["assessment"] == "supported" else answer["assessment"],
         )
     except (PermissionDenied, ValidationError) as exc:
         finding = "Source permission changed." if isinstance(exc, PermissionDenied) else exc.messages[0][:160]
@@ -440,9 +489,9 @@ def sources_for(actor, cases, definitions, *, work_id=None, review=False):
 
 
 def outcome_sources(actor, cases, definitions):
-    from apps.workflows.factory_views import visible
+    from apps.workflows.factory_views import visible, work_grant_scope
 
-    allowed = visible(actor).filter(case_id__in=cases, definition__in=definitions, status="verified")
+    allowed = work_grant_scope(actor).filter(case_id__in=cases, definition__in=definitions, status="verified")
     from apps.workflows.native_station_access import candidates, observe
     from apps.workflows.native_station_models import NativeStationReceipt
     from django.db.models import Q
@@ -473,10 +522,12 @@ def outcome_sources(actor, cases, definitions):
     attempts = (
         FactoryAttempt.objects.filter(activity__work__in=allowed, activity__kind="ACT13", phase="observed")
         .select_related("activity__work__case", "activity__work__actor")
-        .order_by("-pk")[:6]
+        .order_by("-pk")[:18]
     )
+    attempts = list(attempts)
+    visible_ids = set(visible(actor, candidates=[row.activity.work_id for row in attempts]).values_list("pk", flat=True))
     result = []
-    for attempt in attempts:
+    for attempt in (row for row in attempts if row.activity.work_id in visible_ids):
         work = attempt.activity.work
         try:
             factory.access(actor, work.case, "factory.read", work.definition)
@@ -503,6 +554,8 @@ def outcome_sources(actor, cases, definitions):
                 "url": reverse("factory_detail", args=[work.pk]),
             }
         )
+        if len(result) == 6:
+            break
     return native_results + result
 
 

@@ -3,7 +3,6 @@ import ast,hashlib,re
 from pathlib import Path
 from importlib import import_module
 from django.test import SimpleTestCase
-from scripts.statement_ppe_guard import extend
 
 class StatementPPEMigrationTests(SimpleTestCase):
     def test_literal_functions_preserve_exact_parent_clauses(self):
@@ -13,7 +12,20 @@ class StatementPPEMigrationTests(SimpleTestCase):
             prior=import_module(f'apps.{app}.migrations.{parent}');new=import_module(f'apps.{app}.migrations.{current}')
             self.assertEqual(hashlib.sha256(Path(prior.__file__).read_bytes()).hexdigest(),digest)
             bodies=re.findall(r'CREATE OR REPLACE FUNCTION '+function+r'\(\).*?\$\$;',prior.SQL,re.S)
-            self.assertEqual(bodies,[new.PREVIOUS]);self.assertEqual(new.SQL,extend(new.PREVIOUS,publication))
+            self.assertEqual(bodies,[new.PREVIOUS])
+            old = "(SELECT count(*) FROM finance_financestatementinput si WHERE si.statement_id=r.id)"
+            new_total = f"({old}+(SELECT count(*) FROM finance_financestatementppeinput pi WHERE pi.statement_id=r.id))"
+            inventory = "=jsonb_array_length(r.snapshot->'inputs')"
+            recipients = 'NEW.recipient_ids' if publication else 'p.recipient_ids'
+            delta = (
+                new_total + inventory
+                + " AND psl_statement_ppe_current(r.id) AND psl_statement_ppe_document_valid(r.id,b.version_id,b.snapshot)"
+                + f" AND NOT EXISTS(SELECT 1 FROM jsonb_array_elements_text({recipients}) uid"
+                + " WHERE EXISTS(SELECT 1 FROM finance_financestatementppeinput pi WHERE pi.statement_id=r.id)"
+                + " AND NOT psl_ppe_grants(r.case_id,uid::bigint,ARRAY['case.read','finance.read','ppe.read']))"
+            )
+            self.assertEqual(new.SQL.count(delta), 1)
+            self.assertEqual(new.SQL.replace(delta, old + inventory, 1), new.PREVIOUS)
             self.assertNotIn('CREATE TRIGGER',new.SQL)
             tree=ast.parse(Path(new.__file__).read_text())
             imports=[n for n in ast.walk(tree) if isinstance(n,(ast.Import,ast.ImportFrom))]

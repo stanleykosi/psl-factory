@@ -17,6 +17,7 @@ from apps.policy.services import active_component, reference_values
 COMPONENT = 'OPS.leadership_project_scope'
 MODE = 'all_authorised_projects'
 LEAD_MODE = 'all_psl_projects'
+CURRENT = 'current_information'
 REGISTER_KIND = 'agent_private_leadership_project_register'
 REGISTER_SOURCE = 'psl:leadership-project-register/v1'
 GENERATED_SOURCE = 'psl:leadership-project-coverage/v1'
@@ -112,13 +113,14 @@ def sections(manifest, kind):
         counts = ', '.join(f"{scope['record_counts'][domain]} {domain}" for domain in domains)
         related = sorted({row[2] for member in scope['projects'] for domain in domains
                           for row in member['inventory'][domain]})
-        statement = f'Current records in the selected period include {counts}. ' if counts else ''
+        label = 'Current records include' if scope.get('basis') == CURRENT else 'Current records in the selected period include'
+        statement = f'{label} {counts}. ' if counts else ''
         result[theme] = {'text': statement + definitions[theme], 'coverage': 'unknown',
                          'evidence_ids': related[:18] or fallback}
     return result
 
 
-def prepare_inputs(actor, case, inputs):
+def prepare_inputs(actor, case, inputs, *, current=False):
     """Accept a human-selected domain list and derive authority and provenance internally."""
     from .leadership_reporting import DOMAINS
 
@@ -128,6 +130,8 @@ def prepare_inputs(actor, case, inputs):
             raise ValidationError('Leadership reports automatically use all PSL projects and their permitted records.')
         inputs = dict(inputs, selections={domain: [] for domain in DOMAINS}, content_id=None,
                       scope={'mode': LEAD_MODE, 'actor': actor.pk, 'register_id': None, 'domains': sorted(DOMAINS)})
+        if current:
+            inputs['scope']['basis'] = CURRENT
         manifest = snapshot(case, inputs)
         lock_projects(case, manifest, {actor.pk})
         if snapshot(case, inputs) != manifest:

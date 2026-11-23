@@ -89,6 +89,17 @@ class LeadershipProjectScopeTests(TestCase):
         return config
 
     def test_leads_generate_both_reports_over_all_same_organisation_projects(self):
+        import json
+        import os
+        from unittest.mock import patch
+
+        from adapters import case_uploads, openrouter
+        from apps.agents import specialist_memory as specialists
+        from apps.agents.specialist_models import SpecialistReading
+        from apps.documents.controlled import register_template
+        from apps.pmo.leadership_reporting import THEMES
+        from apps.workflows.models import FactoryAttempt
+        from tests.document_helpers import artifact
         from tests.helpers import admit_department
 
         second, _ = self.project('Included PSL project')
@@ -98,6 +109,19 @@ class LeadershipProjectScopeTests(TestCase):
         Case.objects.create(tenant=self.case.tenant, synthetic=False, title='Outside the sample', kind='project')
         for action in ('case.read', 'report.read'):
             Grant.objects.create(case=empty, user=self.actor, action=action)
+        Case.objects.filter(pk=second.pk).update(created_at=timezone.now() - timedelta(days=500))
+        note = add_evidence(self.actor, second.pk, 'meeting_notes', 'Older current observation.',
+                            'synthetic:leadership-project-coverage')
+        record_meeting(self.actor, second.pk, 'OLDER-CURRENT-PROJECT-RECORD', 'status',
+                       timezone.now() - timedelta(days=600), 'Current reference', 'Older noted observation',
+                       [self.actor.pk], [], note.pk, rev(second))
+        tuesday_fields = ['executive_summary', *THEMES['internal_tuesday']]
+        tuesday = register_template(self.actor, self.case.pk, 'Tuesday-format leadership report',
+            {'document_type': 'status_report', 'required_fields': tuesday_fields, 'internal_review_required': False,
+             'audience_fields': {'internal': tuesday_fields}}, self.proof.pk, rev(self.case))
+        artifact(self.actor, self.case, 'D11.template_storage_retention_rules', 'schema:psl/document-storage/v1',
+                 {'template_ids': [self.template.pk, tuesday.pk], 'repository': 'internal-versioned',
+                  'retention_days': 30}, self.proof)
         pmo, member = admit_department(self.actor, self.case, 'pmo-lead', member=True)
         finance, _ = admit_department(self.actor, self.case, 'finance-lead')
         intake = f'/api/v1/projects/{self.case.pk}/leadership-report-intake'
@@ -109,31 +133,72 @@ class LeadershipProjectScopeTests(TestCase):
                 options = self.client.get(intake, {'kind': kind})
                 self.assertEqual(options.status_code, 200, options.content)
                 self.assertTrue(options.json()['automatic_project_scope'])
-                template = self.template.pk if kind == 'monthly_executive' else None
-                response = self.client.post(intake, {'action': 'start', 'case_revision': options.json()['revision'],
-                    'key': f'synthetic-{actor.pk}-{kind}', 'reference': 'PSL company-wide report', 'background': False,
-                    'selection': {'kind': kind, 'audience': 'internal', 'template_id': template,
-                                  'start_at': self.start.isoformat(), 'end_at': self.end.isoformat()}, 'sections': None},
-                    content_type='application/json')
+                template = self.template.pk if kind == 'monthly_executive' else tuesday.pk
+                command = {'action': 'start', 'case_revision': options.json()['revision'],
+                    'key': f'synthetic-{actor.pk}-{kind}', 'reference': 'PSL company-wide report', 'background': True,
+                    'selection': {'kind': kind, 'audience': 'internal', 'template_id': template}, 'sections': None}
+                response = self.client.post(intake, command, content_type='application/json')
                 self.assertEqual(response.status_code, 201, response.content)
+                self.assertEqual(response.json()['background'], 'queued')
                 work = FactoryWork.objects.select_related('source_head', 'case').get(pk=response.json()['work_id'])
                 report = flow.source(work, actor)
                 register = report['manifest']['project_scope']
                 self.assertEqual({project['case'] for project in register['projects']}, expected)
+                self.assertEqual(register['basis'], coverage.CURRENT)
                 self.assertIn(register['register_id'], coverage.citations(report['manifest']))
                 detail = self.client.get(f'/api/v1/work/{work.pk}/leadership-report')
                 self.assertEqual(detail.status_code, 200, detail.content)
                 self.assertEqual(detail.json()['coverage']['scope'], 'all_psl_projects')
                 self.assertEqual({row['id'] for row in detail.json()['coverage']['project_register']}, expected)
                 meeting_count = next(row['count'] for row in detail.json()['coverage']['counts'] if row['domain'] == 'meetings')
-                self.assertGreaterEqual(meeting_count, 1) if actor == pmo else self.assertEqual(meeting_count, 0)
-                if template:
+                if actor == pmo:
+                    self.assertGreaterEqual(meeting_count, 2)
+                else:
+                    self.assertEqual(meeting_count, 0)
+                repeat = self.client.post(intake, {**command, 'case_revision': rev(self.case)},
+                                          content_type='application/json')
+                self.assertEqual(repeat.status_code, 201, repeat.content)
+                self.assertEqual(repeat.json()['work_id'], work.pk)
+                process = 'P40' if kind == 'internal_tuesday' else 'P42'
+                _, profile = factory.profile(work)
+                _, _, model_lines = next(specialists.inputs_for(
+                    work, {flow.KIND: work.source_head}, profile, actor, process))
+                self.assertIn(empty.title, ' '.join(model_lines.values()))
+                self.assertNotIn('Another organisation', ' '.join(model_lines.values()))
+                if actor == finance:
+                    self.assertIn('meetings: 0 accessible records.', model_lines.values())
+                    self.assertIn('Unavailable areas', ' '.join(model_lines.values()))
+                    self.assertNotIn('Older noted observation', ' '.join(model_lines.values()))
+                else:
+                    self.assertIn('Older noted observation', ' '.join(model_lines.values()))
+                if actor == pmo and kind == 'internal_tuesday':
+                    objects = {}
+                    with (patch.dict(os.environ, OPENROUTER_MODEL='test-only', OPENROUTER_API_KEY='test-only',
+                                     PSL_OPENROUTER_COORDINATION='0'),
+                          patch.object(case_uploads, 'put', side_effect=objects.__setitem__),
+                          patch.object(case_uploads, 'read', side_effect=lambda row: objects[row.key]),
+                          patch.object(openrouter, 'completion', return_value={'summary': 'Current source coverage reviewed.',
+                              'quotes': ['1'], 'gaps': [], 'assessment': 'supported', 'facts': []}) as model):
+                        self.assertTrue(factory.run_once(work.pk))
+                        self.assertTrue(SpecialistReading.objects.filter(work=work, process='P40', status='queued').exists())
+                        while specialists.run_once():
+                            pass
+                        self.assertTrue(model.called)
+                        sent = json.loads(model.call_args.args[2])
+                        self.assertEqual(sent, model_lines)
+                        factory.run_until_wait(work.pk)
+                        self.assertTrue(FactoryAttempt.objects.filter(activity__work=work, phase='observed',
+                            result__specialist__activity='ACT09', result__specialist__has_key='source_handoffs').exists())
+                else:
                     factory.run_until_wait(work.pk)
-                    work.refresh_from_db()
-                    document = flow.document(work)
-                    self.assertIsNotNone(document, work.finding)
-                    self.assertIn(empty.title, document.fields['executive_summary']['text'])
-                    self.assertEqual(MinutesReportBinding.objects.get(version=document).report.scope_owner_id, actor.pk)
+                work.refresh_from_db()
+                document = flow.document(work)
+                self.assertIsNotNone(document, work.finding)
+                self.assertIn('As of', document.fields['executive_summary']['text'])
+                self.assertIn(empty.title, document.fields['executive_summary']['text'])
+                self.assertEqual(MinutesReportBinding.objects.get(version=document).report.scope_owner_id, actor.pk)
+                self.assertTrue(FactoryAttempt.objects.filter(activity__work=work, phase='observed',
+                                                              result__specialist__activity='ACT09').exists())
         self.client.force_login(member)
         self.assertIn(self.client.get(intake, {'kind': kinds[0]}).status_code, (403, 404))
 
