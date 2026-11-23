@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-58",
   "outcome": "A person can sign in, see a plain error, and sign out",
-  "state": "IMPLEMENTING",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-SIGNIN"
   ],
@@ -103,29 +103,47 @@
       "at": "2026-11-23T13:17:22Z",
       "seconds": 376.8,
       "evidence_ref": "delivery/features/F-58/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T13:45:17Z",
+      "seconds": 887.8,
+      "evidence_ref": "delivery/features/F-58/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead, light panel D-180)",
+      "snapshot_ref": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "evidence_refs": [
+        "delivery/features/F-58/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "evidence_refs": [
+        "delivery/features/F-58/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance",
+      "snapshot_ref": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "evidence_refs": [
+        "delivery/features/F-58/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -137,25 +155,31 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer",
+      "snapshot_ref": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "evidence_refs": [
+        "delivery/features/F-58/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer",
+      "snapshot_ref": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "evidence_refs": [
+        "delivery/features/F-58/round-2/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "evidence_refs": [
+        "delivery/features/F-58/round-2/review-security.md"
+      ]
     }
   },
   "findings": [
@@ -195,7 +219,7 @@
         "delivery/features/F-58/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -212,11 +236,25 @@
           ],
           "head": "57ae81e83de4ca0de7560998684f6e419241185e",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T13:48:05Z",
+          "refs": [
+            "SignInView.tsx adds `<h1 className=\"signin-title\">Sign in</h1>` to the loading, unready and not-admitted bodies. Each view has one h1 and the callouts and the sign-out button follow it. Round 2 adds tests for these headings."
+          ],
+          "head": "57ae81e83de4ca0de7560998684f6e419241185e",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "57ae81e83de4ca0de7560998684f6e419241185e"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "SignInView.tsx adds `<h1 className=\"signin-title\">Sign in</h1>` to the loading, unready and not-admitted bodies. Each view has one h1 and the callouts and the sign-out button follow it. Round 2 adds tests for these headings."
       ]
     },
     {
@@ -232,7 +270,7 @@
         "delivery/features/F-58/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -249,11 +287,25 @@
           ],
           "head": "57ae81e83de4ca0de7560998684f6e419241185e",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-23T13:48:30Z",
+          "refs": [
+            "SignInView.tsx:182 adds `is-error` to the Password field when a problem is shown and Password is not already flagged as missing. `psl-bundle.css:107` maps `.psl-input.is-error` to `border-color: var(--signal)`, the existing token. `tests/sign-in.test.tsx:244-245` asserts the class lands on Password and not on the user field. The tool's error-board captures show the page without the failed-sign-in callout, so the red border could not be seen in the images; the evidence is the code and the test."
+          ],
+          "head": "57ae81e83de4ca0de7560998684f6e419241185e",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "57ae81e83de4ca0de7560998684f6e419241185e"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "SignInView.tsx:182 adds `is-error` to the Password field when a problem is shown and Password is not already flagged as missing. `psl-bundle.css:107` maps `.psl-input.is-error` to `border-color: var(--signal)`, the existing token. `tests/sign-in.test.tsx:244-245` asserts the class lands on Password and not on the user field. The tool's error-board captures show the page without the failed-sign-in callout, so the red border could not be seen in the images; the evidence is the code and the test."
       ]
     },
     {
@@ -269,7 +321,7 @@
         "delivery/features/F-58/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -286,11 +338,25 @@
           ],
           "head": "57ae81e83de4ca0de7560998684f6e419241185e",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-23T13:48:30Z",
+          "refs": [
+            "sign-in.css:20 sets `.signin-form .psl-input--phone { min-height: 52px; }` inside the phone media query. The round-2 mobile report gives Password at 350x52, the same as the board."
+          ],
+          "head": "57ae81e83de4ca0de7560998684f6e419241185e",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "57ae81e83de4ca0de7560998684f6e419241185e"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "sign-in.css:20 sets `.signin-form .psl-input--phone { min-height: 52px; }` inside the phone media query. The round-2 mobile report gives Password at 350x52, the same as the board."
       ]
     },
     {
@@ -306,7 +372,7 @@
         "delivery/features/F-58/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -323,11 +389,25 @@
           ],
           "head": "57ae81e83de4ca0de7560998684f6e419241185e",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-23T13:48:30Z",
+          "refs": [
+            "sign-in.css:11 sets `.signin-form .psl-label { font-weight: var(--text-label-weight); }`, the existing label token. The side-by-side images show medium-weight labels in the build, as on the board."
+          ],
+          "head": "57ae81e83de4ca0de7560998684f6e419241185e",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "57ae81e83de4ca0de7560998684f6e419241185e"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "sign-in.css:11 sets `.signin-form .psl-label { font-weight: var(--text-label-weight); }`, the existing label token. The side-by-side images show medium-weight labels in the build, as on the board."
       ]
     },
     {
@@ -350,6 +430,75 @@
           "by": "reviewer-security",
           "at": "2026-11-23T13:21:54Z",
           "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The first field's label reads \"Work email or sign-in name\"; the spec and board name it \"Work email\". This looks like a deliberate wording choice because the API also accepts a sign-in name, so please confirm it is covered by the D-178 waiver. Nothing is broken. `frontend/src/features/sign-in/SignInView.tsx`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-58/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T13:54:22Z",
+          "head": "57ae81e83de4ca0de7560998684f6e419241185e"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The visual scores are under 90 on all four boards (86.9, 82.0, 58.2, 52.0). Coverage with exceptions is 100%, and D-178 and D-179 waive the gaps (removed INV line, unfilled sample values, phone). The builder noted the phone score fell after the 52px fix. Product acceptance should view the boards, not rely on the score. `delivery/features/F-58/round-2/build.md`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-58/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T13:55:07Z",
+          "head": "57ae81e83de4ca0de7560998684f6e419241185e"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Three non-blocking findings are still OPEN. TECH-1-1 (the mock scenario cookie 401 on POST /session) and SEC-1-1 (sign-out keeps in-memory data such as the RFP frame) are not recorded as accepted risks or fixed. The builder deferred SEC-1-1 to the coordinator. The coordinator should either schedule or accept them with a named authority. QA-2-1 (the \"Work email or sign-in name\" label) is covered by D-177, so it can be closed against that decision.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-58/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T13:55:07Z",
+          "head": "57ae81e83de4ca0de7560998684f6e419241185e"
         }
       ]
     }
@@ -444,9 +593,9 @@
     "task_branch": "fe-signin-sign-in-reset-and-set-up",
     "head_sha": "57ae81e83de4ca0de7560998684f6e419241185e",
     "worktree": "/Users/Hunchoo/psl-factory",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/100",
+    "pr_number": 100,
+    "pr_author": "hunchoweb",
     "designated_approver": null,
     "ci_status": "not_run",
     "human_approval": "pending",
@@ -597,6 +746,30 @@
       "round": 2,
       "head": "15c8e6bd1aa8c17eefc1f3365473714f6700eb3f",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-23T13:45:50Z",
+      "round": 2,
+      "head": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-23T13:48:37Z",
+      "round": 2,
+      "head": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-23T13:54:24Z",
+      "round": 2,
+      "head": "57ae81e83de4ca0de7560998684f6e419241185e",
+      "reason": null
     }
   ],
   "routing": {
@@ -614,9 +787,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "57ae81e83de4ca0de7560998684f6e419241185e"
   },
   "blocked": null
 }

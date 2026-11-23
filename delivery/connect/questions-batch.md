@@ -95,6 +95,10 @@ Context: the reset boards draw only "ask" and "Check your email."; live gives no
    - (a) Recommended: link only, no helper words, centred as D-178 placed the sentence.
    - (b) Keep a helper line such as "We'll email you a link." under it (adds copy the boards do not draw).
 
+### F-58 · Product acceptance of sign-in (PR https://github.com/stanleykosi/psl-factory/pull/100)
+Context: every review passed on head `57ae81e8` (see merge-batch.md). Product acceptance is yours to give.
+1. Accept F-58 sign-in and sign-out as built on `57ae81e8`? (a) Recommended: accept, and approve the merge. (b) Accept, but first make sign-out load `/sign-in` fresh (SEC-1-1, a small fix round). (c) Request changes (say which).
+
 ## Lane B
 
 - **F-74 · B1. Setup without a workspace (backend B-21, short-list 4).** Every live Setup read and save needs a workspace; our Setup pages are organisation-wide. How should Setup open?
