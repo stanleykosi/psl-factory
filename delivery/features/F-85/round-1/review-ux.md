@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 35189b4503a76ae516ba153f77434a9a562bdc0d
+COMMIT: 1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4
 REVIEWER: reviewer-ux
 AUTHORITY: UX reviewer (lighter panel, D-180)
 
@@ -8,6 +8,8 @@ AUTHORITY: UX reviewer (lighter panel, D-180)
 - 4106 shows one "This record is unavailable." with a way back to the queue. 4104 shows "Why it is stuck" and the next step. 4103 offers "Open decision" only on the decidable task. 4101 links to the output. 4102 draws the weekly report panel read only.
 - History shows an unknown station and status as raw text, and gives the "Showing all changes. As of ..." caption. Phone layout puts the tabs under the title with no overflow.
 - Only low, non-blocking polish items remain.
+
+- Merge delta (F-58 sign-in and account menu, F-70 project list): re-walked /work/4102, /work/4103 and /work/4103/history at 1440 and 390 against the mock, signed in and after sign-out. Pages, copy and states are unchanged, with no overflow. After sign-out at 1440 the item and history routes show "You're signed out." with a Sign in link. The F-85 journeys are not altered by main.
 
 ## Findings
 - UX-1-1 | non-blocking | low | frontend | The breadcrumb shows the raw line key ("WEEKLY_REPORT", "INVOICE"). Use a plain business label when the line is known. LiveWorkItemView.tsx Header.

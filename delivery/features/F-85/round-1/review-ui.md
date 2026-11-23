@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 35189b4503a76ae516ba153f77434a9a562bdc0d
+COMMIT: 1817c34ee2d7bf6386c9ade3231304b9dbe3a7e4
 REVIEWER: reviewer-ui
 AUTHORITY: UI design reviewer
 
@@ -8,6 +8,8 @@ AUTHORITY: UI design reviewer
 - Tool result is FAIL on both (1440: coverage 32.3% 10/31, visual 80.1; 390: coverage 4.8% 1/21, visual 81.9). The missing elements are the station track, six facts strip, agent card/steps and state-panel prose, all removed by D-182 LC-Q1 (approved). No fidelity-exceptions.json exists for F-85, so the tool cannot show 100%; the design engineer should add one listing those removals.
 - What remains uses the existing tokens, tag, tab, section-card, next-step banner and history list styling; hierarchy and contrast are fine.
 - The 390 fidelity capture caught the page in its loading state (tool timing); the 390 judgement rests on my own screenshots after load.
+
+- Merge delta (re-confirmation on 1817c34e, no fidelity re-run): the two main syncs (F-58 sign-in and account menu, F-70 project list) changed the shell only. Work items 4102, 4103, 4104 and the 4101 history page re-screenshotted at 1440 and 390: no overflow, layout and styling unchanged from the earlier review; the account menu in the top bar sits cleanly beside the bell and Start work. The earlier fidelity result and artifacts stand.
 
 ## Findings
 - UI-1-1 | non-blocking | low | frontend | The breadcrumb prints raw identifiers ("MY_WORK / WEEKLY_REPORT / WORK 4102", underscores visible) where the board shows the plain reference and project ("INV-0412 · LAGOON HEALTH"). Use plain words (replace underscores with spaces, or show the project title); see LiveWorkItemView.tsx crumb.
