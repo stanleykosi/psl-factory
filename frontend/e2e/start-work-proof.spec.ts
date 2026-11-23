@@ -129,10 +129,10 @@ for (const [label, viewport, phone] of [
         const log = recordWrites(page);
         await openLine(page, phone, drawer.title);
         await drawer.fill(page);
-        const pickFile = proof(page).getByRole('button', { name: 'Choose a file' });
-        await expect(pickFile).toBeEnabled();
+        const pickFile = proof(page).locator('label.psl-drop');
+        await expect(dialog(page).locator('input[type="file"]')).toBeEnabled();
         await expect(dialog(page).locator('input[type="file"]')).not.toHaveAttribute('accept');
-        if (phone) await atLeast44(page, pickFile, 'Choose a file');
+        if (phone) await atLeast44(page, pickFile, 'Drop zone');
         await expectNoAxeViolations(page, 'empty');
         await choose(page, drawer.file[0], drawer.file[1]);
         await expect(proof(page).getByText(`Uploaded · ${drawer.file[2]}`)).toBeVisible();
@@ -182,7 +182,6 @@ for (const [label, viewport, phone] of [
       await expectNoAxeViolations(page, 'uploading');
       release();
       mode = 'fail';
-      await expect(proof(page).getByText(/Not uploaded/)).toBeVisible();
       await expect(proof(page).getByText('Couldn’t upload. Try again.')).toBeVisible();
       // UX-1-1: the failure is announced with its words
       await expect(dialog(page).getByRole('alert').filter({ hasText: 'Not uploaded' })).toHaveText('qb_export_je7741.pdf: Not uploaded. Couldn’t upload. Try again.');
@@ -220,7 +219,7 @@ for (const [label, viewport, phone] of [
       await openLine(page, phone, 'Record a ledger source');
       await dialog(page).getByLabel('Key').fill('QB-JE-7741');
       await choose(page, 'qb_export_je7741.pdf', 45056);
-      await expect(proof(page).getByText(/Not uploaded/)).toBeVisible();
+      await expect(proof(page).getByText('Couldn’t upload. Try again.')).toBeVisible();
       await expect(proof(page).getByText(/^Uploaded/)).toHaveCount(0);
       await proof(page).getByRole('button', { name: 'Try again' }).click();
       await expect(proof(page).getByText('Uploaded · 44 KB')).toBeVisible();

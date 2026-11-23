@@ -4,7 +4,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { Button, buttonClass, DateField, FilePickButton, RadioGroup, Select, Table, type Column } from '@/components';
+import { Button, buttonClass, DateField, RadioGroup, Select, Table, type Column } from '@/components';
 
 import { violations } from './a11y';
 
@@ -152,27 +152,6 @@ describe('RadioGroup hideLegend and disabled', () => {
     expect(radios.every((r) => r.disabled)).toBe(true);
     expect(radios[0].checked).toBe(true);
     expect(onChange).not.toHaveBeenCalled();
-  });
-});
-
-describe('FilePickButton', () => {
-  it('the button opens the chooser and hands over the chosen file; the chooser can be closed apart from the button', () => {
-    const onFile = vi.fn();
-    const { container } = render(<FilePickButton onFile={onFile} labelledBy="proof-label" className="resp-filebtn">Add another file</FilePickButton>);
-    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
-    const click = vi.spyOn(input, 'click');
-    fireEvent.click(screen.getByRole('button', { name: 'Add another file' }));
-    expect(click).toHaveBeenCalledTimes(1);
-    const file = new File(['x'], 'signoff.pdf');
-    fireEvent.change(input, { target: { files: [file] } });
-    expect(onFile).toHaveBeenCalledWith(file);
-    expect(screen.getByRole('button', { name: 'Add another file' }).className).toBe('resp-filebtn');
-  });
-
-  it('a disabled button does not open the chooser', () => {
-    const { container } = render(<FilePickButton onFile={() => {}} inputDisabled disabled>Choose a file</FilePickButton>);
-    expect((container.querySelector('input[type="file"]') as HTMLInputElement).disabled).toBe(true);
-    expect((screen.getByRole('button', { name: 'Choose a file' }) as HTMLButtonElement).disabled).toBe(true);
   });
 });
 

@@ -188,7 +188,7 @@ describe('the drawer and its fields', () => {
     expect(within(dialog()).getByText('Client or prospect')).toBeTruthy();
     // the help stays under its own field here, not under the document box
     expect(within(dialog()).getByText('As written on their document').closest('[data-field]')!.getAttribute('data-field')).toBe('rfp_reference');
-    expect(within(documentBox()).getByRole('button', { name: 'Choose a file' })).toBeTruthy();
+    expect(within(documentBox()).getByText('choose a file')).toBeTruthy();
     expect(within(dialog()).getByText('When it actually arrived, not when you log it')).toBeTruthy();
     expect(within(within(dialog()).getByRole('radiogroup', { name: 'How the client wants it submitted' })).getAllByRole('radio').map((r) => r.textContent)).toEqual([
       'Email',

@@ -32,7 +32,7 @@ async function fill(page: Page, { file = true, attest = true } = {}) {
   await fillWhen(page, 'When they responded', '2026-11-11T16:20');
   if (file) {
     await page.locator('input[type="file"]').setInputFiles(pdf('Lagoon_UAT_signoff_11Nov.pdf', 184 * 1024));
-    await expect(page.getByText('Lagoon_UAT_signoff_11Nov.pdf · 184 KB')).toBeVisible();
+    await expect(page.getByText('Uploaded · 184 KB')).toBeVisible();
   }
   if (attest) await page.getByRole('checkbox').check();
 }
@@ -109,11 +109,11 @@ async function tabTo(page: Page, target: Locator) {
 const ring = (target: Locator) =>
   target.evaluate((el) => {
     // A shared date field draws its ring on the box around the text and the calendar button.
-    const s = getComputedStyle(el.closest('.cmp-wrapped') ?? el);
+    const s = getComputedStyle(el.closest('.cmp-wrapped, .psl-drop') ?? el);
     return (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none') !== 'none' && parseFloat((s.outlineStyle !== 'none' ? s.outlineWidth : '2px')) >= 2;
   });
 
-test('SCR-16 tab order is Who, When, the actions, Version, Note, the proof button, the attestation and Record, each with a focus ring', async ({ page }) => {
+test('SCR-16 tab order is Who, When, the actions, Version, Note, the proof file, the attestation and Record, each with a focus ring', async ({ page }) => {
   await page.setViewportSize(DESKTOP);
   await openForm(page);
   await fill(page);
@@ -124,7 +124,8 @@ test('SCR-16 tab order is Who, When, the actions, Version, Note, the proof butto
     page.getByRole('radio', { name: 'Approved' }),
     page.getByLabel('For which version'),
     page.getByLabel(/^Note/),
-    page.getByRole('button', { name: 'Add another file' }),
+    page.getByRole('button', { name: 'Remove Lagoon_UAT_signoff_11Nov.pdf' }),
+    page.locator('input[type="file"]'),
     page.getByRole('checkbox'),
     page.getByRole('button', { name: 'Record response' }),
   ];

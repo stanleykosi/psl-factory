@@ -437,7 +437,7 @@ describe('outcome form: options and gating', () => {
     expect(text()).toContain('Choose who you are recording as, and add the proof, to record this.');
     await addFile();
     // one proof file only: E-RFP-OUTCOME takes one evidence_id, so no second picker is offered
-    expect(document.querySelectorAll('input[type="file"]')).toHaveLength(0);
+    expect(screen.queryByText(/choose a file/i)).toBeNull();
     expect(button('Record won').disabled).toBe(true);
     expect(screen.getByRole('alert').textContent).toBe('Choose who you are recording as to record this.');
     pick('You are recording as', 'pm');

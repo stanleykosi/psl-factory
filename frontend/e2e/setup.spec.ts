@@ -113,7 +113,7 @@ test.describe('desktop rules', () => {
     await openAs(page, context, '/setup/rules');
     await panel(page).getByRole('checkbox', { name: 'PMO Lead' }).check();
     await panel(page).getByLabel('Why').fill('Agreed at the PSL leadership meeting');
-    await panel(page).getByLabel(/^Proof/).setInputFiles({ name: 'minutes.pdf', mimeType: 'application/pdf', buffer: Buffer.alloc(120 * 1024, 1) });
+    await panel(page).locator('input[type="file"]').setInputFiles({ name: 'minutes.pdf', mimeType: 'application/pdf', buffer: Buffer.alloc(120 * 1024, 1) });
     await expect(panel(page).getByText('Uploaded · 120 KB')).toBeVisible();
     await panel(page).getByRole('button', { name: 'Save as version 1' }).click();
     await expect(page.locator('.psl-toast')).toHaveText('Saved as version 1.');
@@ -223,7 +223,7 @@ test.describe('desktop rules', () => {
       panel(page).getByLabel('Starts'),
       panel(page).getByRole('button', { name: 'Choose a date' }),
       panel(page).getByLabel('Why'),
-      panel(page).getByLabel(/^Proof/),
+      panel(page).locator('input[type="file"]'),
       panel(page).getByRole('button', { name: 'Save as version 1' }),
     ];
     await tabTo(page, order[0]);

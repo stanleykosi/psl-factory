@@ -10,7 +10,7 @@ describe('Icon', () => {
   it('has the whole design-system set, decorative, 2px square-capped strokes', async () => {
     expect(ICON_NAMES).toEqual([
       'plus', 'chev', 'chev-r', 'back', 'search', 'filter', 'close', 'check', 'warn', 'info', 'ok', 'cal', 'clip',
-      'upload', 'more', 'menu', 'send', 'doc', 'lock', 'external', 'sort', 'down', 'bell',
+      'upload', 'camera', 'more', 'menu', 'send', 'doc', 'lock', 'external', 'sort', 'down', 'bell',
     ]);
     const { container } = render(
       <>

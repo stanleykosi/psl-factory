@@ -1,0 +1,26 @@
+VERDICT: PASS
+COMMIT: abf2482a0bbc656b975f1f1afda722df6cdf7941
+REVIEWER: qa
+AUTHORITY: qa
+
+## Summary
+- The Next proxy sends only `/api/v1/*` and the six download routes to the API. Near misses, `/health`, `/accounts`, `/static`, `/factory-forms`, `/factory-assets` and the followup-inbox path stay in Next and give the Next 404. An unknown page gives the Next 404 (`/no-such-page`, HTTP 404, HTML). Real app pages (`/work/12`, `/work/12/history`, `/projects`, `/projects/<uuid>`, `/projects/<uuid>/documents/5`) return 200 and are not shadowed.
+- A signed-out live visit draws our frame state: "Skip to main content | PSL FACTORY | You're signed out. Sign in". No Django login widget, no JSON, `psl-work-client` count 0. This is the real `/api/v1/me` 401 from Django on 8002, relayed through a thin forwarder.
+- Mock mode on 3000 is unchanged: `/` and `/my-work` draw nav, user and the My work page. The `/no-such-page` path draws the app's "This page doesn't exist" page inside the frame. No failed requests and no `psl-work-client`.
+- The six download routes reach Django and get Django's own access answer: an unauthenticated 302 to `/accounts/login/`. That is the known D-172 and TECH-1-1 behaviour, and it lands on a Next 404 until SCR-17.
+- Not proved: the existing `frontend/.next` build is bound to `http://127.0.0.1:4010` (see Commands), so I did not run a single Next to Django hop. I did not use a signed-in session or test wrong-user or wrong-tenant download cases, because there is no sign-in page and I did not read the demo login files. Reset demo was not exercised. The config unit tests were not re-run; I took the build's own routes-manifest as the evidence.
+
+## Findings
+- QA-1-1 | non-blocking | low | backend | A download without a session is a 302 to `/accounts/login/?next=...`, which is a Django 404 `page_retired` in API-only mode (`PSL_DJANGO_UI=0`) and a Next 404 through the proxy. Spec criterion 11 expected an API-form 401/403/404. This is the same as TECH-1-1 and is accepted under D-172. The follow-up is for the backend to answer the download routes with an API-form 401.
+- QA-1-2 | non-blocking | low | frontend | A trailing-slash request such as `/cases/<uuid>/files/1/` or `/cases/not-a-uuid/files/1/` gets a Next 308 to the slash-less path before any rewrite. The redirected request is the one proxied, and it reaches Django with the slash added. This works. The only effect is that `curl` without `-L` shows 308, not Django's answer, for the spec's slash example (criterion 11).
+
+## Verified
+None (round 1, no fixes to retest).
+
+## Commands and results
+- Setup. Django: `PGDATABASE=psl PGUSER=psl PGHOST=127.0.0.1 PGPORT=55432 PSL_ENV=development PSL_DJANGO_UI=0 .venv/bin/python manage.py runserver --noreload 127.0.0.1:8002`. Next: `next start -p 4980` from `frontend/` using the existing build (mtime 01:23, after the head commit at 01:16). The build's `routes-manifest.json` has every rewrite destination at `http://127.0.0.1:4010`, so it is bound to a different origin. I ran a stub on 4010 to observe what the proxy forwards. For the signed-out check the stub relayed to Django on 8002. I stopped Django, the stub and Next by their own PIDs, and ports 4980, 4010 and 8002 are now free.
+- Rewrites in the build: `beforeFiles` has exactly `/api/v1/:path*`. `afterFiles` has exactly six entries, the destinations end in `/`, and `fallback` is `[]`.
+- Through Next 4980, forwarded to the stub with a trailing slash: `/cases/<uuid>/files/1`, `/projects/<uuid>/templates/2/file`, `/cases/<uuid>/rfp/intake/3/attachment`, `/work/12/invoice-proof/4`, `/cases/<uuid>/finance/invoices/5/payments/6/proof/front` and `/cases/<uuid>/finance/reminders/5/drafts/6/pdf`. All six returned 200 from the stub, and the stub log lists each with the trailing slash.
+- Through Next 4980, not forwarded (the stub log shows no request), all returning the Next 404 HTML: `/cases/<uuid>/files/x`, `/cases/<uuid>/files/1/extra`, `/cases/<uuid>/finance/followup-inbox/<uuid>/key`, `/health`, `/static/x.js`, `/factory-forms/x`, `/factory-assets/work-client.js`, `/no-such-page` and `/__mock/reset` (production build). `/accounts/login/` and `/cases/not-a-uuid/files/1/` and `/health/` return a 308 to the slash-less path, which is then a Next 404.
+- Django 8002 direct: the six download paths without a session each return 302 to `/accounts/login/?next=<same path>`. Without the trailing slash, a 301 to the slash. `/api/v1/me` returns 401 `{"code":"unauthenticated"}`. followup-inbox returns 404 (Django). `/accounts/login/` returns 404 JSON `page_retired`. The Django log shows only my direct curls; the proxied near misses never arrived.
+- Browser (Playwright Chromium): 4980 `/`, `/my-work` and `/no-such-page` show "You're signed out. Sign in" (the only failed response is `/api/v1/me` 401). On `/no-such-page` the HTTP status is 404 and the signed-out state is drawn, because the frame replaces its children when signed out. 3000 `/` and `/my-work` draw the full frame (My work, Projects, Overview, Assistant, Setup, bell, "Ada Okafor · Finance Lead", "44 records you can see") with no failed requests. 3000 `/no-such-page` draws "This page doesn't exist. Go to My work" with a 404. The screenshots are in the scratchpad.

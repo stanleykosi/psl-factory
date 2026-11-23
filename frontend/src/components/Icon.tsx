@@ -48,6 +48,7 @@ const PATHS = {
   ),
   clip: <path d="M12.5 5.5L6.5 11.5a1.8 1.8 0 0 0 2.5 2.5l6.5-6.5a3.5 3.5 0 0 0-5-5L4 9a5 5 0 0 0 7 7l4.5-4.5" strokeLinecap="butt" />,
   upload: <path d="M9 12V2.5M5 6l4-4 4 4M2.5 12.5v3.5h13v-3.5" />,
+  camera: <path d="M2.5 5.5h3l1.5-2h4l1.5 2h3v9h-13zM9 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" />,
   more: (
     <>
       <rect x="2.5" y="8" width="2" height="2" {...fill} />

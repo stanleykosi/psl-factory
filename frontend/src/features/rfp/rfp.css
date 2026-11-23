@@ -120,5 +120,5 @@
   .rfp-assign .psl-drawer__foot .psl-btn { flex: 2 1 0; min-height: var(--control-phone); }
   .rfp-assign .psl-drawer__foot .psl-btn--secondary { flex: 1 1 0; }
 }
-.rfp-assign .resp-chip__remove, .rfp-assign .resp-filebtn, .rfp-assign .resp-chip__problem .psl-btn, .rfp-assign .resp-card__text .psl-btn { min-width: var(--control-phone); min-height: var(--control-phone); }
+.rfp-assign .psl-file .psl-btn { min-width: var(--control-phone); min-height: var(--control-phone); }
 .rfp-assign .psl-summary a { display: inline-block; padding: var(--space-2) 0; }

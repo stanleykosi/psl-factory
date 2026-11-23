@@ -202,7 +202,7 @@ export function ClientResponseForm(props: FormProps) {
         <ChannelSelect response={response} entries={entries} setEntry={setEntry} />
         {when}
         <Actions response={response} entries={entries} setEntry={setEntry} />
-        <ProofField proof={proof} layout="phone" />
+        <ProofField proof={proof} />
         <Note entries={entries} setEntry={setEntry} />
         <Attest entries={entries} setEntry={setEntry} short />
         <RecordRow props={props} ready={ready} line={line} />
@@ -224,7 +224,7 @@ export function ClientResponseForm(props: FormProps) {
         {versionSelect}
         <Note entries={entries} setEntry={setEntry} />
       </div>
-      <ProofField proof={proof} hint={response.proof_hint} />
+      <ProofField proof={proof} hint={response.proof_hint} multiple />
       <Attest entries={entries} setEntry={setEntry} short={false} />
       <RecordRow props={props} ready={ready} line={line} />
     </form>
@@ -278,10 +278,10 @@ export function SowSignatureForm(props: FormProps) {
       <Actions response={response} entries={entries} setEntry={setEntry} />
       {/* Nor the attestation: it sits beside the proof it vouches for (on the phone, after the board's rows). */}
       {phone ? (
-        <ProofField proof={proof} layout="card" />
+        <ProofField proof={proof} />
       ) : (
         <div className="resp-row resp-row--proof">
-          <ProofField proof={proof} layout="card" />
+          <ProofField proof={proof} />
           <Attest entries={entries} setEntry={setEntry} short={false} />
         </div>
       )}

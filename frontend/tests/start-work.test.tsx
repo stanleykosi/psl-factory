@@ -341,7 +341,7 @@ describe('fields by kind', () => {
     expect(within(dialog()).queryByText(/Fee/)).toBeNull();
     expect(within(dialog()).getByText('Proof')).toBeTruthy();
     const proof = within(dialog()).getByRole('group', { name: 'Proof' });
-    expect(within(proof).getByRole('button', { name: 'Choose a file' })).toHaveProperty('disabled', false);
+    expect(within(proof).getByText('choose a file')).toBeTruthy();
     fireEvent.change(within(dialog()).getByRole('textbox', { name: 'Note (optional)' }), { target: { value: 'hi' } });
     press('Start work');
     await waitFor(() => expect(posts).toHaveLength(1));
