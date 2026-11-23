@@ -31,6 +31,7 @@ const me = (patch: Record<string, unknown> = {}) => ({
   startable_lines: ['pmo-weekly-report/v1'],
   csrf_token: 't',
   assistant_agents: ['tola' as const],
+  positions: [] as { role: 'pmo-lead'; mode: 'lead'; name: string; area: string; focus: string; workspace: string; team: string | null; invite_url: string | null; manage_url: string | null }[],
   ...patch,
 });
 const position = (name: string) => ({ role: 'pmo-lead', mode: 'lead', name, area: name, focus: 'x', workspace: `${name} workspace`, team: null, invite_url: null, manage_url: null });
@@ -77,7 +78,7 @@ describe('the frame on live /me', () => {
   });
 
   it('never uses work_desk_url or django_url as a link, even when they hold real-looking paths', async () => {
-    routes['/api/v1/me'] = () => json(200, me({ work_desk_url: '/desk/', destinations: SIX.map((key) => ({ key, title: key, django_url: `/workspace/${key}/` })) }));
+    routes['/api/v1/me'] = () => json(200, me({ work_desk_url: '/desk/', destinations: SIX.map((key) => ({ key, title: key, django_url: `/workspace/${key}/`, url: `/${key}`, available: true })) }));
     renderShell();
     await ready();
     for (const el of document.querySelectorAll('[href], [src]')) expect(`${el.getAttribute('href')}${el.getAttribute('src')}`).not.toMatch(/\/desk\/|\/workspace\//);
