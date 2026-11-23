@@ -47,22 +47,30 @@ def graph(rule):
         units['node:'+n['key']]=n['unit'];keys.append(n['key'])
     if not set(rule['outputs'])<=set(keys):raise ValidationError('Outputs must select declared graph nodes')
 
-def calculate(rule,inputs):
+def calculate(rule,inputs,*,approved_outputs=None):
     graph(rule);validate(ARRAY(VALUE,1),inputs)
     if len({r['key'] for r in inputs})!=len(inputs) or {r['key']:r['unit'] for r in inputs}!={r['key']:r['unit'] for r in rule['inputs']}:raise ValidationError('Every exact input/unit is required once; unknown is null')
+    overrides = approved_outputs or {}
+    output_units = {node['key']: node['unit'] for node in rule['nodes'] if node['key'] in rule['outputs']}
+    if any(output_units.get(key) != rule['currency'] for key in overrides):
+        raise ValidationError('Choose an exact bid price output in the calculator currency.')
     vals={'input:'+r['key']:number(r['value']) for r in inputs};vals.update({'parameter:'+r['key']:number(r['value']) for r in rule['parameters']});findings=[];lineage=[]
     try:
         with localcontext() as ctx:
             ctx.prec=64
             for n in rule['nodes']:
                 left,right=[vals[k] for k in n['operands']];value=None
-                if left is None or right is None:findings.extend('unknown:'+k for k in n['operands'] if vals[k] is None)
+                if n['key'] in overrides:
+                    value = number(overrides[n['key']])
+                elif left is None or right is None:findings.extend('unknown:'+k for k in n['operands'] if vals[k] is None)
                 elif n['operation']=='divide' and right==0:findings.append('division_by_zero:'+n['key'])
                 else:
                     op=n['operation'];value=left+right if op=='add' else left-right if op=='subtract' else left*right if op=='multiply' else left/right
                     if abs(value)>=Decimal('1e24'):raise ValidationError('Calculation magnitude budget exceeded')
                     value=value.quantize(Decimal(1).scaleb(-n['decimal_places']),rounding={'half_even':ROUND_HALF_EVEN,'half_up':ROUND_HALF_UP,'down':ROUND_DOWN}[n['rounding']])
                 vals['node:'+n['key']]=value;lineage.append({'node':n['key'],'operands':n['operands'],'value':format(value,'f') if value is not None else None,'unit':n['unit'],'rounding':n['rounding'],'decimal_places':n['decimal_places']})
+                if n['key'] in overrides:
+                    lineage[-1]['finance_adjustment'] = True
     except DecimalException:raise ValidationError('Declared decimal operation cannot be represented within budget')
     values=[{'key':key,'unit':next(n['unit'] for n in rule['nodes'] if n['key']==key),'value':format(vals['node:'+key],'f') if vals['node:'+key] is not None else None} for key in rule['outputs']]
     return {'status':'held' if findings else 'known','values':values,'findings':list(dict.fromkeys(findings)),'lineage':lineage,'implementation':'declared_decimal_graph_v1','native_workbook_verified':False,'invoice_created':False}

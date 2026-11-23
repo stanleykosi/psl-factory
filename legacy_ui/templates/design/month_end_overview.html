@@ -13,7 +13,7 @@
   <h3>Cash received</h3>
   {% if overview.cash.groups %}
     <ul>{% for group in overview.cash.groups %}<li>
-      {% if group.workspace %}{{ group.workspace }} · {% endif %}<strong>{{ group.currency }} {{ group.amount|decimal_display }}</strong> · {{ group.basis|readable }}
+      {% if group.workspace %}{{ group.workspace }} · {% endif %}<strong>{{ group.currency }} {{ group.amount|decimal_display }}</strong> · {{ group.basis|readable }} · {% if group.sample %}Sample data{% else %}Operational data{% endif %}
     </li>{% endfor %}</ul>
     <p>Verified receipts from the workspaces shown. Remaining cash coverage is <strong>Unknown</strong>.</p>
     {% if overview.cash.more_groups %}<p>More currency and basis groups are available in the workspace details.</p>{% endif %}

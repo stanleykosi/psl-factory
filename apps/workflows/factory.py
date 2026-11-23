@@ -23,7 +23,12 @@ TERMINAL={'verified','cancelled','blocked','owner_needed','configuration_needed'
 
 def access(actor,case,action='factory.read',envelope='pmo-finance/v1'):
     if not get_user_model().objects.filter(pk=actor.pk,is_active=True).exists():raise PermissionDenied('Current active actor required')
-    for key in ['case.read',definition(envelope)['read'],action]:require(actor,case,key)
+    for key in ['case.read',definition(envelope)['read'],action]:
+        if envelope == 'pmo-leadership-report/v1' and key == 'report.read':
+            from apps.pmo.leadership_project_scope import require_report
+            require_report(actor, case)
+        else:
+            require(actor,case,key)
     if envelope=='finance-ledger/v1':
         from .factory_ledger import readable
         readable(actor,case)

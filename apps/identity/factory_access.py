@@ -19,7 +19,7 @@ LEAD_ACTIONS = {
     'finance-lead': frozenset({
         'case.read', 'factory.read', 'factory.start', 'agent.extract', 'evidence.add',
         'finance.read', 'finance.calculate', 'finance.import', 'finance.validate', 'finance.source',
-        'schedules.read', 'ppe.read',
+        'schedules.read', 'ppe.read', 'costing.read', 'costing.source.read', 'costing.calculate', 'costing.bind',
     }),
     'hr': frozenset({'case.read', 'agent.extract', 'evidence.add', 'hrfinance.read'}),
 }

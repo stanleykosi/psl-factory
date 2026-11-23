@@ -201,8 +201,21 @@ def needs_preparation(work,row):
     return False
 
 def instruction_current(work):
-    actions={'factory.start','rfp.read','evidence.add'}
-    return work.source_head.created_by.is_active and set(Grant.objects.filter(case=work.case,user_id=work.source_head.created_by_id,active=True,action__in=actions).values_list('action',flat=True))==actions
+    from .factory_rfp_adjustments import approved_instruction
+
+    source_owner = work.source_head.created_by
+    if not source_owner.is_active:
+        return False
+    if approved_instruction(work):
+        return True
+    actions = {'factory.start', 'rfp.read', 'evidence.add'}
+    return set(Grant.objects.filter(case=work.case, user=source_owner, active=True, action__in=actions)
+               .values_list('action', flat=True)) == actions
+
+
+def require_instruction(work):
+    if not instruction_current(work):
+        raise PermissionDenied('A currently authorised source owner must reaffirm the response instruction.')
 
 def snapshot(work,value,reader=None):
     from .factory import access
@@ -319,7 +332,7 @@ def act(work,choice,value,latest,missing,tasks,jobs):
             if not outcome:raise ValidationError('Actual human customer outcome required')
             disposition=adapter.dispose(work,outcome,data['lessons'])
             return {'head':work.source_head_id,'disposition':disposition.pk,'baseline_imported':False}
-    for permission in ['factory.start','rfp.read','evidence.add']:require(work.source_head.created_by,case,permission)
+    require_instruction(work)
     if data['intake']!=subject(work).current_intake_id:raise ValidationError('Current received RFP instruction required')
     if kind=='ACT04':return {'head':work.source_head_id,**adapter.investigate(work)}
     row=response_for(work)
@@ -387,7 +400,7 @@ def publication_scope(actor,case,version,work_id):
     if work.policy_id!=config.pk or value['executor_id']!=actor.pk:raise PermissionDenied('Current configured RFP publisher required')
     if work.cancel_requested or work.status in ['verified','cancelled','followup_needed']:raise ValidationError('RFP work is stopped')
     if inputs(work)['intake']!=subject(work).current_intake_id:raise ValidationError('Received RFP instruction changed')
-    for permission in ['factory.start','rfp.read','evidence.add']:require(work.source_head.created_by,case,permission)
+    require_instruction(work)
     exact=document_for(work,value)
     if not exact or exact.pk!=version.pk:raise ValidationError('Exact source-bound RFP response document required')
     rfp_documents.dispatch_requirements(version)

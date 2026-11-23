@@ -1,5 +1,9 @@
 # Build progress log
 
+23 November 2026. API 1.26.0 adds on-demand leadership reports. Either lead can generate the Tuesday or monthly format from current information without entering dates. The factory coordinates its specialist work over the authorised project sources and stores the report's capture time. [Backend Answers](delivery/connect/backend-answers.md)
+
+23 November 2026. Implemented the final backend changes for the 224-question frontend handoff in API 1.25.0. Added bid loss note readback, reviewed naira bid price changes, PMO Lead milestone confirmation and automatic PSL-wide leadership coverage. [Backend Answers](delivery/connect/backend-answers.md)
+
 23 November 2026. PSL answered the last four frontend questions. The completed answer sheet pairs all 224 original questions with their answers and records the three new workflows that need backend alignment. [Backend Answers](delivery/connect/backend-answers.md)
 
 23 November 2026. Renamed the Railway API, worker and database services by environment and role, and removed the exited design checks service. Verified the same API 1.24.0 release, database-backed health, resolved worker configuration and all six running services after the change. [Railway runbook](docs/runbooks/railway.md)

@@ -28,7 +28,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const uuid = (n: string) => `00000000-0000-4000-8000-${n.padStart(12, '0')}`;
 
 type Item = { case_id: string; title: string; manager: string | null; phase: string | null; reviews: number | null; exceptions: number | null; sample: boolean };
-type ListBody = { items: Item[]; next_cursor: string | null; as_of: string };
+type ListBody = { items: Item[]; next_cursor: string | null; as_of: string; totals: Record<'all' | 'active' | 'closed', number> };
 type Journey = { case_id: string; title: string; items: { id: number; reference: string | null }[]; page: number; next_page: number | null; facts: { total: number; finance: unknown; engagement: unknown }; tabs: { key: string }[] };
 const rows = readJson(join(fixtures, 'projects/list.json')).rows as { id: string; personas: string[]; status: string; item: Item }[];
 const journeyFiles = readdirSync(join(fixtures, 'projects')).filter((name) => /^P-\d+\.json$/.test(name));
@@ -63,7 +63,8 @@ describe('the fixtures are the live shape', () => {
       expect(row.item.case_id, row.id).toBe(uuid(row.id.slice(2)));
       expect(UUID.test(row.item.case_id)).toBe(true);
     }
-    expect(validList({ items: rows.map((r) => r.item), next_cursor: null, as_of: '2026-11-23T09:00:00Z' }), ajv.errorsText(validList.errors)).toBe(true);
+    const totals = { all: rows.length, active: rows.filter((r) => r.status === 'active').length, closed: rows.filter((r) => r.status === 'closed').length };
+    expect(validList({ items: rows.map((r) => r.item), next_cursor: null, as_of: '2026-11-23T09:00:00Z', totals }), ajv.errorsText(validList.errors)).toBe(true);
     for (const name of [...journeyFiles, '../E-PROJECT.json']) {
       const body = readJson(join(fixtures, 'projects', name));
       expect(validJourney(body), `${name}: ${ajv.errorsText(validJourney.errors)}`).toBe(true);
@@ -78,9 +79,10 @@ describe('the fixtures are the live shape', () => {
     expect(validJourney({ ...body, counts: {} })).toBe(false);
     expect(validJourney({ ...body, tab_counts: {} })).toBe(false);
     const item = rows[0].item;
-    expect(validList({ items: [{ ...item, case_id: 'P-0101' }], next_cursor: null, as_of: '2026-11-23T09:00:00Z' })).toBe(false);
-    expect(validList({ items: [{ ...item, pm: 'x' }], next_cursor: null, as_of: '2026-11-23T09:00:00Z' })).toBe(false);
-    expect(validList({ items: [item], as_of: '2026-11-23T09:00:00Z' })).toBe(false);
+    const common = { as_of: '2026-11-23T09:00:00Z', totals: { all: 1, active: 1, closed: 0 } };
+    expect(validList({ ...common, items: [{ ...item, case_id: 'P-0101' }], next_cursor: null })).toBe(false);
+    expect(validList({ ...common, items: [{ ...item, pm: 'x' }], next_cursor: null })).toBe(false);
+    expect(validList({ ...common, items: [item] })).toBe(false);
   });
 });
 
@@ -95,11 +97,12 @@ describe('GET /projects', () => {
     expect(closed.body.items.every((i) => rows.find((r) => r.item.case_id === i.case_id)?.status === 'closed')).toBe(true);
   });
 
-  it('the default is all, as live; there are no counts, total or limit', async () => {
+  it('defaults to all and returns status totals before pagination', async () => {
     const all = await list('');
     const explicit = await list('status=all');
     expect(all.body).toEqual(explicit.body);
-    expect(Object.keys(all.body).sort()).toEqual(['as_of', 'items', 'next_cursor']);
+    const mine = rows.filter((r) => r.personas.includes('finance_lead'));
+    expect(all.body.totals).toEqual({ all: mine.length, active: mine.filter((r) => r.status === 'active').length, closed: mine.filter((r) => r.status === 'closed').length });
   });
 
   it('pages with next_cursor: every visible row once, 20 a page; a limit is ignored', async () => {
