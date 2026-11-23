@@ -46,7 +46,8 @@ import { resetTemplates, templatesList, templateVersion } from './templates.mjs'
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { workList } from './work-list.mjs';
 import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
-import { LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
+import { INVITATION_PATHS, invitationRoute, resetInvitations } from './invitations.mjs';
+import { currentToken, LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
 import { isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, ASSISTANT_UPLOADS_PATH, createAssistantMock } from './assistant.mjs';
@@ -288,6 +289,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         alerts.reset();
         resetWorkspace();
         resetWorkLive();
+        resetInvitations();
         resetClients();
         assistant.reset();
         runs.reset();
@@ -295,7 +297,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         return res.end();
       }
       // F-58: after a logout (cookie psl_mock_session=out) every other read and write answers 401, as a signed-out session does.
-      if (url.pathname.startsWith('/api/') && url.pathname !== SESSION_PATH && url.pathname !== LOGOUT_PATH && parseCookies(req.headers.cookie).psl_mock_session === 'out') return send(res, ...SIGNED_OUT_REPLY);
+      if (url.pathname.startsWith('/api/') && url.pathname !== SESSION_PATH && url.pathname !== LOGOUT_PATH && !INVITATION_PATHS.includes(url.pathname) && parseCookies(req.headers.cookie).psl_mock_session === 'out') return send(res, ...SIGNED_OUT_REPLY);
       // F-85: live work item reads (integer ids only) and the case file upload (work-live.mjs); not in v7. v7 ids and v7 case routes fall through.
       if (WORK_LIVE_PATH.test(url.pathname) || CASE_FILES_PATH.test(url.pathname)) {
         const cookies = parseCookies(req.headers.cookie);
@@ -325,6 +327,13 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
         if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
         return send(res, ...stationItems({ url, cookies, floorRuns: demoOn(cookies) ? runs.floor() : [] }));
+      }
+      // F-60: invitation preview and accept (invitations.mjs); unauthenticated, but the current token is required.
+      if (method === 'post' && INVITATION_PATHS.includes(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        return send(res, ...invitationRoute({ path: url.pathname, raw, scenario, token: req.headers['x-csrftoken'], expectedToken: currentToken({ cookies, scenario, me: me[persona] }) }));
       }
       // Live session reads and writes (session.mjs): not in v7. Reads need no token; sign-in and sign-out check it.
       if (url.pathname === SESSION_PATH || url.pathname === LOGOUT_PATH || url.pathname === ROLE_DASHBOARD_PATH || url.pathname === ONBOARDING_PATH) {
