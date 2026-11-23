@@ -27,7 +27,7 @@
           "title": "UAT sign-off",
           "state": "Completion recorded",
           "state_code": "recorded",
-          "detail": null,
+          "detail": "Ada Obi",
           "at": "2026-11-11T10:00:00Z",
           "due": null,
           "severity": null,

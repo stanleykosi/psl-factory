@@ -55,6 +55,7 @@ function AmountCell({ item }: { item: MoneyItem }) {
   return (
     <>
       <Value text={contractAmount(item)} />
+      {contractAmount(item) === undefined && item.missing_reason && <span className="ptabs__block ptabs__hint">{item.missing_reason}</span>}
       {item.changes.map((change) => (
         <span key={change.link_id}>
           {' + the change · change amount '}

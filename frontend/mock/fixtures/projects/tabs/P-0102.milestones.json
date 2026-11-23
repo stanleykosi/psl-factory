@@ -11,7 +11,7 @@
           "title": "Recorded step 1",
           "state": "Completion recorded",
           "state_code": "recorded",
-          "detail": "Tunde Bello",
+          "detail": null,
           "at": "2026-11-01T10:00:00Z",
           "due": null,
           "severity": null,
