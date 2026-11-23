@@ -20,7 +20,6 @@ const overlay = JSON.parse(readFileSync(join(__dirname, '../mock/proposals/deliv
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
 const workSchema = ajv.compile(openapi.paths['/api/v1/work/{work_id}'].get.responses['200'].content['application/json'].schema);
-const projectSchema = ajv.compile(openapi.paths['/api/v1/projects/{case_id}'].get.responses['200'].content['application/json'].schema);
 const setupLink = ajv.compile(overlay.setup_rules_link);
 
 const dir = join(__dirname, '../mock/fixtures/work');
@@ -103,19 +102,6 @@ describe('hypercare items', () => {
     const bodies = await Promise.all(['pm', 'finance_lead', 'ceo'].map((p) => send('GET', '/api/v1/work/W-3101', p)));
     expect(bodies[0].body).toEqual(bodies[1].body);
     expect(bodies[0].body).toEqual(bodies[2].body);
-  });
-});
-
-describe('P-0101 Hypercare row', () => {
-  it('carries work_id W-3101, and the project still validates against E-PROJECT without the proposed keys', async () => {
-    const { status, body } = await send('GET', '/api/v1/projects/P-0101');
-    expect(status).toBe(200);
-    expect(body.delivery.find((r: Body) => r.line_key === 'delivery_hypercare').work_id).toBe('W-3101');
-    const stripped = structuredClone(body);
-    for (const row of stripped.delivery) for (const key of ['reference', 'at', 'detail', 'short_title']) delete row[key];
-    delete stripped.delivery_agent;
-    delete stripped.delivery_summary;
-    expect(projectSchema(stripped), ajv.errorsText(projectSchema.errors)).toBe(true);
   });
 });
 

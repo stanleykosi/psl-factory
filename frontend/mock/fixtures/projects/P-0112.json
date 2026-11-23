@@ -1,27 +1,98 @@
 {
-  "case_id": "P-0112",
+  "case_id": "00000000-0000-4000-8000-000000000112",
   "title": "Fola Fashion · online shop",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
-      "line": "RFP response",
-      "state": "verified",
-      "work_id": "W-1732"
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000112/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000112"
     },
     {
-      "line": "Prepare an invoice",
-      "state": "processing",
-      "work_id": "W-1733"
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000112/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000112/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000112/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000112/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000112/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000112/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000112/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000112/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000112/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000112/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000112/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000112/actions"
     }
   ],
-  "next": "Go-live · report sent: the PM Sola Martins confirms the next step.",
-  "pm": {
-    "name": "Sola Martins",
-    "role": "Project manager"
+  "items": [
+    {
+      "id": 1732,
+      "line": "RFP response",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1732/",
+      "api_url": "/api/v1/work/1732"
+    },
+    {
+      "id": 1733,
+      "line": "Prepare an invoice",
+      "reference": null,
+      "state": "Processing",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1733/",
+      "api_url": "/api/v1/work/1733"
+    }
+  ],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 2,
+    "waiting": 2,
+    "stopped": 0,
+    "finance": {
+      "stages": 4,
+      "delivered": null,
+      "next": "Sprint review",
+      "limited": false
+    },
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0112",
+      "manager": "Sola Martins"
+    }
   },
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 3,
-    "registers": 2,
-    "actions": 4
-  }
+  "assistant": [
+    {
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
+    }
+  ]
 }

@@ -119,13 +119,6 @@ describe('handover fixtures', () => {
 
 });
 
-describe('P-0101 Handover row', () => {
-  it('carries work_id W-3704', async () => {
-    const { body } = await send('GET', '/api/v1/projects/P-0101');
-    expect(body.delivery.find((r: Body) => r.line_key === 'delivery_handover').work_id).toBe('W-3704');
-  });
-});
-
 describe('Publish', () => {
   it('sends once per key: a repeat gets the stored reply with no second send', async () => {
     const first = await step('W-3701', 'publish', 1, 'k-pub');

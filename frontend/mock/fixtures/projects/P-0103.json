@@ -1,27 +1,98 @@
 {
-  "case_id": "P-0103",
+  "case_id": "00000000-0000-4000-8000-000000000103",
   "title": "Kora Logistics · fleet tracker",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
-      "line": "Prepare a costing",
-      "state": "processing",
-      "work_id": "W-1811"
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000103/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000103"
     },
     {
-      "line": "Prepare an invoice",
-      "state": "effect_uncertain",
-      "work_id": "W-1005"
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000103/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000103/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000103/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000103/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000103/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000103/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000103/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000103/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000103/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000103/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000103/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000103/actions"
     }
   ],
-  "next": "Finance confirms whether the milestone 1 invoice reached the client.",
-  "pm": {
-    "name": "Tunde Bello",
-    "role": "Project manager"
+  "items": [
+    {
+      "id": 1811,
+      "line": "Prepare a costing",
+      "reference": null,
+      "state": "Processing",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1811/",
+      "api_url": "/api/v1/work/1811"
+    },
+    {
+      "id": 1005,
+      "line": "Prepare an invoice",
+      "reference": null,
+      "state": "Effect uncertain",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1005/",
+      "api_url": "/api/v1/work/1005"
+    }
+  ],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 2,
+    "waiting": 1,
+    "stopped": 0,
+    "finance": {
+      "stages": 4,
+      "delivered": null,
+      "next": "SOW signed",
+      "limited": false
+    },
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0103",
+      "manager": "Tunde Bello"
+    }
   },
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 3,
-    "registers": 2,
-    "actions": 4
-  }
+  "assistant": [
+    {
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
+    }
+  ]
 }

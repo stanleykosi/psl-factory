@@ -41,6 +41,7 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: 'CL-3501', template_id: 'T-01', tab: 'milestones', document_id: 'D-2304', version: '1' };
+const PROJECT_UUID = '00000000-0000-4000-8000-000000000101';
 const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0401', none: 'N-0201', admin: 'N-0201', pmo_lead: 'N-0201', hr: 'N-0301', hr_lead: 'N-0311' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
@@ -55,6 +56,7 @@ const BODY: Record<string, unknown> = {
 };
 // Operations a persona may not use answer the declared status instead of 200 (Setup is for Leads and Admin; E-EXCEPTIONS is Leads only; E-MONTH-END Finance only).
 const PERSONA_STATUS: Record<string, Record<string, number>> = {
+  'E-PROJECT': { none: 404, admin: 404, hr: 404, hr_lead: 404 },
   'E-CLIENTS': { none: 403 },
   'E-CLIENT': { none: 403 },
   'E-CLIENT-CONTACT': { none: 403 },
@@ -205,7 +207,10 @@ const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
 };
 // GET /me answers the live shape (D-172): its 200 is checked against contracts/psl-factory.openapi.json, its errors against v7.
 const liveOpenapi = JSON.parse(readFileSync(join(__dirname, '../../contracts/psl-factory.openapi.json'), 'utf8')) as { paths: Record<string, Record<string, Operation>> };
-const liveMeSchema = liveOpenapi.paths['/api/v1/me'].get.responses['200'].content['application/json'].schema;
+const liveSchema = (path: string) => liveOpenapi.paths[path].get.responses['200'].content['application/json'].schema;
+const liveMeSchema = liveSchema('/api/v1/me');
+// GET /projects and GET /projects/{case_id} answer the live shape too (F-70): their 200s are checked against the live contract.
+const LIVE_200: Record<string, object> = { 'E-ME': liveMeSchema, 'E-PROJECTS': liveSchema('/api/v1/projects'), 'E-PROJECT': liveSchema('/api/v1/projects/{case_id}') };
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 
 let server: Server;
@@ -220,7 +225,7 @@ afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 async function request(id: string, init: { persona?: string; scenario?: string; csrf?: string | null } = {}) {
   const { path, method } = byId(id);
   const persona = init.persona ?? 'finance_lead';
-  const value = (name: string) => (name === 'notification_id' ? NOTIFICATION_IDS[persona] : PATH_VALUES[name]);
+  const value = (name: string) => (name === 'notification_id' ? NOTIFICATION_IDS[persona] : id === 'E-PROJECT' && name === 'case_id' ? PROJECT_UUID : PATH_VALUES[name]);
   const url = base + path.replace(/\{(\w+)\}/g, (_, name: string) => value(name) ?? 'X-1') + (QUERY[id] ?? '');
   const headers: Record<string, string> = { Cookie: `psl_mock_persona=${init.persona ?? 'finance_lead'}` };
   if (init.scenario) headers['X-Mock-Scenario'] = init.scenario;
@@ -237,7 +242,7 @@ async function request(id: string, init: { persona?: string; scenario?: string; 
 
 function expectValid(id: string, status: number, body: unknown) {
   const declared = byId(id).op.responses[String(status)];
-  const schema = id === 'E-ME' && status === 200 ? liveMeSchema : declared ? declared.content['application/json'].schema : errorSchema;
+  const schema = status === 200 && LIVE_200[id] ? LIVE_200[id] : declared ? declared.content['application/json'].schema : errorSchema;
   const validate = ajv.compile(schema);
   const valid = validate(status === 200 ? (CONTRACT_BODY[id]?.(body) ?? body) : body);
   expect(valid, `${id} ${status}: ${ajv.errorsText(validate.errors)}`).toBe(true);

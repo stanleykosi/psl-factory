@@ -270,7 +270,7 @@ test.describe('the Documents tab', () => {
     await expect(rows.nth(1)).toContainText('TEST TEMPLATE');
     await expect(rows.nth(2).getByRole('link')).toHaveCount(0);
     await rows.nth(1).getByRole('link', { name: 'Statement of work' }).click();
-    await expect(page).toHaveURL(/\/projects\/P-0101\/documents\/D-2901\?v=2$/);
+    await expect(page).toHaveURL(/\/projects\/00000000-0000-4000-8000-000000000101\/documents\/D-2901\?v=2$/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Statement of work · v2');
   });
 });
