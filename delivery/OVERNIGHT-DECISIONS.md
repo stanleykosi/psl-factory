@@ -415,3 +415,10 @@ Also accepted with the recommendation: mock persona `none` shows only "Sample Pe
 
 ## D-176 (23 Nov 2026): sign-in split in three
 Readiness found SCR-17 too large for one review. Asked whether to split it into (a) sign in, error, sign out and every Sign in link, (b) forgotten password and (c) account set-up from an invitation, the design engineer answered "Split in three". F-58 is part (a), F-59 part (b) and F-60 part (c), all on task FE-SIGNIN and built one after another.
+
+## D-177 (23 Nov 2026): F-58 sign-in board conflicts settled
+The F-58 spec listed nine places where the SCR-17 boards cannot be met against the live API. The design engineer answered:
+- "Email or sign-in name": the first field is labelled "Work email or sign-in name", where the board says "Work email", because the API accepts either.
+- "Remove all three": "You'll go straight to INV-0412…" (it would show a record to a signed-out person), "3 tries left… 15 minutes" (the API gives no numbers and has no attempt limit) and the phone footer "Only PMO, Finance, HR and leadership roles have accounts…" (an admission rule the backend owns) are all left out, with no replacement.
+- "Text plus a hint": until F-59, "Forgot your password?" is plain text: "Reset opens in a later release. Ask your administrator for help."
+- "Accept all": the account menu has only the name and "Sign out" (the rest comes with FE-ALERTS-MENU). On phones, Sign out sits in the existing phone menu. After sign-out the person lands on /sign-in. Loading, "can't get ready", and signed-in-but-not-admitted use existing components with no new board. The frame's signed-out text becomes "You're signed out. Sign in", which replaces the D-174 interim line.

@@ -3,26 +3,70 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-58",
-  "outcome": "A person signs in, sees the error state when it fails, and signs out, on the SCR-17 sign-in board, against the live session API; every Sign in link in the app opens this page and the frame re-reads role words after sign-in (wave 1 part a, D-176)",
-  "state": "PLANNED",
+  "outcome": "A person can sign in, see a plain error, and sign out",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-SIGNIN"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/sign-in` renders with no `/me` call and no top bar or phone bar. \u2014 verify: unit (render `AppShell` at `/sign-in` with a spy fetch: only `GET /api/v1/session` is called); mock (page at `/sign-in` shows the form and no \"My work\" link).",
+    "Desktop and phone layouts match `SCR-17-desktop` and `SCR-17-mobile` for the default state (brand column, headings, labels, \"Keep me signed in\", \"Sign in\" button; no \"You'll go straight to INV-0412\" line, no mobile footer sentence about roles). \u2014 verify: mock, design fidelity run at 1440 and 390 wide.",
+    "Submitting with an empty field makes no request and shows \"Enter your work email.\" / \"Enter your password.\" \u2014 verify: unit (no POST on the fetch spy).",
+    "The form has `method=\"post\"`; submitting never changes the address bar to include the password. \u2014 verify: unit (attribute) and mock (type a password, press Enter, address stays `/sign-in`).",
+    "`POST /session` body is `{username, password, remember, next_url?}` with `remember` a boolean and the `X-CSRFToken` set from the last `GET /session` body. \u2014 verify: unit (assert body and header on both checkbox states).",
+    "Each error in the table shows exactly the fixed wording, password cleared, username kept, focus on the callout, and no number or time anywhere on the page. \u2014 verify: unit with fixtures for 422 `sign_in_failed`, 422 `invalid_input` with `fields`, 403 `csrf_failed`, 429, a thrown network error, 500 and 503; assert the server `message` text never appears; mock with the scenario cookies 429, 503 and 500.",
+    "A 403 `csrf_failed` re-reads the token and a second press succeeds without a reload. \u2014 verify: unit (second POST carries the new token); mock (use a wrong token via the mock's scenario).",
+    "A failed `GET /session` on load shows \"We couldn't get sign-in ready\" with \"Try again\" and no form; Try again recovers. \u2014 verify: unit.",
+    "`safeNext` rejects `https://evil.example`, `//evil.example`, `/\\evil.example`, `javascript:alert(1)`, `/%2F%2Fevil.example`, `/api/v1/me`, `/accounts/login/`, `/getting-started/`, `/sign-in`, a value over 2048 characters, an empty string and a non-string; it accepts `/`, `/my-work`, `/projects/P-0101?tab=money`. \u2014 verify: unit table test.",
+    "`/sign-in?next=%2Fmy-work`: after a good sign-in the browser is at `/my-work`; with `next=https%3A%2F%2Fevil.example` or `next=%2F%2Fevil.example` it ends at `/` then the first destination and never leaves the site, and the POST body has no `next_url`. \u2014 verify: unit (router spy) and mock (Playwright).",
+    "If the server returns a `next_url` the page would not allow (`/accounts/login/`), the page goes to `/`. \u2014 verify: unit.",
+    "After a good sign-in as an admitted person the frame shows the new person's name and role words (not the previous person's). \u2014 verify: mock (sign in, check the top bar name and `GET /role-dashboard` called again after the sign-in; sign out, sign in as another persona via the DemoBar cookie, name changes); live (criterion 17).",
+    "Not admitted: after sign-in as `none` (mock) or `live-none` (live) the page stays on `/sign-in` with \"You're signed in, but no work is open to you yet. Ask your administrator.\" and a working \"Sign out\"; the browser never loads `/getting-started/`. \u2014 verify: unit and live.",
+    "Wrong password for the admitted account: the page shows \"That email and password don't match.\" and `POST /api/v1/session` returned 422 `sign_in_failed`. An unknown username returns a byte-identical 422 body and the same page text. \u2014 verify: live (browser, plus `curl` through the proxy comparing the two bodies).",
+    "Right password: `POST /session` 200, the browser goes to `/`, then the person's first destination, and `GET /api/v1/me` returns 200. \u2014 verify: live.",
+    "Open redirect: `http://127.0.0.1:3100/sign-in?next=//evil.example` and `?next=https://evil.example` followed by a good sign-in end on a page of the app (never another host); a `curl` `POST /api/v1/session` with `next_url:\"//evil.example\"` returns a `next_url` that is not `//evil.example`. \u2014 verify: live.",
+    "Role words: the top bar after sign-in shows the signed-in person's name and the role words from `GET /role-dashboard` without a reload. \u2014 verify: live (screenshot of the bar; the network log shows `/me` and `/role-dashboard` after the sign-in).",
+    "Signed-in visit: with a session, opening `/sign-in` shows no form and lands on the person's first destination (or the not-admitted message for `live-none`). \u2014 verify: live.",
+    "Remember: with the box ticked the session cookie has an expiry; unticked it is a session cookie (no `Expires`). \u2014 verify: live (`curl -i` through the proxy, `Set-Cookie` for `sessionid`).",
+    "Sign-out: from the name menu the browser goes to `/sign-in`, `GET /api/v1/me` then answers 401, and going Back to `/my-work` shows \"You're signed out. Sign in\" with the link `/sign-in?next=%2Fmy-work`. \u2014 verify: live.",
+    "Stale token on sign-out: sign in in tab A, sign in again in tab B (rotates the token), press \"Sign out\" in tab A: the toast \"Your session was refreshed. Press Sign out again. Nothing was changed.\" shows, the person is still signed in (`GET /me` 200), and a second press signs out. Also `curl -X POST .../api/v1/session/logout` with a wrong `X-CSRFToken` returns 403 `csrf_failed`. \u2014 verify: live.",
+    "Token rotation: the `csrf_token` in the sign-in response differs from the one read before it, and the next write after sign-in (any existing write, e.g. alert settings save) succeeds with the new token. \u2014 verify: live (network log).",
+    "The top-bar name opens an account menu with \"Sign out\"; keyboard: Enter opens, arrows move, Esc closes and returns focus to the name, Tab leaves. On a phone the menu has \"Sign out\" after the destinations. Axe finds no violations on `/sign-in`, the open menu and the error state. \u2014 verify: mock (Playwright with `expectNoAxeViolations`, as in `e2e/frame.spec.ts`).",
+    "Sign-out failure keeps the person where they are: a 500 or network error shows \"We couldn't sign you out. Try again.\" and the menu still works. \u2014 verify: unit.",
+    "`grep -rn \"accounts/login\" frontend/src frontend/tests frontend/e2e` returns only the negative assertion in `tests/next-config.test.ts` and nothing in `src`; every test and e2e spec that asserted `/accounts/login/?next=\u2026` now asserts `/sign-in?next=\u2026` with the same encoded path. \u2014 verify: the grep, and `npm test` passing.",
+    "The frame's signed-out state (401 from `/me`) shows \"You're signed out.\" with a \"Sign in\" link to `/sign-in?next=<path>`, and the text \"Sign-in opens in a later release\" appears nowhere. \u2014 verify: unit and mock (`e2e/frame.spec.ts` updated; the old \"no link\" assertions at lines about 140 and 308 now expect the link).",
+    "Forgot password: the page shows the plain sentence, no link or button for it, and no request goes to `/accounts/recovery/*`. \u2014 verify: unit (no link by that name, fetch spy) and mock.",
+    "The mock answers `POST /api/v1/session` and `POST /api/v1/session/logout` with bodies that validate against the live contract (200, 422 `sign_in_failed`, 403 `csrf_failed`), rotates tokens as in Fixtures, rejects a non-current token, and `GET /me/onboarding` validates too. \u2014 verify: unit (extend `tests/mock-live-me.test.ts` pattern with the live 200 and error schemas).",
+    "On port 3000 a full round works: sign in with the sample pair, see the frame, sign out, land on `/sign-in`; a wrong pair shows the error. \u2014 verify: mock (Playwright `e2e/sign-in.spec.ts`)."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "RISK is high. This is sign-in, session and CSRF rotation, and a mistake can expose accounts or lock everyone out (contracts/psl-factory.openapi.json 1.22.0, D-SIGNIN r2, D-AUTH r3). SURFACES are ui, api, auth and security, plus contract-change because the shared `SignedOutState`, the frame's role words and the retired /accounts/login/ links change for about 30 screens. I left out product-decision: the numbers and wording the API cannot supply are bound out of scope above, so no business rule is left to guess. PRODUCT-ACCEPTANCE is required because the flow and its copy are new, and D-173 is an exception, not a client approval. Open backend questions A-46 to A-49, A-54 and A-55 shape copy only and do not block this part."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-58/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "06305ba6d0dc499acd054d6f493c4102efd6b7cc83bea6966753b6462029a27d",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -45,7 +89,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +103,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-58/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +154,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-SIGNIN",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "main",
+    "base_sha": "44878365c9d1e71bb56a3e9b3cd8a0d7ddbb240a",
+    "task_branch": "fe-signin-sign-in-reset-and-set-up",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -136,12 +201,41 @@
     }
   },
   "created_at": "2026-11-23T11:27:08Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T11:36:52Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T11:36:52Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-58/readiness.md",
+      "delivery/features/F-58/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

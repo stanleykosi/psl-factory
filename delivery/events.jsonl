@@ -3994,3 +3994,6 @@
 {"at":"2026-11-23T11:27:08Z","feature":"F-58","round":0,"kind":"created","tasks":["FE-SIGNIN"]}
 {"at":"2026-11-23T11:30:18Z","feature":"F-59","round":0,"kind":"created","tasks":["FE-SIGNIN"]}
 {"at":"2026-11-23T11:30:19Z","feature":"F-60","round":0,"kind":"created","tasks":["FE-SIGNIN"]}
+{"at":"2026-11-23T11:36:52Z","feature":"F-58","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","security","auth","contract-change"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T11:36:52Z","feature":"F-58","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-23T11:36:52Z","feature":"F-58","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
