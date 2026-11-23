@@ -97,3 +97,6 @@ div.sw-next { display: flex; flex-direction: column; gap: var(--space-6px); bord
 .sw-lines .sw-unavailable { display: block; cursor: default; }
 .sw-unavailable__note { display: block; margin-top: 2px; }
 .sw-stack { display: flex; flex-direction: column; gap: var(--space-2); }
+
+/* the summary's links sit in a list: each is a 24px target so neighbours keep the spacing axe asks for */
+.sw-body .psl-summary a { display: inline-block; min-height: 24px; line-height: 24px; }
