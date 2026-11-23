@@ -1248,7 +1248,7 @@ Each entry keeps the frontend developer's original question and ID. The question
 
 **Answer**  The PMO Lead and Finance Lead can generate either format whenever they need it. The Factory’s AI workers use the current records each lead can access across all PSL projects. Show when the report gathered its information. Staff can generate the report without choosing dates or waiting for a day of the week.
 
-**API 1.26.0**  `GET /projects/{case_id}/leadership-report-intake` returns `automatic_project_scope: true` for either current lead. Start either format with the report type, audience and template. Omit `start_at` and `end_at` for the information available at the time of the request. Use `background: true` to queue the agent work. Read the capture time under `coverage.captured_at` and the project list under `coverage.project_register`. Existing report reviews and recipient checks still apply.
+**API 1.26.0**  `GET /projects/{case_id}/leadership-report-intake` returns `automatic_project_scope: true` for either current lead. Start either format with the report type, audience and template. Omit `start_at` and `end_at` for the information available at the time of the request. Use `background: true` to queue the agent work. When model reading is enabled for the report, the specialist receives a checked summary of the permitted project records. Read the capture time under `coverage.captured_at` and the project list under `coverage.project_register`. Existing report reviews and recipient checks still apply.
 
 #### D-34
 

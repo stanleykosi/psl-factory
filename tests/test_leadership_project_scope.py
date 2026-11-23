@@ -89,6 +89,13 @@ class LeadershipProjectScopeTests(TestCase):
         return config
 
     def test_leads_generate_both_reports_over_all_same_organisation_projects(self):
+        import json
+        import os
+        from unittest.mock import patch
+
+        from adapters import case_uploads, openrouter
+        from apps.agents import specialist_memory as specialists
+        from apps.agents.specialist_models import SpecialistReading
         from apps.documents.controlled import register_template
         from apps.pmo.leadership_reporting import THEMES
         from apps.workflows.models import FactoryAttempt
@@ -152,7 +159,38 @@ class LeadershipProjectScopeTests(TestCase):
                                           content_type='application/json')
                 self.assertEqual(repeat.status_code, 201, repeat.content)
                 self.assertEqual(repeat.json()['work_id'], work.pk)
-                factory.run_until_wait(work.pk)
+                process = 'P40' if kind == 'internal_tuesday' else 'P42'
+                _, profile = factory.profile(work)
+                _, _, model_lines = next(specialists.inputs_for(
+                    work, {flow.KIND: work.source_head}, profile, actor, process))
+                self.assertIn(empty.title, ' '.join(model_lines.values()))
+                self.assertNotIn('Another organisation', ' '.join(model_lines.values()))
+                if actor == finance:
+                    self.assertIn('meetings: 0 accessible records.', model_lines.values())
+                    self.assertIn('Unavailable areas', ' '.join(model_lines.values()))
+                    self.assertNotIn('Older noted observation', ' '.join(model_lines.values()))
+                else:
+                    self.assertIn('Older noted observation', ' '.join(model_lines.values()))
+                if actor == pmo and kind == 'internal_tuesday':
+                    objects = {}
+                    with (patch.dict(os.environ, OPENROUTER_MODEL='test-only', OPENROUTER_API_KEY='test-only',
+                                     PSL_OPENROUTER_COORDINATION='0'),
+                          patch.object(case_uploads, 'put', side_effect=objects.__setitem__),
+                          patch.object(case_uploads, 'read', side_effect=lambda row: objects[row.key]),
+                          patch.object(openrouter, 'completion', return_value={'summary': 'Current source coverage reviewed.',
+                              'quotes': ['1'], 'gaps': [], 'assessment': 'supported', 'facts': []}) as model):
+                        self.assertTrue(factory.run_once(work.pk))
+                        self.assertTrue(SpecialistReading.objects.filter(work=work, process='P40', status='queued').exists())
+                        while specialists.run_once():
+                            pass
+                        self.assertTrue(model.called)
+                        sent = json.loads(model.call_args.args[2])
+                        self.assertEqual(sent, model_lines)
+                        factory.run_until_wait(work.pk)
+                        self.assertTrue(FactoryAttempt.objects.filter(activity__work=work, phase='observed',
+                            result__specialist__activity='ACT09', result__specialist__has_key='source_handoffs').exists())
+                else:
+                    factory.run_until_wait(work.pk)
                 work.refresh_from_db()
                 document = flow.document(work)
                 self.assertIsNotNone(document, work.finding)
