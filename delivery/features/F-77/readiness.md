@@ -1,23 +1,23 @@
 DECISION: NOT-READY
 RISK: high
-SURFACES: ui, api, product-decision, contract-change
+SURFACES: ui, api, contract-change, product-decision
 PRODUCT-ACCEPTANCE: required
 BLOCKING-DECISIONS: D-COSTING-RULE
 REVIEWER: readiness
 
 ## Summary
-- F-77 is FE-SETUP-COSTING with SCR-39 Setup costing rule (4 boards: default, review, example, review-own). D-COSTING-RULE is still revision 1, status open (architecture/model.json:1780-1806). It covers the rule's shape, review and withdrawal, and the backend move to one studio-wide rule. No later decision settles it.
-- Live 1.22.0 has costing endpoints, but they are per project (`/projects/{case_id}/costing...`) and return raw calculator payloads, hashes and ids. There is no organisation-wide read (B-51), no readable rule or worked examples (B-50), and no proposer or reviewer names. The design is an org-wide version list with those names.
-- A read-only slice is not worth building yet. The screen's content depends on the open shape of the rule and on B-50 and B-51, so any build would invent what a rule section looks like.
-- Writes (propose, withdraw, decide) are financial-rule changes and stay held. The reviewer must differ from the proposer (12 Nov), and PSL has not named the reviewers or the owners.
+- Re-check on main b8542c79 and API 1.24.0: D-COSTING-RULE is still unsettled. The 23 Nov PSL decision "Finance staff can adjust any pricing line in NGN, with the lines and amounts reviewed by the Finance Lead before the revised bid proceeds" is about pricing lines on a revised bid. It says nothing on the studio-wide rule's shape, who proposes or reviews a new version, or how a proposal is withdrawn. It does not settle D-COSTING-RULE.
+- B-50 to B-53 do not unblock the screen. B-50: public reads give the structured rule and worked-example results but no prose summary and not all proposer or reviewer names, which the design shows. B-51: no org read; start from Setup scopes and the authorised workspace's organisation policy, and do not pick a project. B-52: a verdict needs a current case evidence ID, the verdict and a reason, checked against reviewer authority. B-53: costing proposals are not a work definition.
+- Withdrawal is not answered anywhere, and reviewer and owner names are still not given. Writes stay held.
+- A read-only slice still invents what a rule section and the missing names look like, so it is not worth building.
 
 ## Scope
-Not for a spec. Unblock by: (1) PSL decides D-COSTING-RULE; (2) backend answers B-50 (readable rule and examples with names), B-51 (which project or workspace carries the org rule), B-52 (what evidence a verdict needs), B-53 (what `POST /work` does for costing). After that, re-run readiness, probably as two PRs: the read (versions, sections, examples) and the review decision (`POST .../costing/proposals/{proposal_id}`: confirm, return, withdraw). Out of scope until then: "New version" (no write is proposed), SCR-27 costing sheet (F-FE-COSTING, same gate).
+Not for a spec. Unblock by PSL deciding D-COSTING-RULE (rule shape, who proposes and reviews, withdrawal, named owners), and the backend confirming how an org-level read is reached (B-51 gives a direction, not an endpoint) and whether names will be returned (B-50). Then re-run readiness, likely as two PRs: the read (versions, sections, examples), then the review decision (confirm, return, withdraw). Out: "New version" and SCR-27.
 
 ## Risk
-High: a financial rule that prices projects and feeds invoices, with unknown values that must never become zero (G-SCR39-4, "Unknown equals Unknown" is not a match). Contract change is needed for a readable, org-level read. Sources: connect/screens-b-projects-setup-clients.md SCR-39, backend-handoff/gaps-a-project-setup.md:304-317.
+High. A financial rule that prices projects and feeds invoices, with unknown values that must not become zero. Contract change is likely for a readable org-level read. Sources: architecture/model.json D-COSTING-RULE (open), BUILD-DECISIONS.md 23 Nov, backend-answers.md B-50 to B-53.
 
 ## Questions
-(Not NEEDS-INFO, since the blocker is a PSL decision.)
-1. PSL with the backend developer: the costing rule's shape, who proposes and reviews it, how it is withdrawn, and the named rule and examples owners (D-COSTING-RULE).
-2. Backend: B-50, B-51, B-52, B-53.
+(Not NEEDS-INFO: the blocker is a PSL decision plus backend work.)
+1. PSL with the backend developer: the costing rule's shape, who proposes and reviews it, how it is withdrawn, and the named owners (D-COSTING-RULE).
+2. Backend: the org-level read route and proposer and reviewer names (B-50, B-51).

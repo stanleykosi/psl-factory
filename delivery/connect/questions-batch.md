@@ -220,6 +220,29 @@ Plain hides in these two specs are covered by D-182 and are not asked again. We 
   1. (Recommended) Use the Issues columns, with "—" where live has no value.
   2. Give each register its own columns (needs a board).
 
+### Batch 4 (lane B, API 1.24.0, D-185)
+
+Parts that 1.24.0 now supplies are switched on as the boards draw them (D-185), with no question. Below is only new behaviour. We build option 1 of each.
+
+- **F-73 · B26. Add a billing contact now.** 1.24.0 lets Setup record a billing contact, but only with a proof already recorded on the project; there is no proof upload from the client page. The form also needs customer, client name and role, which the board does not draw.
+  1. (Recommended) Build it now: the form picks one of the project's recorded proofs, adds the extra fields, and is disabled with its reason when there is no proof.
+  2. Keep it disabled (as in B6) until a proof can be uploaded from the client page.
+- **F-74 · B27. Setup saves as "draft, then review".** 1.24.0 has proof upload, delegation drafts, template replacement and review actions. Company settings open without a project (PSL: "Company-wide settings should be accessible from Setup without needing to know a project first").
+  1. (Recommended) Build the saves now: every change is saved as a draft that is never shown as in force, review buttons follow what the server allows, a company selector shows only when you manage more than one company, and Templates keeps a project selector (templates belong to a project). Rule rows stay read-only: none of them matches a rule type the backend can draft yet.
+  2. Keep Setup read-only this release.
+- **F-76 · B28. Staff invite, deactivate, restore and role changes.** 1.24.0 has these commands, but PSL's answer says who may read staff, not who may change them.
+  1. (Recommended) Keep F-76 read-only; build the changes as a separate feature once PSL says who may make them (needs PSL).
+  2. Build them now for whoever the server allows.
+- **F-79 · B29. Month-end and payments wording.**
+  1. (Recommended) "Received this month covers N of M projects; K could not be read." only when some could not be read; OWED shows the known part plus "Unknown" with a count of invoices that have no known balance.
+  2. Show the total alone with a "partial" tag.
+- **F-71 · B30. Money and Milestones: paid word and proof.** Live gives no paid word on the money read (it lives on each invoice's payments) and no proof file route.
+  1. (Recommended) No paid word: show the status as given plus Paid and Owed amounts; a "Proof" button shows the recorded name, date and proof version.
+  2. Read each invoice's payments to show Paid / Part paid / Not paid.
+- **F-78 · B31 (for PSL). Does marking a milestone complete start the invoice draft?** PSL decided the PMO Lead confirms the milestone. The backend only says a Finance handoff is queued. Mark complete stays BLOCKED until PSL answers.
+  1. (Recommended) Completion only queues the Finance handoff; Finance starts the invoice.
+  2. Completion starts the invoice draft automatically.
+
 ## Lane C
 
 ### LC-Q1 · F-85, F-87 · Work item parts the live API does not give
@@ -310,6 +333,19 @@ The review board shows the four parts with their records, a byline and a link to
 3. Hold the whole review block until the preview is connected.
 
 _LC-Q10 onwards were added after batch 1 went out; D-182 covers LC-Q1 to LC-Q9 only. They stay open for batch 2, and lane C builds on their recommended options meanwhile._
+
+### LC-Q17 · F-88 · Assign PM: the two confirmation tick-boxes (API 1.24.0)
+Live now lets the person upload a file as the proof for choosing a PM, but only with a "checked" confirmation (`checked: true`) sent beside it. Logging an RFP also has a `context_attested` confirmation of the client name and submission instructions typed on the form. The contract gives no words for either.
+1. **(Recommended)** Assign PM, when a file is uploaded: a required tick-box "I have checked this file and it supports my choice." Log RFP: an optional tick-box "I confirm the client name and submission details above match the RFP." shown only when a client name or submission detail is filled in.
+2. Show no tick-boxes and send the confirmations as true. (Not recommended: it records a confirmation nobody gave.)
+3. Hold both until PSL supplies the wording.
+
+## Lane D
+
+### LD-Q1 · F-107 · Business-unit totals (SCR-57): build on what the API discloses?
+F-44 was held on D-PAYROLL-VISIBILITY: may Finance, the BU reviewer and Chidi see staff count and staff cost per business unit? That decision is still open in `architecture/model.json`. PSL's 23 Nov answers (E-26, E-27, E-30, E-32 in `backend-answers.md`) now have the backend enforce it per person: totals come from the eligible payroll match, a recipient gets the approved BU totals only (no staff counts, no names, no pay rows), a too-small group holds the publication, and approval is an independent review (kind `business_unit`).
+1. **(Recommended)** Build SCR-57 on what the API serves to each person and nothing more. A board figure the API does not give that person (for example "Legal (2 people)" for a recipient) is hidden. The merge comes to you in the merge batch, because it shows restricted payroll totals and sends them to the CEO and BU heads.
+2. Keep F-107 blocked until PSL records D-PAYROLL-VISIBILITY itself.
 
 ## Answers, batch 1 (23 Nov 2026, D-182)
 

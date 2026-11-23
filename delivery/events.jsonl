@@ -4257,3 +4257,12 @@
 {"at":"2026-11-23T17:10:40Z","feature":"F-85","round":1,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"1817c34ee2d7","findings":{"UX-1-1":"low","UX-1-2":"low","UX-1-3":"low","UX-1-4":"low"},"written_at":"2026-11-23T17:07:23Z"}
 {"at":"2026-11-23T17:10:40Z","feature":"F-85","round":1,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"1817c34ee2d7","findings":{"UI-1-1":"low","UI-1-2":"low"},"written_at":"2026-11-23T17:05:30Z"}
 {"at":"2026-11-23T17:14:25Z","feature":"F-62","round":1,"kind":"finding","action":"fix","finding":"QA-1-1","by":"coordinator"}
+{"at":"2026-11-23T17:38:19Z","feature":"F-91","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T17:38:22Z","feature":"F-92","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T17:39:29Z","feature":"F-101B","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T17:39:34Z","feature":"F-102B","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T17:39:38Z","feature":"F-103B","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T17:39:41Z","feature":"F-104B","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T17:39:43Z","feature":"F-111B","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T17:39:44Z","feature":"F-113B","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T17:39:47Z","feature":"F-115B","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}

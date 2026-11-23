@@ -1,24 +1,28 @@
-DECISION: NOT-READY
+DECISION: NEEDS-INFO
 RISK: high
-SURFACES: ui, api, product-decision, contract-change
+SURFACES: ui, api, auth, contract-change, product-decision
 PRODUCT-ACCEPTANCE: required
-BLOCKING-DECISIONS: PSL milestone-completion rule (who may press "Mark complete", and whether it starts the invoice draft); no decision ID is assigned yet
+BLOCKING-DECISIONS: none assigned (open: who holds the completion write, and whether completion starts the invoice draft)
 REVIEWER: readiness
 
 ## Summary
-- F-78 is FE-MILESTONE-COMPLETE with SCR-19 (replaces F-50, BLOCKED 19 Nov). Architecture gates are empty (`gate_ids: []`, model.json:22051), and the Milestones tab (F-25) and proof upload (F-47) are merged.
-- Live 1.22.0 now has the write: `POST /api/v1/projects/{case_id}/milestones/completions` (201) with `GET` options and `GET .../milestones/{milestone_id}`. So the F-50 "endpoint missing" blocker is gone.
-- The PSL decision is not settled anywhere. I searched OVERNIGHT-DECISIONS.md, COORDINATOR-HANDOFF.md:158 (still lists it as waiting), model.json (no decision ID) and the connect docs. Both questions are still open: who may press "Mark complete", and whether it auto-starts Chidi's invoice draft.
-- The live contract also leaves the screen's gaps open: no `can_complete` or reason (B-31), `name` is free text with no milestone id (B-28), no API way to create `kind=completion` evidence (B-29), and no returned invoice handoff id (B-30). The 403/404 on the options read stands in for permission, which would be a guess at the rule.
+- Most of the r1 blockers are cleared. PSL decided on 23 Nov (BUILD-DECISIONS.md on main) that the PMO Lead reviews the project and confirms the exact milestone before completion is recorded. Contract 1.24.0 has the write and options read the screen needs.
+- B-28 to B-31 are answered. The write takes the milestone name, current revision and typed evidence (an existing native proof, or a checked private PDF). The options read returns `can_complete`, `can_attach_pdf` and `hold` (`baseline_required`, `proof_required`, `name_in_use`). The write returns the new milestone id.
+- The invoice-draft question is not answered. B-30 says only that the service queues a Finance handoff that may appear later in the department handoffs. No PSL decision or backend answer says whether the invoice draft starts automatically.
+- The "who" is only half enforced. The decision names the PMO Lead, but the backend answer for the sibling go-live flow (backend-answers.md:1139) says completion checks the configured `PM` authority and that backend work is still needed to route the decision to the PMO Lead and keep it on the exact milestone record. Nothing says the plain completions write does this. If `can_complete` is true for a PM who is not the PMO Lead, the screen would contradict PSL.
+- Risk stays high: the completion is recorded as fact, can feed billing, and has no revoke path in the contract.
 
 ## Scope
-Not for a spec yet. When unblocked: the PM opens SCR-19 from the Milestones tab, sees the milestone and the proof on record, and presses "Mark complete" (`POST .../milestones/completions` with case `revision`, `evidence_id`, `name`). The completion shows only from the re-read. Boards: `design/canvas/project/SCR-19-{desktop,mobile}.dc.html`. Out: invoicing, stage amount, any edit or revoke, the SCR-38 button link until the design is reconciled.
-Unblock by: (a) PSL answers the two questions below; (b) backend answers B-28 to B-31. Alternative, only with a recorded exception and limits from the design engineer: build on the contract mock and show the button only when the mock returns `can_complete`. I have not assumed that exception. No read-only slice exists: the SCR-19 screen is the confirm step, and the read is already F-25's Milestones tab.
+Not for a spec yet. When unblocked, the outcome is: the PMO Lead opens SCR-19 from the Milestones tab, sees the exact milestone and proof on record, and confirms completion. Covers FE-MILESTONE-COMPLETE, `GET` and `POST /api/v1/projects/{case_id}/milestones/completions` (and `GET .../milestones/{milestone_id}` for the re-read). Binding rules for the spec writer:
+- The button shows only when `can_complete` is true; `hold` gives the reason in plain words. The UI never encodes a role rule of its own.
+- Evidence is an existing proof from `proofs[]` or a PDF upload, shown only when `can_attach_pdf` is true.
+- The completion appears only after the re-read. No invoice or "draft started" claim until the invoice question is answered; at most show the Finance handoff as read from the project's department handoffs.
+- Out: invoicing, stage amounts, edit or revoke, the SCR-38 link.
+Boards: `design/canvas/project/SCR-19-{desktop,mobile}.dc.html`.
 
 ## Risk
-High. The completion is a fact that queues the Finance handoff (money) and is hard to undo (no correction or revoke path in live). Writing it without the permission rule would invent an approver. Sources: contracts/psl-factory.openapi.json:78823, connect/screens-b-projects-setup-clients.md SCR-19, F-50/readiness.md.
+High. A completion is an irreversible, billing-adjacent write (queues a Finance handoff, contract 1.24.0 milestones/completions, backend-answers.md B-28 to B-31). Surfaces: ui and api for the screen and write, auth because the PMO Lead rule must be enforced server-side, contract-change for the 1.24.0 options and write, product-decision for the open invoice rule. Not READY, because building before the authority is confirmed would invent an approver.
 
 ## Questions
-1. PSL: who may mark a milestone complete, only the project's PM or anyone in PMO?
-2. PSL: should completion start Chidi's stage invoice draft automatically, or only offer "Start the invoice" to Finance?
-3. Backend: B-28 (milestone id and name), B-29 (how completion evidence is created), B-30 (handoff id), B-31 (`can_complete` with a reason), and how a wrong completion is corrected.
+1. Backend: for `POST milestones/completions`, does `can_complete` (and the write) require the PMO Lead's confirmation on the exact milestone, as PSL decided on 23 Nov, or does it still accept the project's PM as in the go-live flow?
+2. PSL: when a milestone is marked complete, should the stage invoice draft start automatically, or should Finance be offered "Start the invoice" after the handoff?

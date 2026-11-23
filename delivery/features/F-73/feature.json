@@ -36,10 +36,11 @@
       "ui",
       "api",
       "contract-change",
-      "product-decision"
+      "product-decision",
+      "security"
     ],
-    "rated_by": "readiness",
-    "rationale": "Medium. The change is read-only and conforms to the approved design. It is still a cross-layer contract change, and the meaning of \"client\" changes from a record to a group in src/features/clients and in the route id. Per-record access applies to the reads. The high-risk billing-contact write is excluded. Surfaces: ui, api, contract-change, and product-decision for the B4 and B5 defaults. Product acceptance is required because the client sees a changed list, a changed detail page and a disabled contact form."
+    "rated_by": "coordinator after the 1.24.0 re-spec (D-185)",
+    "rationale": "Medium. Adds one non-money write, recording a billing contact (name, email, role) from a proof already on the project, plus the Owed panel read. Security: personal contact data and proof selection. Product decision B26 is pending in the batch."
   },
   "baseline": {
     "architecture_manifest_sha256": null,

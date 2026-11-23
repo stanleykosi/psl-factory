@@ -28,15 +28,17 @@
     "Live check: with Django on 8010 and Next.js on 4970 (LANES.md \"Live backend for checks\"), signed in as `live-admin`, `/setup/rules`, `/setup/delegation` and `/setup/templates` show the live data for a workspace the account can read, and `live-none` sees the no-access state. \u2014 verify: browser, as above."
   ],
   "risk": {
-    "level": "medium",
+    "level": "high",
     "surfaces": [
       "ui",
       "api",
       "contract-change",
-      "product-decision"
+      "product-decision",
+      "security",
+      "auth"
     ],
-    "rated_by": "readiness",
-    "rationale": "Reads only, so no data change. Medium because the workspace scope for organisation-wide Setup is an unconfirmed default (B-21, B-27, B-38), the contract is cross-layer (several endpoints, plus 404-as-no-access handling), and the rules screens expose approval-authority data, so an access leak is possible. Surfaces: ui, api, contract-change, product-decision (the picker and the reads-only default). Risk drops from r1's high because the evidence_id and draft-activate paths are no longer in scope."
+    "rated_by": "coordinator after the 1.24.0 re-spec (D-185)",
+    "rationale": "High. The 1.24.0 re-spec adds writes: proof upload (decision-proofs), delegation drafts, template replacement and review actions on company policy, which carry approval authority. Security and auth: a wrong draft or review could change who may approve; uploads. Product decision B27 is pending in the batch."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
