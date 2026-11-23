@@ -9,7 +9,7 @@ const WRITES = /^(approve|return|reject|withdraw|post|record|match|leave unmatch
 const loaded = async (page: Page) => {
   await expect(page.locator('.psl-loading')).toHaveCount(0);
   await expect(page.locator('main#main h1').first()).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Where it stands' }).or(page.locator('.ws-note').first())).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Where it stands' })).toBeVisible();
 };
 const watch = (page: Page) => {
   const seen = { writes: [] as string[], urls: [] as string[] };
