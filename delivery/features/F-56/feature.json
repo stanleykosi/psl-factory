@@ -3,26 +3,51 @@
   "record_kind": "project_record",
   "project_id": "psl-factory",
   "feature_id": "F-56",
-  "outcome": "The Django embed main added is gone: the app shell always draws our own frame, the Next.js proxy forwards only /api/v1 and the authenticated download routes the API returns, and no page falls through to retired Django pages (FE-CONNECT-1 part a, D-172)",
-  "state": "PLANNED",
+  "outcome": "Remove the Django embed: the shell always draws our own frame, and the proxy forwards only the API and file downloads",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`frontend/src/shell/FactoryDesk.tsx` no longer exists, and nothing in `frontend/src`, `frontend/tests`, `frontend/e2e` or `frontend/mock` mentions `FactoryDesk`, `work_desk_url`, `django_url`, `factory-forms`, `factory-assets` or `NEXT_PUBLIC_FACTORY_ORIGIN`. \u2014 verify: a vitest test using `matchingSources` from `frontend/tests/source-files.ts` over those four folders (excluding the test file itself) returns an empty list; `cd frontend && npm test` passes.",
+    "The rewrite set is exactly the expected one. \u2014 verify: new `frontend/tests/next-config.test.ts` sets `API_ORIGIN`, calls `rewrites()` and asserts: `beforeFiles` is exactly the `/api/v1/:path*` rewrite; `afterFiles` has exactly six entries whose sources match the table; `fallback` is empty or absent; no source is `/:path*`, `/accounts/...`, `/static/...`, `/factory-forms/...`; every destination starts with `API_ORIGIN`; the config has no `env` key.",
+    "`/__mock/reset` is present only with `NEXT_PUBLIC_MOCK_DEMO=1` and non-production. \u2014 verify: the same test runs the config with the flag unset (absent), `'1'` (present once), and `'1'` with `NODE_ENV=production` (absent).",
+    "Each of the six patterns accepts its route and rejects near misses. \u2014 verify: the test converts each source with Next's path matcher (`next/dist/compiled/path-to-regexp`, or `next/dist/shared/lib/router/utils/path-match`) and asserts: a matching example for each (UUID `3f2b8c1e-1a4d-4c7e-9b0a-5d6e7f8a9b0c`, ids `12`) matches; a non-numeric id, a non-UUID case, an extra trailing segment (`/cases/<uuid>/files/1/extra`), and the unrelated `/finance/followup-inbox/<uuid>/key` and `/health` do not match.",
+    "No rewrite shadows an app route. \u2014 verify: the same test asserts every rewrite sits in `afterFiles`, and that none of the app routes `/work/12`, `/work/12/history`, `/work/12/decide`, `/work/12/outcome`, `/work/12/respond`, `/projects`, `/projects/<uuid>`, `/projects/<uuid>/documents/5`, `/projects/<uuid>/anything` matches any of the six sources.",
+    "The shell always draws our frame, even if `/me` still carries Django fields. \u2014 verify: a vitest render of `AppShell` (pattern of `frontend/tests/frame-fixtures.test.tsx`) with a `/me` mock body that includes `work_desk_url` and `django_url` destinations draws the standard frame states (ready nav from `destinations`, or the no-sections state), with no `psl-work-client` element and no link whose href contains `/factory-forms` or a `django_url`.",
+    "Signed-out, forbidden, error and loading states still draw as before. \u2014 verify: the existing shell tests (`frame-fixtures.test.tsx` and the other shell tests) pass unchanged; none is edited to relax an assertion.",
+    "Mock dev run unchanged. \u2014 verify: `cd frontend && npm run dev -- -p 3101` (mock on `127.0.0.1:4010`, or `MOCK_PORT` set to a free port if 4010 is taken) starts both; the home page and `/my-work` in a browser draw our frame (top nav, bell, page content), the browser console shows no failed request for `/factory-assets/work-client.js`, and Reset demo (DemoBar) still works. `npm run build` succeeds.",
+    "Unknown page is a Next 404, not Django JSON. \u2014 verify: with the dev run, `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3101/no-such-page` prints `404` and the body is the app's `not-found` page (HTML from `frontend/src/app/not-found.tsx`), not `{\"error\"...page_retired...}`; `/accounts/login/` and `/static/x.js` likewise return the Next 404 and never reach the API origin.",
+    "Live API-only check: a signed-out visit shows our frame. \u2014 verify (integration owner): start Django with `PSL_DJANGO_UI=0 PSL_ENV=development PGDATABASE=psl PGUSER=psl PGHOST=127.0.0.1 PGPORT=55432` and `python manage.py runserver 127.0.0.1:8000` (Postgres already on 55432, migrated), then `API_ORIGIN=http://127.0.0.1:8000 npm run dev -- -p 3102` (so `dev.mjs` runs the mock only for its own `4010`, with the demo bar off since the origin differs). Open `http://127.0.0.1:3102/` with no session: the page shows `SignedOutState` (\"You're signed out.\" with the Sign in link), plus the frame chrome as drawn; it does not show the Django login widget or a raw JSON 404. `curl -i http://127.0.0.1:3102/api/v1/me` returns the API's 401 JSON through the proxy. Record the commands and the visible result in the build notes. A different state caused only by the v7-shaped `/me` against live data belongs to F-57; note it, do not fix it.",
+    "Download routes reach Django and keep its permission checks. \u2014 verify: in the live check, `curl -i http://127.0.0.1:3102/cases/3f2b8c1e-1a4d-4c7e-9b0a-5d6e7f8a9b0c/files/1/` (no session) returns Django's own 401/403/404 for that route (from `apps/agents/upload_views.download`, in API JSON form), not the Next 404 HTML, and not file content. Repeat for `/work/1/invoice-proof/1/`. Negative: `/cases/not-a-uuid/files/1/` returns the Next 404 and does not reach port 8000 (confirm in the runserver log).",
+    "Lint, typecheck and the gate pass. \u2014 verify: `cd frontend && npm run lint && npm run typecheck && npm test`, and `python delivery/design.py check` (or the repo's design check named in `delivery/checks.sh`) reports no new finding."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "infra",
+      "security"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. Small diff, but `next.config.ts` decides which paths reach Django, and four of the six routes carry client files and payment proofs; a rewrite that is too broad or that shadows an app route would be a security and routing fault that is easy to miss. Surfaces: ui (shell loses the embed), infra (proxy config, env var removal), security (authenticated download paths exposed through the proxy). No data, money logic, auth code or contract change, so not high; no new flow or copy, so product acceptance is not required."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-56/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "06305ba6d0dc499acd054d6f493c4102efd6b7cc83bea6966753b6462029a27d",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,7 +60,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T00:23:53Z",
+      "seconds": 404.9,
+      "evidence_ref": "delivery/features/F-56/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -45,7 +83,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +97,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": false,
+      "assessment_reason": "delivery/features/F-56/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -89,11 +148,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-CONNECT-1",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
-    "head_sha": null,
-    "worktree": null,
+    "base_branch": "main",
+    "base_sha": "9bac31099be352e8d5cb64fe9a7d0399effaa8ef",
+    "task_branch": "fe-connect-1-foundation",
+    "head_sha": "abf2482a0bbc656b975f1f1afda722df6cdf7941",
+    "worktree": "/Users/Hunchoo/psl-factory",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -103,7 +162,39 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "architecture/build_model.py",
+      "architecture/model.json",
+      "architecture/packages/v8/delivery.md",
+      "architecture/packages/v8/endpoints.csv",
+      "architecture/packages/v8/handoff.md",
+      "architecture/packages/v8/impact.json",
+      "architecture/packages/v8/index.html",
+      "architecture/packages/v8/integrations.csv",
+      "architecture/packages/v8/manifest.json",
+      "architecture/packages/v8/manifest.sha256",
+      "architecture/packages/v8/model.json",
+      "architecture/packages/v8/openapi.json",
+      "architecture/packages/v8/reviews.json",
+      "architecture/packages/v8/tasks.csv",
+      "architecture/packages/v8/traceability.csv",
+      "architecture/packages/v8/validation.json",
+      "architecture/sources/decisions-2026-11-23.md",
+      "delivery/OVERNIGHT-DECISIONS.md",
+      "delivery/events.jsonl",
+      "delivery/features/F-56/feature.json",
+      "delivery/features/F-56/readiness-r0-not-ready.md",
+      "delivery/features/F-56/readiness.md",
+      "delivery/features/F-56/spec.md",
+      "delivery/features/F-57/feature.json",
+      "design/review.json",
+      "frontend/next.config.ts",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/FactoryDesk.tsx",
+      "frontend/tests/assistant-dictation.test.ts",
+      "frontend/tests/next-config.test.ts",
+      "frontend/tests/shell-no-embed.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +227,44 @@
     }
   },
   "created_at": "2026-11-22T23:39:17Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-22T23:52:08Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-22T23:52:08Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-56/readiness.md",
+      "delivery/features/F-56/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 1,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "abf2482a0bbc656b975f1f1afda722df6cdf7941"
   },
   "blocked": null
 }
