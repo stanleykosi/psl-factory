@@ -4245,3 +4245,8 @@
 {"at":"2026-11-23T17:35:22Z","feature":"F-116","round":0,"kind":"created","tasks":["FE-DELIVERY-HYPERCARE-ARCHIVE"]}
 {"at":"2026-11-23T17:35:23Z","feature":"F-67","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
 {"at":"2026-11-23T17:35:23Z","feature":"F-117","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T17:35:25Z","feature":"F-118","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T17:35:25Z","feature":"F-85","round":1,"kind":"finding","action":"add","finding":"MAIN-1-1","by":"lane-c-coordinator","severity":"high","owner":"frontend","blocking":true,"role":"main"}
+{"at":"2026-11-23T17:35:28Z","feature":"F-119","round":0,"kind":"created","tasks":["FE-DELIVERY-CLOSURE"]}
+{"at":"2026-11-23T17:35:57Z","feature":"F-85","round":1,"kind":"transition","head":"1817c34ee2d7","from":"PR_OPEN","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-23T17:36:10Z","feature":"F-85","round":2,"kind":"transition","head":"1817c34ee2d7","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
