@@ -3,26 +3,68 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-59",
-  "outcome": "A person who forgot their password asks for a reset link, opens it at /accounts/recovery/link/ and sets a new password, on the SCR-17 reset boards, against the live recovery API (wave 1 part b, D-176)",
-  "state": "PLANNED",
+  "outcome": "A person who forgot their password asks for a link, sets a new password, and signs in",
+  "state": "READY",
   "task_ids": [
     "FE-SIGNIN"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "The sign-in page shows \"Forgot your password?\" as a link to `/accounts/recovery/` and no longer contains \"Reset opens in a later release\" or \"Ask your administrator for help\"; it still calls no recovery endpoint until the person opens the page and submits. \u2014 verify: unit (role `link` by that name; fetch spy sees no `/accounts/recovery/*` call on `/sign-in`; `grep -rn \"later release\" frontend/src/features/sign-in` returns nothing); mock.",
+    "`/accounts/recovery/` and `/accounts/recovery/link/` render with no `/me` call and no top bar or phone bar. \u2014 verify: unit (render `AppShell` at both paths with a fetch spy: no `GET /me`, no `GET /role-dashboard`); mock (no \"My work\" link).",
+    "Desktop and phone layouts match `SCR-17-desktop-reset` and `SCR-17-mobile-reset` for the ask and the \"Check your email.\" states apart from the exceptions in Questions for the design engineer (the missing \"works for 30 minutes\", the added \"Use a different email\" button). \u2014 verify: mock, design fidelity run at 1440 and 390 wide; `grep -rn \"30 minutes\\|12 characters\" frontend/src/features/recovery` returns nothing.",
+    "An empty address or one without \"@\" makes no request and shows \"Enter your work email.\" with focus on the field. \u2014 verify: unit (no POST on the fetch spy).",
+    "The request body is exactly `{email}` with the trimmed address and `X-CSRFToken` from a session read made at submit time; `method=\"post\"` on the form means pressing Enter never changes the address bar. \u2014 verify: unit (body keys and header) and mock (press Enter; the address stays `/accounts/recovery/`).",
+    "A 202 shows \"Check your email.\" with the typed address, and the text and DOM are identical for a known address and `unknown@psl.example` (same snapshot). \u2014 verify: unit and mock.",
+    "Server 422 `invalid_input` shows the server message under the field; 403 `csrf_failed`, 429, a thrown network error, 500 and 503 each show exactly the specified wording, keep the typed address, never show the server `message` for non-422 and show no number or time. \u2014 verify: unit with one fixture per row; mock with scenario cookies 429, 503, 500.",
+    "After the page reads the fragment the address bar is `/accounts/recovery/link/` with no `#`; the token appears in no URL, storage (`localStorage`, `sessionStorage`, `document.cookie`) or console output and is sent only in the JSON body of `POST /accounts/recovery/link`. \u2014 verify: unit (spy on `history.replaceState`, storage and `console`; assert request URLs and bodies); mock (Playwright reads `page.url()` and storage after load).",
+    "The page's metadata gives `<meta name=\"referrer\" content=\"no-referrer\">`. \u2014 verify: mock (`document.querySelector('meta[name=referrer]')`).",
+    "A good link (`mock-recovery-good`) shows \"Choose a new password\" with the two fields and \"Change password\"; a wrong, expired or used fixture shows the identical unusable text and links, and the text never states which reason applies. \u2014 verify: unit (snapshot equal across the three) and mock.",
+    "After the token is cleared, a reload with no fragment calls `GET /accounts/recovery/password`: it shows the form while the binding is still valid and the unusable state when not (after a completed change). No `POST /link` is sent without a held token. \u2014 verify: unit and mock (Playwright reload).",
+    "Empty password, empty confirm and mismatch show the three messages, make no request and focus the right field; the body is exactly `{new_password1, new_password2}`. \u2014 verify: unit.",
+    "Server refusals: 422 `invalid_input` with `fields` shows each message under the right field with both fields cleared; 422 without `fields` shows the callout; 422 `recovery_unavailable` shows the unusable state; 403 `csrf_failed` (a second press with the new token works without a reload); 429; 500/503 and a network error (the extra \"may already be changed\u2026 try signing in\" sentence with a link). The `grep -rn \"12\\b\" frontend/src/features/recovery` shows no password rule. \u2014 verify: unit with one fixture per row; mock for the scenario cookies.",
+    "A good change shows \"Your password is changed.\" with a \"Sign in\" link to exactly `/sign-in`; it is not a success callout (`tests/no-success-callouts.test.ts` passes unchanged); the page makes no `/me` or `/me/onboarding` call and does not follow any URL. Reloading afterwards shows the unusable state. \u2014 verify: unit and mock (`e2e/recovery.spec.ts`).",
+    "Passwords are never kept after the request: the form fields are empty after a failure and after success, and neither password is in the URL, storage, a rendered error or a log line. \u2014 verify: unit (spies as in criterion 8).",
+    "Rendered text is escaped: a server `message` containing `<b>x</b>` shows literally. \u2014 verify: unit.",
+    "Keyboard and accessibility: Tab order is field to button to link; the problem callout takes focus on a failed submit; focus goes to the heading on \"Check your email.\" and on Done; axe finds no violations in the ask, sent, loading, ready, field-error, page-error, unusable and done states, desktop and phone. \u2014 verify: mock (Playwright with `expectNoAxeViolations`, as in `e2e/frame.spec.ts`).",
+    "The mock routes validate against the live contract (202, 200 `{ready}`, 200 `{complete}`, 422 `invalid_input`, 422 `recovery_unavailable`, 403 `csrf_failed`) and reject a non-current token. \u2014 verify: unit (extend the `tests/mock-live-me.test.ts` pattern).",
+    "F-58 is unharmed: `tests/sign-in.test.tsx` (except the forgot-password assertion changed by criterion 1), `tests/sign-in-next.test.ts` and `e2e/sign-in.spec.ts` pass; `grep -n \"recovery\" frontend/next.config.ts` is empty and `tests/next-config.test.ts` passes. \u2014 verify: `npm test` and the e2e spec.",
+    "Request for a real local account and for `unknown@psl.example` both return 202 `{requested:true}`; the response bodies and headers (except `Date`) are identical, and a second request inside the cooldown also returns 202 with the same body. \u2014 verify: live (`curl` through the proxy comparing bodies; browser shows the same page).",
+    "A real link opened in the browser: `POST /link` returns 200 `{ready:true}`, the address bar loses the `#`, the form appears, and `GET /password` returns `{ready:true}` before and after a reload. \u2014 verify: live (network log and `curl` with the cookie jar).",
+    "A tampered token, a random 80-character token and a token for another account's consumed request each return 200 `{ready:false}` and the page shows the identical unusable state; no other account's data appears. \u2014 verify: live.",
+    "A password refused by the server (shorter than the server minimum, or one on its common list) shows the server's message under the field and leaves the link usable; the page's own code contains no number. A mismatch is stopped by the page. \u2014 verify: live; `grep -rn \"12\\b\" frontend/src/features/recovery` empty.",
+    "A good password returns 200 `{complete:true}`; the same link opened again shows the unusable state and `POST /password` without a binding returns 422 `recovery_unavailable`; signing in on `/sign-in` with the old password gives 422 `sign_in_failed` and with the new password succeeds. \u2014 verify: live (`manage.py shell` shows `check_password` true for the new password).",
+    "A missing or wrong `X-CSRFToken` on `POST /request`, `/link` and `/password` returns 403 `csrf_failed` and changes nothing (the link still works afterwards). \u2014 verify: live (`curl`).",
+    "An expired link (move the delivery row's `created_at` back past the server's limit in `manage.py shell`) and a link whose account route or password changed after it was sent both give the unusable state. \u2014 verify: live.",
+    "Race: two tabs set a good password with the same link; one gets Done, the other the unusable state, and exactly one change is recorded (`consumed_at` set once). \u2014 verify: live.",
+    "The link in the emailed message (read from the delivery record or the local mail backend) opens the page without the page redirecting through a Django route; if its host is not the frontend origin, record it under the backend leftovers (A-54) without changing the PR. \u2014 verify: live and a note in `build.md`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth"
+    ],
+    "rated_by": "readiness",
+    "rationale": "RISK is high. This is account recovery: the token lives in the URL fragment, a password change is hard to undo, and mistakes can enable account takeover or user enumeration (D-SIGNIN r2, D-AUTH r3, contracts/psl-factory.openapi.json 1.22.0). SURFACES are ui, api, security and auth. I left out contract-change because it only edits the F-58 page link, and product-decision because the unknown rules are bound out of scope. Add the Opus security reviewer under D-180."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-59/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +101,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-59/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +201,29 @@
   "created_at": "2026-11-23T11:30:18Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:59:50Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-59/readiness.md",
+      "delivery/features/F-59/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

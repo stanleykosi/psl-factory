@@ -1,0 +1,243 @@
+{
+ "exceptions": [
+  {
+   "role": "columnheader",
+   "name": "FACTS EARNED",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop"
+   ],
+   "reason": "Conflicts 1: hidden. The live work list rows carry no facts; Open output is the only proof path (D-182 Q2a).",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "columnheader",
+   "name": "PROOF",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop"
+   ],
+   "reason": "Conflicts 1: hidden. The live work list rows carry no proof line (D-182 Q2a).",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "columnheader",
+   "name": "VERIFIED",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop"
+   ],
+   "reason": "Conflicts 3: relabelled LAST UPDATED; updated_at may not be the verification time.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "text",
+   "name": "6 OF 28",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop",
+    "SCR-14-mobile"
+   ],
+   "reason": "Conflicts 4: no total exists in the live list; the toolbar reads '{n} shown' with 'so far' while more pages exist (D-182 Q3a).",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "text",
+   "name": "Verified",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop",
+    "SCR-14-mobile"
+   ],
+   "reason": "Conflicts 4: the 'Verified · This month' filter chip is removed; the filter is the line only.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "text",
+   "name": "This month",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop",
+    "SCR-14-mobile"
+   ],
+   "reason": "Conflicts 4: month filter removed (no live parameter).",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "button",
+   "name": "Remove Verified filter",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop",
+    "SCR-14-mobile"
+   ],
+   "reason": "Conflicts 4: month filter removed.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "link",
+   "name": "Clear all",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop",
+    "SCR-14-mobile"
+   ],
+   "reason": "Conflicts 4: shown only when a line filter is applied.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "text",
+   "name": "Verified means the factory's work is complete and checked. Whether an invoice has been paid is a separate Finance fact.",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop"
+   ],
+   "reason": "Conflicts 5: replaced by the as-of and coverage lines under the list (D-182 Q6a).",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "link",
+   "name": "Lagoon Health · Milestone 1 invoice",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop"
+   ],
+   "reason": "Sample row of the board; the built page lists the rows the live queue returns, with the reference removed (Conflicts 2).",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "link",
+   "name": "Sabi Market · web store closure",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop"
+   ],
+   "reason": "Board sample row; live rows differ.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "link",
+   "name": "Harmattan Bank · weekly client report, wk 45",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop"
+   ],
+   "reason": "Board sample row; live rows differ.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "link",
+   "name": "October management accounts",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop"
+   ],
+   "reason": "Board sample row; live rows differ.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "link",
+   "name": "Kora Logistics · go-live acceptance",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop"
+   ],
+   "reason": "Board sample row; live rows differ.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "link",
+   "name": "Ojo Foods · kick-off minutes",
+   "category": "component",
+   "boards": [
+    "SCR-14-desktop"
+   ],
+   "reason": "Board sample row; live rows differ.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "text",
+   "name": "46 RECORDS YOU CAN SEE · UPDATED 10:42",
+   "category": "frame",
+   "boards": [
+    "SCR-14-desktop"
+   ],
+   "reason": "The board draws SCR-14 as the My work page on its Done tab; Verified outputs is its own page with its own heading, no totals (D-182 Q1a, Q3a).",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "tablist",
+   "name": "My work",
+   "category": "frame",
+   "boards": [
+    "SCR-14-desktop",
+    "SCR-14-mobile"
+   ],
+   "reason": "Board draws the My work tabs; Verified outputs is a separate page, reached from My work (D-182 Q1a).",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "tab",
+   "name": "Needs me 3",
+   "category": "frame",
+   "boards": [
+    "SCR-14-desktop",
+    "SCR-14-mobile"
+   ],
+   "reason": "As the tab strip: not drawn on /verified.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "tab",
+   "name": "Waiting on others 2",
+   "category": "frame",
+   "boards": [
+    "SCR-14-desktop",
+    "SCR-14-mobile"
+   ],
+   "reason": "As the tab strip: not drawn on /verified.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "tab",
+   "name": "Done 28",
+   "category": "frame",
+   "boards": [
+    "SCR-14-desktop",
+    "SCR-14-mobile"
+   ],
+   "reason": "As the tab strip: not drawn on /verified.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "link",
+   "name": "Lagoon Health · Milestone 1 invoice INV-0398 · 03 Nov 11:24",
+   "category": "component",
+   "boards": [
+    "SCR-14-mobile"
+   ],
+   "reason": "Board sample card; live cards differ and carry no reference.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "link",
+   "name": "Sabi Market · web store closure CLS-0044 · 12 Nov 09:12",
+   "category": "component",
+   "boards": [
+    "SCR-14-mobile"
+   ],
+   "reason": "Board sample card; live cards differ.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  },
+  {
+   "role": "link",
+   "name": "Harmattan Bank · weekly client report, wk 45 WCR-0211 · 07 Nov 16:05",
+   "category": "component",
+   "boards": [
+    "SCR-14-mobile"
+   ],
+   "reason": "Board sample card; live cards differ.",
+   "approved_by": "design engineer, 23 Nov 2026 — D-182"
+  }
+ ]
+}

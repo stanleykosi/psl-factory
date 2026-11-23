@@ -3,26 +3,54 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-65",
-  "outcome": "A lead, CTO or CEO sees the factory floor on SCR-06 from live overview records, with what is in progress, what needs a person and what is stopped per line, and the coverage time, and opens the work behind each count",
-  "state": "PLANNED",
+  "outcome": "The factory floor shows live recorded work per line, with a way into each line's queue",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Page reads the live operation. verify: `grep -rn \"liveApi.GET('/api/v1/overview')\" frontend/src/features/overview` finds the call; no `api.GET('/api/v1/overview')` and no import of the v7 overview type remain in `src/features/overview` or `src/features/floor`.",
+    "Success with the fixture. verify: a test renders `/overview` and sees \"UPDATED\" with the `as_of` time and \"WAT\", floor rows Pre-sale (4), Invoices (4), Other lines (7), and a line titled \"Costing and commercial submission\" with 3 and \"recorded work\".",
+    "Unmapped key is kept. verify: test shows \"A line added later\" with 5 under \"Other lines\"; a map test asserts every fixture key lands on exactly one floor and a floor with no lines is not rendered.",
+    "Nothing is invented. verify: test asserts the page contains no \"IN PROGRESS\", \"NEED A PERSON\", \"STOPPED\" or \"VERIFIED THIS MONTH\" figures, no \"needs a person\" text, no \"Stopped\"/\"Waiting\" tag, no station squares, and that \"Totals are not available yet.\" and \"Not available yet\" show.",
+    "Drill-down. verify: test clicks \"Open work\" on the commercial line and the link's href is `/my-work?line=commercial%2Fv1`; opening it in the running app lists work for that line only.",
+    "Empty. verify: with `lines: []` the page shows \"No lines to show yet.\" and no Flat/3D switch.",
+    "Error with retry. verify: a 500 shows \"We couldn't load the factory floor.\" and \"Try again\"; pressing it with a later 200 shows the rows. A network failure shows the same state.",
+    "403 and 404. verify: a 403 shows \"The factory floor isn't open to your role.\" with the server's message, no \"Try again\", and no further `/overview` request after 20 s of fake time. Wrong user and wrong tenant are covered by the server answering 404 or an empty list; the test feeds both and shows the not-open state and the empty state.",
+    "Signed out. verify: a 401 shows the signed-out state with a sign-in link for `/overview`.",
+    "Loading. verify: before the response resolves the page shows `LoadingState` and no rows.",
+    "Polling. verify: with fake timers a second request goes out after 15 s while visible, an older response arriving late is dropped, and a 403 stops polling.",
+    "3D floor on reduced data. verify: test with WebGL stubbed shows the 3D view for the fixture with one machine per line, no \"PERSON\" mark, and the pressed machine's strip shows the count and an \"Open work\" link; with reduced motion, the flat view shows and the hint appears.",
+    "Phone. verify: at 390 px width the page shows the title, rows, the \"Updated\" line under the rows and no 3D switch; at 1440 px the eyebrow shows above the title.",
+    "Live smoke. verify: against the local live backend (account `live-lead`), `/overview` shows the same line titles and totals as `curl -b <session> /api/v1/overview`; an account with no work shows the empty state.",
+    "The mock matches the live shape. verify: the mock handler for `/api/v1/overview` returns exactly `{as_of, lines[{key,title,total}]}` and the existing contract-drift test (`tests/api-live-schema-drift.test.ts`) passes; v7-only overview tests (`tests/mock-overview.test.ts`, `tests/overview*.test.tsx`, `tests/floor*.test.ts*`) are rewritten to the live shape, not deleted without replacement."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium because it is a cross-layer contract change that drops design content (totals, stations, tags) and rests on an assumed key-to-floor mapping. The mapping must not mislead on counts. It is read-only, so it moves no data, money or identity, and the server decides who can read it. Surfaces are ui, api and contract-change. The product-acceptance gate covers the reduced floor, so the product-decision surface is not added."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-65/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +87,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-65/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +180,28 @@
   "created_at": "2026-11-23T13:24:20Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:56:56Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-65/readiness.md",
+      "delivery/features/F-65/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

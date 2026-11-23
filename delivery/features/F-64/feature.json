@@ -3,26 +3,54 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-64",
-  "outcome": "A person with a decision waiting opens it on SCR-03, reads the live task, its evidence and what is asked, and records approve, return or reject through the live decision API, with the result shown from the record (variants payment-exception, ceo-costing and cto-emergency are not in this feature)",
-  "state": "PLANNED",
+  "outcome": "SCR-03 Decision desk on the live API: read the invoice or accounting review, claim it, record approve, return or reject",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Open `/work/17/decide?task=41` against the mock or live server as a person who can claim. The page makes `GET /tasks/41`, one `POST /tasks/41/claim` with `{expected_revision:3}`, and shows the label, version, formatted amount and recipient \u2014 verify: network log in `tests/decide.test.tsx` (one claim call, even under StrictMode) and the page text.",
+    "No evidence is pre-selected and approve, return and reject are disabled until one item of `review_evidence` is chosen \u2014 verify: test asserts disabled buttons on open, enabled after choosing, and the decision body carries that item's `id`.",
+    "Approve sends exactly `{expected_revision, verdict:\"approve\", evidence_id, note}` with `note` present even when empty; return and reject with an empty note show a validation message and send nothing \u2014 verify: request-body assertions in the test.",
+    "A decision 200 shows the done board with the verdict, note and label, and does not show \"decided by\" unless the history read has a matching item (then actor and time from it) \u2014 verify: test with and without a history item.",
+    "A 409 on claim or decision reloads and shows the stale board with the replaced version beside the current one, controls on the current only after \"Review version n\"; the write is not resent \u2014 verify: test counts decision calls (1).",
+    "A network or 5xx failure on the decision reloads once, never resends, and shows the uncertain notice; when the reload also fails, the buttons stay disabled and Try again only issues GETs \u2014 verify: test.",
+    "Wrong user: `can_decide:false, can_claim:false` shows the read-only board with no decision controls and no specific reason sentence; no claim is sent \u2014 verify: test; wrong tenant or unknown task: GET 404 shows the no-access state; 401 shows signed-out; 403 on a write turns the page read-only \u2014 verify: tests per status.",
+    "Invalid input: a 422 on the decision shows the server message (and `fields[]` text) without leaving the board and without clearing the picked evidence or note \u2014 verify: test.",
+    "Unknown amount (`invoice_packet:null` or empty) shows \"Unknown\", never 0 or \"\u20a60.00\" \u2014 verify: test on `formatAmount` and the page.",
+    "A task whose `verdicts[]` omits a verdict does not draw that button; no revoke control exists on SCR-03 or `InlineDecide` \u2014 verify: `grep -rn \"revoke\" src/features/decide src/features/workspace/InlineDecide.tsx` returns nothing, plus a test.",
+    "No pager \"decision n of m\" is drawn unless `GET /work?queue=decisions` succeeds and contains this task; with the list failing the rest of the page still works \u2014 verify: test both cases.",
+    "Comment on the not-yours board (if kept, Question 4) sends `{revision, body}`, requires a body, shows the server message on 403/409/422 and does not send twice \u2014 verify: test.",
+    "Every call on this feature goes through `liveApi` and the typed live schema; `tests/api-live-schema-drift.test.ts` still passes \u2014 verify: `grep -rn \"api\\.\\(GET\\|POST\\)\" src/features/decide` returns nothing.",
+    "The page matches the approved boards at 1440 and 390 for default, done, not-yours and stale, apart from the parts listed under Questions \u2014 verify: UI review of the changed area; the own board is checked only for the unreachable-state note below."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The change is one screen, but it sits on a contract change: required evidence and note, no revoke, and reshaped task reads. It also writes a business decision (approval of an invoice or accounting review) with revision-conflict handling. Several design parts are removed because the live API cannot fill them, so the client must accept the result as a changed flow (product-decision). No data or migration work is involved, and the backend is not touched. Verification is contained: five boards and a mockable API."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-64/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +87,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-64/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +180,28 @@
   "created_at": "2026-11-23T13:23:39Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:56:53Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-64/readiness.md",
+      "delivery/features/F-64/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

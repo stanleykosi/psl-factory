@@ -3,26 +3,65 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-60",
-  "outcome": "An invited person opens their invitation at /staff/join/, sees its workspace, role and scope, and sets up their account, on the SCR-17 set-up boards, against the live invitation API (wave 1 part c, D-176)",
-  "state": "PLANNED",
+  "outcome": "An invited person opens their link and sets up their account",
+  "state": "READY",
   "task_ids": [
     "FE-SIGNIN"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/staff/join/` renders with no `/me` call and no top bar or phone bar. \u2014 verify: unit (render `AppShell` at `/staff/join/` with a fetch spy: only `GET /api/v1/session` and the preview POST); mock (no \"My work\" link).",
+    "After the page reads the fragment, the address bar is `/staff/join/` with no `#`, and the token appears in no URL, storage (`localStorage`, `sessionStorage`, `document.cookie`) or console output; it is sent only in the JSON body of preview and accept. \u2014 verify: unit (spy on `history.replaceState`, storage and `console`; assert request URLs and bodies); mock (Playwright reads `page.url()` and storage after load).",
+    "No fragment, a fragment of the wrong length, or one with other characters shows the unavailable state and sends no preview request. \u2014 verify: unit.",
+    "The page's response sets `Referrer-Policy`/`<meta name=\"referrer\" content=\"no-referrer\">`. \u2014 verify: mock (page source or `document.querySelector('meta[name=referrer]')`).",
+    "After the fragment is cleared, a reload shows the unavailable state. \u2014 verify: mock (Playwright reload).",
+    "A valid link shows \"Set up your account\", \"Welcome, Sola Martins. You've been given PMO for Ojo Foods and Kora Logistics.\", the validity line with the date from `expires_at`, a read-only \"Work email\" with the preview email, \"New password\", \"Confirm new password\" and \"Finish setup\". With the two-group fixture the text reads \"You've been given PMO for Ojo Foods. You've also been given Finance Lead for Kora Logistics.\" \u2014 verify: unit (both fixtures) and mock.",
+    "Desktop and phone layouts match `SCR-17-desktop-setup` and `SCR-17-mobile-setup` apart from the exceptions in \"Conflicts with the boards\". The page shows no \"At least 12 characters\", no \"72 hours\" or other duration, no WhatsApp field or code sentence, and no `review_alerts` control. \u2014 verify: mock (design fidelity run at 1440 and 390 wide; `grep -rn \"12 characters\\|72 hours\\|WhatsApp\" frontend/src/features/join` returns nothing).",
+    "Expired, used and wrong-token fixtures (`'e'`, `'u'`) show the identical unavailable text and link; the text never contains \"expired\" as a statement of fact. \u2014 verify: unit (snapshot equal for both) and mock.",
+    "The `name`, `access` and workspace values are rendered as text: a fixture name containing `<b>x</b>` shows the literal characters. \u2014 verify: unit.",
+    "Preview with 429, 503, 500 or a thrown network error shows \"We couldn't open your invitation. Nothing was changed.\" with \"Try again\" and no form; Try again recovers. \u2014 verify: unit and mock (scenario cookies).",
+    "Empty password, empty confirm and mismatch show the three messages from the table, make no accept request, and focus the right field. \u2014 verify: unit.",
+    "The accept body is exactly `{token, password, confirm}` (no `review_alerts`) with `X-CSRFToken` from the last session read, and `method=\"post\"` on the form means a submitted form never changes the address bar. \u2014 verify: unit (assert body keys and header) and mock (press Enter, address stays `/staff/join/`).",
+    "Each failure in the accept table shows exactly the specified outcome, both password fields cleared, the email kept: 422 `invalid_input` with `fields` (messages under fields); 422 without fields; 422 `action_unavailable` \"This password is too short\u2026\" (callout with the server text; preview recheck still valid, form stays); the renewed-token fixture (`'r'`) lands in the unavailable state; 403 `csrf_failed` (retry works with the new token and no reload); 429; 500/503; network error (extra \"try signing in\" sentence). \u2014 verify: unit with one fixture per row; mock for 429/503/500 scenario cookies.",
+    "Success on the mock: a good password pair gives \"Your account is ready.\" with \"Sign in with sola.martins@psl.example.\" and a \"Sign in\" link to exactly `/sign-in` (the retired `next_url` is not followed). Opening the same token again shows the unavailable state. \u2014 verify: unit and mock (`e2e/join.spec.ts`).",
+    "If the session read after accept says `signed_in: true`, the page runs the onboarding path: `admitted:false` shows the F-58 not-admitted message with working \"Sign out\"; `admitted:true` goes to the safe `next_url` or `/`; a `next_url` of `https://evil.example` or `/accounts/login/` is never followed. \u2014 verify: unit (router spy).",
+    "`SignInView` is unchanged in behaviour after the extraction: the existing `tests/sign-in.test.tsx`, `tests/sign-in-next.test.ts` and `e2e/sign-in.spec.ts` pass without edits. \u2014 verify: `npm test` and the e2e spec.",
+    "Preview of a fresh local invitation returns the real name, email, `expires_at` and workspaces and the page shows them as returned. \u2014 verify: live (browser at `/staff/join/#<token>`, network log).",
+    "A password shorter than 12 characters is refused by the server and the page shows the server's message under the callout without any number typed in the page's own code; a mismatch is stopped by the page. \u2014 verify: live; `grep -n \"12\" frontend/src/features/join` shows no password rule.",
+    "A good accept returns 201, the page shows the ready state, the account exists (`manage.py shell`: user with the invitation's username), and signing in on `/sign-in` with the email and the new password lands on the person's first destination, with the top bar showing the invited person's name and the role words from `GET /role-dashboard`. \u2014 verify: live (screenshot of the bar; network log shows `/me` and `/role-dashboard` after sign-in).",
+    "Used, expired and superseded tokens (accept once then reuse; set `expires_at` in the past in the local database; issue a resend with `preceding_id`) all show the identical unavailable page; `curl` of preview for each returns `422 invitation_unavailable` with the same body. \u2014 verify: live.",
+    "Wrong tenant and wrong user: a token for one invitation never reveals another invitation's data; a 43-character random token returns the same 422 body as an expired one; the preview and accept requests with a missing or wrong `X-CSRFToken` return 403 `csrf_failed` and change nothing (the invitation can still be accepted afterwards). \u2014 verify: live (`curl` through the proxy).",
+    "Race: two tabs accept the same token with a good password; one gets the ready state, the other the unavailable state (or the callout then unavailable), and exactly one account exists. \u2014 verify: live.",
+    "Axe finds no violations on `/staff/join/` in the ready, field-error, page-error, unavailable and ready-done states, desktop and phone; keyboard: Tab order email (skipped as read-only is acceptable only if it is focusable), New password, Confirm, Finish setup; the problem callout takes focus on a failed submit. \u2014 verify: mock (Playwright with `expectNoAxeViolations`, as in `e2e/frame.spec.ts`).",
+    "`grep -rn \"staff/join\" frontend/next.config.ts` is empty (no proxy to Django), and `tests/next-config.test.ts` still passes. \u2014 verify: grep and `npm test`.",
+    "The mock routes validate against the live contract (200, 201, 422 `invitation_unavailable`, 422 `invalid_input`, 403 `csrf_failed`) and reject a non-current token. \u2014 verify: unit (extend the `tests/mock-live-me.test.ts` pattern)."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth"
+    ],
+    "rated_by": "readiness",
+    "rationale": "RISK is high. The page sets a password from a bearer token in a URL fragment, which is an identity and account-creation path (D-SIGNIN r2, D-AUTH r3, contracts/psl-factory.openapi.json 1.22.0). SURFACES are ui, api, security and auth. I left out contract-change because F-58 already changed the shared pieces, and this feature only adds a page. I left out product-decision because the unknown policy numbers and the WhatsApp step are bound out of scope above."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-60/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +98,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-60/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +198,29 @@
   "created_at": "2026-11-23T11:30:19Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:57:03Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-60/readiness.md",
+      "delivery/features/F-60/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

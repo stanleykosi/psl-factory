@@ -1,0 +1,789 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-23T14:06:52.445Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/lane-a/design/canvas/project/SCR-14-desktop.dc.html",
+  "boardName": "SCR-14-desktop.dc.html",
+  "pageUrl": "http://localhost:4964/verified",
+  "viewport": {
+    "width": 1440,
+    "height": 980
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": null,
+  "pass": false,
+  "passReasons": [
+    "20 board item(s) are missing from the page and are not approved exceptions (coverage 42.9% with exceptions, needs 100%).",
+    "Visual match 73.8 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 42.9,
+    "coverageWithExceptions": 42.9,
+    "visual": 73.8
+  },
+  "visual": {
+    "score": 73.8,
+    "allCellsScore": 84.2,
+    "width": 1440,
+    "height": 980,
+    "boardHeight": 980,
+    "pageHeight": 980,
+    "cell": 12,
+    "contentCells": 5945,
+    "mismatchedCells": 1558
+  },
+  "coverage": {
+    "total": 35,
+    "found": 15,
+    "coverage": 42.9,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 82,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 350,
+          "y": 1,
+          "w": 79,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "pageName": "Tunde Bello",
+        "pageRole": "text",
+        "similarity": 86,
+        "looks": [
+          "text colour #C8CDD0 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 726,
+          "y": 445,
+          "w": 185,
+          "h": 65
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 766
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 861
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "My work",
+        "pageName": "Verified outputs",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"My work\" on the board, \"Verified outputs\" on the page",
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 209,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 215,
+          "w": 1264,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 148,
+          "w": 1264,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 215,
+          "w": 460,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 148,
+          "w": 464,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter 1",
+        "pageName": "Filter",
+        "pageRole": "button",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 558,
+          "y": 215,
+          "w": 116,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 562,
+          "y": 148,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "Verified outputs, in the order the factory reports them",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 325,
+          "w": 1260,
+          "h": 402
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 214,
+          "w": 1260,
+          "h": 556
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "OUTPUT",
+        "pageName": "OUTPUT",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 325,
+          "w": 449,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 214,
+          "w": 426,
+          "h": 35
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "46 RECORDS YOU CAN SEE · UPDATED 10:42",
+        "key": "text: 46 RECORDS YOU CAN SEE · UPDATED 10:42",
+        "container": "main",
+        "boardBox": {
+          "x": 1078,
+          "y": 112,
+          "w": 274,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "My work",
+        "key": "tablist: My work",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 147,
+          "w": 397,
+          "h": 48
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Needs me 3",
+        "key": "tab: Needs me 3",
+        "container": "tablist",
+        "boardBox": {
+          "x": 90,
+          "y": 149,
+          "w": 124,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Waiting on others 2",
+        "key": "tab: Waiting on others 2",
+        "container": "tablist",
+        "boardBox": {
+          "x": 214,
+          "y": 149,
+          "w": 172,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Done 28",
+        "key": "tab: Done 28",
+        "container": "tablist",
+        "boardBox": {
+          "x": 386,
+          "y": 149,
+          "w": 99,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "6 OF 28",
+        "key": "text: 6 OF 28",
+        "container": "search",
+        "boardBox": {
+          "x": 1302,
+          "y": 230,
+          "w": 50,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verified",
+        "key": "text: Verified",
+        "container": "main",
+        "boardBox": {
+          "x": 99,
+          "y": 278,
+          "w": 45,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "This month",
+        "key": "text: This month",
+        "container": "main",
+        "boardBox": {
+          "x": 150,
+          "y": 278,
+          "w": 67,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Remove Verified filter",
+        "key": "button: Remove Verified filter",
+        "container": "main",
+        "boardBox": {
+          "x": 223,
+          "y": 272,
+          "w": 28,
+          "h": 28
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Clear all",
+        "key": "link: Clear all",
+        "container": "main",
+        "boardBox": {
+          "x": 262,
+          "y": 278,
+          "w": 47,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "FACTS EARNED",
+        "key": "columnheader: FACTS EARNED",
+        "container": "table",
+        "boardBox": {
+          "x": 539,
+          "y": 325,
+          "w": 244,
+          "h": 35
+        },
+        "exception": null
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "PROOF",
+        "key": "columnheader: PROOF",
+        "container": "table",
+        "boardBox": {
+          "x": 783,
+          "y": 325,
+          "w": 407,
+          "h": 35
+        },
+        "exception": null
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "VERIFIED",
+        "key": "columnheader: VERIFIED",
+        "container": "table",
+        "boardBox": {
+          "x": 1191,
+          "y": 325,
+          "w": 159,
+          "h": 35
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Lagoon Health · Milestone 1 invoice",
+        "key": "link: Lagoon Health · Milestone 1 invoice",
+        "container": "table",
+        "boardBox": {
+          "x": 104,
+          "y": 373,
+          "w": 421,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Sabi Market · web store closure",
+        "key": "link: Sabi Market · web store closure",
+        "container": "table",
+        "boardBox": {
+          "x": 104,
+          "y": 434,
+          "w": 421,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Harmattan Bank · weekly client report, wk 45",
+        "key": "link: Harmattan Bank · weekly client report, wk 45",
+        "container": "table",
+        "boardBox": {
+          "x": 104,
+          "y": 495,
+          "w": 421,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "October management accounts",
+        "key": "link: October management accounts",
+        "container": "table",
+        "boardBox": {
+          "x": 104,
+          "y": 556,
+          "w": 421,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Kora Logistics · go-live acceptance",
+        "key": "link: Kora Logistics · go-live acceptance",
+        "container": "table",
+        "boardBox": {
+          "x": 104,
+          "y": 617,
+          "w": 421,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ojo Foods · kick-off minutes",
+        "key": "link: Ojo Foods · kick-off minutes",
+        "container": "table",
+        "boardBox": {
+          "x": 104,
+          "y": 678,
+          "w": 421,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verified means the factory's work is complete and checked. Whether an invoice has been paid is a separate Finance fact.",
+        "key": "text: Verified means the factory's work is complete and checked. Whether an invoice has been paid is a separate Finance fact.",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 749,
+          "w": 1264,
+          "h": 17
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Tunde Bello · PMO\"",
+        "kind": "Text",
+        "name": "Tunde Bello · PMO",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 726,
+          "y": 445,
+          "w": 185,
+          "h": 65
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Main area \"\"",
+          "across the page: right on the board (90% across), middle on the page (57% across)",
+          "inside the top navigation on the board, inside the table frame on the page"
+        ]
+      },
+      {
+        "label": "Table \"\"",
+        "kind": "Table",
+        "name": "",
+        "boardBox": {
+          "x": 90,
+          "y": 325,
+          "w": 1260,
+          "h": 402
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 214,
+          "w": 1260,
+          "h": 556
+        },
+        "reasons": [
+          "inside the table frame on the board, inside a section on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "container": "navigation",
+        "pageBox": {
+          "x": 601,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 979,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1027,
+          "y": 19,
+          "w": 152,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "button",
+        "name": "Show more",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 792,
+          "w": 109,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "As of 23 Nov 12:00",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 844,
+          "w": 103,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 20
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/lane-a/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

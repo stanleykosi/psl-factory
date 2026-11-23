@@ -3,26 +3,59 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-66",
-  "outcome": "A signed-in person asks the assistant a question about their work on SCR-05, sees the conversation list and each answer, drafted or unable-to-answer state from the live assistant API, and starts a new conversation",
-  "state": "PLANNED",
+  "outcome": "Assistant conversations on the live API",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/assistant` lists live conversations as scope, agent, \"Updated <WAT time>\", with \"As of\" and \"<n> loaded\" and no title or status badge \u2014 verify: mock or dev server returns 3 items; page shows 3 rows, no badge, no title.",
+    "An empty list shows the board's empty state; a body with no `items` shows the load error with Retry, not the empty state \u2014 verify: component test for both bodies.",
+    "New conversation sends `{agent, case_id, idempotency_key, scope}` once; submitting twice quickly sends one request; a retry after a network error reuses the same key \u2014 verify: test asserts request bodies and key equality.",
+    "With no project chosen the request has `scope: \"department\"` \u2014 verify: test on the request body.",
+    "Sending a question posts `{text, idempotency_key, source_keys}` and gets 202; the thread shows \"Sending\u2026\" then the working card with \"Asked at <time>\" \u2014 verify: `tests/assistant-send.test.tsx`.",
+    "While a message is working the thread re-reads at 3 s, then 10 s, stops when status settles, when the person leaves the page, and on 403 \u2014 verify: fake-timer test counting calls.",
+    "Status mapping: working, answered, drafted and an unknown status each render the matching card; an unknown status shows its text as the reason; an empty reason shows only \"I can't answer this.\" \u2014 verify: table test on `messageState`.",
+    "Answer text containing `<script>`, markdown links or \"approve and send\" renders as plain text and enables no control \u2014 verify: test with that answer; DOM has no script or anchor from the text.",
+    "Source picker lists `available_sources` labels, allows 5, blocks a 6th, sends keys never labels; question options fill the composer and do not send \u2014 verify: test.",
+    "Composer blocks empty text and text over 4000 characters, keeping the typed text \u2014 verify: test.",
+    "403 on a conversation or send shows the restricted state, with composer disabled and no retry loop; 404 shows not found \u2014 verify: test counts calls after 403 (no repeats).",
+    "Draft: Start is disabled until saved; the start body carries the exact saved `draft_version`; editing after a save disables Start again \u2014 verify: test.",
+    "A 409 on save or start locks the form with Reload, makes no second request \u2014 verify: test.",
+    "Start 200 shows the started state with a link to `/work/<work_id>`; a message with `started_work_id` loads as started without a Start button \u2014 verify: test.",
+    "Unknown draft `line` shows no Start button; null fields show \"Not provided\", never 0 or blank \u2014 verify: test.",
+    "Pass to another agent offers only `/me` `assistant_agents` other than the current one, and navigates to the returned conversation \u2014 verify: test.",
+    "No image attach control, upload call or `/assistant/mentions` call exists in the assistant code \u2014 verify: `grep -rn \"uploads\\|mentions\" src/features/assistant` returns nothing.",
+    "No hand-written pixel or colour values are added; the existing assistant tokens and CSS classes are reused \u2014 verify: diff of `assistant.css` adds no new literal colours.",
+    "Agent or source `django_url` is never rendered as an absolute or `//` link \u2014 verify: helper test with `https://x`, `//x`, `javascript:` and `/work/1/`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. This is a cross-layer contract change: the conversation, message and draft shapes change, and messages go async (202 plus polling). It sends agent-drafted text onward to start work, which is external-messaging and needs authority checks. No money, identity or migration is involved. Parts of the design are dropped (image attach, titles and status badges), so the client must see the result."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-66/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +92,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-66/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +192,29 @@
   "created_at": "2026-11-23T13:24:20Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:57:01Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-66/readiness.md",
+      "delivery/features/F-66/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

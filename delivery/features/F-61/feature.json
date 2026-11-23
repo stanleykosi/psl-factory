@@ -3,26 +3,56 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-61",
-  "outcome": "A signed-in person reads their alerts grouped into needs-you and for-information, marks them read and opens the work, and sets how they are alerted (email and WhatsApp switches with delivery receipts), on the SCR-15 default and settings boards, against the live notification and alert-preference API",
-  "state": "PLANNED",
+  "outcome": "Alerts list, drawer and alert settings on the live API",
+  "state": "READY",
   "task_ids": [
     "FE-ALERTS"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "With the live backend and an account that has alerts, the bell drawer lists them under \"Needs you\" and \"For information\" by `group`, each row with title and subject/detail, and an \"As of\" time from `as_of` \u2014 verify: open the app, click the bell; compare with `curl -b <cookie> /api/v1/notifications`.",
+    "`/notifications` shows the same grouping and as-of line, with no search box, no agent filter, no Filter button, no unread filter and no \"total\" figure \u2014 verify: open `/notifications` at 1440 and 390; `grep -rn \"unread_count\\|cursor\\|agent=\" frontend/src/features/alerts` finds no live request use.",
+    "The bell badge equals the number of unread items in the loaded list, is hidden at zero and before the first load, and shows \"99+\" above 99 \u2014 verify: unit test on `badgeText` and a component test with 0, 3 and 120 unread items.",
+    "Opening an unread alert sends `POST /api/v1/notifications/{id}/read` with body `{}` and an `X-CSRFToken` header; the row turns read and the badge drops by one only after the 200 \u2014 verify: Playwright test asserting the request body and header, then the badge.",
+    "A failed mark-read (500) leaves the row unread, shows a retryable notice, and still navigates when the row has a link; a 404 shows \"no longer available\" and refreshes the list \u2014 verify: component tests with mocked responses.",
+    "A row whose `django_url` is `/work/<id>/` links to `/work/<id>`; rows with an empty, absolute, `//`, `javascript:` or unrecognised `django_url` have no link and no control that opens a Django page \u2014 verify: unit tests for `workHrefFromUrl` with those inputs; no `href` containing `/accounts/` or the Django host in the rendered DOM.",
+    "Agent avatar, agent name, per-alert time and \"via WhatsApp / digest\" wording no longer appear on any alert row \u2014 verify: component test; look at the page.",
+    "`/settings/alerts` shows exactly an Email switch and a WhatsApp switch with Ready or Not ready yet text, and the recent receipts; there are no per-event rows, digest select, quiet-hours select, locked rows or phone-number block \u2014 verify: open the page at 1440 and 390.",
+    "Changing a switch and pressing Save sends `POST /api/v1/me/alert-preferences` with exactly `{revision, email_requested, whatsapp_requested}`, then shows \"Saved\" and uses the returned revision for the next save \u2014 verify: Playwright test asserting the body, then a second save sends the new revision.",
+    "A 409 on save shows the stale notice, keeps nothing of the draft after Reload, and does not retry by itself \u2014 verify: component test with a 409.",
+    "Receipts show the states Queued, Not confirmed, Delivered and Held; an `uncertain` receipt is not styled or worded as delivered \u2014 verify: component test over all four states.",
+    "A 401 on any of the four operations shows the signed-out state and sends no further alert reads \u2014 verify: component tests for the bell feed, the page and settings.",
+    "A different signed-in person sees only the list the server returns for them; the client sends no user or tenant identifier \u2014 verify: code review of request construction; Playwright with two accounts (live-lead, live-none) shows different lists.",
+    "A list response with no `items` array shows the error state, not \"No alerts\" \u2014 verify: component test.",
+    "The v7 alert operations are gone from the app code: no `E-NOTIFICATIONS`, `E-NOTIFICATION-READ`, `E-ALERT-PREFS` or `api.PUT('/api/v1/me/alert-preferences'` under `frontend/src` \u2014 verify: `grep -rn` returns nothing; `npm run typecheck` passes.",
+    "Existing tests that asserted removed behaviour (`alerts-model`, `alerts-mock`, `alerts`, `alerts-settings`, `alerts-bell`, `e2e/alerts*.spec.ts`) are rewritten to the live shapes, not deleted outright, and new tests cover criteria 3 to 6, 9 to 12 and 14 \u2014 verify: `git diff --stat` and the gate."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The change spans a cross-layer contract (the v7 mock to live reshape: PUT becomes POST, and the settings and list shapes change). It also changes what the client sees where the board promised more than the API serves. It touches the WhatsApp and email channel switches and receipt states (external-messaging), but nothing is sent from this screen. It handles no money, identity or migration. Write requests need CSRF and revision handling. Cite `frontend/src/features/alerts/model.ts` and `types.ts` as the main adaptation points."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-61/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +89,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-61/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +189,29 @@
   "created_at": "2026-11-23T13:19:54Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:56:50Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-61/readiness.md",
+      "delivery/features/F-61/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
