@@ -14,7 +14,7 @@ import { AppShell } from '@/shell/AppShell';
 // @ts-expect-error plain ESM module without type declarations
 import { projectTab } from '../mock/project-tabs.mjs';
 // @ts-expect-error plain ESM module without type declarations
-import { projects } from '../mock/projects.mjs';
+import { normaliseProjectPath, projects, uuidOf } from '../mock/projects.mjs';
 import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 // The URL of the page: replace() rewrites it and the page re-renders, as the router does.
@@ -70,9 +70,11 @@ beforeEach(() => {
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me(persona));
       calls.push(url);
-      const custom = respond?.(url);
+      // the mock server names a project by its P-nnnn id for the tab fixtures (normaliseProjectPath); the request keeps the UUID
+      const mockUrl = new URL(normaliseProjectPath(url.pathname) + url.search, url);
+      const custom = respond?.(mockUrl);
       if (custom) return custom;
-      const r = url.pathname.split('/').length > 5 ? projectTab({ url, persona, cookies }) : projects({ operationId: 'E-PROJECT', url, persona });
+      const r = mockUrl.pathname.split('/').length > 5 ? projectTab({ url: mockUrl, persona, cookies }) : projects({ operationId: 'E-PROJECT', url: mockUrl, persona });
       return json(r.status, r.body);
     }),
   );
@@ -123,11 +125,11 @@ const phone = () =>
 describe('Milestones (SCR-38)', () => {
   it('P-0101: the four milestones in returned order, one read, facts kept separate, no totals', async () => {
     await open('P-0101', 'milestones');
-    expect(calls.map((u) => u.pathname)).toEqual(['/api/v1/projects/P-0101', '/api/v1/projects/P-0101/milestones']);
+    expect(calls.map((u) => u.pathname)).toEqual(['/api/v1/projects/P-0101', `/api/v1/projects/${uuidOf('P-0101')}/milestones`]);
     expect(tabCalls()[0].search).toBe('?limit=10');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · patient app');
     expect(screen.getByRole('tab', { name: /^Milestones/ }).getAttribute('aria-selected')).toBe('true');
-    expect(document.querySelector('.ptabs__route')!.textContent).toBe('PM Tunde Bello · Route A from RFP-0031');
+    expect(document.querySelector('.ptabs__route')!.textContent).toBe('PM Tunde Bello · Route A');
     expect([...document.querySelectorAll('thead th')].map((th) => th.textContent)).toEqual(['MILESTONE', 'CONTRACT AMOUNT', 'COMPLETION', 'INVOICE', 'PAID']);
     expect(rowsOf()).toEqual([
       ['1 · Kick-off', '₦3,000,000.00', 'Done 27 Oct · proof', 'INV-0398 · Verified', 'Part paid · ₦500,000.00 owed'],
@@ -446,14 +448,14 @@ describe('access and errors (all tabs)', () => {
     const rows = within(screen.getByRole('table', { name: 'Documents' })).getAllByRole('row').slice(1);
     expect(rows).toHaveLength(6);
     const link = within(rows[0]).getByRole('link', { name: 'Statement of work' });
-    expect(link.getAttribute('href')).toBe('/projects/P-0101/documents/D-2901?v=2');
+    expect(link.getAttribute('href')).toBe(`/projects/${uuidOf('P-0101')}/documents/D-2901?v=2`);
     expect(rows[0].textContent).toContain('v2');
     expect(rows[0].textContent).toContain('Awaiting PMO Lead review');
     expect(rows[0].textContent).toContain('TEST TEMPLATE');
     expect(within(rows[1]).queryByRole('link')).toBeNull();
     expect(rows[1].textContent).toContain('Costing COST-0140');
     expect(rows[2].textContent).toContain('Weekly sync minutes');
-    expect(tabCalls().map((u) => u.pathname)).toEqual(['/api/v1/projects/P-0101/documents']);
+    expect(tabCalls().map((u) => u.pathname)).toEqual([`/api/v1/projects/${uuidOf('P-0101')}/documents`]);
   });
 
   it('documents of a project with none says so', async () => {

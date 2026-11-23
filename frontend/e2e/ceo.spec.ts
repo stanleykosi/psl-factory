@@ -56,7 +56,7 @@ test('Projects: every project is listed and one opens', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1, name: 'Projects' })).toBeVisible();
   await expect(page.locator('[data-project-link]').first()).toBeVisible();
   await page.getByRole('tab', { name: /All I can see/ }).click();
-  await expect(page.getByRole('tab', { name: /All I can see/ })).toContainText('24');
+  await expect(page).toHaveURL(/\?status=all$/);
   await page.goto('/projects/P-0101');
   await expect(page.getByRole('tablist', { name: 'Project' })).toBeVisible();
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Lagoon Health');

@@ -1,27 +1,98 @@
 {
-  "case_id": "P-0119",
+  "case_id": "00000000-0000-4000-8000-000000000119",
   "title": "Mainland Courier · tracking",
-  "lines": [
+  "revision": 1,
+  "sample": true,
+  "tabs": [
     {
-      "line": "RFP response",
-      "state": "verified",
-      "work_id": "W-1746"
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000119/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000119"
     },
     {
-      "line": "Plan a project",
-      "state": "verified",
-      "work_id": "W-1747"
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000119/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000119/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000119/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000119/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000119/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000119/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000119/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000119/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000119/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000119/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000119/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000119/actions"
     }
   ],
-  "next": "Delivery · sprint 3 of 4: the PM Kemi Adebayo confirms the next step.",
-  "pm": {
-    "name": "Kemi Adebayo",
-    "role": "Project manager"
+  "items": [
+    {
+      "id": 1746,
+      "line": "RFP response",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-03-10T09:00:00Z",
+      "updated": "2026-11-01T14:30:00Z",
+      "django_url": "/work/1746/",
+      "api_url": "/api/v1/work/1746"
+    },
+    {
+      "id": 1747,
+      "line": "Plan a project",
+      "reference": null,
+      "state": "Verified",
+      "started": "2026-04-11T09:00:00Z",
+      "updated": "2026-11-04T14:30:00Z",
+      "django_url": "/work/1747/",
+      "api_url": "/api/v1/work/1747"
+    }
+  ],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 2,
+    "waiting": 0,
+    "stopped": 0,
+    "finance": {
+      "stages": 4,
+      "delivered": null,
+      "next": "Sprint review",
+      "limited": false
+    },
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0119",
+      "manager": "Kemi Adebayo"
+    }
   },
-  "tab_counts": {
-    "milestones": 4,
-    "documents": 3,
-    "registers": 2,
-    "actions": 4
-  }
+  "assistant": [
+    {
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
+    }
+  ]
 }

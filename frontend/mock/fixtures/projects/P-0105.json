@@ -1,16 +1,77 @@
 {
-  "case_id": "P-0105",
+  "case_id": "00000000-0000-4000-8000-000000000105",
   "title": "Sabi Market · web store",
-  "lines": [],
-  "next": "The RFP response starts when a person picks it up.",
-  "pm": {
-    "name": "Kemi Adebayo",
-    "role": "Project manager"
+  "revision": 1,
+  "sample": true,
+  "tabs": [
+    {
+      "key": "journey",
+      "title": "Journey",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000105/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000105"
+    },
+    {
+      "key": "milestones",
+      "title": "Milestones",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000105/milestones/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000105/milestones"
+    },
+    {
+      "key": "documents",
+      "title": "Documents",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000105/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000105/documents"
+    },
+    {
+      "key": "templates",
+      "title": "Templates",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000105/templates/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000105/templates"
+    },
+    {
+      "key": "money",
+      "title": "Money",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000105/money/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000105/money"
+    },
+    {
+      "key": "registers",
+      "title": "Registers",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000105/registers/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000105/registers"
+    },
+    {
+      "key": "actions",
+      "title": "Actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000105/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000105/actions"
+    }
+  ],
+  "items": [],
+  "page": 1,
+  "next_page": null,
+  "as_of": "2026-11-23T09:00:00Z",
+  "facts": {
+    "total": 0,
+    "waiting": 0,
+    "stopped": 0,
+    "finance": {
+      "stages": 2,
+      "delivered": null,
+      "next": null,
+      "limited": false
+    },
+    "engagement": {
+      "route": "Route A",
+      "reference": "ENG-0105",
+      "manager": "Kemi Adebayo"
+    }
   },
-  "tab_counts": {
-    "milestones": 2,
-    "documents": 1,
-    "registers": 0,
-    "actions": 0
-  }
+  "assistant": [
+    {
+      "agent": "tola",
+      "scope": "project",
+      "api_url": "/api/v1/assistant/conversations"
+    }
+  ]
 }

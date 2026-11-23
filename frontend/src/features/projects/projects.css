@@ -14,6 +14,10 @@
 .psl .projects__table .projects__title { font-weight: 600; color: var(--ink); }
 .projects__count { font-weight: 700; color: var(--signal-ink); }
 .projects__zero, .projects__none { color: var(--ink-subtle); }
+.projects__more { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); }
+.projects__morecount { color: var(--ink-muted); font-size: var(--text-hint-size); }
+.projects__morefail { margin: 0; font-size: var(--text-small-size); color: var(--signal-ink); }
+.projects__partial { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
 .projects__note { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
 .projects__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .psl .projects__cards .projects__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); min-height: var(--control-md); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); color: var(--ink); text-decoration: none; line-height: 1.3; }

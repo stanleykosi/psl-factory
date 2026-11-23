@@ -6,7 +6,6 @@ import { setImmediate as realImmediate } from 'node:timers';
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { nextMilestoneText, type NextMilestone } from '@/features/projects/model';
 import { ProjectsPage } from '@/features/projects/ProjectsPage';
 import { AppShell } from '@/shell/AppShell';
 
@@ -44,8 +43,10 @@ vi.mock('next/navigation', async () => {
   };
 });
 
-type Item = { case_id: string; title: string; pm: string; stage: string; sample: boolean; next_milestone?: NextMilestone; needs_person?: number; stopped?: number };
-type Body = { items: Item[]; next_cursor?: string; as_of: string; counts?: Record<string, number>; total?: number };
+type Item = { case_id: string; title: string; manager: string | null; lifecycle: string | null; phase: string | null; reviews: number | null; exceptions: number | null; sample: boolean };
+type Body = { items: Item[]; next_cursor: string | null; as_of: string };
+const AS_OF = '2026-11-23T09:00:00Z';
+const row = (n: number, over: Partial<Item> = {}): Item => ({ case_id: `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`, title: `Project ${n}`, manager: 'Ada Okafor', lifecycle: 'active', phase: 'Planning', reviews: 0, exceptions: 0, sample: true, ...over });
 const me = (persona: string) => JSON.parse(readFileSync(join(__dirname, `../mock/fixtures/me.${persona}.json`), 'utf8'));
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 const fromMock = (url: URL, persona = 'finance_lead') => projects({ operationId: 'E-PROJECTS', url, persona }) as { status: number; body: Body };
@@ -102,7 +103,7 @@ const titles = () => [...rows()].map((r) => r.querySelector('a')!.textContent);
 const lastCall = () => calls[calls.length - 1];
 const query = (url: URL) => Object.fromEntries(url.searchParams);
 const tabs = () => within(screen.getByRole('tablist', { name: 'Projects' })).getAllByRole('tab');
-const radios = () => within(screen.getByRole('radiogroup', { name: 'Rows per page' })).getAllByRole('radio');
+const moreButton = () => screen.queryByRole('button', { name: 'Show more' });
 
 function renderPage(search = '') {
   nav.set(search);
@@ -120,79 +121,100 @@ async function open(search = '') {
   return result;
 }
 
-const ACTIVE_20 = 'http://x/api/v1/projects?limit=10';
-const cellsOf = (i: Item) => [i.title, i.pm, i.stage, nextMilestoneText(i.next_milestone) ?? 'Unknown', String(i.needs_person ?? 'Unknown'), String(i.stopped ?? 'Unknown')];
 
-describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
-  it('finance_lead: one GET for the Active tab, the eyebrow, tabs with counts, six columns, rows in response order', async () => {
+const ACTIVE = 'http://x/api/v1/projects?status=active';
+const textOfRow = (r: Element) => [...r.querySelectorAll('td')].map((td) => td.textContent);
+const LAGOON = '/projects/00000000-0000-4000-8000-000000000101';
+
+describe('list reads GET /projects, drawn as SCR-22', () => {
+  it('finance_lead: one GET with status=active and no limit, the eyebrow, tabs without counts, five columns, rows in response order', async () => {
     await open();
     expect(calls).toHaveLength(1);
     expect(calls[0].pathname).toBe('/api/v1/projects');
-    expect(calls[0].search).toBe('?limit=10');
+    expect(calls[0].search).toBe('?status=active');
+    expect(calls[0].searchParams.has('limit')).toBe(false);
     expect(document.querySelector('.projects__eyebrow')!.textContent).toBe('PROJECTS');
     expect(screen.getByRole('heading', { level: 1, name: 'Projects' })).toBeTruthy();
     expect(tabs().map((t) => [t.textContent, t.getAttribute('aria-selected')])).toEqual([
-      ['Active 22', 'true'],
-      ['Closed 2', 'false'],
-      ['All I can see 24', 'false'],
+      ['Active', 'true'],
+      ['Closed', 'false'],
+      ['All I can see', 'false'],
     ]);
     expect(screen.getByRole('tabpanel', { name: 'Active' })).toBeTruthy();
-    expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual([
-      'PROJECT',
-      'PM',
-      'WHERE IT IS',
-      'NEXT MILESTONE',
-      'NEEDS A PERSON',
-      'STOPPED',
-    ]);
-    const expected = fromMock(new URL(ACTIVE_20)).body.items;
-    expect(rows()).toHaveLength(10);
-    expect([...rows()].map((r) => [...r.querySelectorAll('td')].map((td) => td.textContent))).toEqual(expected.map(cellsOf));
-    expect([...rows()[0].querySelectorAll('td')].slice(4).map((td) => td.firstElementChild!.className)).toEqual(['projects__count', 'projects__count']);
+    expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual(['PROJECT', 'PM', 'WHERE IT IS', 'NEEDS A PERSON', 'STOPPED']);
+    const expected = fromMock(new URL(ACTIVE)).body;
+    expect(rows()).toHaveLength(20);
+    expect(titles()).toEqual(expected.items.map((i) => i.title));
     const first = within(rows()[0] as HTMLElement).getByRole('link', { name: 'Lagoon Health · patient app' });
-    expect(first.getAttribute('href')).toBe('/projects/P-0101');
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('22 PROJECTS');
-    expect(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ })).toBeTruthy();
+    expect(first.getAttribute('href')).toBe(LAGOON);
+    expect(textOfRow(rows()[0])).toEqual(['Lagoon Health · patient app', 'Tunde Bello', 'Release · UAT with client', '2', '1']);
+    expect([...rows()[0].querySelectorAll('td')].slice(3).map((td) => td.firstElementChild!.className)).toEqual(['projects__count', 'projects__count']);
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('20 shown, more available');
     expect(screen.getByText('You see projects your roles cover. Open one for its journey, documents, money and registers.')).toBeTruthy();
   });
 
-  it('pm sees the four active SCR-22 board projects, never P-0104', async () => {
-    persona = 'pm';
+  it('there is no NEXT MILESTONE column, no count badge, no "N PROJECTS" total and no rows-per-page choice', async () => {
     await open();
-    expect(titles()).toEqual(['Lagoon Health · patient app', 'Harmattan Bank · mobile onboarding', 'Kora Logistics · fleet tracker', 'Ojo Foods · ordering app']);
-    expect(document.body.textContent).not.toContain('Delta Foods');
-    expect(screen.getByText('All 4 showing')).toBeTruthy();
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('4 PROJECTS');
+    expect(document.body.textContent).not.toContain('NEXT MILESTONE');
+    expect(document.body.textContent).not.toMatch(/\d+ PROJECTS?\b/);
+    expect(document.querySelector('.psl-badge')).toBeNull();
+    expect(screen.queryByRole('radiogroup', { name: 'Rows per page' })).toBeNull();
+    expect(document.body.textContent).not.toContain('Rows per page');
   });
 
-  it('Active sends no status, Closed and All I can see send status=closed and status=all, write ?status=, and arrow keys move between tabs', async () => {
+  it('a null manager reads No manager, null counts read Unknown, and a real 0 reads 0', async () => {
+    respond = () =>
+      json(200, {
+        items: [row(1, { reviews: 0, exceptions: 0 }), row(104, { title: 'Atlas Retail · POS refresh', manager: null, lifecycle: null, phase: null, reviews: null, exceptions: null })],
+        next_cursor: null,
+        as_of: AS_OF,
+      });
+    await open();
+    expect(textOfRow(rows()[0])).toEqual(['Project 1', 'Ada Okafor', 'Planning', '0', '0']);
+    expect(textOfRow(rows()[1])).toEqual(['Atlas Retail · POS refresh', 'No manager', 'Unknown', 'Unknown', 'Unknown']);
+    expect(rows()[1].querySelectorAll('.psl-unknown')).toHaveLength(2);
+    expect(rows()[0].querySelectorAll('.projects__zero')).toHaveLength(2);
+    expect(document.body.textContent).not.toContain('undefined');
+  });
+
+  it('WHERE IT IS shows the phase, else the lifecycle, else Unknown', async () => {
+    respond = () =>
+      json(200, { items: [row(1, { phase: 'Release', lifecycle: 'active' }), row(2, { phase: null, lifecycle: 'closed' }), row(3, { phase: null, lifecycle: null })], next_cursor: null, as_of: AS_OF });
+    await open();
+    expect([...rows()].map((r) => textOfRow(r)[2])).toEqual(['Release', 'closed', 'Unknown']);
+  });
+
+  it('pm sees the four active SCR-22 board projects and Standalone fit-out, never P-0104', async () => {
     persona = 'pm';
     await open();
+    expect(titles()).toEqual(['Lagoon Health · patient app', 'Harmattan Bank · mobile onboarding', 'Kora Logistics · fleet tracker', 'Ojo Foods · ordering app', 'Standalone fit-out']);
+    expect(document.body.textContent).not.toContain('Delta Foods');
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('5 shown');
+    expect(moreButton()).toBeNull();
+  });
+
+  it('Active sends status=active (and none in the address), Closed and All I can see send status=closed and status=all; arrow keys move between tabs', async () => {
+    persona = 'pm';
+    await open();
+    expect(query(lastCall())).toEqual({ status: 'active' });
+    expect(window.location.search).toBe('');
     fireEvent.click(tabs()[1]);
     await until(() => expect(titles()).toEqual(['Sabi Market · web store']));
-    expect(query(lastCall())).toEqual({ limit: '10', status: 'closed' });
+    expect(query(lastCall())).toEqual({ status: 'closed' });
     expect(window.location.search).toBe('?status=closed');
-    // D-94: on the Closed tab the API says the project is closed, so there is no next milestone to come: "—"
-    expect([...rows()[0].querySelectorAll('td')].map((td) => td.textContent)).toEqual(['Sabi Market · web store', 'Kemi Adebayo', 'Closed 09 Nov', '—', '0', '0']);
-    expect(rows()[0].querySelector('.psl-unknown')).toBeNull();
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECT');
     tabs()[1].focus();
     fireEvent.keyDown(tabs()[1], { key: 'ArrowRight' });
     await waitFor(() => expect(document.activeElement).toBe(tabs()[2]));
-    // Arrows only move focus (Tabs); Enter or Space opens the focused tab.
     fireEvent.click(tabs()[2]);
-    await until(() => expect(rows()).toHaveLength(5));
-    expect(query(lastCall())).toEqual({ limit: '10', status: 'all' });
-    // D-94: on All I can see the rows do not say which are closed, so an unsent next milestone is Unknown
-    const sabi = [...rows()].find((r) => r.textContent?.startsWith('Sabi Market'))!;
-    expect(sabi.querySelectorAll('td')[3].textContent).toBe('Unknown');
+    await until(() => expect(rows()).toHaveLength(6));
+    expect(query(lastCall())).toEqual({ status: 'all' });
     expect(window.location.search).toBe('?status=all');
     await waitFor(() => expect(document.activeElement).toBe(tabs()[2]));
     expect(tabs().map((t) => t.tabIndex)).toEqual([-1, -1, 0]);
     fireEvent.keyDown(tabs()[2], { key: 'Home' });
     await waitFor(() => expect(document.activeElement).toBe(tabs()[0]));
     fireEvent.click(tabs()[0]);
-    await until(() => expect(rows()).toHaveLength(4));
+    await until(() => expect(rows()).toHaveLength(5));
     expect(window.location.search).toBe('');
   });
 
@@ -211,63 +233,14 @@ describe('list reads E-PROJECTS (JR-08 open project), drawn as SCR-22', () => {
   });
 
   it('server order is kept: the page never sorts or filters', async () => {
-    const items: Item[] = [
-      { case_id: 'P-9', title: 'Zulu works', pm: 'Kunle Ade', stage: 'Closed', sample: true },
-      { case_id: 'P-1', title: 'Alpha works', pm: 'Ada Okafor', stage: 'Planning', sample: true },
-    ];
-    respond = () => json(200, { items, as_of: '2026-11-14T09:00:00Z' });
+    respond = () => json(200, { items: [row(9, { title: 'Zulu works' }), row(1, { title: 'Alpha works' })], next_cursor: null, as_of: AS_OF });
     await open();
     expect(titles()).toEqual(['Zulu works', 'Alpha works']);
   });
 });
 
-describe('a body without the PROPOSAL fields', () => {
-  it('still draws every board element: tabs without counts, Filter, six columns with dashes, and N shown', async () => {
-    respond = () =>
-      json(200, {
-        items: [
-          { case_id: 'P-1', title: 'Alpha works', pm: 'Ada Okafor', stage: 'Planning', sample: true },
-          { case_id: 'P-2', title: 'Beta works', pm: 'Kunle Ade', stage: 'Go-live', sample: true },
-        ],
-        as_of: '2026-11-14T09:00:00Z',
-      });
-    await open();
-    expect(tabs().map((t) => t.textContent)).toEqual(['Active', 'Closed', 'All I can see']);
-    expect(screen.getByRole('button', { name: 'Filter' })).toBeTruthy();
-    expect(document.querySelectorAll('th')).toHaveLength(6);
-    expect([...rows()].map((r) => [...r.querySelectorAll('td')].map((td) => td.textContent))).toEqual([
-      ['Alpha works', 'Ada Okafor', 'Planning', 'Unknown', 'Unknown', 'Unknown'],
-      ['Beta works', 'Kunle Ade', 'Go-live', 'Unknown', 'Unknown', 'Unknown'],
-    ]);
-    expect(document.body.textContent).not.toContain('undefined');
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('2 shown');
-  });
-});
-
-describe('PROPOSAL fields in another shape (TECH-2-1)', () => {
-  it('degrade to dashes and N shown instead of throwing; a search without total does not show the tab count', async () => {
-    respond = () =>
-      json(200, {
-        items: [
-          { case_id: 'P-1', title: 'Alpha works', pm: 'Ada Okafor', stage: 'Planning', sample: true, next_milestone: 'Plan approved', needs_person: '2', stopped: -1 },
-          { case_id: 'P-2', title: 'Beta works', pm: 'Kunle Ade', stage: 'Go-live', sample: true, next_milestone: { name: 'Go-live', due: { unknown: true } }, needs_person: 1, stopped: 0 },
-        ],
-        as_of: '2026-11-14T09:00:00Z',
-        counts: { active: 'many', closed: 3 },
-        total: '2',
-      });
-    await open('?q=works');
-    expect([...rows()].map((r) => [...r.querySelectorAll('td')].map((td) => td.textContent))).toEqual([
-      ['Alpha works', 'Ada Okafor', 'Planning', 'Unknown', 'Unknown', 'Unknown'],
-      ['Beta works', 'Kunle Ade', 'Go-live', 'Go-live · due Unknown', '1', '0'],
-    ]);
-    expect(tabs().map((t) => t.textContent)).toEqual(['Active', 'Closed 3', 'All I can see']);
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('2 shown');
-  });
-});
-
 describe('search', () => {
-  it('sends one q=lagoon&limit=10 request 200 ms after the last keystroke; clearing drops q', async () => {
+  it('sends one q=lagoon request 200 ms after the last keystroke; clearing drops q', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
     await open();
     const box = screen.getByRole('searchbox', { name: 'Search' });
@@ -281,11 +254,10 @@ describe('search', () => {
     expect(calls).toHaveLength(1);
     await act(() => vi.advanceTimersByTimeAsync(1));
     await until(() => expect(calls).toHaveLength(2));
-    expect(calls[1].search).toBe('?limit=10&q=lagoon');
+    expect(calls[1].search).toBe('?status=active&q=lagoon');
     expect(window.location.search).toBe('?q=lagoon');
     await until(() => expect(titles()).toEqual(['Lagoon Health · patient app']));
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 PROJECT');
-    expect(tabs()[0].textContent).toBe('Active 22');
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 shown');
 
     fireEvent.change(box, { target: { value: '' } });
     await act(() => vi.advanceTimersByTimeAsync(300));
@@ -295,19 +267,34 @@ describe('search', () => {
     expect(calls.every((c) => c.searchParams.get('q') !== '')).toBe(true);
   });
 
+  it('trims the search, and a pasted 200 characters are cut to 120 in the box and in the request', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
+    await open();
+    const box = screen.getByRole('searchbox', { name: 'Search' }) as HTMLInputElement;
+    fireEvent.change(box, { target: { value: 'z'.repeat(200) } });
+    expect(box.value).toHaveLength(120);
+    await act(() => vi.advanceTimersByTimeAsync(300));
+    await until(() => expect(calls).toHaveLength(2));
+    expect(lastCall().searchParams.get('q')).toBe('z'.repeat(120));
+    fireEvent.change(box, { target: { value: '  harmattan  ' } });
+    await act(() => vi.advanceTimersByTimeAsync(300));
+    await until(() => expect(calls).toHaveLength(3));
+    expect(lastCall().searchParams.get('q')).toBe('harmattan');
+  });
+
   it('no match shows No projects match; Show all projects restores the full list', async () => {
     await open('?q=zzz');
-    expect(query(calls[0])).toEqual({ limit: '10', q: 'zzz' });
+    expect(query(calls[0])).toEqual({ status: 'active', q: 'zzz' });
     expect(screen.getByRole('heading', { name: 'No projects match' })).toBeTruthy();
-    expect(document.querySelector('.psl-showmore')).toBeNull();
+    expect(moreButton()).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Show all projects' }));
-    await until(() => expect(rows()).toHaveLength(10));
+    await until(() => expect(rows()).toHaveLength(20));
     expect(lastCall().searchParams.has('q')).toBe(false);
     expect((screen.getByRole('searchbox') as HTMLInputElement).value).toBe('');
   });
 
   it('zero projects without a search shows the empty state', async () => {
-    respond = () => json(200, { items: [], as_of: '2026-11-14T09:00:00Z' });
+    respond = () => json(200, { items: [], next_cursor: null, as_of: AS_OF });
     await open();
     expect(screen.getByRole('heading', { name: 'No projects you can see yet.' })).toBeTruthy();
     expect(screen.getByText('You see projects your roles cover.')).toBeTruthy();
@@ -315,87 +302,52 @@ describe('search', () => {
   });
 });
 
-describe('paging (D-PAGING r2)', () => {
-  it('Show more sends cursor=o10&limit=10 and appends, then the rest, then All N showing with no button', async () => {
+describe('paging with next_cursor', () => {
+  it('shows "N shown, more available"; Show more sends the cursor, appends, and focuses the first new row', async () => {
     await open();
-    expect(rows()).toHaveLength(10);
-    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
-    await until(() => expect(rows()).toHaveLength(20));
-    expect(query(lastCall())).toEqual({ limit: '10', cursor: 'o10' });
-    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
-    await until(() => expect(rows()).toHaveLength(22));
-    await until(() => expect(screen.queryByRole('button', { name: /^Show (more|\d+ more)$/ })).toBeNull());
-    expect(query(lastCall())).toEqual({ limit: '10', cursor: 'o20' });
-    const all = fromMock(new URL('http://x/api/v1/projects?limit=50')).body.items;
+    expect(rows()).toHaveLength(20);
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('20 shown, more available');
+    fireEvent.click(moreButton()!);
+    await until(() => expect(rows()).toHaveLength(23));
+    expect(query(lastCall())).toEqual({ status: 'active', cursor: 'o20' });
+    expect(moreButton()).toBeNull();
+    const all = [...fromMock(new URL(ACTIVE)).body.items, ...fromMock(new URL(`${ACTIVE}&cursor=o20`)).body.items];
     expect(titles()).toEqual(all.map((i) => i.title));
-    expect(screen.getByText(`All ${all.length} showing`)).toBeTruthy();
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe(`${all.length} PROJECTS`);
+    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('23 shown');
     await waitFor(() => expect(document.activeElement?.textContent).toBe(all[20].title));
   });
 
-  it('Rows per page 20 adds the next rows in place (cursor o10), writes ?limit=20 and keeps the first rows; 10 trims without a request', async () => {
+  it('a new tab or search loads page 1 again; the cursor never reaches the address', async () => {
     await open();
-    expect(radios().map((r) => [r.textContent, r.getAttribute('aria-checked')])).toEqual([
-      ['10', 'true'],
-      ['20', 'false'],
-      ['50', 'false'],
-    ]);
-    const first = [...rows()];
-    fireEvent.click(radios()[1]);
-    await until(() => expect(rows()).toHaveLength(20));
-    expect(query(lastCall())).toEqual({ limit: '10', cursor: 'o10' });
-    expect(window.location.search).toBe('?limit=20');
-    first.forEach((row, i) => expect(rows()[i]).toBe(row));
-    expect(document.querySelector('.psl-loading')).toBeNull();
-    const requests = calls.length;
-    fireEvent.click(radios()[0]);
-    expect(rows()).toHaveLength(10);
-    expect(calls.length).toBe(requests);
+    fireEvent.click(moreButton()!);
+    await until(() => expect(rows()).toHaveLength(23));
     expect(window.location.search).toBe('');
-  });
-
-  it('?limit=20 loads 20; ?limit=7 falls back to 10', async () => {
-    const first = await open('?limit=20');
-    expect(query(calls[0])).toEqual({ limit: '20' });
-    expect(rows()).toHaveLength(20);
-    first.unmount();
-    calls = [];
-    await open('?limit=7');
-    expect(query(calls[0])).toEqual({ limit: '10' });
-  });
-
-  it('arrow keys move the radiogroup selection with a roving tabindex', async () => {
-    await open();
-    radios()[0].focus();
-    fireEvent.keyDown(radios()[0], { key: 'ArrowRight' });
+    fireEvent.click(tabs()[2]);
     await until(() => expect(rows()).toHaveLength(20));
-    expect(radios()[1].getAttribute('aria-checked')).toBe('true');
-    await waitFor(() => expect(document.activeElement).toBe(radios()[1]));
-    expect(radios().map((r) => r.tabIndex)).toEqual([-1, 0, -1]);
-    fireEvent.keyDown(radios()[1], { key: 'ArrowRight' });
-    await until(() => expect(rows()).toHaveLength(22));
-    expect(radios()[2].getAttribute('aria-checked')).toBe('true');
-    await waitFor(() => expect(document.activeElement).toBe(radios()[2]));
-    fireEvent.keyDown(radios()[2], { key: 'ArrowRight' });
-    await until(() => expect(rows()).toHaveLength(10));
-    fireEvent.keyDown(radios()[0], { key: 'ArrowLeft' });
-    await until(() => expect(rows()).toHaveLength(22));
+    expect(query(lastCall())).toEqual({ status: 'all' });
+    expect(window.location.search).toBe('?status=all');
   });
 
-  it('a failed Show more keeps the loaded rows and shows the inline problem; Try again recovers', async () => {
+  it('an old ?limit= is ignored: no limit is sent', async () => {
+    await open('?limit=50');
+    expect(query(calls[0])).toEqual({ status: 'active' });
+    expect(rows()).toHaveLength(20);
+  });
+
+  it('a failed Show more keeps the loaded rows and shows the inline problem; Retry recovers', async () => {
     await open();
     respond = () => json(503, { code: 'unavailable', message: 'Down.' });
-    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
-    await until(() => expect(screen.getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
-        expect(rows()).toHaveLength(10);
+    fireEvent.click(moreButton()!);
+    await until(() => expect(screen.getByText(/We couldn’t load more/)).toBeTruthy());
+    expect(rows()).toHaveLength(20);
     respond = (url) => mockResponse(url);
-    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
-    await until(() => expect(rows().length).toBeGreaterThan(10));
-      });
+    fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    await until(() => expect(rows()).toHaveLength(23));
+  });
 });
 
 describe('access and failures', () => {
-  it('without the projects destination: not open, and no E-PROJECTS request', async () => {
+  it('without the projects destination: not open, and no projects request', async () => {
     persona = 'pm';
     const pm = me('pm');
     vi.mocked(fetch).mockImplementation(async (request) => {
@@ -415,7 +367,7 @@ describe('access and failures', () => {
     expect(calls).toHaveLength(0);
   });
 
-  it('persona none (no destinations at all): the frame says no sections are open, and no E-PROJECTS request', async () => {
+  it('persona none (no destinations at all): the frame says no sections are open, and no projects request', async () => {
     persona = 'none';
     renderPage();
     await until(() => expect(screen.getByText('No sections are open to your role yet.')).toBeTruthy());
@@ -442,9 +394,10 @@ describe('access and failures', () => {
 
   it.each([
     ['500', () => json(500, { code: 'server_down', message: 'x' }), 'server_down'],
-    ['404', () => json(404, { code: 'invalid_query', message: 'x' }), 'invalid_query'],
+    ['400', () => json(400, { code: 'bad_request', message: 'x' }), 'bad_request'],
+    ['422 invalid_filter', () => json(422, { code: 'invalid_filter', message: 'x' }), 'invalid_filter'],
     ['network', () => Promise.reject(new TypeError('Failed to fetch')), 'network_error'],
-    ['malformed 200 (the E-ME body)', () => json(200, me('finance_lead')), 'unexpected_response'],
+    ['malformed 200 (the /me body)', () => json(200, me('finance_lead')), 'unexpected_response'],
   ])('%s shows the error card; Try again re-reads and recovers', async (_, failure, code) => {
     respond = failure as () => Response;
     await open();
@@ -454,15 +407,14 @@ describe('access and failures', () => {
     expect(card.textContent).toContain(`Reference ${code} for support.`);
     respond = (url) => mockResponse(url);
     fireEvent.click(within(card).getByRole('button', { name: 'Try again' }));
-    await until(() => expect(rows()).toHaveLength(10));
-    expect(query(lastCall())).toEqual({ limit: '10' });
+    await until(() => expect(rows()).toHaveLength(20));
+    expect(query(lastCall())).toEqual({ status: 'active' });
   });
 
   it('loading shows status with no old rows; a late response for an earlier q is ignored', async () => {
     await open();
     const pending: Record<string, () => void> = {};
-    respond = (url) =>
-      new Promise<Response>((resolve) => (pending[url.searchParams.get('q') ?? ''] = () => resolve(mockResponse(url))));
+    respond = (url) => new Promise<Response>((resolve) => (pending[url.searchParams.get('q') ?? ''] = () => resolve(mockResponse(url))));
     const box = screen.getByRole('searchbox', { name: 'Search' });
     fireEvent.change(box, { target: { value: 'lagoon' } });
     await act(() => new Promise((r) => setTimeout(r, 260)));
@@ -483,29 +435,29 @@ describe('access and failures', () => {
 });
 
 describe('phone and sample label', () => {
-  it('below 720px each project is one card link: title, where it is · PM, then what needs a person', async () => {
+  it('below 720px each project is one card link: title, where it is · PM, then what needs a person; no PM part without a manager', async () => {
     vi.stubGlobal('matchMedia', (q: string) => ({ matches: true, media: q, addEventListener: () => {}, removeEventListener: () => {} }));
+    respond = () =>
+      json(200, {
+        items: [row(101, { title: 'Lagoon Health · patient app', manager: 'Tunde Bello', phase: 'Release · UAT with client', reviews: 2, exceptions: 1 }), row(104, { title: 'Atlas Retail · POS refresh', manager: null, phase: null, lifecycle: null, reviews: null, exceptions: null }), row(5)],
+        next_cursor: null,
+        as_of: AS_OF,
+      });
     await open();
     expect(screen.queryByRole('table')).toBeNull();
     const cards = document.querySelectorAll('.projects__cards a');
-    expect(cards).toHaveLength(10);
-    expect(cards[0].getAttribute('href')).toBe('/projects/P-0101');
+    expect(cards).toHaveLength(3);
+    expect(cards[0].getAttribute('href')).toBe(LAGOON);
     expect(cards[0].textContent).toBe('Lagoon Health · patient appRelease · UAT with client · PM Tunde Bello2 need a person · 1 stopped');
     expect(cards[0].querySelector('.projects__attention')!.textContent).toBe('2 need a person · 1 stopped');
+    expect(cards[1].textContent).toBe('Atlas Retail · POS refreshUnknown');
+    expect(cards[2].querySelector('.projects__attention')).toBeNull();
     expect(screen.getByRole('searchbox').getAttribute('placeholder')).toBe('Search projects');
     expect(screen.getByRole('button', { name: 'Filter' }).textContent).toBe('');
-    expect(document.querySelector('.psl-seg--phone')).toBeTruthy();
   });
 
   it('no SAMPLE DATA by default; with the switch on, exactly one per sample row and none for sample: false', async () => {
-    respond = () =>
-      json(200, {
-        items: [
-          { case_id: 'P-1', title: 'Alpha works', pm: 'Ada Okafor', stage: 'Planning', sample: true },
-          { case_id: 'P-2', title: 'Beta works', pm: 'Kunle Ade', stage: 'Go-live', sample: false },
-        ],
-        as_of: '2026-11-14T09:00:00Z',
-      });
+    respond = () => json(200, { items: [row(1), row(2, { sample: false })], next_cursor: null, as_of: AS_OF });
     const first = await open();
     expect(document.querySelector('.psl-sample')).toBeNull();
     first.unmount();

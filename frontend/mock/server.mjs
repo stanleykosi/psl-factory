@@ -11,7 +11,7 @@
 // Tasks: E-TASK-CLAIM and E-TASK-DECIDE validate the body against the openapi request schema, find the task in
 // the items the mock serves and check its revision. A decide swaps in <id>.next.json (a redraft: 409) or
 // <id>.<verdict>.json (the decided item) as an in-memory override; POST /__mock/reset clears the overrides.
-// Projects: E-PROJECTS and E-PROJECT answer from projects.mjs (persona rows, q, paging; P-0099 is the no-access id).
+// Projects: E-PROJECTS and E-PROJECT answer from projects.mjs in the live shape (persona rows, status, q, cursor, page; UUID ids, P-nnnn accepted too; P-0099 is the no-access id).
 // Project tabs (F-25): E-PROJECT-TAB answers from project-tabs.mjs (milestones, registers, actions; documents 501; money goes to money.mjs, F-26).
 // Overview: E-OVERVIEW serves fixtures/overview/<v>.json when cookie psl_mock_overview names a variant.
 // Alerts (F-12): the four alert operations go to alerts.mjs; as typed by the v7 contract.
@@ -28,7 +28,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { delayMs, delayReply, demoOn } from './demo.mjs';
 import { addDemoProject } from './demo-projects.mjs';
-import { caseVisible, projects } from './projects.mjs';
+import { caseVisible, normaliseProjectPath, projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
 import { documentRead } from './documents.mjs';
 import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
@@ -272,6 +272,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       const rawBytes = Buffer.concat(chunks);
       const raw = rawBytes.toString('utf8');
       const url = new URL(req.url ?? '/', 'http://mock.local');
+      // a project may be named by its UUID or its P-nnnn id; the tab and money fixtures are keyed by the P-nnnn form
+      url.pathname = normaliseProjectPath(url.pathname);
       const method = (req.method ?? 'GET').toLowerCase();
       // D-155: in the live demo every answer to the API waits a realistic time (demo.mjs); off, there is no wait.
       if (url.pathname.startsWith('/api/')) delayReply(res, delayMs(method, parseCookies(req.headers.cookie)));
