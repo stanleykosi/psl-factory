@@ -286,7 +286,7 @@ function History({ id }: { id: number }) {
 
 /** The frame and the tab's content for a live work id (one item read for both tabs). */
 export function LiveWorkItemView({ id, tab }: { id: string; tab: 'overview' | 'history' }) {
-  const workId = Number(id);
+  const workId = Number.parseInt(id, 10);
   const { state, retry } = useLiveWorkItem(workId);
   const base = `/work/${workId}`;
   usePhoneBack(tab === 'history' ? { label: 'Work item', href: base } : { label: 'Queue', href: '/my-work' });
