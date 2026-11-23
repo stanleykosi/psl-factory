@@ -157,7 +157,7 @@ def work_grant_scope(actor, *, include_native=False):
         case_id__in=grants.filter(action='factory.read').values('case_id'))))
 
 
-def visible(actor, *, work_id=None, case_id=None):
+def visible(actor, *, work_id=None, case_id=None, candidates=None):
     query=work_grant_scope(actor, include_native=work_id is not None).select_related('case','actor','invoice','source_head')
     if work_id is not None:
         query=query.filter(pk=work_id)
@@ -168,12 +168,19 @@ def visible(actor, *, work_id=None, case_id=None):
                 return query.none()
     if case_id is not None:
         query=query.filter(case_id=case_id)
+    if candidates is not None:
+        query = query.filter(pk__in=candidates)
     from apps.finance.fixed_charge import preparation_access
-    inaccessible=[]
-    for work in query.filter(preparation__kind='fixed_contract').select_related('preparation'):
-        try:preparation_access(actor,work.preparation)
-        except (PermissionDenied,ValidationError):inaccessible.append(work.pk)
-    return query.exclude(pk__in=inaccessible)
+    from apps.finance.models import BillingPreparation
+
+    protected = query.filter(preparation__kind='fixed_contract').order_by().values('preparation_id')
+    inaccessible = []
+    for preparation in BillingPreparation.objects.filter(pk__in=protected).select_related('case'):
+        try:
+            preparation_access(actor, preparation)
+        except (PermissionDenied, ValidationError):
+            inaccessible.append(preparation.pk)
+    return query.exclude(preparation_id__in=inaccessible)
 
 
 def decision_inbox_row(row):
@@ -1185,7 +1192,7 @@ def _detail(request,work_id,focus=None):
             return redirect(request.get_full_path())
         except (ValidationError,ValueError) as exc:
             messages.error(request,' '.join(exc.messages) if isinstance(exc,ValidationError) else 'Review the current recorded references.')
-        work=get_object_or_404(visible(request.user),pk=work_id)
+        work=get_object_or_404(visible(request.user, candidates=[work_id]),pk=work_id)
     row=presentation(request.user,work)
     if work.definition == 'pmo-finance/v1' and work.invoice_id:
         from .factory_invoice_cancellation import eligible, existing_issue, readback
@@ -1316,7 +1323,7 @@ def responsibility_context(request,case):
     work=None
     if work_key:
         if not work_key.isascii() or not work_key.isdecimal() or len(work_key)>19 or not 1<=int(work_key)<=2**63-1:raise Http404
-        work=get_object_or_404(visible(request.user),pk=int(work_key),case=case,definition='pmo-finance/v1')
+        work=get_object_or_404(visible(request.user, candidates=[int(work_key)]),pk=int(work_key),case=case,definition='pmo-finance/v1')
     values = {key: request.POST.get(key, request.GET.get(key, '')) for key in ('queue', 'q', 'line')}
     params = work_queue_params(values, work=work)
     suffix = '?' + urlencode({'work': work.pk, **params}) if work else ''

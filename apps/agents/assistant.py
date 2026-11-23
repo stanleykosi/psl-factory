@@ -207,13 +207,14 @@ def _tool_context(conversation):
     next_work = []
     if persona == 'tola':
         from apps.workflows.factory_definitions import DEFINITIONS
-        from apps.workflows.factory_views import visible
+        from apps.workflows.factory_views import visible, work_grant_scope
         from apps.core.evidence_access import public_evidence
         from apps.pmo import planning
 
-        work = visible(actor).filter(case=case).exclude(definition__startswith='finance-').exclude(
+        candidates = work_grant_scope(actor).filter(case=case).exclude(definition__startswith='finance-').exclude(
             definition='pmo-finance/v1',
-        ).order_by('-updated_at', '-pk')[:6]
+        )
+        work = visible(actor, candidates=candidates.values('pk')).order_by('-updated_at', '-pk')[:6]
         for item in work:
             status = item.status.replace('_', ' ')
             source(DEFINITIONS[item.definition]['title'],

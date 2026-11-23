@@ -270,9 +270,8 @@ def work_in_month(actor, entries, start, as_of):
         actions = common | {DEFINITIONS[definition]['read']}
         if definition == 'finance-ledger/v1':
             actions.add('ledger.private.read')
-        permitted = [case_id for case_id, values in grants.items() if actions <= values]
-        if permitted:
-            scope |= Q(definition=definition, case_id__in=permitted)
+        permitted = granted(actor, sorted(actions)).filter(pk__in=ids)
+        scope |= Q(definition=definition, case_id__in=permitted.values('pk'))
 
     last = start.replace(day=monthrange(start.year, start.month)[1])
     window = (timezone.make_aware(datetime.combine(start, time.min)),
@@ -317,10 +316,11 @@ def cash_in_month(entries):
             case = entry['case']
             workspace = (str(case.pk), workspace_name(case)) if by_workspace else (None, None)
             for currency, basis, amount in entry['cash']:
-                key = (workspace, currency, basis)
+                key = (workspace, case.synthetic, currency, basis)
                 totals[key] = totals.get(key, Decimal(0)) + amount
-    groups = [{'workspace_id': case_id, 'workspace': name, 'currency': currency, 'basis': basis, 'amount': amount}
-              for ((case_id, name), currency, basis), amount in totals.items()]
+    groups = [{'workspace_id': case_id, 'workspace': name, 'sample': sample,
+               'currency': currency, 'basis': basis, 'amount': amount}
+              for ((case_id, name), sample, currency, basis), amount in totals.items()]
     return {'groups': groups[:12], 'more_groups': len(groups) > 12}
 
 

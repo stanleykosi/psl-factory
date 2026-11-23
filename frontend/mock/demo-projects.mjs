@@ -31,7 +31,7 @@ export const demoVisible = (persona) => DEMO_PROJECT_PERSONAS.includes(persona);
 export const uuidOf = (caseId) => `00000000-0000-4000-8000-${caseId.slice(2).padStart(12, '0')}`;
 
 /** GET /projects item: no manager is chosen yet, so there is none; the phase says the project was won. */
-export const listItem = (p) => ({ case_id: uuidOf(p.case_id), title: p.title, revision: 1, sample: true, manager: null, lifecycle: 'active', phase: 'Won · ready to plan', reviews: 0, exceptions: 0, django_url: `/projects/${uuidOf(p.case_id)}/` });
+export const listItem = (p) => ({ case_id: uuidOf(p.case_id), title: p.title, revision: 1, sample: true, manager: null, lifecycle: 'active', phase: 'Won · ready to plan', reviews: 0, exceptions: 0, next_milestone: null, django_url: `/projects/${uuidOf(p.case_id)}/` });
 
 /** GET /projects/{case_id}: the journey lists the won RFP run as verified; everything else is empty or not available. */
 export const journey = (p) => {

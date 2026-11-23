@@ -33,7 +33,7 @@
       {% block content %}{% endblock %}
       {% if row.work %}{% factory_background_status row.work %}{% factory_coordination_status row.work %}{% factory_execution_status row.work %}{% endif %}
     </main>
-    <footer class="app-footer"><span>PSL Factory</span>{% if user.is_authenticated %}<a href="{% url 'connected_factory_work' %}">My work and decisions</a>{% endif %}{% if case.synthetic or sample_mode %}<span>Sample data</span>{% endif %}</footer>
+    <footer class="app-footer"><span>PSL Factory</span>{% if user.is_authenticated %}{% url 'connected_factory_work' as work_url %}{% if work_url %}<a href="{{ work_url }}">My work and decisions</a>{% else %}<a href="{% url 'home' %}">Recovery home</a>{% endif %}{% endif %}{% if case.synthetic or sample_mode %}<span>Sample data</span>{% endif %}</footer>
   </div>
   {% if choose_work_url %}
   <dialog id="start-work-dialog" class="start-work-dialog" aria-label="Start work" data-create-url="{% url 'factory_create' %}">
