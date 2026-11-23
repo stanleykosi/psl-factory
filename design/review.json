@@ -123,6 +123,12 @@
       "authorized_by": "design engineer (hunchoweb), 23 Nov 2026 \u2014 D-173",
       "reason": "Delivery may continue on the current design version while the client re-approves it. Since the D-89 exception (15 Nov), the design changed only through the design engineer's own live changes: design tokens and shared components taking the boards' look (D-92a, D-93), focus as the control's own border (D-144), the toast host (D-151), dropdown active rows (D-156), the date-and-time dropdown (D-158), one-row project tabs and fact alignment (D-159), chat sending and image attachments (D-160, D-161), the earned-fact divider (D-163), the after-you-decide concept B for SCR-03 (D-166) and the phone toast above drawers (D-169); 18 commits under design/. No screen was added or removed. The 13 Nov client approval (version 1794581312-b166) still covers everything else, and PSL approval of these changes is still required.",
       "recorded_at": "2026-11-22T23:52:01Z"
+    },
+    {
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "authorized_by": "design engineer (hunchoweb), 23 Nov 2026 \u2014 D-181",
+      "reason": "Delivery may continue on the current design version while the client re-approves it. Since D-173 the only design change is the design engineer's own: the upload concepts page (four concepts, A chosen) added to the main canvas for D-171, one upload field across the platform. No approved screen was added or removed. The 13 Nov client approval (version 1794581312-b166) still covers everything else, and PSL approval of the design engineer's changes since then is still required.",
+      "recorded_at": "2026-11-23T13:12:53Z"
     }
   ]
 }

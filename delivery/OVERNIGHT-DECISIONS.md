@@ -446,3 +446,6 @@ After the D-178 fixes (head 473090df), with `fidelity-exceptions.json`, sign-in 
 - "Delegate, batch the risky ones": the coordinator merges routine features into main once the gate and reviews pass, and records the delegation in decision.md. Sign-in, money and security merges wait for the design engineer's batch approval, about twice a day.
 - "Batch twice a day": board questions and product acceptance are collected per lane and brought to the design engineer about twice a day. Lanes keep moving on other screens while they wait.
 Unchanged: no AI footer; never force-push; check disk before spawning (stop under 3 GB); never invent business rules. Writes blocked by an unanswered backend question are built on the best reading of the contract and flagged, or held and listed.
+
+## D-181 (23 Nov 2026): design exception after the upload-field merge
+PR #99 (D-171) added the upload concepts page to the main canvas, which made the design gate STALE (design 4eed6eff). Asked whether to record the same kind of exception as D-173, the design engineer answered "Record exception". It is recorded in `design/review.json`. PSL approval of the design engineer's changes since 13 Nov is still required.
