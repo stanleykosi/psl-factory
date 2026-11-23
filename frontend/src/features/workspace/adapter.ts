@@ -48,8 +48,8 @@ export type LineActionsProps<Readback = unknown> = {
 export type LineAdapter<Readback = unknown> = {
   /** The panels[].key it handles, e.g. 'weekly-report'. */
   key: string;
-  /** GET ref.url through liveApi and call(); throws ApiError. */
-  read(ref: PanelRef): Promise<Readback>;
+  /** GET ref.url through liveApi and call(); throws ApiError. `ctx` is the loaded item (an adapter that does not need it ignores it). */
+  read(ref: PanelRef, ctx: LineContext): Promise<Readback>;
   sections(readback: Readback, ctx: LineContext): Section[];
   /** Commands are described, not sent. */
   commands?(readback: Readback, ctx: LineContext): CommandDescriptor[];

@@ -12,7 +12,7 @@ import { Breadcrumb, buttonClass, Button, Callout, EmptyState, formatDayTime, Se
 import { adapterFor, type LineContext, type PanelRef } from '@/features/workspace/adapter';
 import type { Section } from '@/features/workspace/labels';
 import { SectionView } from '@/features/workspace/Sections';
-import '@/features/workspace/weeklyReportAdapter';
+import '@/features/workspace/lines';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { SampleLabel } from '@/shell/SampleLabel';
@@ -131,7 +131,7 @@ function PanelView({ panel, ctx, version, reloadItem }: { panel: PanelRef; ctx: 
     if (!adapter) return;
     let active = true;
     adapter
-      .read(panel)
+      .read(panel, { workId, caseId, revision, caseRevision, state: itemState })
       .then((readback) => {
         if (active) setState({ status: 'ready', sections: adapter.sections(readback, { workId, caseId, revision, caseRevision, state: itemState }), readback });
       })

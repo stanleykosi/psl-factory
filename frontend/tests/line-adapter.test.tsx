@@ -7,6 +7,7 @@ import type { LiveWeeklyReport } from '@/api/types';
 import { adapterFor, isPanelUrl, makeCommand, registerLineAdapter, type LineAdapter, type LineContext } from '@/features/workspace/adapter';
 import type { Section } from '@/features/workspace/labels';
 import { SectionView } from '@/features/workspace/Sections';
+import '@/features/workspace/lines';
 import { NOT_RECORDED, weeklyReportAdapter } from '@/features/workspace/weeklyReportAdapter';
 
 // @ts-expect-error plain ESM module without type declarations
@@ -27,7 +28,7 @@ describe('the adapter interface (AC16, AC17)', () => {
     };
     registerLineAdapter(fake as LineAdapter);
     const adapter = adapterFor('fake-line')!;
-    const readback = await adapter.read({ key: 'fake-line', url: '/api/v1/work/4102/fake' });
+    const readback = await adapter.read({ key: 'fake-line', url: '/api/v1/work/4102/fake' }, ctx);
     render(<>{adapter.sections(readback, ctx).map((s) => <SectionView key={s.key} section={s} level={2} />)}</>);
     expect(screen.getByRole('heading', { name: 'Fake panel' })).toBeTruthy();
     expect(screen.getByText('Hello from the line')).toBeTruthy();
@@ -38,6 +39,13 @@ describe('the adapter interface (AC16, AC17)', () => {
     expect(command.idempotency).toEqual({ field: 'operation', value: body.operation });
     expect(command.method).toBe('POST');
     expect(adapterFor('nothing-registered')).toBeUndefined();
+  });
+
+  it('read() receives the line context', async () => {
+    const read = vi.fn(async () => ({ n: 1 }));
+    registerLineAdapter({ key: 'ctx-line', read, sections: () => [] } as LineAdapter);
+    await adapterFor('ctx-line')!.read({ key: 'ctx-line', url: '/api/v1/work/4102/x' }, ctx);
+    expect(read).toHaveBeenCalledWith({ key: 'ctx-line', url: '/api/v1/work/4102/x' }, ctx);
   });
 
   it('a null token stays null, never 0; a line with no key field has no key', () => {
@@ -90,10 +98,10 @@ describe('the weekly report adapter (AC18, AC21)', () => {
 
   it('reads its panel route and is registered under weekly-report', async () => {
     expect(adapterFor('weekly-report')).toBe(weeklyReportAdapter);
-    const readback = await weeklyReportAdapter.read({ key: 'weekly-report', url: '/api/v1/work/4102/weekly-report' });
+    const readback = await weeklyReportAdapter.read({ key: 'weekly-report', url: '/api/v1/work/4102/weekly-report' }, ctx);
     expect(readback.expected_revision).toBe(3);
     expect(new URL(fetchStub.mock.calls[0][0].url).pathname).toBe('/api/v1/work/4102/weekly-report');
-    await expect(weeklyReportAdapter.read({ key: 'weekly-report', url: 'https://evil.example/api/v1/x' })).rejects.toBeTruthy();
+    await expect(weeklyReportAdapter.read({ key: 'weekly-report', url: 'https://evil.example/api/v1/x' }, ctx)).rejects.toBeTruthy();
     expect(fetchStub).toHaveBeenCalledTimes(1);
   });
 
