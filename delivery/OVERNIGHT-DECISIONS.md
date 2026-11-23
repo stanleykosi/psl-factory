@@ -488,3 +488,6 @@ Seven full test runs ran at once across lanes A to D (load about 450), and gates
 
 ## D-190 (23 Nov 2026): six gate attempts per round during the push
 F-72 used its three gate attempts per round on causes outside its own code: a timeout during the machine overload (before D-189), another lane's load-sensitive test (`hypercare.test.tsx`), and a pass that was overtaken by the D-185 main syncs. Asked whether to raise the limit, the design engineer answered "Raise to 6". `delivery/config.json` `max_gate_attempts` changes from 3 to 6. Each gate still has to pass on the exact head before review. A failure the feature caused still needs a real fix, and a test that fails under load gets its cause fixed, not retries.
+
+## D-191 (24 Nov 2026): a weekly report week uses the person's own time zone (LC-Q32)
+Asked which time zone a weekly client report week uses, the design engineer answered "Person's own time zone (built)". The week runs from local midnight on the first day to local midnight after the last day, in the browser's time zone, and a week that has not finished yet is refused. This settles F-86's last product question.

@@ -688,3 +688,7 @@ F-58: accepted, merge approved. All recommended options accepted for F-59 Q1 to 
 ## Answers, batch 3 (23 Nov 2026, D-187)
 
 Every recommended option is accepted: lane A 1.24.0 questions, B19 to B30, LC-Q17 to LC-Q22, and all lane D specs (LD-Q2). LD-Q1: build SCR-57 on what the API serves; the merge goes to the design engineer. B31: completion only queues the Finance handoff; Finance starts the invoice.
+
+## Answer, LC-Q32 (24 Nov 2026, D-191)
+
+"Person's own time zone (built)": local midnight on the first day to local midnight after the last day, in the browser's time zone; a week that has not ended is refused.
