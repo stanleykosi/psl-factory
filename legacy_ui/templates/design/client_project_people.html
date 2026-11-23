@@ -1,0 +1,19 @@
+<section class="card" id="client-project-people" aria-labelledby="client-project-people-title">
+  <h2 id="client-project-people-title">Additional project contacts</h2>
+  {% for person in project_people.entries %}<article class="floor-line">
+    <div><strong>{{ person.name }}</strong><p>{{ person.role }}</p>{% if person.email %}<p>{{ person.email }}</p>{% endif %}</div>
+    <div><p>Version {{ person.number }} · {{ person.actor.get_full_name|default:person.actor.get_username }} · {{ person.created_at|date:'d M Y' }}</p>
+      {% if project_people.form %}<a href="?project_contact={{ person.pk }}&amp;people_page={{ project_people.page.number }}{% if return_work %}&amp;work={{ return_work }}{% endif %}#client-project-people">Edit {{ person.name }}</a>{% endif %}</div>
+  </article>{% empty %}<p>No additional project contacts have been recorded.</p>{% endfor %}
+  {% if project_people.page.has_other_pages %}<nav class="actions" aria-label="Project contact pages">
+    {% if project_people.page.has_previous %}<a href="?people_page={{ project_people.page.previous_page_number }}{% if return_work %}&amp;work={{ return_work }}{% endif %}#client-project-people">Previous contacts</a>{% endif %}
+    {% if project_people.page.has_next %}<a href="?people_page={{ project_people.page.next_page_number }}{% if return_work %}&amp;work={{ return_work }}{% endif %}#client-project-people">More contacts</a>{% endif %}
+  </nav>{% endif %}
+  {% if project_people.form %}<details{% if project_people.selected or project_people.form.is_bound %} open{% endif %}>
+    <summary>{% if project_people.selected %}Edit contact details{% else %}Add a project contact{% endif %}</summary>
+    <form method="post" autocomplete="off">{% csrf_token %}<input type="hidden" name="purpose" value="project_person">
+      {{ project_people.form.as_p }}<button>Save project contact</button>
+    </form>
+    {% if project_people.selected %}<a href="?{% if return_work %}work={{ return_work }}{% endif %}#client-project-people">Add another person</a>{% endif %}
+  </details>{% endif %}
+</section>

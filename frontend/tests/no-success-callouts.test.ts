@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, sep } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
@@ -20,7 +20,7 @@ describe('no success callouts for an action result', () => {
   const root = join(__dirname, '..');
   const found = files(join(root, 'src'))
     .filter((file) => SUCCESS.test(readFileSync(file, 'utf8')))
-    .map((file) => relative(root, file));
+    .map((file) => relative(root, file).split(sep).join('/'));
 
   it('renders a success callout only in the allowlisted files', () => {
     expect(found.filter((file) => !(file in ALLOWED))).toEqual([]);

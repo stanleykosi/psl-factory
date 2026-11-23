@@ -451,6 +451,9 @@ def assess(actor,case_id,terms_id,as_of,expected):
     snapshot,result=projection(actor,terms,as_of);key=digest({'snapshot':snapshot,'result':result,'actor':actor.pk})
     old=CoverageAssessment.objects.filter(operation_key=key).first()
     if old:return old
+    if result['status']=='assessed':
+        from apps.workflows.native_stations import receive_advice
+        receive_advice('F45',terms,actor,case=case)
     record=CoverageAssessment.objects.create(terms=terms,as_of=as_of,snapshot=snapshot,result=result,operation_key=key,actor=actor)
     event(actor,case,'coverage.assessed',assessment=record.pk);bump(case);return record
 
@@ -593,6 +596,8 @@ def receive_preparation(actor,case_id,request_id,preparation_id,expected):
         row=next(r for r in route['assessment'].result['obligations'] if r['key']==request.obligation_key)
         if not prep.usage_id or {r['period'] for r in prep.usage.rows}!={row['start'][:7]} or row['start'][:7]!=row['end'][:7]:
             raise ValidationError('Exact native usage-period preparation required; other preparation kinds remain separate')
+    from apps.workflows.native_stations import receive_advice
+    receive_advice('F31',request,actor,case=case)
     receipt=CoveragePreparationReceipt.objects.create(request=request,preparation=prep,
         payload={'request':request.pk,'operation_key':request.operation_key,'received_by':actor.pk,
             'route_id':route['id'],'assessment_id':route['assessment'].pk,

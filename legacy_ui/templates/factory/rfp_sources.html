@@ -1,0 +1,6 @@
+{{ source_form.as_p }}
+<h3>Requirement coverage</h3><p>Add a cited requirement and the proposed response. Leave unused rows empty. A correction creates new evidence and preserves the earlier wording.</p>
+{{ mappings.management_form }}{{ mappings.non_form_errors }}
+<div data-requirement-rows>{% for mapping in mappings %}<fieldset><legend>Requirement {{ forloop.counter }}</legend>{{ mapping.as_p }}</fieldset>{% endfor %}</div>
+<template data-requirement-template><fieldset><legend>Additional requirement</legend>{{ mappings.empty_form.as_p }}</fieldset></template>
+<button type="button" class="secondary" data-add-requirement>Add a requirement</button>

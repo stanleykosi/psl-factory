@@ -1,0 +1,30 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Client testing delivery · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'client_uat' case.pk dossier.pk %}">← Client response</a>
+<h1>Client testing delivery</h1><p class="lede">{{ case|workspace_name }} · {{ dossier.candidate.reference }}</p></div></header>
+{% if not target %}<section class="card"><h2>Record the testing request first</h2><a href="{% url 'client_uat' case.pk dossier.pk %}">Record the client and version sent</a></section>{% endif %}
+{% if state.stale %}<p role="status">Check the current client, version and delivery evidence before continuing.</p>{% endif %}
+{% if state.pack %}<section class="card"><h2>{% if state.review %}Delivery proof confirmed{% else %}Delivery proof awaiting review{% endif %}</h2>
+  <dl><dt>Reported delivery time</dt><dd>{{ state.pack.payload.received_at|recorded_time }}</dd>
+      {% if state.timing %}<dt>Client response due</dt><dd>{{ state.timing.payload.reply_due_at|recorded_time }}</dd>
+      <dt>Follow-up time</dt><dd>{% if state.timing.payload.remind_at %}{{ state.timing.payload.remind_at|recorded_time }}{% else %}No reminder set{% endif %}</dd>{% endif %}</dl>
+  {% if state.client_replied %}<p>The client has replied. <a href="{% url 'client_uat' case.pk dossier.pk %}">Read the response</a>.</p>
+  {% elif state.reminder_due %}<p role="status">Follow up with the client now.</p>{% endif %}
+</section>{% endif %}
+{% if review_form %}<section class="card"><h2>Review the delivery evidence</h2>
+  <p>Receipt reference {{ state.pack.payload.reference }}</p>
+  <p><a href="{% url 'client_uat_pack_file' case.pk dossier.pk state.pack.pk 'pack' %}">Open the test pack</a> ·
+     <a href="{% url 'client_uat_pack_file' case.pk dossier.pk state.pack.pk 'receipt' %}">Open the original proof</a></p>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="verify">{{ review_form.as_p }}<button>Confirm delivery proof</button></form>
+</section>{% endif %}
+{% if schedule_form %}<section class="card"><h2>{% if state.timing %}Change reminder{% else %}Set the response window{% endif %}</h2>
+  <p>Use the dates agreed for this client and version. The reminder appears here when due.</p>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="schedule">{{ schedule_form.as_p }}<button>Save response dates</button></form>
+</section>{% endif %}
+{% if record_form %}<details class="card" {% if not state.pack or record_form.errors %}open{% endif %}>
+  <summary>{% if state.pack %}Record corrected delivery proof{% else %}Record delivery proof{% endif %}</summary>
+  <p><a href="{% url 'case_uploads' case.pk %}">Upload the test pack and delivery proof</a></p>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="record">{{ record_form.as_p }}<button>Save delivery proof for review</button></form>
+</details>{% endif %}
+{% endblock %}

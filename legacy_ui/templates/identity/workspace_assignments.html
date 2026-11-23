@@ -1,0 +1,38 @@
+<div id="assignments">
+{% if assignments.actions %}
+<section class="card factory-floor" aria-labelledby="assigned-work">
+  <h2 id="assigned-work">{% if assignments.has_teams %}Team assignments{% else %}My assignments{% endif %}</h2>
+  {% for item in assignments.actions %}
+  <a class="floor-line" href="{{ item.url }}">
+    <span><strong>{{ item.title }}</strong><br>{{ item.workspace }}{% if not item.mine %} · {{ item.owner }}{% endif %}{% if item.line %}<br>{{ item.line }}{% endif %}</span>
+    <span>{{ item.state }}{% if item.due %}<br>Due {{ item.due|date:'j M, H:i' }}{% endif %}</span>
+  </a>
+  {% endfor %}
+</section>
+{% endif %}
+{% if assignments.decisions or assignments.limited %}
+<section class="card factory-floor" aria-labelledby="my-decisions">
+  <h2 id="my-decisions">Decisions for me</h2>
+  {% for item in assignments.decisions %}<a class="floor-line" href="{{ item.url }}"><span>{{ item.title }}</span><span>{{ item.workspace }}</span></a>{% endfor %}
+  {% if assignments.limited %}<p>Some decisions need a fresh access check. Reload the page to try again.</p>{% endif %}
+</section>
+{% endif %}
+{% if assignments.approval_desks %}
+<section class="card factory-floor" aria-labelledby="approval-desks">
+  <h2 id="approval-desks">Other approvals</h2>
+  {% for desk in assignments.approval_desks %}<a class="floor-line" href="{{ desk.url }}"><span>{{ desk.title }}</span><span>{{ desk.workspace }}</span></a>{% endfor %}
+</section>
+{% endif %}
+{% if assignments.team_decisions %}
+<section class="card factory-floor" aria-labelledby="team-decisions">
+  <h2 id="team-decisions">Waiting on my team</h2>
+  {% for item in assignments.team_decisions %}<a class="floor-line" href="{{ item.url }}"><span>{{ item.title }}</span><span>{{ item.owner }} · {{ item.state }}</span></a>{% endfor %}
+</section>
+{% endif %}
+{% if assignments.page > 1 or assignments.has_next %}
+<nav aria-label="Assignment pages" class="factory-queues">
+  {% if assignments.page > 1 %}<a href="?queue={{ queue }}&amp;assignments_page={{ assignments.page|add:'-1' }}#assignments">Previous</a>{% endif %}
+  {% if assignments.has_next %}<a href="?queue={{ queue }}&amp;assignments_page={{ assignments.page|add:'1' }}#assignments">Next</a>{% endif %}
+</nav>
+{% endif %}
+</div>

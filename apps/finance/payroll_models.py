@@ -52,6 +52,13 @@ class PayrollReview(AppendOnly):
  actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
  created_at=models.DateTimeField(auto_now_add=True)
  class Meta:constraints=[models.UniqueConstraint(fields=['request','operation_key'],name='payroll_review_operation'),models.CheckConstraint(condition=Q(input__isnull=False,run__isnull=True)|Q(input__isnull=True,run__isnull=False),name='payroll_review_one_subject')]
+
+class PayrollReviewNote(AppendOnly):
+ review=models.OneToOneField(PayrollReview,on_delete=models.PROTECT)
+ note=models.CharField(max_length=2000)
+ class Meta:
+  constraints=[models.CheckConstraint(condition=Q(note__regex=r'[^[:space:]]'),name='payroll_review_note_nonblank')]
+
 class PayrollPublication(AppendOnly):
  request=models.ForeignKey(PayrollRequest,on_delete=models.PROTECT)
  run=models.ForeignKey(PayrollRun,on_delete=models.PROTECT)

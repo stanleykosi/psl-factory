@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.test import TestCase
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import connection,transaction,DatabaseError
+from django.urls import reverse
 from django.utils import timezone
 from apps.identity.models import Grant
 from apps.core.evidence_access import public_evidence,public_agent_runs
@@ -48,10 +49,92 @@ class FactoryLedgerTests(TestCase):
         review(f,x,'reject');self.assertTrue(flow.projection(f['actor'],self.work)['readiness_changed'])
         with self.assertRaises(ValidationError):flow.verify(self.work,f['actor'])
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
+
+    def test_api_incumbent_observation_independent_review_and_private_readback(self):
+        self.start()
+        self.advance()
+        f = self.f
+        lineage = flow.lineage(self.work)
+        values = {key: lineage.payload[key] for key in ('provider', 'realm', 'entity', 'source_reference',
+                  'target_reference', 'transaction_date', 'accounting_period', 'treatment_evidence_id')}
+        values.update(state='found', observed_at=(timezone.now() - timedelta(seconds=1)).isoformat(), incumbent_version='sync-api')
+        url = f'/api/v1/work/{self.work.pk}/incumbent-reference'
+        self.client.force_login(f['actor'])
+        saved = self.client.post(f"/api/v1/projects/{f['case'].pk}/incumbent-evidence", {
+            'case_revision': rev(f['case']), 'kind': 'quickbooks_verification', 'value': values},
+            content_type='application/json')
+        self.assertEqual(saved.status_code, 201, saved.content)
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200, page.content)
+        self.assertTrue(page.json()['can_observe'])
+        command = {key: page.json()[key] for key in ('expected_revision', 'case_revision', 'lineage_id')}
+        observed = self.client.post(url, {**command, 'action': 'observe', 'evidence_id': saved.json()['id'], 'outcome': 'found'},
+                                    content_type='application/json')
+        self.assertEqual(observed.status_code, 201, observed.content)
+        self.client.force_login(f['reviewer'])
+        current = self.client.get(url).json()
+        self.assertIn('approve', current['review_options'])
+        decision = self.client.post(url, {'action': 'review', 'check_id': observed.json()['record_id'],
+            'expected_revision': current['expected_revision'], 'case_revision': current['case_revision'],
+            'evidence_id': f['e'].pk, 'verdict': 'approve', 'reason': 'Independent review of this supplied reference.'},
+            content_type='application/json')
+        self.assertEqual(decision.status_code, 201, decision.content)
+        self.advance()
+        current = self.client.get(url)
+        self.assertEqual(current.status_code, 200, current.content)
+        self.assertEqual(current.json()['verified']['incumbent']['incumbent_version'], 'sync-api')
+        self.assertFalse(current.json()['verified']['posting_performed'])
+        Grant.objects.filter(case=f['case'], user=f['reviewer'], action='ledger.private.read').update(active=False)
+        self.assertIn(self.client.get(url).status_code, (403, 404))
     def test_private_reader_and_generic_disclosure_denied(self):
         self.accepted();f=self.f
         self.assertFalse(public_evidence(Evidence.objects.all()).filter(pk=self.work.source_head_id).exists());self.assertFalse(public_agent_runs(AgentRun.objects.all()).filter(process_id='F01').exists())
         Grant.objects.filter(case=f['case'],user=f['reviewer'],action='ledger.private.read').update(active=False);self.client.force_login(f['reviewer']);before=self.rows();r=self.client.get('/work/'+str(self.work.pk)+'/');self.assertIn(r.status_code,[403,404]);self.assertEqual(before,self.rows())
+
+    def test_live_investigation_requires_exact_private_reader_and_worker_claim(self):
+        from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
+
+        self.start()
+        f = self.f
+        reader = f['reviewer']
+        self.client.force_login(reader)
+        path = reverse('factory_detail', args=[self.work.pk])
+        decision = reverse('factory_invoice_decision', args=[self.work.pk])
+        label = 'Investigating the supplied ledger reference.'
+        self.assertNotContains(self.client.get(path), label)
+        api = f'/api/v1/work/{self.work.pk}'
+
+        class ObserveInvestigation(SyntheticFactoryCoordinator):
+            def choose(provider, context):
+                self.assertEqual(context['eligible'], ['ACT04'])
+                page = self.client.get(path)
+                self.assertContains(page, label)
+                self.assertContains(page, 'data-work-watch')
+                self.assertEqual(self.client.get(api).json()['current_activity'], {'label': label, 'watching': True})
+                self.assertNotContains(self.client.get(decision), label)
+                for actor, action in ((reader, 'ledger.private.read'), (f['actor'], 'agent.ledger')):
+                    grant = Grant.objects.filter(case=f['case'], user=actor, action=action)
+                    self.assertTrue(grant.filter(active=True).exists())
+                    grant.update(active=False)
+                    try:
+                        self.assertNotIn(label, self.client.get(path).content.decode())
+                        reduced = self.client.get(api)
+                        if reduced.status_code == 200:
+                            self.assertNotIn('current_activity', reduced.json())
+                        else:
+                            self.assertIn(reduced.status_code, (403, 404))
+                    finally:
+                        grant.update(active=True)
+                self.assertContains(self.client.get(path), label)
+                self.assertFalse(LedgerLineage.objects.filter(case=f['case']).exists())
+                return super().choose(context)
+
+        self.assertTrue(factory.run_once(self.work.pk, provider=ObserveInvestigation()))
+        self.assertNotContains(self.client.get(path), label)
+        self.assertNotIn('current_activity', self.client.get(api).json())
+        self.assertTrue(self.work.activities.filter(kind='ACT04', status='succeeded').exists())
+        self.assertFalse(LedgerLineage.objects.filter(case=f['case']).exists())
+
     def test_uncertain_observation_never_retries_or_verifies(self):
         self.start();self.advance();w=flow.lineage(self.work);verify(self.f,w,{'state':'unknown','target_reference':None,'incumbent_version':None});self.advance();self.assertNotEqual(self.work.status,'verified');self.assertEqual(LedgerLineage.objects.count(),1)
         with self.assertRaises(ValidationError):flow.verify(self.work,self.f['actor'])
@@ -68,15 +151,78 @@ class FactoryLedgerTests(TestCase):
         w,x=self.accepted();f=self.f;capture(f)
         with self.assertRaises(ValidationError):flow.verify(self.work,f['actor'])
         self.assertTrue(flow.projection(f['actor'],self.work)['readiness_changed'])
+    def test_duplicate_factory_source_is_refused_and_can_extend_earlier_lineage(self):
+        f=self.f;earlier=capture(f);self.start();self.advance()
+        self.assertIsNone(flow.lineage(self.work))
+        self.assertEqual(LedgerLineage.objects.filter(case=f['case']).count(),1)
+        self.client.force_login(f['actor'])
+        url=reverse('factory_invoice_recovery',args=[self.work.pk]);page=self.client.get(url)
+        self.assertContains(page,'Source evidence comparison');self.assertContains(page,'Correct the original lineage')
+        self.assertEqual(self.client.post(url,{'action':'correct','revision':self.work.revision,
+                         'case_revision':rev(f['case']),'evidence_id':self.source.pk,'predecessor_id':earlier.pk,
+                         'reason':'The selected evidence is a correction to the original lineage.'}).status_code,302)
+        self.advance();self.assertEqual(flow.lineage(self.work).predecessor_id,earlier.pk)
+    def test_focused_observation_and_rejection_require_fresh_proof(self):
+        self.start();self.advance();f=self.f;w=flow.lineage(self.work)
+        value={k:w.payload[k] for k in ['provider','realm','entity','source_reference','target_reference',
+                                      'transaction_date','accounting_period','treatment_evidence_id']}
+        value.update(state='found',observed_at=(timezone.now()-timedelta(seconds=1)).isoformat(),incumbent_version='sync-1')
+        proof=evidence(f,'quickbooks_verification',value)
+        observe=reverse('factory_work_response',args=[self.work.pk]);decision=reverse('factory_invoice_decision',args=[self.work.pk])
+        command={'action':'observe','revision':self.work.revision,'case_revision':rev(f['case']),
+                 'target':w.pk,'evidence':proof.pk,'outcome':'unknown'}
+        self.client.force_login(f['actor']);self.assertContains(self.client.get(observe),'What you found')
+        self.assertContains(self.client.post(observe,command),'The selected outcome must match the supplied evidence.')
+        self.assertFalse(w.checks.exists())
+        self.assertEqual(self.client.post(observe,{**command,'outcome':'found'}).status_code,302)
+        check=w.checks.get();self.client.force_login(f['reviewer'])
+        self.assertContains(self.client.get(decision),'Independent Finance decision')
+        url = f'/api/v1/work/{self.work.pk}/incumbent-reference'
+        panel = self.client.get(url).json()
+        response = self.client.post(url, {'action': 'review', 'expected_revision': panel['expected_revision'],
+            'case_revision': panel['case_revision'], 'check_id': check.pk, 'evidence_id': f['e'].pk,
+            'verdict': 'reject', 'reason': 'Sample evidence does not establish the reference.'},
+            content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        rejected = self.client.get(url).json()
+        self.assertEqual(rejected['stage'], 'rejected')
+        self.assertEqual(rejected['latest_decision']['id'], response.json()['record_id'])
+        self.assertEqual(rejected['latest_decision']['reason'], 'Sample evidence does not establish the reference.')
+        self.assertEqual(rejected['review_options'], [])
+        self.assertContains(self.client.get(decision),'Sample evidence does not establish the reference.')
+        self.assertNotContains(self.client.get(decision),'Approve supplied reference')
+        with self.assertRaisesMessage(ValidationError,'Supply fresh evidence'):
+            ledger.review(f['reviewer'],f['case'].pk,check.pk,f['e'].pk,'approve',rev(f['case']))
+        with self.assertRaisesMessage(ValidationError,'Supply fresh evidence'):
+            ledger.verify(f['actor'],f['case'].pk,w.pk,proof.pk,rev(f['case']))
+        fresh=verify(f,w,{'incumbent_version':'sync-2'});review(f,fresh)
+        self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        self.assertEqual(self.client.get(url).json()['check_id'], fresh.pk)
     def test_cancellation_no_capture_and_unknown_command(self):
         self.start();f=self.f;factory.manage(f['actor'],self.work.pk,self.work.revision,'cancel');self.advance();self.assertEqual(self.work.status,'cancelled');self.assertEqual(LedgerLineage.objects.count(),0)
         with self.assertRaises(ValidationError):flow.command(f['reviewer'],self.work.pk,self.work.revision,rev(f['case']),'review',1,f['e'].pk,'approve')
 
     def test_exact_http_intake_and_commands_reject_extra_fields(self):
         f=self.f;self.client.force_login(f['actor'])
-        response=self.client.post(__import__('django.urls',fromlist=['reverse']).reverse('factory_create'),{'definition':flow.DEFINITION,'case':str(f['case'].pk),'key':'http-ledger','revision':rev(f['case']),'evidence_id':self.source.pk,'predecessor_id':''})
+        from django.urls import reverse
+        from apps.core.presentation import workspace_name
+        create_url=reverse('factory_create')
+        choice=self.client.get(create_url, {'definition':flow.DEFINITION})
+        self.assertContains(choice, workspace_name(f['case']))
+        self.assertContains(choice, 'Choose workspace')
+        self.assertNotContains(choice, 'Case object (')
+        response=self.client.post(create_url,{'definition':flow.DEFINITION,'case':str(f['case'].pk),'key':'http-ledger','revision':rev(f['case']),'evidence_id':self.source.pk,'predecessor_id':''})
         self.assertEqual(response.status_code,302,response.content);self.work=FactoryWork.objects.get(key='http-ledger');self.advance()
         before=self.rows();r=self.client.post('/work/'+str(self.work.pk)+'/',{'action':'observe','revision':self.work.revision,'case_revision':rev(f['case']),'target':flow.lineage(self.work).pk,'evidence':self.source.pk,'post_to_quickbooks':'yes'});self.assertEqual(r.status_code,200);self.assertEqual(before,self.rows())
+        checked = verify(f, flow.lineage(self.work), {'state': 'unknown'})
+        self.assertEqual(checked.status, 'held')
+        page = self.client.get(reverse('factory_work_response', args=[self.work.pk]))
+        self.assertContains(page, 'Latest supplied observation')
+        self.assertContains(page, 'Needs further evidence before Finance can verify the reference.')
+        detail = self.client.get(reverse('factory_detail', args=[self.work.pk]))
+        self.assertContains(detail, 'Earlier source to correct')
+        self.assertNotContains(detail, 'LedgerLineage object')
+        self.assertFalse(checked.decisions.exists())
     def test_recheck_current_observation_reuses_lineage_and_budget(self):
         w,x=self.accepted();f=self.f;spent=self.work.budget_used;verify(f,w,{'state':'unknown'});flow.recheck(f['actor'],self.work.pk,self.work.revision,rev(f['case']),'Inspect changed incumbent evidence');self.advance();self.assertNotEqual(self.work.status,'verified');self.assertGreaterEqual(self.work.budget_used,spent);self.assertEqual(LedgerLineage.objects.count(),1)
         nx=verify(f,w);review(f,nx);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)

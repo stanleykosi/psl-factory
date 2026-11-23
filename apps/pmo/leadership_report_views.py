@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.http import Http404
 from django.shortcuts import render
 from apps.core.views import accessible_case
 from apps.core.services import lock_case, add_evidence
@@ -62,7 +63,8 @@ class LeadershipReportForm(forms.Form):
 def prepare(request, case_id, kind):
     case = accessible_case(request.user, case_id)
     require(request.user, case, 'report.read'); require(request.user, case, 'report.draft')
-    if kind not in reports.THEMES: raise ValidationError('Choose a registered leadership report kind')
+    if kind not in reports.THEMES:
+        raise Http404('Leadership report type not found')
     form = LeadershipReportForm(request.user, case, kind, request.POST if request.method == 'POST' else None)
     binding = None; investigation = None
     if request.method == 'POST' and form.is_valid():

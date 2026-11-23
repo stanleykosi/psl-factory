@@ -1,0 +1,41 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Client link · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'design_client_project' case.pk %}">← Client contacts</a><h1>Client link</h1><p>{{ case|workspace_name }}</p></div></header>
+<section class="card">
+  <h2>Recorded link</h2>
+  {% if current.coverage %}
+    <p>{{ current.client_label }} · {{ current.coverage.customer }} · reviewed {{ current.created_at|date:'j M Y H:i T' }}.</p>
+    {% if coverage_changed %}<p>The billing coverage changed. Review a fresh link before this project can appear under the client.</p>{% endif %}
+  {% else %}<p>This project has no verified client link.</p>{% endif %}
+  {% if form %}
+    <details{% if form.errors %} open{% endif %}>
+      <summary>Propose a client link change</summary>
+      <p>Use the client reference and name in the original customer register. Another authorised person reviews the exact proposal.</p>
+      <form method="post">
+        {% csrf_token %}<input type="hidden" name="operation" value="propose">
+        {{ form.as_p }}
+        <button type="submit">Save for review</button>
+      </form>
+    </details>
+  {% endif %}
+</section>
+{% for proposal in proposals %}
+  <section class="card">
+    <h2>{% if proposal.coverage %}Review link to {{ proposal.name }}{% else %}Review removal of the client link{% endif %}</h2>
+    {% if proposal.coverage %}<dl><dt>Customer register</dt><dd>{{ proposal.facts.issuer }}</dd><dt>Client reference</dt><dd>{{ proposal.facts.reference }}</dd><dt>Billing coverage</dt><dd>{{ proposal.coverage.customer }} · {{ proposal.coverage.reference }}</dd></dl>{% endif %}
+    <p>Source {{ proposal.evidence.source }} · recorded by {{ proposal.evidence.created_by.get_full_name|default:proposal.evidence.created_by.username }}.</p>
+    {% if proposal.can_confirm %}
+      <form method="post">
+        {% csrf_token %}<input type="hidden" name="operation" value="confirm">
+        <input type="hidden" name="revision" value="{{ case.revision }}">
+        <input type="hidden" name="evidence" value="{{ proposal.evidence.pk }}">
+        <button type="submit">{% if proposal.coverage %}Confirm client link{% else %}Confirm removal{% endif %}</button>
+      </form>
+    {% else %}<p>Waiting for an independent reviewer.</p>{% endif %}
+  </section>
+{% endfor %}
+{% if history %}<section class="card"><h2>Earlier link decisions</h2>
+  {% for item in history %}<p>{{ item.client_label|default:'Link removed' }} · reviewed {{ item.created_at|date:'j M Y H:i T' }}.</p>{% endfor %}
+</section>{% endif %}
+{% endblock %}

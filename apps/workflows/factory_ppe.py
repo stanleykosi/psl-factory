@@ -2,7 +2,7 @@
 import hashlib,json,re
 from datetime import timedelta
 from django.core.exceptions import ValidationError,PermissionDenied
-from django.db import transaction
+from django.db import connections, transaction
 from django.db.models import Q
 from django.utils import timezone
 from apps.core.models import Audit
@@ -10,7 +10,7 @@ from apps.core.services import lock_case,add_evidence,event
 from apps.identity.models import Grant
 from apps.identity.services import require
 from apps.documents.contracts import digest,validate
-from apps.finance import ppe,analysis
+from apps.finance import ppe,analysis,ppe_dates
 from apps.finance.models import FinanceRun,ScheduleWork
 from .models import FactoryWork as Work,FactoryActivity as Activity,FactoryAttempt as Attempt
 from .factory_delivery import investigation_key
@@ -20,6 +20,10 @@ KIND='agent_private_ppe_intake'
 PROTOCOL='factory-ppe-intake/v1'
 ID={'anyOf':[{'type':'integer','minimum':1},{'type':'null'}]}
 SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'register_id':{'type':'integer','minimum':1},'prior_id':ID,'ledger_id':ID},'required':['protocol','register_id','prior_id','ledger_id'],'additionalProperties':False}
+PROGRESS_LABELS = {
+    'ACT04': 'Investigating the asset register and supporting records.',
+    'ACT08': 'Calculating the asset schedule.',
+}
 
 def finding(exc):return '; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)
 
@@ -71,13 +75,20 @@ def report(work,actor):
     r,data=source(work,actor);w=schedule(work)
     result={'register':r.pk,'schedule':w.pk if w else None,'stage':'source_review','finding':'','ledger':data['ledger_id'],'ledger_posted':False,'full_owner_oracle_acceptance':'unresolved'}
     try:
+        prior = ppe.latest(r, 'register')
+        if prior and prior.verdict in ('return', 'reject'):
+            return dict(result, stage='returned', finding='Select a corrected version of the asset register for Finance review.')
         ppe.approved(r,'register')
-        if r.result['date_basis_ambiguous']:ppe.approved(r,'basis')
+        if ppe_dates.needs_review(r):
+            result['stage']='basis_review';ppe.approved(r,'basis')
         result['stage']='calculation'
         if not w:return result
         ppe.current(w)
         if w.payload!={'register_id':r.pk,'prior_id':data['prior_id']} or w.parent_id!=data['ledger_id']:raise ValidationError('Exact selected register, prior and accounting note required')
-        if w.result['status']!='ready':raise ValidationError(w.result['findings'])
+        if w.result['status']!='ready':raise ValidationError(ppe_dates.wait_reason(w.result) or w.result['findings'])
+        prior = ppe.latest(w, 'schedule')
+        if prior and prior.verdict in ('return', 'reject'):
+            return dict(result, stage='returned', finding='Correct the asset inputs and prepare a new version for Finance review.')
         result['stage']='output_review';ppe.approved(w,'schedule')
         result['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
@@ -116,6 +127,12 @@ def verify(work,actor):
         gaps=analysis.certification_findings(w.parent)
         if gaps:raise ValidationError(gaps)
         if w.parent.kind!='mapping':raise ValidationError('Native PPE requires an exact Finance mapping note')
+        # The handoff owns the complete linked note authority, including roles not used by its reviewer.
+        # Use the same check as the PostgreSQL guard for marking the schedule verified.
+        with connections[w.parent._state.db].cursor() as cursor:
+            cursor.execute('SELECT psl_ppe_mapping_current(%s)', [w.parent_id])
+            if cursor.fetchone() != (True,):
+                raise ValidationError('The linked Finance mapping note and its authority need fresh verification.')
         ledger_reviews={'source':w.parent.snapshot['source_review'],'rules':w.parent.snapshot['reviews']}
     return {'verified':True,'verification_scope':'selected_supplied_ppe_register_reviewed_schedule_and_read_only_note','head':work.source_head_id,'register':r.pk,'register_review':register_review.pk,'schedule':w.pk,'schedule_sha256':w.sha256,'schedule_review':review.pk,'ledger':w.parent_id,'ledger_reviews':ledger_reviews,'ledger_posted':False,'native_source_verified':False,'full_owner_oracle_acceptance':'unresolved'}
 
@@ -128,7 +145,7 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if kind=='ACT04':return {'head':work.source_head_id,'investigation':report(work,work.execution_actor),'questions':['Finance must supply unknown classification, useful life, residual and method values.','Review exact source, period basis and output. A selected note is read-only, not a ledger posting.'],'financial_values_read':False,'approval_granted':False}
     if kind=='ACT08':
         ppe.approved(r,'register')
-        if r.result['date_basis_ambiguous']:ppe.approved(r,'basis')
+        if ppe_dates.needs_review(r):ppe.approved(r,'basis')
         w=ppe.prepare(work.execution_actor,c.pk,work.request['reference'],r.pk,data['prior_id'],data['ledger_id'],c.revision)
         return {'head':work.source_head_id,'schedule':w.pk,'status':w.result['status'],'ledger_posted':False}
     if kind=='ACT13':
@@ -144,6 +161,7 @@ def settled(w):
 @transaction.atomic
 def correct(actor,work_id,expected,case_expected,register_id,prior_id,ledger_id,reason):
     from .factory import access
+    from .factory_progress import wake_waiting
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.manage',DEFINITION);ppe.readable(actor,w.case);c=lock_case(actor,w.case_id,'evidence.add',case_expected);w.case=c
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.status in ['cancelled','followup_needed']:raise ValidationError('Refresh current active PPE work')
@@ -152,37 +170,51 @@ def correct(actor,work_id,expected,case_expected,register_id,prior_id,ledger_id,
     if data==new:
         current=schedule(w)
         if not current:raise ValidationError('Provide changed native source selection')
+        previous = ppe.latest(current, 'schedule')
+        if previous and previous.verdict in ('return', 'reject'):
+            raise ValidationError('Select corrected asset inputs before rebuilding the returned schedule')
         try:source(w,actor);ppe.current(current);ppe.approved(current,'schedule')
         except (ValidationError,PermissionDenied):pass
         else:raise ValidationError('Current reviewed output requires a genuine source change')
     before=w.source_head_id;w.source_head=capture(actor,c,new,'factory.ppe_source');w.status='ready';w.finding='';w.revision+=1;w.save()
-    event(actor,c,'factory.ppe_corrected',work=w.pk,previous=before,current=w.source_head_id,reason=reason);return w
+    event(actor,c,'factory.ppe_corrected',work=w.pk,previous=before,current=w.source_head_id,reason=reason)
+    wake_waiting(w.pk)
+    return w
 
 @transaction.atomic
 def review(actor,work_id,expected,case_expected,target,purpose,verdict,evidence,note):
     from .factory import access
+    from .factory_progress import wake_waiting
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION);r,_=source(w,actor);s=schedule(w)
     if type(expected) is not int or w.revision!=expected or w.cancel_requested:raise ValidationError('Refresh active PPE work')
     settled(w)
     if target!= (r.pk if purpose in ['register','basis'] else s.pk if s and purpose=='schedule' else None):raise ValidationError('Review exact selected native target')
-    return ppe.review(actor,w.case_id,target,purpose,verdict,evidence,note,case_expected)
+    result = ppe.review(actor,w.case_id,target,purpose,verdict,evidence,note,case_expected)
+    wake_waiting(w.pk)
+    return result
 
-def projection(actor,work):
+def projection(actor,work,*,include_progress=False):
     from .factory import profile
+    from .factory_progress import current_plan_step
     ppe.readable(actor,work.case);r,data=source(work,actor,False);s=schedule(work);options=[];changed=False;message='';n={}
+    step = None
     try:
         _,v=profile(work,recovery=True);state,latest,missing,stale,tasks,jobs=snapshot(work,v,reader=actor);n=state['native'];options,message=eligible(work,v,state,latest,missing,stale,tasks,jobs)
         if work.status=='verified':verify(work,actor)
+        if include_progress:
+            step = current_plan_step(work, state['hash'], options)
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified'
     pending_reviews=[];reviewer_names=[];can_review=False
     if not work.cancel_requested and work.status not in ['cancelled','followup_needed']:
-        candidates=[(r,'register')]+([(r,'basis')] if r.result['date_basis_ambiguous'] else [])
+        candidates=[(r,'register')]+([(r,'basis')] if ppe_dates.needs_review(r) else [])
         if s and s.result['status']=='ready':candidates.append((s,'schedule'))
         from django.contrib.auth import get_user_model
         for target,purpose in candidates:
             try:ppe.current(target)
             except (ValidationError,PermissionDenied):continue
+            prior = ppe.latest(target, purpose)
+            if purpose!='basis' and prior and prior.verdict in ('return','reject'):continue
             try:ppe.approved(target,purpose)
             except (ValidationError,PermissionDenied):
                 pending_reviews.append({'target':target.pk,'purpose':purpose})
@@ -191,7 +223,21 @@ def projection(actor,work):
                     except (ValidationError,PermissionDenied):continue
                     reviewer_names.append(user.get_full_name() or user.username)
                     if user.pk==actor.pk:can_review=True
-    return {'pending_reviews':pending_reviews,'reviewer_names':sorted(set(reviewer_names)),'can_review':can_review,'register':r,'schedule':s,'inputs':data,'next_options':options,'next_action':message,'readiness_changed':changed,'native':n,'finding':message if not options else ''}
+    if step == 'ACT08':
+        from .factory_execution import available_actor
+
+        worker = available_actor(work)
+        try:
+            if worker is None:
+                raise PermissionDenied('The asset schedule preparer is unavailable.')
+            require(worker, work.case, 'ppe.prepare')
+            if data['ledger_id'] is not None:
+                require(worker, work.case, 'finance.calculate')
+        except PermissionDenied:
+            step = None
+    label = PROGRESS_LABELS.get(step)
+    progress = {'label': label, 'watching': True} if label else None
+    return {'pending_reviews':pending_reviews,'reviewer_names':sorted(set(reviewer_names)),'can_review':can_review,'register':r,'schedule':s,'inputs':data,'next_options':options,'next_action':message,'readiness_changed':changed,'native':n,'finding':message if not options else '', 'progress':progress}
 
 @transaction.atomic
 def restart(actor,work_id,expected,case_expected,reason):

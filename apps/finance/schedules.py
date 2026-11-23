@@ -209,7 +209,13 @@ def approved(w):
  current(w);r=w.reviews.order_by('-pk').first()
  if not r or r.verdict!='approve':raise ValidationError('Current exact human approval required')
  r.actor.refresh_from_db(fields=['is_active'])
- if authority(r.actor,w)!=r.authority or r.snapshot!=w.snapshot:raise ValidationError('Human authority or review context changed')
+ try:current_authority=authority(r.actor,w)
+ except PermissionDenied:
+  from apps.identity.role_native_decisions import SCHEDULE_ACTIONS,schedule_review_access
+  from apps.identity.services import subject_actions
+  if not schedule_review_access(w,r):raise
+  with subject_actions(r.actor,w.case,SCHEDULE_ACTIONS):current_authority=authority(r.actor,w)
+ if current_authority!=r.authority or r.snapshot!=w.snapshot:raise ValidationError('Human authority or review context changed')
  return r
 
 @transaction.atomic
@@ -217,10 +223,12 @@ def review(actor,case_id,work_id,verdict,evidence_id,note,expected=None):
  c=locked(actor,case_id,'schedules.review',expected);w=exact(c,work_id)
  if verdict not in ['approve','return','reject','revoke']:raise ValidationError('Typed human verdict required')
  analysis.note(note);auth=authority(actor,w)
+ prior=w.reviews.order_by('-pk').first()
  if verdict=='approve':
   current(w)
+  if prior and prior.verdict in ('return','reject'):raise ValidationError('Prepare a corrected schedule version for another Finance decision')
   if w.result['status']!='ready':raise ValidationError('Resolve dependent work holds before approval')
- if verdict=='revoke' and (not w.reviews.exists() or w.reviews.order_by('-pk').first().verdict!='approve'):raise ValidationError('Prior approval required for revocation')
+ if verdict=='revoke' and (not prior or prior.verdict!='approve'):raise ValidationError('Prior approval required for revocation')
  r=ScheduleReview.objects.create(work=w,verdict=verdict,authority=auth,snapshot=w.snapshot,evidence=subject(c,evidence_id,'finance_review'),note=note,actor=actor)
  event(actor,c,'finance.schedule_reviewed',work=w.pk,review=r.pk,verdict=verdict);bump(c);return r
 

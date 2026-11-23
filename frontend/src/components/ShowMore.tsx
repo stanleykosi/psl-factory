@@ -96,7 +96,7 @@ export function usePagedRows<T>({ items, next, busy, failed = false, loadMore, r
     failed,
     onMore: () => {
       asked.current = null;
-      if (failed) latest.current(limitFor(Math.max(missing, 1)));
+      if (failed) loadMore(limitFor(Math.max(missing, 1)));
       else setVisible(shown + size);
     },
     size,

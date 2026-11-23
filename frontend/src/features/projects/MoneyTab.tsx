@@ -11,6 +11,7 @@ import type { ApiError } from '@/api/errors';
 import { AgentAvatar, agentKey, AGENTS, BottomSheet, Callout, EmptyState, ErrorState, Link, Loading, Panel, Table, Unknown, useIsPhone, VisuallyHidden, When, type Column } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { useMe } from '@/shell/AppShell';
+import { hasDestination } from '@/shell/destinations';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
 import { amountText, figureOf, figureTitle, invoiceText, paidWords, valuesDiffer, type Figure, type MoneyRow, type MoneyValue, type Paid, type Report, type SourceDetail } from './moneyModel';
@@ -155,7 +156,7 @@ function AgentCard({ report }: { report: Report | undefined }) {
       <AgentAvatar agent={agent} size={40} />
       <span>
         <strong>{name}</strong> · {role}
-        {me.destinations.includes('assistant') && (
+        {hasDestination(me, 'assistant') && (
           <>
             <br />
             <Link href={`/assistant?agent=${agent}`}>Ask me</Link> about any figure here.

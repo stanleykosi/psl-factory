@@ -15,7 +15,7 @@ import { AppShell } from '@/shell/AppShell';
 import { projectTab } from '../mock/project-tabs.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { projects } from '../mock/projects.mjs';
-import { bellFeed, isBellFeed } from './bell-feed';
+import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 // The URL of the page: replace() rewrites it and the page re-renders, as the router does.
 const nav = vi.hoisted(() => {
@@ -66,6 +66,7 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (request: Request) => {
       if (isBellFeed(request)) return bellFeed();
+      if (isRoleDashboard(request)) return roleDashboard();
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me(persona));
       calls.push(url);

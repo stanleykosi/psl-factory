@@ -58,6 +58,16 @@ from .factory_validators import HYPERCARE_COMPONENT as FACTORY_HYPERCARE,HYPERCA
 SCHEMAS[FACTORY_HYPERCARE]=(FACTORY_HYPERCARE_SCHEMA,FACTORY_HYPERCARE_VALUE)
 from .factory_validators import ARCHIVE_COMPONENT as FACTORY_ARCHIVE,ARCHIVE_SCHEMA as FACTORY_ARCHIVE_SCHEMA,ARCHIVE_VALUE as FACTORY_ARCHIVE_VALUE
 SCHEMAS[FACTORY_ARCHIVE]=(FACTORY_ARCHIVE_SCHEMA,FACTORY_ARCHIVE_VALUE)
+from .archive_transfer_validators import COMPONENT as ARCHIVE_TRANSFER, SCHEMA as ARCHIVE_TRANSFER_SCHEMA, VALUE as ARCHIVE_TRANSFER_VALUE
+SCHEMAS[ARCHIVE_TRANSFER] = (ARCHIVE_TRANSFER_SCHEMA, ARCHIVE_TRANSFER_VALUE)
+from .handover_reply_validators import COMPONENT as HANDOVER_REPLY, SCHEMA as HANDOVER_REPLY_SCHEMA, VALUE as HANDOVER_REPLY_VALUE
+from .issue_team_validators import COMPONENT as ISSUE_TEAM, SCHEMA as ISSUE_TEAM_SCHEMA, VALUE as ISSUE_TEAM_VALUE
+SCHEMAS[ISSUE_TEAM] = (ISSUE_TEAM_SCHEMA, ISSUE_TEAM_VALUE)
+from .issue_message_validators import COMPONENT as ISSUE_MESSAGE, SCHEMA as ISSUE_MESSAGE_SCHEMA, VALUE as ISSUE_MESSAGE_VALUE
+SCHEMAS[ISSUE_MESSAGE] = (ISSUE_MESSAGE_SCHEMA, ISSUE_MESSAGE_VALUE)
+from .costing_proposal_validators import COMPONENT as COSTING_PROPOSAL, SCHEMA as COSTING_PROPOSAL_SCHEMA, VALUE as COSTING_PROPOSAL_VALUE
+SCHEMAS[COSTING_PROPOSAL] = (COSTING_PROPOSAL_SCHEMA, COSTING_PROPOSAL_VALUE)
+SCHEMAS[HANDOVER_REPLY] = (HANDOVER_REPLY_SCHEMA, HANDOVER_REPLY_VALUE)
 from .factory_validators import HANDOVER_COMPONENT as FACTORY_HANDOVER,HANDOVER_SCHEMA as FACTORY_HANDOVER_SCHEMA,HANDOVER_VALUE as FACTORY_HANDOVER_VALUE
 SCHEMAS[FACTORY_HANDOVER]=(FACTORY_HANDOVER_SCHEMA,FACTORY_HANDOVER_VALUE)
 from .factory_validators import CLOSURE_COMPONENT as FACTORY_CLOSURE,CLOSURE_SCHEMA as FACTORY_CLOSURE_SCHEMA,CLOSURE_VALUE as FACTORY_CLOSURE_VALUE
@@ -86,6 +96,10 @@ SCHEMAS[FACTORY_REPORTING]=(FACTORY_REPORTING_SCHEMA,FACTORY_REPORTING_VALUE)
 from .factory_leadership_validators import COMPONENT as FACTORY_LEADERSHIP,SCHEMA as FACTORY_LEADERSHIP_SCHEMA,VALUE as FACTORY_LEADERSHIP_VALUE,validate_reference as validate_leadership_factory
 SCHEMAS[FACTORY_LEADERSHIP]=(FACTORY_LEADERSHIP_SCHEMA,FACTORY_LEADERSHIP_VALUE)
 SCHEMAS['OPS.leadership_review_authority']=('schema:psl/leadership-review-authority/v1',{'type':'object','properties':{'role':{'anyOf':[{'enum':['PMO Lead','Head of PMO']},{'type':'null'}]}},'required':['role'],'additionalProperties':False})
+SCHEMAS['OPS.leadership_project_scope'] = (
+    'schema:psl/leadership-project-scope/v1',
+    obj({'enabled': {'type': 'boolean'}}),
+)
 SCHEMAS['OPS.leadership_audience']=('schema:psl/leadership-audience/v1',{'type':'object','properties':{key:{'anyOf':[{'type':'array','items':{'type':'integer','minimum':1},'minItems':1,'uniqueItems':True},{'type':'null'}]} for key in ['internal_tuesday:internal','monthly_executive:internal','monthly_executive:management']},'required':['internal_tuesday:internal','monthly_executive:internal','monthly_executive:management'],'additionalProperties':False})
 SCHEMAS[FACTORY_EMERGENCY]=(FACTORY_EMERGENCY_SCHEMA,FACTORY_EMERGENCY_VALUE)
 SCHEMAS[FACTORY_COMMERCIAL]=(FACTORY_COMMERCIAL_SCHEMA,FACTORY_COMMERCIAL_VALUE)
@@ -105,6 +119,8 @@ from .factory_rfp_validators import COMPONENT as FACTORY_RFP,SCHEMA as FACTORY_R
 SCHEMAS[FACTORY_RFP]=(FACTORY_RFP_SCHEMA,RFP_VALUE)
 from .rfp_outcome_validators import COMPONENT as RFP_OUTCOME,SCHEMA as RFP_OUTCOME_SCHEMA,VALUE as RFP_OUTCOME_VALUE,validate_reference as validate_rfp_outcome
 SCHEMAS[RFP_OUTCOME]=(RFP_OUTCOME_SCHEMA,RFP_OUTCOME_VALUE)
+from .rfp_loss_validators import COMPONENT as RFP_LOSS, SCHEMA as RFP_LOSS_SCHEMA, VALUE as RFP_LOSS_VALUE, validate_reference as validate_rfp_loss
+SCHEMAS[RFP_LOSS] = (RFP_LOSS_SCHEMA, RFP_LOSS_VALUE)
 
 from .factory_forecast_validators import COMPONENT as FACTORY_FORECAST,SCHEMA as FORECAST_SCHEMA,VALUE as FORECAST_VALUE,validate_reference as validate_forecast_factory
 SCHEMAS[FACTORY_FORECAST]=(FORECAST_SCHEMA,FORECAST_VALUE)
@@ -114,10 +130,46 @@ SCHEMAS[FACTORY_LEDGER]=(LEDGER_SCHEMA,LEDGER_VALUE)
 
 from .factory_validators import ENGAGEMENT_COMPONENT as FACTORY_ENGAGEMENT,ENGAGEMENT_SCHEMA,ENGAGEMENT_VALUE
 SCHEMAS[FACTORY_ENGAGEMENT]=(ENGAGEMENT_SCHEMA,ENGAGEMENT_VALUE)
+from .factory_validators import STATION_COMPONENT, STATION_SCHEMA, STATION_VALUE
+SCHEMAS[STATION_COMPONENT]=(STATION_SCHEMA,STATION_VALUE)
+from .reminder_validators import COMPONENT as REMINDER, SCHEMA as REMINDER_SCHEMA, VALUE as REMINDER_VALUE, validate_delivery
+SCHEMAS[REMINDER]=(REMINDER_SCHEMA,REMINDER_VALUE)
+from .short_payment_validators import COMPONENT as SHORT_PAYMENT, SCHEMA as SHORT_PAYMENT_SCHEMA, VALUE as SHORT_PAYMENT_VALUE, validate_reference as validate_short_payment
+SCHEMAS[SHORT_PAYMENT] = (SHORT_PAYMENT_SCHEMA, SHORT_PAYMENT_VALUE)
+from .bid_adjustment_validators import COMPONENT as BID_ADJUSTMENT, SCHEMA as BID_ADJUSTMENT_SCHEMA, VALUE as BID_ADJUSTMENT_VALUE, validate_reference as validate_bid_adjustment
+SCHEMAS[BID_ADJUSTMENT] = (BID_ADJUSTMENT_SCHEMA, BID_ADJUSTMENT_VALUE)
+from .rfp_estimate_request_validators import COMPONENT as RFP_ESTIMATE, SCHEMA as RFP_ESTIMATE_SCHEMA, VALUE as RFP_ESTIMATE_VALUE, validate_reference as validate_rfp_estimate
+SCHEMAS[RFP_ESTIMATE] = (RFP_ESTIMATE_SCHEMA, RFP_ESTIMATE_VALUE)
+from .go_live_milestone_validators import COMPONENT as GO_LIVE_MILESTONE, SCHEMA as GO_LIVE_MILESTONE_SCHEMA, VALUE as GO_LIVE_MILESTONE_VALUE, validate_reference as validate_go_live_milestone
+SCHEMAS[GO_LIVE_MILESTONE] = (GO_LIVE_MILESTONE_SCHEMA, GO_LIVE_MILESTONE_VALUE)
 
 def validate_reference(component,target,case,runtime=False):
+    if component == GO_LIVE_MILESTONE:
+        return validate_go_live_milestone(target, case)
+    if component == RFP_ESTIMATE:
+        return validate_rfp_estimate(target, case)
+    if component == BID_ADJUSTMENT:
+        return validate_bid_adjustment(target, case)
+    if component == SHORT_PAYMENT:
+        return validate_short_payment(target, case, runtime=runtime)
+    if component == ISSUE_MESSAGE:
+        from .issue_message_validators import validate_reference as validate_issue_message
+        return validate_issue_message(target,case)
+    if component == ISSUE_TEAM:
+        from .issue_team_validators import validate_reference as validate_issue_team
+        return validate_issue_team(target, case)
+    if component == COSTING_PROPOSAL:
+        from .costing_proposal_validators import validate_reference as validate_costing_proposal
+        return validate_costing_proposal(target, case)
+    if component == HANDOVER_REPLY:
+        from .handover_reply_validators import validate_reference as validate_handover_reply
+        return validate_handover_reply(target, case)
+    if component == ARCHIVE_TRANSFER:
+        from .archive_transfer_validators import validate_reference as validate_archive_transfer
+        return validate_archive_transfer(target, case)
     if component==FACTORY_FORECAST:return validate_forecast_factory(component,target,case,runtime)
     if component==RFP_OUTCOME:return validate_rfp_outcome(component,target,case,runtime)
+    if component==RFP_LOSS:return validate_rfp_loss(target,case)
     if component==FACTORY_RFP:return validate_factory_rfp(component,target,case,runtime)
     if component==RECEIPT_RECOVERY:return validate_receipt_recovery(component,target,case,runtime)
     if component==FACTORY_RECOVERY:return validate_factory_recovery(component,target,case,runtime)
@@ -131,6 +183,7 @@ def validate_reference(component,target,case,runtime=False):
     if component==FACTORY_REPORTING:return validate_reporting_factory(component,target,case,runtime)
     if component==FACTORY_EMERGENCY:return validate_emergency_factory(component,target,case,runtime)
     if component==FACTORY_MINUTES:return validate_minutes(component,target,case,runtime)
+    if component==STATION_COMPONENT:return validate_factory(component,target,case,runtime)
     if component in [FACTORY_LEDGER,FACTORY_BU,FACTORY_ENGAGEMENT,FACTORY_SCHEDULES,FACTORY_PPE,FACTORY_PAYROLL,FACTORY,FACTORY_PLANNING,FACTORY_COMMERCIAL,FACTORY_DELIVERY,FACTORY_HYPERCARE,FACTORY_ARCHIVE,FACTORY_HANDOVER,FACTORY_CLOSURE,FACTORY_GO_LIVE,FACTORY_CHANGE]:return validate_factory(component,target,case,runtime)
     if component==PLANNING:return validate_planning(component,target,case,runtime)
     if component==PROJECT_VIEW:return validate_project_view(component,target,case,runtime)
@@ -147,6 +200,8 @@ def validate_reference(component,target,case,runtime=False):
     if component==APPLICATION:return validate_application(component,target,case,runtime)
     private=component==PROTECTION and target.schema_ref==PRIVATE_SCHEMA
     v=typed(target,PRIVATE_SCHEMA,PRIVATE_VALUE) if private else typed(target,*SCHEMAS[component])
+    if component==REMINDER:
+        return validate_delivery(case,v,runtime)
     if component=='OPS.leadership_audience':
         for purpose, members in v.items():
             if members is None: continue

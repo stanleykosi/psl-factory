@@ -7,7 +7,8 @@ class Command(BaseCommand):
         parser.add_argument('--limit',type=int,default=50)
     def handle(self,*args,**options):
         count=0
+        seen=set()
         for _ in range(min(max(options['limit'],0),1000)):
-            if not run_publication_once():break
+            if not run_publication_once(seen_jobs=seen):break
             count+=1
         self.stdout.write(f'Processed {count} publication(s)')

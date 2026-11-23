@@ -2,6 +2,7 @@
 import json
 from datetime import date
 from django.db import transaction,connection
+from django.db.models import OuterRef,Subquery
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -86,6 +87,9 @@ def context(w):
 def verify(a,case_id,pk,evidence_id,expected=None):
  c=locked(a,case_id,'ledger.verify',expected);w=exact(c,pk);identity_lock(w.identity);target_lock(c,w.payload);p,v=context(w)
  e=subject(c,evidence_id);r=SuppliedQuickBooksReadAdapter().read(e,RESPONSE)
+ latest_verdict=LedgerDecision.objects.filter(verification_id=OuterRef('pk')).order_by('-pk').values('verdict')[:1]
+ if w.checks.filter(evidence__sha256=e.sha256).annotate(latest_verdict=Subquery(latest_verdict)).filter(latest_verdict='reject').exists():
+  raise ValidationError('The previous observation was rejected. Supply fresh evidence for this reference.')
  at=timestamp(r['observed_at']);age=(timezone.now()-at).total_seconds()
  if age<0 or age>v['max_age_seconds']:raise ValidationError('Current incumbent observation required')
  for k in ['provider','realm','entity','source_reference','transaction_date','accounting_period','treatment_evidence_id']:
@@ -129,17 +133,20 @@ def guard_review(a,c,check_id,evidence_id,verdict='approve'):
  x=LedgerCheck.objects.filter(lineage__case=c,pk=check_id).first()
  if not x or verdict not in ['approve','reject']:raise ValidationError('Exact check and decision required')
  auth=authority(a,x)
- if verdict=='approve':current(x)
+ if verdict=='approve':
+  if x.decisions.order_by('-pk').values_list('verdict',flat=True).first()=='reject':
+   raise ValidationError('The previous observation was rejected. Supply fresh evidence for this reference.')
+  current(x)
  return x,auth,subject(c,evidence_id)
 
 @transaction.atomic
-def review(a,case_id,pk,evidence_id,verdict='approve',expected=None):
+def review(a,case_id,pk,evidence_id,verdict='approve',expected=None,*,reason=''):
  c=locked(a,case_id,'ledger.review',expected);x=LedgerCheck.objects.filter(lineage__case=c,pk=pk).first()
  if not x or verdict not in ['approve','reject']:raise ValidationError('Exact check and decision required')
  identity_lock(x.lineage.identity);target_lock(c,x.lineage.payload)
  x,auth,evidence=guard_review(a,c,pk,evidence_id,verdict)
  r=LedgerDecision.objects.create(verification=x,actor=a,evidence=evidence,verdict=verdict,authority=auth)
- event(a,c,'ledger.review',decision=r.pk,verdict=verdict);bump(c);return r
+ event(a,c,'ledger.review',decision=r.pk,verdict=verdict,**({'reason':reason} if reason else {}));bump(c);return r
 @transaction.atomic
 def report(a,case_id,pk):
  c=locked(a,case_id,'ledger.read');w=exact(c,pk);identity_lock(w.identity);target_lock(c,w.payload);x=w.checks.order_by('-pk').first()

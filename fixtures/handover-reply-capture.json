@@ -1,0 +1,5 @@
+{
+  "classification": "Synthetic acceptance choices only. Operational recorder roles and channels require an owner decision.",
+  "recorder_roles": ["PM"],
+  "channels": ["email"]
+}

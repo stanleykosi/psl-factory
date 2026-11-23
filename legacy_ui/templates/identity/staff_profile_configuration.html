@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Access profiles · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Named access profiles</h1><p>{{ configuration.tenant }} · {{ configuration.user.get_full_name|default:configuration.user.username }} · Delegation version {{ configuration.version }}</p></div><a class="button secondary" href="{% url 'staff_account_controls' configuration.pk %}">Account controls</a></header>
+<section class="card"><p>These profiles group workspace functions already delegated to this administrator. They do not assign project responsibility or approval authority. Saving creates a new version, retains existing grants and requires pending invitations to be renewed.</p>
+<form method="post">{% csrf_token %}{{ form.as_p }}{{ profiles.management_form }}{{ profiles.non_form_errors }}
+{% for profile in profiles %}<fieldset><legend>{% if profile.initial.label %}{{ profile.initial.label }}{% else %}Add a profile{% endif %}</legend>{{ profile.as_p }}</fieldset>{% endfor %}
+<button>Save profile definitions</button></form></section>
+{% endblock %}

@@ -4,7 +4,7 @@ from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.core import signing
 from django.core.exceptions import PermissionDenied,ValidationError
-from django.db.models import Q,F,OuterRef,Subquery
+from django.db.models import Exists,Q,F,OuterRef,Subquery
 from django.db import transaction
 from apps.identity.models import Grant
 from apps.identity.services import visible_cases
@@ -16,17 +16,46 @@ CURSOR_SALT='psl.workbench.cases.v1'
 def active(actor):
     if not actor.is_authenticated or not get_user_model().objects.filter(pk=actor.pk,is_active=True).exists():raise PermissionDenied('Current authenticated principal required')
 
-def granted(actor,actions):
+def granted(actor,actions,*,include_roles=True):
     query=visible_cases(actor)
     for action in actions:query=query.filter(pk__in=Grant.objects.filter(user=actor,active=True,action=action).values('case_id'))
+    if include_roles:
+        from apps.identity.factory_access import role_cases
+
+        query = query | role_cases(actor, actions)
     return query
 
-def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area=''):
+def source_workspaces(actor, action):
+    from apps.identity.factory_access import management_cases
+
+    # A management workspace can open a native source only with its existing
+    # department read permission. Legacy workbenches retain their explicit grants.
+    return granted(actor, [action]).filter(
+        Q(pk__in=visible_cases(actor).values('pk')) | Q(pk__in=management_cases(actor).values('pk')))
+
+def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area='',lifecycle=''):
     active(actor)
     if not all(isinstance(x,str) for x in [q,tenant,kind,area]) or len(q)>120 or len(tenant)>100 or kind not in ['', 'project','support'] or area not in ['', 'finance'] or type(page_size) is not int or not 1<=page_size<=50:raise ValidationError('Valid workspace search, organization, type, area and page size required')
-    filters={'q':q.strip(),'tenant':tenant.strip(),'kind':kind,'area':area};query=granted(actor,['finance.read']) if area=='finance' else visible_cases(actor)
+    from apps.identity.factory_access import project_cases
+
+    filters={'q':q.strip(),'tenant':tenant.strip(),'kind':kind,'area':area}
+    query=granted(actor,['finance.read']) if area=='finance' else visible_cases(actor) | project_cases(actor)
+    if lifecycle not in ['', 'active', 'closed'] or lifecycle and kind != 'project':
+        raise ValidationError('Choose a lifecycle filter for projects')
     if filters['tenant']:query=query.filter(tenant=filters['tenant'])
     if kind:query=query.filter(kind=kind)
+    if kind == 'project':
+        from apps.pmo.models import DeliveryDossier, DeliveryRecord
+
+        closures = DeliveryRecord.objects.filter(dossier_id=OuterRef('pk'), kind='closure')
+        dossiers = DeliveryDossier.objects.filter(case_id=OuterRef('pk')).annotate(closed=Exists(closures))
+        can_read = granted(actor, ['delivery.read']).filter(pk=OuterRef('pk'))
+        query = query.annotate(project_status_visible=Exists(can_read), has_closed_dossier=Exists(dossiers.filter(closed=True)),
+                               has_open_dossier=Exists(dossiers.filter(closed=False)))
+        closed = Q(has_closed_dossier=True, has_open_dossier=False)
+        if lifecycle:
+            filters['lifecycle'] = lifecycle
+            query = query.filter(project_status_visible=True).filter(closed if lifecycle == 'closed' else ~closed)
     if filters['q']:
         from apps.pmo.engagement_models import ProjectIdentifier,EngagementRecord
         permitted=granted(actor,['engagement.read']).values('pk')
@@ -59,7 +88,11 @@ def discover(actor,q='',tenant='',kind='',cursor=None,page_size=25,area=''):
     next_cursor=None
     if more:
         last=rows[-1];next_cursor=signing.dumps({'actor':actor.pk,'filters':filters,'size':page_size,'last':[last.created_at.isoformat(),str(last.pk)]},salt=CURSOR_SALT,compress=True)
-    return {'cases':rows,'next_cursor':next_cursor,'filters':filters}
+    result = {'cases': rows, 'next_cursor': next_cursor, 'filters': filters}
+    if kind == 'project' and not area:
+        from .project_list import summaries
+        result['project_rows'] = summaries(actor, rows)
+    return result
 
 def _row(kind,case,pk,reference,status,path,**extra):
     labels={'assigned_action':'Assigned action','owned_support':'Recorded Support ownership','eligible_document_review':'Available document review','initiated_finance_intent':'Your financial intent','eligible_summary_review':'Available complaint summary review','received_department_request':'Received department request','assigned_rfp':'Assigned RFP coordination'}
@@ -137,5 +170,13 @@ def work(actor,limit=25):
         except (PermissionDenied,ValidationError,get_user_model().DoesNotExist):continue
         rows.append(_row('received_department_request',request.case,receipt.pk,request.reference,finding['status'],'approvals',finding='source_verification_required' if finding['status']=='unavailable' else ''));count+=1
         if count>=limit:break
-    return {'rows':rows,'coverage':'Bounded current accessible recorded assignments, delivered department requests, role-eligible reviews and initiated operational work; not an exhaustive task or approval claim',
+    from apps.finance.payroll_questions import inbox as payroll_question_inbox
+    for case,question in payroll_question_inbox(actor,limit):
+        rows.append({'kind':'payroll_hr_question','label':'Staff-cost question for HR','case_id':str(case.pk),
+            'case_title':case.title,'synthetic':case.synthetic,'record_id':question['id'],
+            'reference':question['question'],'status':question['state'],'display_status':{
+                'owner_needed':'HR owner needed','dispatched':'Waiting for HR','answered':'HR reply ready',
+                'recorded':'Ready for your review','held':'Needs current source or authority checks'}.get(question['state'],question['state']),
+            'url':f'/cases/{case.pk}/finance/payroll/questions/?question={question["id"]}'})
+    return {'rows':rows,'coverage':'Bounded current accessible recorded assignments, delivered department requests, role-eligible reviews, HR report questions and initiated operational work; not an exhaustive task or approval claim',
         'authority_from_discovery':False,'effect_tools':[]}

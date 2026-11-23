@@ -9,7 +9,7 @@ from django.utils import timezone
 from apps.core.models import Evidence,Audit
 from apps.core.services import lock_case,add_evidence,event
 from apps.core.evidence_access import public_evidence
-from apps.core.read_observation import read_observation
+from apps.core.read_observation import observed_fact,read_observation
 from apps.identity.services import require
 from apps.identity.models import Grant
 from apps.documents.contracts import digest,validate
@@ -37,8 +37,13 @@ def input_rows(case,version,inputs):
     if inputs['authorization_id'] and not ChangeAuthorization.objects.filter(pk=inputs['authorization_id'],version=version).exists():raise ValidationError('Choose the authorization for this exact change revision')
 
 def source(work,actor=None,current=True):
-    require(actor or work.actor,work.case,'change.read');e=work.source_head
-    if not e or e.case_id!=work.case_id or e.kind!=KIND or e.sha256!=hashlib.sha256(e.body.encode()).hexdigest():raise ValidationError('Exact change intake required')
+    require(actor or work.actor,work.case,'change.read')
+    return checked_source(work,work.source_head_id,current)
+
+@observed_fact
+def checked_source(work,head_id,current):
+    e=work.source_head
+    if not e or e.pk!=head_id or e.case_id!=work.case_id or e.kind!=KIND or e.sha256!=hashlib.sha256(e.body.encode()).hexdigest():raise ValidationError('Exact change intake required')
     try:data=json.loads(e.body)
     except (TypeError,ValueError):raise ValidationError('Typed native change intake required') from None
     validate(SCHEMA,data)
@@ -73,8 +78,9 @@ def start(actor,case_id,key,version_id,inputs,reference,expected=None):
     event(actor,case,'factory.started',work=w.pk,definition=DEFINITION);return w
 
 def authorization(work,data):
-    if not data['inputs']['authorization_id']:raise ValidationError('Await human impact assessment, prescribed decisions and explicit native authorization selection')
-    return native.get_authorization(work.case,data['inputs']['authorization_id'])
+    authorization_id=data['inputs']['authorization_id']
+    if not authorization_id:raise ValidationError('Await human impact assessment, prescribed decisions and explicit native authorization selection')
+    return native.get_authorization(work.case,authorization_id)
 
 def document(work,purpose):
     pk=Attempt.objects.filter(activity__work=work,phase='observed',result__head=work.source_head_id,result__purpose=purpose,result__has_key='document_version').order_by('-pk').values_list('result__document_version',flat=True).first()
@@ -89,13 +95,18 @@ def principal(work,value,name):
     except PermissionDenied:raise ValidationError('owner_needed: Change principal lacks current project permissions') from None
     return u
 
+@observed_fact
+def checked_document_review(work,version_id):
+    version=current_version(work.case,version_id)
+    return validate_review(work.case,version)
+
 def published(work,purpose,actor=None):
     from .factory import profile
     _,data=source(work,actor);auth=authorization(work,data);v=document(work,purpose)
     if not v:raise ValidationError('Await exact controlled '+purpose+' document')
     b=ChangeDocumentBinding.objects.get(version=v)
     if b.authorization_id!=auth.pk or b.purpose!=purpose:raise ValidationError('Exact selected change authorization required')
-    current_version(work.case,v.pk);review=validate_review(work.case,v);policies,recipients,retention=publication_requirements(work.case,v)
+    review=checked_document_review(work,v.pk);policies,recipients,retention=publication_requirements(work.case,v)
     config,value=profile(work,recovery=True);principal(work,value,'preparer_id');user=principal(work,value,'executor_id')
     p=Publication.objects.filter(version=v,factory_work=work,factory_source=work.source_head,factory_policy=config,actor=user).first()
     if not p or p.policies!=policies or p.recipient_ids!=recipients or p.retention_days!=retention or p.review_id!=review.pk:raise ValidationError('Await current exact '+purpose+' publication')
@@ -105,15 +116,17 @@ def published(work,purpose,actor=None):
 
 def report(work,actor=None):
     v,data=source(work,actor);rows=list(v.assessments.order_by('pk'));decisions=list(v.decisions.order_by('pk'))
-    result={'change_version':v.pk,'category':v.category,'assessments':[x.pk for x in rows],'decisions':[x.pk for x in decisions],'authorization':data['inputs']['authorization_id'],'owner_impacts':[{'contributor':x.contributor,'assessment':x.pk,'cost':x.cost_impact,'timeline':x.timeline_impact,'client_facing':x.client_facing,'evidence':x.evidence_id,'impact_details':x.impact_details} for x in rows],'stage':'impact','finding':'','deployment_authorized':False}
+    result={'change_version':v.pk,'category':v.category,'assessments':[x.pk for x in rows],'decisions':[x.pk for x in decisions],'authorization':data['inputs']['authorization_id'],'owner_impacts':[{'contributor':x.contributor,'assessment':x.pk,'cost':x.cost_impact,'timeline':x.timeline_impact,'client_facing':x.client_facing,'evidence':x.evidence_id,
+        'impact_details':{key: item for key, item in x.impact_details.items() if key != 'private_proof'}}
+        for x in rows],'stage':'impact','finding':'','deployment_authorized':False}
     result['execution_impacts']=list(ChangeAuthorization.objects.get(pk=data['inputs']['authorization_id']).execution.order_by('pk').values('pk','kind','impact_details')) if data['inputs']['authorization_id'] else []
     try:
         if v.category=='Emergency':raise ValidationError('Emergency P61/P62 use native preauthorization, incident, implementation and retrospective controls; ordinary change authorization is not applicable')
         changes.impact(v);result['stage']='authorization';auth=authorization(work,data)
         result['stage']='notice';published(work,'notice',actor)
-        result['stage']='execution';native.execution_manifest(auth)
-        result['stage']='go_live';published(work,'go_live',actor)
-        result['stage']='signatures';verify(work,actor);result['stage']='complete'
+        result['stage']='execution';execution_ids=native.execution_manifest(auth)
+        result['stage']='go_live';_,_,receipts=published(work,'go_live',actor)
+        result['stage']='signatures';verified_closure(auth,receipts,execution_ids);result['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
     return result
 
@@ -136,7 +149,7 @@ def snapshot(work,value,reader=None):
     for purpose in ['notice','go_live']:
         d=document(work,purpose);review={'status':'unprepared'}
         if d:
-            try:current_version(work.case,d.pk);r=validate_review(work.case,d);review={'status':'ready','id':r.pk}
+            try:r=checked_document_review(work,d.pk);review={'status':'ready','id':r.pk}
             except (ValidationError,PermissionDenied) as exc:review={'status':'held','finding':finding(exc)}
         docs[purpose]={'id':d.pk if d else None,'review':review,'publication':Publication.objects.filter(version=d).values_list('pk',flat=True).first() if d else None}
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],'native':native_state,'checks':{'stage':native_state['stage']},'documents':docs,'jobs':[(j.pk,j.status) for j in jobs]}
@@ -204,13 +217,17 @@ def publication_scope(actor,case,version,work_id):
     if native.change_binding_findings(b):raise ValidationError(native.change_binding_findings(b))
     return {'factory_work_id':w.pk,'factory_policy_id':config.pk,'factory_source_id':w.source_head_id}
 
+def verified_closure(auth, receipts, execution_ids):
+    closure=ChangeClosure.objects.filter(authorization=auth,receipt_id__in=[r.pk for r in receipts]).first()
+    if not closure or closure.execution_ids!=execution_ids:raise ValidationError('Await exact native PM acceptance plus actual Client acceptance or explicit current owner applicability')
+    from apps.pmo.change_signatures import current_closure
+    return closure, current_closure(closure)
+
+
 def verify(work,actor=None):
     _,data=source(work,actor);auth=authorization(work,data)
-    notice,np,nr=published(work,'notice',actor);v,p,receipts=published(work,'go_live',actor)
-    closure=ChangeClosure.objects.filter(authorization=auth,receipt_id__in=[r.pk for r in receipts]).first()
-    if not closure or closure.execution_ids!=native.execution_manifest(auth):raise ValidationError('Await exact native PM acceptance plus actual Client acceptance or explicit current owner applicability')
-    from apps.pmo.change_signatures import current_closure
-    assurance=current_closure(closure)
+    notice,_,nr=published(work,'notice',actor);v,_,receipts=published(work,'go_live',actor)
+    closure,assurance=verified_closure(auth,receipts,native.execution_manifest(auth))
     return {'verified':True,'verification_scope':'native_controlled_change_delivery_and_human_acceptance_assurance','assurance_id':assurance.pk,'client_signature_requirement':getattr(assurance,'requirement','required'),'client_signed':assurance.client_signature_id is not None,'original_closure_client_signed':closure.client_signature_id is not None,'current_client_signature_id':assurance.client_signature_id,'head':work.source_head_id,'authorization':auth.pk,'closure':closure.pk,'document_version':v.pk,'notice_version':notice.pk,'receipt_ids':[r.pk for r in nr+receipts],'deployment_authorized':False,'external_authenticity_verified':False}
 
 @transaction.atomic
@@ -308,11 +325,12 @@ def close(actor,work_id,expected,case_expected,receipt_id,pm_signature_id,client
     result=native.close_change(actor,w.case_id,auth.pk,receipt_id,pm_signature_id,client_signature_id,note,case_expected,attestation=attestation,operation_key=operation_key)
     w.status='ready';w.finding='Actual closure assurance recorded; verify exact native result';w.revision+=1;w.save();return result
 
+@read_observation
 def projection(actor,work):
     from .factory import access,profile
     access(actor,work.case,'factory.read',DEFINITION);v,data=source(work,actor,False)
-    issue='';options=[];next_action='Review native change prerequisites';current=True
-    try:source(work,actor);status=report(work,actor)
+    issue='';options=[];next_action='Review native change prerequisites';current=True;status=None
+    try:source(work,actor)
     except (ValidationError,PermissionDenied) as exc:status={'stage':'source','finding':finding(exc)};issue=finding(exc);current=False
     jobs=list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'));docs=[]
     live=not work.cancel_requested and not (work.lease_until and work.lease_until>timezone.now())
@@ -330,8 +348,12 @@ def projection(actor,work):
             except (ValidationError,PermissionDenied):pass
         docs.append({'version':d,'purpose':purpose,'verdicts':verdicts,'receipts':list(PublicationReceipt.objects.filter(publication__version=d).order_by('pk'))})
     try:
-        _,value=profile(work);state,*args=snapshot(work,value,reader=actor);options,next_action=eligible(work,value,state,*args)
+        _,value=profile(work);state,*args=snapshot(work,value,reader=actor)
+        status=state['native'];options,next_action=eligible(work,value,state,*args)
     except (ValidationError,PermissionDenied) as exc:next_action=finding(exc)
+    if status is None:
+        try:status=report(work,actor)
+        except (ValidationError,PermissionDenied) as exc:status={'stage':'source','finding':finding(exc)};issue=finding(exc)
     changed=False
     if work.status=='verified':
         try:
@@ -343,10 +365,11 @@ def projection(actor,work):
             require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')
             can_correct=not ChangeClosure.objects.filter(authorization__version_id=v.change.current_id).exists() and work.status not in ['cancelled','followup_needed'] and not any(j.status in ['pending','unknown','leased','held'] for j in jobs)
         except PermissionDenied:pass
-        try:
-            require(actor,work.case,'change.manage');decision_authority(actor,work.case,'PM');published(work,'notice',actor);published(work,'go_live',actor)
-            can_close=not ChangeClosure.objects.filter(authorization_id=data['inputs']['authorization_id']).exists()
-        except (ValidationError,PermissionDenied):pass
+        if status['stage']=='signatures':
+            try:
+                require(actor,work.case,'change.manage');decision_authority(actor,work.case,'PM')
+                can_close=not ChangeClosure.objects.filter(authorization_id=data['inputs']['authorization_id']).exists()
+            except (ValidationError,PermissionDenied):pass
     for j in jobs:
         j.can_operate=False;j.can_retry=False
         try:
@@ -372,7 +395,7 @@ def human_action(actor,work_id,expected,case_expected,version_id,action,values):
     access(actor,w.case,'factory.read',DEFINITION);v,data=source(w,actor)
     if type(expected) is not int or w.revision!=expected or v.pk!=version_id or w.cancel_requested or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh exact change work')
     if v.category=='Emergency':raise ValidationError('Use the separate native Emergency preauthorization and retrospective route')
-    if action=='assess':result=changes.assess_change(actor,w.case_id,v.pk,values['contributor'],values['cost_impact'],values['timeline_impact'],values['client_facing'],values['evidence'],values['note'],case_expected,**{k:values.get(k) for k in ['outputs','production_impact','scope_items']})
+    if action=='assess':result=changes.assess_change(actor,w.case_id,v.pk,values['contributor'],values['cost_impact'],values['timeline_impact'],values['client_facing'],values['evidence'],values['note'],case_expected,**{k:values.get(k) for k in ['outputs','production_impact','scope_items','effort_person_days','proof_upload']})
     elif action=='decide':result=changes.decide_change(actor,w.case_id,v.pk,values['role'],values['verdict'],values['evidence'],values['note'],case_expected)
     elif action=='authorize':result=changes.authorize_change(actor,w.case_id,v.pk,values.get('commercial'),case_expected)
     elif action=='execution':

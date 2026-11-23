@@ -1,0 +1,18 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}HR · {{ case|workspace_name }} · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div>
+  <a class="back-link" href="{% url 'design_project' case.pk %}">← {{ case|workspace_name }}</a>
+  <h1>Human resources</h1>
+  <p class="lede">Coordinate HR information and follow-up with Finance.</p>
+</div></header>
+{% include 'design/project_tabs.html' %}
+<div class="area-grid">
+  {% for destination in destinations %}
+  <section class="area-card">
+    <h2><a href="{{ destination.django_url }}">{{ destination.title }}</a></h2>
+    <p>{{ destination.description }}</p>
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

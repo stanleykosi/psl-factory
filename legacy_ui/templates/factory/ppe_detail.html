@@ -1,0 +1,48 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}
+<a class="back-link" href="{% url 'home' %}{% work_queue_query row.work %}">← Back to the same work view</a>
+<header class="page-heading"><div><p class="eyebrow">FINANCE SCHEDULES</p><h1>Asset schedule · {{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div></header>
+<div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small><time datetime="{{ row.work.updated_at|date:'c' }}">{{ row.work.updated_at|date:'d M Y, H:i T' }}</time></div></div>
+{% include 'factory/work_focus.html' %}
+{% include 'factory/current_step.html' with progress=row.ppe.progress only %}
+<section class="card"><h2>Asset register</h2>{% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}
+<p>Exact register {{ row.ppe.register.pk }} · {{ row.ppe.register.reference }} · version {{ row.ppe.register.version }}</p>
+<p>Reporting period {{ row.ppe.register.payload.period_start }} to {{ row.ppe.register.payload.period_end }} · supplied label {{ row.ppe.register.payload.label_as_of }}</p>
+<p><a href="{% url 'ppe' case.pk %}">Inspect native asset evidence and configured rules</a></p>
+{% if opening_attachment %}<p><a href="{% url 'factory_ppe_opening_proof' row.work.pk row.ppe.register.pk %}">Open private opening proof · {{ opening_attachment.name }}</a></p>{% endif %}
+{% include 'finance/ppe_source.html' with payload=row.ppe.register.payload has_asset_dates=has_asset_dates %}
+{% if date_attachments %}<h3>Date explanation proof</h3><ul>{% for fact, attachment in date_attachments.items %}
+<li><a href="{% url 'factory_ppe_date_proof' row.work.pk fact %}">{{ attachment.name }}</a> · {{ attachment.size|filesizeformat }}</li>
+{% endfor %}</ul>{% endif %}
+<p>Selected supplied population only. No ledger posting or external source verification. Full owner-oracle acceptance remains unresolved.</p></section>
+{% if row.ppe.schedule %}<section class="card"><h2>Native calculation</h2><p>Schedule {{ row.ppe.schedule.pk }} · version {{ row.ppe.schedule.version }} · {{ row.ppe.schedule.result.status }}</p>
+{% include 'finance/ppe_result.html' with result=row.ppe.schedule.result %}
+{% for finding in row.ppe.schedule.result.findings %}<p>{{ finding }}</p>{% endfor %}
+<p>Read-only accounting note: {{ row.ppe.schedule.parent_id|default:'Not selected' }}. Native reconciliation and human output review are required.</p>
+{% if can_open_reviewed_report %}<p><a href="{% url 'ppe_report' case.pk row.ppe.schedule.pk %}">Open exact reviewed schedule and note reference</a></p>{% endif %}</section>{% endif %}
+{% if decisions %}<section class="card"><h2>Recorded Finance decisions</h2>{% for entry in decisions %}<h3>{{ entry.title }}</h3><p>{{ entry.decision.verdict|readable }} · {{ entry.decision.created_at|date:'d M Y, H:i T' }}</p><p>{{ entry.decision.note }}</p>{% endfor %}{% if focus == 'decision' %}{% if row.ppe.native.stage == 'returned' or date_returned %}<a href="{% url 'factory_invoice_recovery' row.work.pk %}{% work_queue_query row.work %}">Open asset source correction</a>{% endif %}{% endif %}</section>{% endif %}
+{% for review in reviews %}<section class="card"><h2>{{ review.title }} decision</h2><form method="post">{% csrf_token %}<input type="hidden" name="action" value="review"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><input type="hidden" name="target" value="{{ review.target }}"><input type="hidden" name="purpose" value="{{ review.purpose }}"><label>Exact decision evidence<select name="evidence" required>{% for e in review.evidence %}<option value="{{ e.pk }}">{{ e.kind|readable }} · {{ e.pk }}</option>{% endfor %}</select></label><label>Rationale<textarea name="note" required maxlength="2000"></textarea></label>{% if 'approve' in review.verdicts %}<button name="verdict" value="approve">Approve exact {{ review.purpose }}</button>{% endif %}{% if 'return' in review.verdicts %}<button class="button secondary" name="verdict" value="return">Return for correction</button>{% endif %}{% if 'reject' in review.verdicts %}<button class="button secondary" name="verdict" value="reject">Reject</button>{% endif %}{% if 'revoke' in review.verdicts %}<button class="button secondary" name="verdict" value="revoke">Withdraw approval</button>{% endif %}</form></section>{% endfor %}
+{% if focus != 'decision' %}
+{% if can_correct %}<p><a href="{% url 'ppe' case.pk %}#asset-source-actions">Record corrected delivery or in-service dates</a></p>{% endif %}
+{% if proof_form %}
+<details class="card"{% if proof_form.is_bound %} open{% endif %}>
+  <summary>Correct and resubmit</summary>
+  <p>Attach the opening proof for the captured register. Finance will review the new version. For changes to values or dates, select the corrected register below.</p>
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+    <input type="hidden" name="action" value="attach_opening_proof">
+    <input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">
+    {{ proof_form.target_id }}{{ proof_form.review_id }}{{ proof_form.non_field_errors }}
+    {{ proof_form.file.as_field_group }}{{ proof_form.reason.as_field_group }}
+    <button>Correct and resubmit</button>
+  </form>
+</details>
+{% endif %}
+<section class="card"><h2>Continue work</h2>{% if row.can_advance %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="advance"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Continue eligible work</button></form>{% endif %}
+{% if row.can_manage %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="resume"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Recheck corrected prerequisites</button></form>{% endif %}
+{% if row.can_cancel %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Stop preparation</button></form>{% endif %}</section>
+{% if can_correct %}<section class="card"><h2>Review source-owned correction</h2><p>Original calculations, decisions and spent allowance remain in history.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="correct"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}">{{ inputs_form.as_p }}<label>Reason<textarea name="reason" required maxlength="2000"></textarea></label><button>Select corrected sources and rebuild</button></form></section>{% endif %}
+<section class="card"><h2>Agent activity</h2>{% for a in activities %}<p>{{ a.kind }} · {{ a.status }}</p>{% empty %}<p>No agent work recorded.</p>{% endfor %}<p>Reserved allowance {{ row.work.budget_used }} of {{ row.work.budget_limit }}.</p></section>
+{% if can_configure %}<p><a href="{% url 'factory_configuration' case.pk %}?definition=finance-ppe/v1">Configure bounded asset work</a></p>{% endif %}
+{% if can_restart %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="restart"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="case_revision" value="{{ case.revision }}"><label>Fresh instruction<textarea name="reason" required maxlength="2000"></textarea></label><button>Restart settled preparation</button></form>{% endif %}
+{% if row.adoption %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="adopt_profile"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="configuration" value="{{ row.adoption.id }}"><label>Reason<textarea name="reason" required></textarea></label><button>Adopt reviewed settings</button></form>{% endif %}
+{% endif %}
+{% endblock %}

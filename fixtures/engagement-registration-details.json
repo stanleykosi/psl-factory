@@ -1,0 +1,11 @@
+{
+  "classification": "Synthetic-only examples; no live owner or requiredness decision",
+  "registration": {
+    "registration_roles": ["PMO Lead"], "namespace": "synthetic:tracker-v1",
+    "format": "ascii_token", "max_length": 40, "case_sensitive": false,
+    "allow_synthetic": true,
+    "required_details": {"planned_start": null, "client_contact": null}
+  },
+  "complete_test_requirements": {"planned_start": true, "client_contact": true},
+  "optional_test_requirements": {"planned_start": false, "client_contact": false}
+}

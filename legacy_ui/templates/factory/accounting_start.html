@@ -1,0 +1,36 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}
+<div class="page-heading"><div><h1>{% if correction %}Correct a returned trial balance{% else %}Prepare management accounts{% endif %}</h1>{% if not correction %}<p class="lede">Carry a controlled trial balance through native preparation, Finance decisions and a reviewed aggregate report.</p>{% endif %}</div></div>
+{% if unit_form %}
+<section class="card"><h2>Confirm the file’s units</h2>
+  <p>{{ unit_receipt.data.request.reference }} · {{ unit_receipt.data.request.period }} · {{ unit_receipt.data.request.currency }}</p>
+  <p>Use the same file in a new submission. The original submission stays on hold. Calculation of amounts in thousands or millions requires a reviewed conversion for this source.</p>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="confirm_units">
+    {{ unit_form.as_p }}<button>Confirm units and resubmit</button> <a href="{{ intake_view }}">Cancel</a>
+  </form>
+</section>
+{% else %}
+<section class="card">{% if workspace_field %}<form method="get"><input type="hidden" name="definition" value="{{ definition }}"><label for="accounting-workspace">Workspace</label>{{ workspace_field }}<button>Select workspace</button></form>{% else %}
+<h2>{{ case.title }}</h2>
+{% if not correction %}<p><a class="button secondary" href="{% url 'finance_document_inbox' case.pk %}">Upload a document for Chidi and Finance to review</a></p>{% endif %}
+{% if correction %}
+<p><strong>Returned for correction</strong> {{ correction.reason }}</p>
+<p>{{ correction.entity }} · {{ correction.period }} · {{ correction.currency }}</p>
+<p>A corrected file starts a fresh Finance review. The earlier source and its decisions remain in the original work.</p>
+<p><a href="{% url 'factory_invoice_recovery' correction.work %}">Open the returned work</a></p>
+{% else %}
+<p>The source, adjustment inventory and report reference are recorded exactly. Starting work grants no Finance approval and posts no ledger transactions.</p><h3>Use an existing controlled source</h3><form method="post">{% csrf_token %}<input type="hidden" name="action" value="existing">{{ form.as_p }}<button>Start accounting preparation</button></form>
+<h3>Start from a supplied trial balance</h3><p>Select unchanged CSV evidence already supplied to this workspace. No QuickBooks connection or ledger posting is performed. Invalid inputs remain quarantined; missing validation rules can be configured and retried.</p>
+{% endif %}
+<form method="post"{% if correction %} enctype="multipart/form-data"{% endif %}>{% csrf_token %}<input type="hidden" name="action" value="supplied">{{ supplied_form.as_p }}<button>{% if correction %}Correct and resubmit{% else %}Receive trial balance and prepare accounts{% endif %}</button></form>
+{% if receipts %}<h3>Your recent submissions</h3><p>Showing up to 30 submissions, newest first. Repeat submissions use the original imported rows.</p>
+{% for item in receipts %}<article><h4>{{ item.receipt.data.request.reference }} · {% if item.missing_units %}File units missing{% elif item.held_unit_label %}Calculation on hold{% else %}{{ item.result.status|readable }}{% endif %}</h4>
+<p>{{ item.receipt.data.request.entity }} · {{ item.receipt.data.request.period }}</p>
+{% if item.missing_units %}<p>Confirm how the amounts are shown before preparing accounts.</p>{% elif item.held_unit_label %}<p>File units: {{ item.held_unit_label }}. Calculation needs a reviewed conversion for this source.</p>{% else %}{% for finding in item.result.findings %}<p>{{ finding }}</p>{% endfor %}{% endif %}
+{% if item.confirm_url %}<a class="button secondary" href="{{ item.confirm_url }}">Confirm file units</a>
+{% elif item.result.work %}<a href="{% url 'factory_detail' item.result.work %}">Open accounting work</a>
+{% elif not item.missing_units %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="resume"><input type="hidden" name="receipt" value="{{ item.receipt.pk }}"><input type="hidden" name="revision" value="{{ case.revision }}"><button>Recheck this submission</button></form>{% endif %}
+<details><summary>Submission reference</summary><p>{{ item.receipt.pk }} · {{ item.receipt.data.request.sha256 }}</p></details>
+</article>{% endfor %}{% endif %}
+<a href="{% url 'factory_configuration' case.pk %}?definition={{ definition }}">Review execution setup</a>{% endif %}</section>
+{% endif %}
+{% endblock %}

@@ -3,6 +3,7 @@ import hashlib,json,re
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.utils import timezone
+from apps.core.read_observation import observed_fact
 from apps.core.services import lock_case,event,bump
 from apps.identity.services import require
 from apps.policy.models import Configuration
@@ -70,7 +71,10 @@ def current_review(case,purpose,**target):
     if not r:return {'id':None,'verdict':'missing','valid':False}
     valid=False;finding=''
     try:
-        require(r.actor,case,'finance.review')
+        from apps.identity.role_factory_decisions import recorded_access
+
+        subject = next(key for key in ('source','configuration','adjustment','run') if getattr(r,key+'_id') is not None)
+        recorded_access(case,r.actor,'accounting',r.pk,'finance.review',accounting={'purpose':r.purpose,'subject':subject})
         item=r.source or r.configuration or r.adjustment or r.run
         if r.run_id:
             from .statement_ppe import recipient_access
@@ -142,18 +146,30 @@ def stage_snapshot(actor,source,kind,parent,request):
         **({'formula_result_implementation':'finance-note-lineage/v1'} if kind=='formula' else {}),**({'hr_basis_access':hr_basis_access} if hr_basis_access else {})},configs
 
 def ensure_current(run):
+    assert_run_current(run)
+    return run
+
+@observed_fact
+def assert_run_current(run):
     if run.kind=='statement':
         from .statements import ensure_current as current_statement
-        return current_statement(run)
+        current_statement(run)
+        return True
     parent=run.parent
     snapshot,_=stage_snapshot(run.actor,run.source,run.kind,parent,run.request)
     if snapshot!=run.snapshot:raise ValidationError('Source, policy, review or authority changed; rebuild the exact Finance preview')
-    return run
+    return True
 
+@transaction.atomic
 def store(actor,case,source,kind,parent,request,snapshot,result):
     key=digest({'actor':actor.pk,'case':str(case.pk),'source':source.pk,'kind':kind,'parent':parent.pk if parent else None,'request':request,'snapshot':snapshot})
     old=FinanceRun.objects.filter(operation_key=key).first()
     if old:return old
+    if kind == 'mapping':
+        from apps.workflows.native_stations import receive_advice
+        receive_advice('F02', source, actor, case=case)
+        for adjustment in FinanceAdjustment.objects.filter(source=source, pk__in=request['adjustment_ids']):
+            receive_advice('F04', adjustment, actor, case=case)
     run=FinanceRun.objects.create(case=case,source=source,parent=parent,kind=kind,request=request,snapshot=snapshot,result=result,operation_key=key,actor=actor)
     event(actor,case,'finance.preview_created',run=run.pk,kind=kind,operation_key=key,status=result['status']);bump(case);return run
 
@@ -204,6 +220,7 @@ def adjustment(actor,case_id,source_id,reference,kind,lines,evidence_id,note_tex
         evidence=subject(case,evidence_id,'finance_adjustment'),note=note_text,actor=actor)
     event(actor,case,'finance.reporting_adjustment',adjustment=a.pk,ledger_posted=False);bump(case);return a
 
+@observed_fact
 def certification_findings(run):
     if run.kind=='statement':
         ensure_current(run)

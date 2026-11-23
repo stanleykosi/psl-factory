@@ -18,7 +18,7 @@ from .delivery import operate_publication
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id)
+    case=accessible_case(request.user,case_id,source_action='document.read')
     require(request.user,case,'document.read')
     templates=Template.objects.filter(case=case).exclude(definition__document_type='accepted_finance_metadata').order_by('name','-version')
     versions=Version.objects.filter(document__case=case).exclude(template__definition__document_type='accepted_finance_metadata').select_related('document','template').order_by('-pk')
@@ -27,9 +27,12 @@ def workbench(request,case_id):
         versions=versions.filter(forecastbinding__isnull=True)
         templates=templates.exclude(definition__document_type='finance_group_report').exclude(pk__in=Version.objects.filter(document__case=case,forecastbinding__isnull=False).values('template_id'))
     from apps.finance.models import FinanceDocumentBinding
-    from apps.finance.statement_ppe import recipient_access as ppe_recipient_access
-    hidden=[]
-    for binding in FinanceDocumentBinding.objects.filter(version__in=versions).select_related('run'):
+    from apps.finance.statement_ppe import held_opening_statement_ids, recipient_access as ppe_recipient_access
+    bindings=FinanceDocumentBinding.objects.filter(version__in=versions)
+    held_runs=held_opening_statement_ids(case)
+    held_versions=set(bindings.filter(run_id__in=held_runs).values_list('version_id',flat=True))
+    hidden=list(held_versions)
+    for binding in bindings.exclude(version_id__in=hidden).select_related('run'):
         try:ppe_recipient_access(binding.run,[request.user.pk])
         except (PermissionDenied,ValidationError):hidden.append(binding.version_id)
     from apps.pmo.leadership_reporting import binding_access
@@ -38,22 +41,23 @@ def workbench(request,case_id):
         except PermissionDenied:hidden.append(version.pk)
     versions=versions.exclude(pk__in=hidden)
     evidence=public_evidence(case.evidence.all()).order_by('-pk')
-    tf=TemplateForm();df=DraftForm();rf=ReviewForm();cf=CandidateForm();gf=GateForm()
+    template_scopes=visible_scopes(request.user,case,held_finance_runs=held_runs)
+    tf=TemplateForm(auto_id='template_%s');df=DraftForm(auto_id='draft_%s');rf=ReviewForm(auto_id='review_%s');cf=CandidateForm(auto_id='candidate_%s');gf=GateForm(auto_id='gate_%s')
     candidates=DeliveryCandidate.objects.filter(case=case)
     cf.fields['requirements'].queryset=evidence.filter(kind='requirements')
     gf.fields['candidate'].queryset=candidates;gf.fields['evidence'].queryset=evidence
     tf.fields['evidence'].queryset=evidence.filter(kind='policy_decision')
-    df.fields['template'].queryset=templates;df.fields['sources'].queryset=evidence;df.fields['template_scope'].queryset=visible_scopes(request.user,case)
+    df.fields['template'].queryset=templates;df.fields['sources'].queryset=evidence;df.fields['template_scope'].queryset=template_scopes
     rf.fields['version'].queryset=versions
     if request.method=='POST':
         try:
             action=request.POST.get('action');expected=int(request.POST['revision'])
             if action=='candidate':
-                cf=CandidateForm(request.POST);cf.fields['requirements'].queryset=evidence.filter(kind='requirements')
+                cf=CandidateForm(request.POST,auto_id='candidate_%s');cf.fields['requirements'].queryset=evidence.filter(kind='requirements')
                 if not cf.is_valid():raise ValidationError(cf.errors.as_text())
                 d=cf.cleaned_data;register_candidate(request.user,case.pk,d['reference'],d['requirements'].pk,expected)
             elif action=='gate':
-                gf=GateForm(request.POST);gf.fields['candidate'].queryset=candidates;gf.fields['evidence'].queryset=evidence
+                gf=GateForm(request.POST,auto_id='gate_%s');gf.fields['candidate'].queryset=candidates;gf.fields['evidence'].queryset=evidence
                 if not gf.is_valid():raise ValidationError(gf.errors.as_text())
                 d=gf.cleaned_data;record_gate(request.user,case.pk,d['candidate'].pk,d['kind'],d['external_ref'],d['evidence'].pk,expected)
             elif action=='gate_verify':
@@ -63,11 +67,11 @@ def workbench(request,case_id):
             elif action=='gate_check':
                 check_candidate(request.user,case.pk,int(request.POST['candidate']))
             elif action=='template':
-                tf=TemplateForm(request.POST);tf.fields['evidence'].queryset=evidence.filter(kind='policy_decision')
+                tf=TemplateForm(request.POST,auto_id='template_%s');tf.fields['evidence'].queryset=evidence.filter(kind='policy_decision')
                 if not tf.is_valid():raise ValidationError(tf.errors.as_text())
                 d=tf.cleaned_data;register_template(request.user,case.pk,d['name'],d['definition'],d['evidence'].pk,expected)
             elif action in ['draft','agent_draft']:
-                df=DraftForm(request.POST);df.fields['template'].queryset=templates;df.fields['sources'].queryset=evidence;df.fields['template_scope'].queryset=visible_scopes(request.user,case)
+                df=DraftForm(request.POST,auto_id='draft_%s');df.fields['template'].queryset=templates;df.fields['sources'].queryset=evidence;df.fields['template_scope'].queryset=template_scopes
                 if not df.is_valid():raise ValidationError(df.errors.as_text())
                 d=df.cleaned_data
                 if action=='agent_draft':
@@ -75,11 +79,13 @@ def workbench(request,case_id):
                 else:
                     create_version(request.user,case.pk,d['template'].pk,d['title'],d['audience'],d['fields'] or {},expected,d['document_id'],template_scope_id=d['template_scope'].pk if d['template_scope'] else None)
             elif action=='review':
-                rf=ReviewForm(request.POST);rf.fields['version'].queryset=versions
+                rf=ReviewForm(request.POST,auto_id='review_%s');rf.fields['version'].queryset=versions
                 if not rf.is_valid():raise ValidationError(rf.errors.as_text())
                 d=rf.cleaned_data;review_version(request.user,case.pk,d['version'].pk,d['verdict'],d['note'],expected,d['delegated'])
             elif action in ['request','publish','check','withdraw']:
                 version_id=int(request.POST['version'])
+                if version_id in held_versions and action != 'withdraw':
+                    raise ValidationError('Current asset opening proof authority is required for this document.')
                 if action=='request':request_review(request.user,case.pk,version_id,expected)
                 elif action=='publish':reserve_publication(request.user,case.pk,version_id,expected)
                 elif action=='withdraw':withdraw_review(request.user,case.pk,version_id,request.POST.get('reason',''),expected)
@@ -95,14 +101,17 @@ def workbench(request,case_id):
         form.fields[field].queryset=queryset
     actions=set(Grant.objects.filter(user=request.user,case=case,active=True).values_list('action',flat=True))
     items=list(versions)
+    from .design_review import visible_reports
+    focused_reports = set(visible_reports(case).values_list('pk', flat=True))
     from apps.finance.presentation import present
     for version in items:
+        version.has_focused_review = version.pk in focused_reports
         version.findings=preflight(version);version.finance_presentation=present(version.payload)
     candidate_rows=list(candidates)
     from apps.pmo.models import ApprovalGateBinding
     for candidate in candidate_rows:
         candidate.summary=gate_summary(candidate,request.user);candidate.visible_gates=[]
-        for gate in candidate.gates.all():
+        for gate in candidate.gates.order_by('pk'):
             binding=ApprovalGateBinding.objects.filter(verification__record=gate).select_related('observation__receipt').order_by('-pk').first()
             if binding:
                 try:require(request.user,case,'approval.source.read:'+binding.observation.receipt.system)
@@ -114,7 +123,7 @@ def workbench(request,case_id):
     return render(request,'documents/workbench.html',{'case':case,'actions':actions,'template_form':tf,'draft_form':df,'review_form':rf,
         'candidate_form':cf,'gate_form':gf,'candidates':candidate_rows,'templates':templates,'versions':items,'tasks':HumanTask.objects.filter(case=case).exclude(version_id__in=hidden).exclude(version__template__definition__document_type='accepted_finance_metadata').select_related('version__document').order_by('-pk'),
         'jobs':visible_jobs.select_related('publication__version__document').order_by('-pk'),
-        'agent_runs':case.agentrun_set.filter(process_id__in=['P52','P53','P31']).order_by('-pk')[:20] if 'agent.document' in actions or 'agent.gates' in actions else []})
+        'agent_runs':case.agentrun_set.filter(process_id__in=['P52','P53','P31']).exclude(result__version_id__in=held_versions).order_by('-pk')[:20] if 'agent.document' in actions or 'agent.gates' in actions else []})
 
 @login_required
 def inbox(request):

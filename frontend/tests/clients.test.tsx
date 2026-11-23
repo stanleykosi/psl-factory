@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
-import { execSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { matchingSources } from './source-files';
 
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -11,7 +11,7 @@ import { AppShell } from '@/shell/AppShell';
 
 // @ts-expect-error plain ESM module without type declarations
 import { clients, resetClients } from '../mock/clients.mjs';
-import { bellFeed, isBellFeed } from './bell-feed';
+import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/clients',
@@ -47,6 +47,7 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (request: Request) => {
       if (isBellFeed(request)) return bellFeed();
+      if (isRoleDashboard(request)) return roleDashboard();
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me);
       const text = request.method === 'GET' ? '' : await request.clone().text();
@@ -513,7 +514,10 @@ describe('source rules for features/clients', () => {
     expect(readFileSync(join(dir, 'clients.css'), 'utf8').match(/#[0-9a-fA-F]{3,8}\b|rgba?\(|hsl\(/g)).toBeNull();
   });
   it('hard-codes none of the sample client names in the clients code (other features already carry theirs)', () => {
-    const found = execSync(`grep -rln "Lagoon\\|Harmattan\\|Kora\\|Ojo\\|Sabi\\|Tamarind" ${join(__dirname, '../src/features/clients')} ${join(__dirname, '../src/app/clients')} || true`).toString().trim();
-    expect(found).toBe('');
+    const found = matchingSources(
+      [join(__dirname, '../src/features/clients'), join(__dirname, '../src/app/clients')],
+      /Lagoon|Harmattan|Kora|Ojo|Sabi|Tamarind/,
+    );
+    expect(found).toEqual([]);
   });
 });

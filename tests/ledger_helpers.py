@@ -16,9 +16,9 @@ def evidence(f,kind,body):return add_evidence(f['actor'],f['case'].pk,kind,json.
 def policy(f,key,value):
  p=draft_ledger_policy(f['actor'],f['case'].pk,key,value,f['e'].pk,timezone.now()-timedelta(seconds=1));transition(f['actor'],p.pk,'validated');transition(f['actor'],p.pk,'active');return p
 
-def fixture(username='ledger-human',reviewer_username='ledger-reviewer'):
- a,c=setup_case(username=username);b=get_user_model().objects.create_user(username=reviewer_username)
- for action in ACTIONS:Grant.objects.create(case=c,user=b,action=action)
+def fixture(username='ledger-human',reviewer_username='ledger-reviewer',*,reviewer=None):
+ a,c=setup_case(username=username);b=reviewer or get_user_model().objects.create_user(username=reviewer_username)
+ for action in ACTIONS:Grant.objects.get_or_create(case=c,user=b,action=action)
  f={'actor':a,'case':c,'reviewer':b};f['e']=evidence(f,'policy_decision','Synthetic reviewed treatment and incumbent identity evidence')
  r=register_reference(a,c.pk,'ledger-finance-role','schema:psl/role-assignment/v1',{'role':'Finance','user_id':b.pk},f['e'].pk)
  activate(a,c,'D05.role_principal_assignments',[r.ref],f['e'])

@@ -1,0 +1,806 @@
+{
+  "schema_version": "feature-review-0.2.0",
+  "record_kind": "project_record",
+  "project_id": "psl-factory",
+  "feature_id": "F-57",
+  "outcome": "The app frame loads from the live API: live types and client, session and error handling, role words from role-dashboard",
+  "state": "DONE",
+  "task_ids": [
+    "FE-CONNECT-1"
+  ],
+  "operation_ids": [],
+  "acceptance_criteria": [
+    "Generated live types match the contract \u2014 verify: `cd /Users/Hunchoo/psl-factory/frontend && npm run gen:api:live && git diff --exit-code src/api/live-schema.d.ts`; `npx vitest run tests/api-live-schema-drift.test.ts` passes; changing one character in `live-schema.d.ts` makes it fail.",
+    "`GET /session` stores the token \u2014 verify: unit test in `tests/client.test.ts`: `refreshSession()` with a stubbed fetch calls `/api/v1/session` and a following `liveApi.POST` sends `X-CSRFToken` equal to the returned token; with no token set a write still throws `csrf_unavailable` and sends nothing.",
+    "403 `csrf_failed` is not `forbidden` and is never retried \u2014 verify: unit test: stub fetch answers 403 `{code:'csrf_failed'}` to the write and a new token to `/session`; `call` rejects with `kind:'csrf'`, the stated message, exactly one write request was made, `/session` was called once, and the next write uses the new token. A 403 `forbidden` still gives `kind:'forbidden'` with no `/session` call.",
+    "Every row of the error table maps as written \u2014 verify: table-driven unit test in `tests/client.test.ts` for 400, 401, 403 (both codes), 404, 409 (`idempotency_conflict`, `stale_version`), 422 with `fields`, 413, 415, 429 (with a `Retry-After` header present: message shows no value), 503 `read_limited`, 500, network failure, and a body that is not JSON (`unexpected_response`).",
+    "422 keeps `fields` through `call()` \u2014 verify: unit test: a 422 body with `fields:[{name:'x',message:'m'}]` gives `error.fields` equal to it; a 422 with none gives `[]`.",
+    "`idempotency_conflict` \u2014 verify: `rg idempotency_key_reused frontend/src` has no match; `tests/start-work.test.tsx` has a case where the write answers 409 `idempotency_conflict` and the form shows the problem message.",
+    "Frame draws from live `/me` \u2014 verify: `tests/shell.test.tsx` renders `AppShell` with the fixture example above: top bar links My work, Projects, Overview, Assistant, Setup in that order and no \"Clients\" link; Projects is current on `/clients`; Start work shows; the DOM has no element whose `href` or text includes `/retired/` or the `work_desk_url` value (extend `tests/shell-no-embed.test.tsx`).",
+    "Callers use `hasDestination` \u2014 verify: `rg \"me\\.destinations\\.includes|visibleDestinations\\(me\\.destinations\\)\" frontend/src` returns nothing outside `destinations.ts`; a test per frame page (my-work, projects, assistant, setup) for a `/me` whose list omits that key shows `NotOpenState`.",
+    "Role words from role-dashboard \u2014 verify: unit tests with stubbed `/me` and `/role-dashboard`: positions with names \"PMO Lead\", \"PMO Lead\", \"Finance Lead\" give \"Name \u00b7 PMO Lead, Finance Lead\" in the top bar (`.shell-who-role`) and in the phone menu `<small>`; role-dashboard 500, 401, a network failure, `positions: []`, and blank names each give the name alone with no \" \u00b7 \" and no error shown; `/me` success never waits for role-dashboard (assert the frame renders while role-dashboard is pending).",
+    "Signed-out state \u2014 verify: test: `/me` 401 renders \"You're signed out.\" and the later-release line, `GET /session` was called and the token stored, and `main` contains no anchor at all and nothing pointing at `/accounts/`. If `/session` answers `signed_in:true`, `/me` is read once more and the frame renders.",
+    "Error and csrf states on `/me` \u2014 verify: tests: 429, 503 `read_limited`, 400, 500 and a network failure each render `LoadErrorState` with the code reference and a Try again that reloads; 403 `forbidden` renders `ForbiddenState`; 403 `csrf_failed` on `/me` triggers one `/session` and one `/me` retry only.",
+    "Mock `/me` is in the live shape and validated \u2014 verify: `tests/mock-contract.test.ts` (or new `tests/mock-live-me.test.ts`) validates every `mock/fixtures/me.<persona>.json` and the running mock's `GET /api/v1/me`, `/session`, `/role-dashboard` bodies for every persona against the live schema in `contracts/psl-factory.openapi.json` with Ajv; `roles` is absent; the test fails if a fixture gains an extra key.",
+    "Mock run looks and behaves as today \u2014 verify: with the mock (`npm run dev` on port 3000, finance_lead persona): top bar shows the same links as before the change and \"<name> \u00b7 Finance Lead\"; switching persona with the demo bar gives pmo_lead without Setup, `none` with the \"No sections are open\" empty state and name alone; Start work shows only where it showed before; Reset demo works (`/__mock/reset`); `npx playwright test e2e/frame.spec.ts e2e/demo.spec.ts` passes with fixtures updated only for the new shape (axe still clean on desktop and phone).",
+    "The frame shows the csrf notice on the mock \u2014 verify: with the mock scenario 403 set to `csrf_failed` for a write (alert settings Save at `/settings/alerts`), the page shows the \"Press the action again\" text, not \"Your account can't use PSL Factory\"; a second press succeeds when the scenario is cleared; the mock log shows one write per press.",
+    "Download rewrites asserted exactly \u2014 verify: `tests/next-config.test.ts` asserts each of the six `afterFiles` rules' exact `source` and `destination` (`${API}/cases/:case/files/:upload` style, as built in `next.config.ts`), not only the count and prefix (TECH-1-2).",
+    "Live run through `next start` (integration owner). Setup: Postgres on 55432; `cd /Users/Hunchoo/psl-factory && PSL_DJANGO_UI=0 PGDATABASE=psl PGUSER=psl PGHOST=127.0.0.1 PGPORT=55432 PSL_ENV=development PSL_FRONTEND_ORIGINS=http://127.0.0.1:3101 python3 manage.py runserver 127.0.0.1:8001`; create a local test account with `manage.py` (never the demo login file); `cd frontend && API_ORIGIN=http://127.0.0.1:8001 npm run build && API_ORIGIN=http://127.0.0.1:8001 npx next start -p 3101`. Checks, using a browser or Playwright script kept outside the repo:",
+    "Whole gate \u2014 verify: `cd /Users/Hunchoo/psl-factory/frontend && npm run lint && npm run typecheck && npm test` pass, and `python3 delivery/design.py check` passes (not run by readiness)."
+  ],
+  "risk": {
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. There is no money or data migration, but the change sets how every later screen handles session, CSRF and 403, and it is a cross-layer contract change (live OpenAPI 1.22.0 against the v7 mock, frontend/src/api/client.ts and errors.ts, about 56 files that touch the old `/me` shape). Surfaces: ui (frame, role words, menu), api and contract-change (generated types, mock validated against the live contract), security and auth (CSRF refresh, no auto-retry of writes, 401 and 403 handling), product-decision (role-words fallback and an unfiltered menu, both accepted in D-172 but not seen by PSL). Product acceptance is required because what people see in the top bar and menu changes (no role words on failure, same menu for everyone) and PSL has not seen it."
+  },
+  "baseline": {
+    "architecture_manifest_sha256": null,
+    "demo_manifest_sha256": null,
+    "approval_evidence_refs": [
+      "delivery/features/F-57/readiness.md"
+    ],
+    "blocking_decision_ids": [],
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "06305ba6d0dc499acd054d6f493c4102efd6b7cc83bea6966753b6462029a27d",
+      "canvas_url": null,
+      "canvas_version": null
+    }
+  },
+  "roles": {},
+  "snapshot": {
+    "source_revision": null,
+    "uncommitted_file_hashes": {},
+    "build_manifest_sha256": null,
+    "environment": null
+  },
+  "component_readiness": {
+    "frontend": "NOT_ASSESSED",
+    "backend": "NOT_ASSESSED"
+  },
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T08:43:12Z",
+      "seconds": 538.0,
+      "evidence_ref": "delivery/features/F-57/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T09:24:08Z",
+      "seconds": 846.7,
+      "evidence_ref": "delivery/features/F-57/round-2/checks.md"
+    }
+  ],
+  "reviews": {
+    "technical": {
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-technical.md"
+      ]
+    },
+    "integrated_qa": {
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA on the current head",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-qa.md"
+      ]
+    },
+    "pmo_acceptance": {
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance for F-57 (FE-CONNECT-1 part b). Not client or product acceptance, merge or release.",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/acceptance-pmo.md"
+      ]
+    },
+    "product_acceptance": {
+      "required": true,
+      "assessment_reason": "delivery/features/F-57/readiness.md",
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), recorded by the coordinator",
+      "authority": "the design engineer's answer in the delivery session, 23 Nov 2026",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/acceptance-product.md"
+      ]
+    },
+    "ux": {
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-ux.md"
+      ]
+    },
+    "ui": {
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "reviewer-ui",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-ui.md"
+      ]
+    },
+    "security": {
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "reviewer-security",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-security.md"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`refreshSession()` calls `call()`, and `call()` calls `refreshSession()` on a `csrf` error (`frontend/src/api/client.ts:46-65`). If `GET /session` ever answered 403 `csrf_failed`, the two would recurse without end. The live contract does not allow this today. A raw `liveApi.GET` inside `refreshSession`, or a guard flag, would remove the risk.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T09:24:08Z",
+          "refs": [
+            "5262fbd4"
+          ],
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T09:26:40Z",
+          "refs": [
+            "`refreshSession` calls `call(..., false)`, so a `csrf_failed` from GET /session throws `kind: csrf` without a second session read. The unit test in `frontend/tests/client.test.ts` (\"does not loop when GET /session itself answers csrf_failed\") checks that exactly one `/api/v1/session` request is made."
+          ],
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5262fbd4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`refreshSession` calls `call(..., false)`, so a `csrf_failed` from GET /session throws `kind: csrf` without a second session read. The unit test in `frontend/tests/client.test.ts` (\"does not loop when GET /session itself answers csrf_failed\") checks that exactly one `/api/v1/session` request is made."
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock `startable_lines` keep the v7 keys instead of live keys such as `pmo-weekly-report/v1` (`frontend/mock/fixtures/me.*.json`). `spec.md` says the fixtures use real live keys. The builder disclosed this, and the frame only tests `length > 0`, so nothing breaks. It needs a follow-up when the per-line adapter lands.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`useRoleWords` reads once per mount of the layout (`frontend/src/shell/useRoleWords.ts`). \"Try again\" after a `/me` error does not re-read it, and a sign-in in the same page session (SCR-17, wave 1) would not refresh it. This matches `spec.md` (\"once per page load\"). SCR-17 will need to re-trigger it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The design engineer's running app on port 3000 does not serve this head: its mock (pid 89457 on 3001, started Sun 22 Nov 00:12) still answers the old `/me` shape (`roles[]`, string destinations) and has no `/role-dashboard`, so every persona shows only \"No sections are open to your role yet.\" with no menu, name only, until the mock is restarted. Restart `node mock/server.mjs` on 3001 from this head before the design engineer reviews.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "When `/me` answers `csrf_failed` twice the card shows \"Reference csrf_failed for support.\" (same for `not_found` on a 404); the csrf wording \"press the action again\" is not used here. Acceptable (a frame load is not an action), a plainer line could follow later.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Long role words break the desktop top bar. With positions named Finance Lead, PMO Lead, Head of Delivery Operations, Client Services Manager, Administrator the `.shell-who-role` text does not truncate at 1440: Start work is clipped at the right edge and the document is 90px wider than the viewport. The spec allows up to 50 positions, de-duplicated by name, and asks that long role words not overflow. Expected: the name stays whole and the role words shorten with an ellipsis (full text stays in the accessible name or a title), with Start work and the bell always visible. Actual: `.psl-nav__who` only gets `min-width:0; overflow:hidden; text-overflow:ellipsis` below 1080px (frontend/src/styles/shell.css:63); at 1080px and above it has no cap, so the line grows. Fix by capping the role span on the bar (for example `white-space:nowrap; overflow:hidden; text-overflow:ellipsis` with `min-width:0` on `.psl-nav__who` at all widths), not by changing the design.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "VERIFIED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-23T08:47:56Z",
+          "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-23T09:24:08Z",
+          "refs": [
+            "5262fbd4"
+          ],
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-23T09:26:40Z",
+          "refs": [
+            "Mock on port 4971 and `next start` on 4972 from the worktree build (the built CSS holds the unconditional `.psl-nav__who` ellipsis rule), role-dashboard routed with five roles (Finance Lead, PMO Lead, Head of Delivery Operations, Client Services Manager, Administrator). 1440: scrollWidth 1440, who line one line (19.5px) and clipped, Start work right edge 1312 (chevron button visible beyond it), title holds the full text. 1280: scrollWidth 1280, one line, clipped, Start work visible. 390: scrollWidth 390; the menu shows the full roles wrapped under the name. One role (\"Ada Okafor \u00b7 Finance Lead\") is not clipped at 1440 or 1280; name only shows no role and no title. Servers stopped."
+          ],
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "5262fbd4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Mock on port 4971 and `next start` on 4972 from the worktree build (the built CSS holds the unconditional `.psl-nav__who` ellipsis rule), role-dashboard routed with five roles (Finance Lead, PMO Lead, Head of Delivery Operations, Client Services Manager, Administrator). 1440: scrollWidth 1440, who line one line (19.5px) and clipped, Start work right edge 1312 (chevron button visible beyond it), title holds the full text. 1280: scrollWidth 1280, one line, clipped, Start work visible. 390: scrollWidth 390; the menu shows the full roles wrapped under the name. One role (\"Ada Okafor \u00b7 Finance Lead\") is not clipped at 1440 or 1280; name only shows no role and no title. Servers stopped."
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The full role list is only in a mouse-hover title. Keyboard and touch users who have more roles than fit cannot see the cut-off ones in the bar. This is an edge case, since most people have one or two positions. A later release could show the full list in a menu or on the profile page.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-23T09:26:02Z",
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "owner": "backend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Live account `live-admin` (superuser): `POST /api/v1/session` signs in but answers 422 `action_unavailable` \"'invite_minutes' is a required property\", and `GET /api/v1/role-dashboard` answers 422 the same way (Django log). Expected 200 matching the contract. Effect on F-57: the frame degrades as designed to the name alone, so the \"Admin\" role word the spec expects for administrators is not shown and that path is unproved live. Reproduce: `POST /api/v1/session {\"username\":\"live-admin\",...}` with a token from GET /session.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T09:36:07Z",
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "At 800px wide the top bar no longer clips the role line (`scrollWidth` equals `clientWidth` with five long names) and the page does not scroll sideways; Start work stays inside the viewport. Noted only as evidence, no change asked. (Informational; remove if not wanted.)",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-23T09:36:07Z",
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Product acceptance is pending. Delivery is accepted here; it does not stand in for the design engineer's acceptance, the merge or the release decision.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T09:40:02Z",
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical",
+          "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+          "evidence_refs": [
+            "delivery/features/F-57/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-57/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+          "evidence_refs": [
+            "delivery/features/F-57/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "reviewer-ui",
+          "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+          "evidence_refs": [
+            "delivery/features/F-57/round-1/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "reviewer-security",
+          "authority": "reviewer-security",
+          "snapshot_ref": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+          "evidence_refs": [
+            "delivery/features/F-57/round-1/review-security.md"
+          ]
+        }
+      }
+    }
+  ],
+  "run_controls": {
+    "unattended_execution_enabled": false,
+    "time_budget": null,
+    "cost_budget": null,
+    "rework_budget": null,
+    "escalation_authority": null
+  },
+  "completion": {
+    "status": "done",
+    "evidence_refs": [],
+    "reason": null
+  },
+  "release": {
+    "status": "not_authorized",
+    "evidence_refs": []
+  },
+  "git": {
+    "repository": null,
+    "task_id": "FE-CONNECT-1",
+    "base_branch": "main",
+    "base_sha": "e80c3276f76baebf4b42e5eadf95ea535fb62820",
+    "task_branch": "fe-connect-1-live-client",
+    "head_sha": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+    "worktree": "/Users/Hunchoo/psl-factory",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/97",
+    "pr_number": 97,
+    "pr_author": "hunchoweb",
+    "designated_approver": "hunchoweb",
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "44878365c9d1e71bb56a3e9b3cd8a0d7ddbb240a",
+    "merge_policy": "not_configured",
+    "changed_paths": [
+      "frontend/e2e/document-review.spec.ts",
+      "frontend/e2e/exceptions.spec.ts",
+      "frontend/e2e/frame.spec.ts",
+      "frontend/e2e/setup.spec.ts",
+      "frontend/mock/fixtures/me.admin.json",
+      "frontend/mock/fixtures/me.ceo.json",
+      "frontend/mock/fixtures/me.finance_lead.json",
+      "frontend/mock/fixtures/me.hr.json",
+      "frontend/mock/fixtures/me.hr_lead.json",
+      "frontend/mock/fixtures/me.none.json",
+      "frontend/mock/fixtures/me.pm.json",
+      "frontend/mock/fixtures/me.pmo_lead.json",
+      "frontend/mock/fixtures/role-dashboard.admin.json",
+      "frontend/mock/fixtures/role-dashboard.ceo.json",
+      "frontend/mock/fixtures/role-dashboard.finance_lead.json",
+      "frontend/mock/fixtures/role-dashboard.hr.json",
+      "frontend/mock/fixtures/role-dashboard.hr_lead.json",
+      "frontend/mock/fixtures/role-dashboard.none.json",
+      "frontend/mock/fixtures/role-dashboard.pm.json",
+      "frontend/mock/fixtures/role-dashboard.pmo_lead.json",
+      "frontend/mock/line-runs.mjs",
+      "frontend/mock/response.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/mock/session.mjs",
+      "frontend/mock/start-work.mjs",
+      "frontend/package.json",
+      "frontend/src/api/client.ts",
+      "frontend/src/api/errors.ts",
+      "frontend/src/api/live-schema.d.ts",
+      "frontend/src/api/types.ts",
+      "frontend/src/features/assistant/AssistantFrame.tsx",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/my-work/MyWorkPage.tsx",
+      "frontend/src/features/overview/OverviewPage.tsx",
+      "frontend/src/features/projects/MoneyTab.tsx",
+      "frontend/src/features/projects/ProjectJourney.tsx",
+      "frontend/src/features/projects/ProjectsPage.tsx",
+      "frontend/src/features/setup/SetupFrame.tsx",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/src/shell/AppShell.tsx",
+      "frontend/src/shell/DestinationPage.tsx",
+      "frontend/src/shell/FrameStates.tsx",
+      "frontend/src/shell/PhoneBar.tsx",
+      "frontend/src/shell/TopNav.tsx",
+      "frontend/src/shell/destinations.ts",
+      "frontend/src/shell/useRoleWords.ts",
+      "frontend/src/styles/shell.css",
+      "frontend/tests/alerts-bell.test.tsx",
+      "frontend/tests/alerts-settings.test.tsx",
+      "frontend/tests/alerts.test.tsx",
+      "frontend/tests/api-live-schema-drift.test.ts",
+      "frontend/tests/assistant-bridge.ts",
+      "frontend/tests/bell-feed.ts",
+      "frontend/tests/cash-forecast.test.tsx",
+      "frontend/tests/client-types.test.ts",
+      "frontend/tests/client.test.ts",
+      "frontend/tests/clients.test.tsx",
+      "frontend/tests/decide-board.test.tsx",
+      "frontend/tests/decide.test.tsx",
+      "frontend/tests/delivery-overview.test.tsx",
+      "frontend/tests/destinations.ts",
+      "frontend/tests/document-review.test.tsx",
+      "frontend/tests/hr-mock.test.ts",
+      "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-live-me.test.ts",
+      "frontend/tests/money.test.tsx",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/next-config.test.ts",
+      "frontend/tests/payments.test.tsx",
+      "frontend/tests/project-tabs.test.tsx",
+      "frontend/tests/projects-journey.test.tsx",
+      "frontend/tests/projects.test.tsx",
+      "frontend/tests/response.test.tsx",
+      "frontend/tests/rfp.test.tsx",
+      "frontend/tests/setup-delegation.test.tsx",
+      "frontend/tests/setup-rules.test.tsx",
+      "frontend/tests/setup-templates.test.tsx",
+      "frontend/tests/shell-live.test.tsx",
+      "frontend/tests/shell-no-embed.test.tsx",
+      "frontend/tests/shell.test.tsx",
+      "frontend/tests/start-work-mock.test.ts",
+      "frontend/tests/start-work-proof.test.tsx",
+      "frontend/tests/start-work.test.tsx"
+    ]
+  },
+  "parallel_execution": {
+    "enabled": false,
+    "mode": "manual_coordinator",
+    "authorization_ref": null,
+    "contract_revision": null,
+    "contract_sha256": null,
+    "integration_owner": null,
+    "configured_worker_limit": null,
+    "runtime_worker_capacity": null,
+    "lanes": [],
+    "integration_snapshot_ref": null,
+    "final_validation": [],
+    "carried_forward_evidence": [],
+    "elapsed_wall_time_ms": null,
+    "status": "not_planned"
+  },
+  "merge_decision": {
+    "policy_ref": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-57/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'auth' always needs a human",
+      "surface 'contract-change' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "surface 'security' always needs a human",
+      "83 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+    "merged_by": null,
+    "pre_merge_sync": {
+      "base_sha": null,
+      "checks_rerun": "not_run"
+    }
+  },
+  "created_at": "2026-11-22T23:46:51Z",
+  "round": 2,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T00:50:11Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T00:50:11Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-23T08:43:25Z",
+      "round": 1,
+      "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-23T08:48:04Z",
+      "round": 1,
+      "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-23T08:48:04Z",
+      "round": 2,
+      "head": "84f3a3e9959b9c9cebe0746a9324c3795d5290da",
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-23T09:24:20Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-23T09:26:40Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-23T09:36:07Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-23T09:40:36Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-23T09:43:38Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-23T09:43:39Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-23T09:44:13Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-23T09:44:14Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-57/readiness.md",
+      "delivery/features/F-57/spec.md"
+    ]
+  },
+  "gate": {
+    "round": 2,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732"
+  },
+  "blocked": null
+}

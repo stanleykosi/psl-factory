@@ -33,7 +33,10 @@ def cash_remaining(lot):
     if CashReversal.objects.filter(lot=lot).exists():return Decimal(0)
     with localcontext() as ctx:
         ctx.prec=512;return lot.amount-sum_amount(allocations(lot=lot))
-def lot_payload(lot):return lot.successor.payload if lot.successor_id else lot.receipt.payload
+def lot_payload(lot):
+    if lot.successor_id:return lot.successor.payload
+    if lot.reported_amount_id:return lot.reported_amount.payload
+    return lot.receipt.payload
 
 def open_amount(issue):
     from .corrections import adjusted_face
@@ -72,15 +75,32 @@ def verify(actor,case_id,receipt_id,role,evidence_id,expected):
     case=lock_case(actor,case_id,'finance.cash.verify',expected)
     r,amount,auth,old=guard_verify(actor,case,receipt_id,role,evidence_id,lock=True)
     if old:return old
-    lot=CashVerification.objects.create(receipt=r,amount=amount,evidence_id=evidence_id,authority=auth,actor=actor)
+    report_pin=auth.get('reported_amount')
+    lot=CashVerification.objects.create(receipt=r,amount=amount,evidence_id=evidence_id,authority=auth,actor=actor,
+                                         reported_amount_id=report_pin['id'] if report_pin else None)
     event(actor,case,'cash.verified',lot=lot.pk,receipt=r.pk);bump(case);return lot
 
 
 def guard_verify(actor,case,receipt_id,role,evidence_id,*,lock=False):
     require(actor,case,'finance.cash.verify');r=exact_receipt(case,receipt_id)
     old=CashVerification.objects.filter(receipt=r,successor__isnull=True).first()
-    if old:return r,None,{},old
-    amount,auth=verification_facts(actor,case,r.payload,r.evidence,r.actor_id,role,evidence_id,lock=lock)
+    if old:
+        if old.reported_amount_id and old.evidence_id!=evidence_id:
+            raise ValidationError('The first verification is already bound to its exact reported amount and verification proof.')
+        return r,None,{},old
+    if r.payload['amount'] is None:
+        for action in ('case.read','finance.read'):
+            require(actor,case,action)
+    from .cash_reported_amount import current
+    supplemented=current(r)
+    report=supplemented or r
+    if supplemented:
+        proof=subject(case,evidence_id,'cash_verification',metadata_only=True)
+        for action in ('case.read','finance.read','evidence.add'):
+            require(proof.created_by,case,action)
+    amount,auth=verification_facts(actor,case,report.payload,report.evidence,report.actor_id,role,evidence_id,lock=lock)
+    if supplemented:
+        auth['reported_amount']={'id':supplemented.pk,'evidence':report.evidence_id,'sha256':report.evidence.sha256,'role':role}
     return r,amount,auth,None
 
 def verification_facts(actor,case,payload,report_evidence,report_actor_id,role,evidence_id,*,lock=True):

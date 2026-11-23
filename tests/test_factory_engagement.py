@@ -53,6 +53,127 @@ def complete(f):
 
 
 class FactoryEngagementTests(TestCase):
+    def test_api_engagement_assignment_details_and_registered_planning_handoff(self):
+        f = setup()
+        actor, case, work = f['a'], f['c'], f['w']
+        self.client.force_login(actor)
+        self.assertEqual(self.client.get(f'/api/v1/projects/{case.pk}/engagement-intake').json()['capture']['evidence_id'], f['e'].pk)
+        detail = f'/api/v1/work/{work.pk}/engagement'
+        values = json.loads(Path('fixtures/engagement-intake.json').read_text())
+        roles(actor, case, f['policy'])
+        activate(actor, case, ASSIGN, values['assignment'], f['policy'])
+        activate(actor, case, REGISTER, values['registration'], f['policy'])
+        factory.run_until_wait(work.pk)
+
+        def write(action, **fields):
+            work.refresh_from_db()
+            response = self.client.post(detail, {'action': action, 'expected_revision': work.revision,
+                'case_revision': rev(case), **fields}, content_type='application/json')
+            self.assertEqual(response.status_code, 201, response.content)
+            return response.json()['record_id']
+
+        available = self.client.get(detail).json()
+        self.assertIn(actor.pk, [manager['id'] for manager in available['managers']])
+        assignment = write('assign', pm_id=actor.pk, role='PMO Lead', evidence_id=f['e'].pk, key='api-assignment')
+        factory.run_until_wait(work.pk)
+        self.assertEqual(self.client.get(detail).json()['assignment_id'], assignment)
+        plan = add_evidence(actor, case.pk, 'plan', 'Synthetic plan supplied by its owner', 'synthetic:plan')
+        capture = available['capture']['id']
+        details = write('details', capture_id=capture, reference='API-PSL-1', plan_id=plan.pk, evidence_id=f['e'].pk,
+                        key='api-details', checked=True, planned_start=None, contact_id=None)
+        self.assertEqual(self.client.get(detail).json()['details']['id'], details)
+        registration = write('register', role='PMO Lead', value='API-PSL-1', plan_id=plan.pk, evidence_id=f['e'].pk,
+                             key='api-registration', details_id=details)
+        factory.run_until_wait(work.pk)
+        work.refresh_from_db()
+        verified = self.client.get(detail).json()
+        self.assertEqual(verified['registration_id'], registration)
+        self.assertIsNotNone(verified['planning_receipt_id'])
+        self.assertEqual(d.verified_output(work)['registration'], registration)
+
+    def test_human_decision_wakes_the_existing_background_request_without_resuming_a_pause(self):
+        from apps.workflows import factory_progress
+        from apps.workflows.models import FactoryProgress
+        f=setup();factory.run_until_wait(f['w'].pk)
+        roles(f['a'],f['c'],f['policy'])
+        values=json.loads(Path('fixtures/engagement-intake.json').read_text())
+        activate(f['a'],f['c'],ASSIGN,values['assignment'],f['policy'])
+        f['w'].refresh_from_db()
+        factory_progress.set_progress(f['a'],f['w'].pk,f['w'].revision,True)
+        factory_progress.run_once()
+        job=FactoryProgress.objects.get(work=f['w']);self.assertEqual(job.status,'waiting')
+        self.assertTrue(job.observation)
+        f['w'].refresh_from_db()
+        d.human(f['a'],f['w'].pk,f['w'].revision,rev(f['c']),'assign',
+            {'pm_id':f['a'].pk,'role':'PMO Lead','evidence_id':f['e'].pk,'key':'WAKE-PM'})
+        job.refresh_from_db();self.assertEqual(job.status,'waiting');self.assertEqual(job.observation,'')
+        self.assertLessEqual(job.available_at,timezone.now())
+        for _ in range(12):
+            factory_progress.run_once();job.refresh_from_db();f['w'].refresh_from_db()
+            if job.status=='waiting' and d.linked(f['w']):break
+        self.assertIsNotNone(d.linked(f['w']))
+        self.assertEqual(FactoryWork.objects.count(),2)
+        factory_progress.set_progress(f['a'],f['w'].pk,f['w'].revision,False)
+        activate(f['a'],f['c'],REGISTER,values['registration'],f['policy'])
+        plan=add_evidence(f['a'],f['c'].pk,'plan','Synthetic source-owned plan','synthetic:paused-registration')
+        f['w'].refresh_from_db();spent=f['w'].budget_used
+        d.human(f['a'],f['w'].pk,f['w'].revision,rev(f['c']),'register',
+            {'value':'SYN-PAUSED','role':'PMO Lead','evidence_id':f['e'].pk,'plan_id':plan.pk,'key':'PAUSED-REGISTER'})
+        job.refresh_from_db();f['w'].refresh_from_db()
+        self.assertEqual(job.status,'paused');self.assertEqual(f['w'].budget_used,spent)
+        self.assertEqual(FactoryProgress.objects.filter(work=f['w']).count(),1)
+
+    def test_intake_selects_project_before_sources_and_posts_exact_source_without_duplicate_work(self):
+        f=setup();self.client.force_login(f['a'])
+        url=reverse('factory_create')
+        page=self.client.get(url,{'definition':d.DEFINITION})
+        self.assertContains(page,'Use this project')
+        self.assertNotContains(page,'Log engagement work')
+        page=self.client.get(url,{'definition':d.DEFINITION,'case':f['c'].pk})
+        self.assertContains(page,'Engagement source document')
+        self.assertContains(page,'synthetic:engagement-factory')
+        self.assertNotContains(page,'Use this project')
+        before=FactoryWork.objects.count()
+        response=self.client.post(url,{'definition':d.DEFINITION,'case':f['c'].pk,'key':'BROWSER-REOPEN',
+            'route':'B','evidence':f['e'].pk,'reference':'SYN-ENGAGEMENT','revision':rev(f['c']),'background':''})
+        self.assertEqual(response.status_code,302)
+        self.assertEqual(response.url,reverse('factory_detail',args=[f['w'].pk]))
+        self.assertEqual(FactoryWork.objects.count(),before)
+
+    def test_both_assignment_forms_list_only_current_nominated_project_managers_and_recheck_on_post(self):
+        from apps.policy.role_assignments import draft as draft_roles
+        from apps.workflows.factory_engagement_views import human_forms
+        from apps.policy.services import transition
+        from datetime import timedelta
+        f=setup();factory.run_until_wait(f['w'].pk);assign(f)
+        users=get_user_model().objects
+        appointed=users.create_user(username='appointed-project-manager')
+        reader=users.create_user(username='project-reader-not-appointed')
+        expired=users.create_user(username='expired-project-manager')
+        for user in [appointed,reader,expired]:
+            Grant.objects.bulk_create([Grant(user=user,case=f['c'],action=action) for action in ['case.read','engagement.read']])
+        now=timezone.now()
+        bundle={'roles':['PM','PMO Lead'],'valid_from':(now-timedelta(days=2)).isoformat(),'valid_until':(now-timedelta(days=1)).isoformat()}
+        value=[{'role':role,'user_id':f['a'].pk} for role in ['PM','Head of PMO','CEO','PMO Lead']]
+        value += [{'role':'PM','user_id':appointed.pk}]
+        value += [{'role':role,'user_id':expired.pk,'eligibility':bundle} for role in ['PM','PMO Lead']]
+        rule=draft_roles(f['a'],f['c'].pk,value,f['policy'].pk,now)
+        transition(f['a'],rule.pk,'validated');transition(f['a'],rule.pk,'active')
+        f['w'].refresh_from_db()
+        form=next(p['form'] for p in human_forms(f['a'],f['w']) if p['operation']=='assign')
+        self.assertEqual(set(form.fields['pm_id'].queryset.values_list('pk',flat=True)),{f['a'].pk,appointed.pk})
+        self.client.force_login(f['a'])
+        response=self.client.get(reverse('engagement',args=[f['c'].pk]))
+        self.assertContains(response,appointed.username)
+        self.assertNotContains(response,reader.username)
+        self.assertNotContains(response,expired.username)
+        Grant.objects.filter(case=f['c'],user=appointed,action='engagement.read').update(active=False)
+        args={'pm_id':appointed.pk,'role':'PMO Lead','evidence_id':f['e'].pk,'key':'WITHDRAWN-CANDIDATE'}
+        with self.assertRaises(PermissionDenied):d.human(f['a'],f['w'].pk,f['w'].revision,rev(f['c']),'assign',args)
+        response=self.client.post(reverse('engagement',args=[f['c'].pk]),dict(args,action='assign',revision=rev(f['c'])))
+        self.assertContains(response,'Select a valid choice')
+        self.assertFalse(engagement.Record.objects.filter(operation_key='WITHDRAWN-CANDIDATE').exists())
+
     def test_missing_human_assignment_policy_does_not_hide_ready_investigation_or_unknown_inputs(self):
         from apps.workflows.factory_views import presentation
         f=setup();self.client.force_login(f['a'])
@@ -92,6 +213,12 @@ class FactoryEngagementTests(TestCase):
         self.assertEqual(FactoryWork.objects.count(),2);self.assertEqual(Case.objects.count(),1)
         self.assertEqual(Audit.objects.filter(action=d.LINKED).count(),1)
         self.assertEqual(engagement.Identifier.objects.count(),1)
+
+        self.client.force_login(f['a'])
+        page=self.client.get(reverse('factory_detail',args=[f['w'].pk]))
+        self.assertContains(page,'factory-history-panel')
+        self.assertContains(page,'<summary>Processing settings</summary>')
+        self.assertNotContains(page,'<h2>Next permitted action</h2>')
 
     def test_route_c_preserves_native_product_paper_and_alias_history(self):
         f=setup(route='C');complete(f)
@@ -213,7 +340,7 @@ class FactoryEngagementTests(TestCase):
         self.assertEqual(engagement.Identifier.objects.count(),1)
         with self.assertRaises(ValidationError):d.human(f['a'],f['w'].pk,f['w'].revision,rev(f['c']),'register',{})
         self.assertContains(self.client.get(reverse('factory_intake')),'Log an engagement and connect planning')
-        self.assertContains(self.client.get(reverse('factory_create')+'?definition=engagement/v1&case='+str(f['c'].pk)),'Actual engagement source')
+        self.assertContains(self.client.get(reverse('factory_create')+'?definition=engagement/v1&case='+str(f['c'].pk)),'Engagement source document')
 
     def test_unauthorised_reader_and_native_decision_grants_are_not_inferred(self):
         f=setup();other,_=setup_case(username='other-engagement')

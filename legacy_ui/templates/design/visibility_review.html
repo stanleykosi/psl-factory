@@ -1,0 +1,24 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Review field visibility · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'workspace_settings' case.pk %}?area=payroll">← Payroll visibility</a><h1>Review field visibility</h1><p>Version {{ review.configuration.revision }} · {{ review.state|readable }}</p></div></header>
+<section class="card"><h2>Proposed fields</h2>
+<div class="table-wrap detail-table"><table><thead><tr><th scope="col">Field</th><th scope="col">Earlier version {{ review.base.revision }}</th><th scope="col">Proposed version {{ review.configuration.revision }}</th></tr></thead><tbody>
+{% for row in rows %}<tr><th scope="row">{{ row.label }}</th><td data-label="Earlier version">{% if row.current %}Included{% else %}Hidden{% endif %}</td><td data-label="Proposed version">{% if row.proposed %}Included{% else %}Hidden{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
+<h3>Reason for the change</h3><p>{{ review.reason }}</p>
+<p>Proposed by {% firstof review.configuration.created_by.get_full_name review.configuration.created_by.username %} on {{ review.configuration.created_at|date:'d M Y H:i T' }}.</p>
+</section>
+<section class="card"><h2>Disclosure terms</h2>
+<dl><dt>Source</dt><dd>{{ review.proposed.source_view }}</dd><dt>Periods</dt><dd>{{ review.proposed.from_period }} to {{ review.proposed.to_period }}</dd><dt>Permitted purposes</dt><dd>{{ review.proposed.purposes|join:', ' }}</dd><dt>Recipients</dt><dd>{% for recipient in recipients %}{% firstof recipient.get_full_name recipient.username %}{% if not forloop.last %}, {% endif %}{% endfor %}</dd><dt>Retained access</dt><dd>{{ review.proposed.retention_seconds }} seconds</dd><dt>Effective from</dt><dd>{{ effective_at|date:'d M Y H:i:s T' }}</dd></dl>
+</section>
+<section class="card">
+{% if can_validate or can_activate %}
+<form method="post">{% csrf_token %}<input type="hidden" name="revision" value="{{ case.revision }}"><input type="hidden" name="state" value="{{ review.state }}">
+{% if can_validate %}<button name="action" value="validate">Check proposed version</button>{% else %}<button name="action" value="activate">Activate reviewed version</button>{% endif %}
+</form>
+{% elif review.state == 'active' %}<p role="status">This version is active. The earlier version remains in the history.</p>
+{% elif not review.current %}<p role="status">A newer rule or proposal requires review. Open Payroll visibility for its current version.</p>
+{% else %}<p>View access only. The assigned rule reviewer can continue this review.</p>{% endif %}
+</section>
+{% endblock %}

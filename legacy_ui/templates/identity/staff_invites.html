@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Staff invitations · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>{% if lead %}Invite a teammate{% else %}Staff invitations{% endif %}</h1><p>{{ case.title }}{% if lead %} · {{ lead.team.name }}{% endif %}</p></div>{% if lead %}<a class="button secondary" href="{% url 'home' %}">My work</a>{% else %}<a class="button secondary" href="{% url 'staff_teams' case.pk %}">Manage teams</a>{% endif %}</header>
+{% if invitation_link %}<section class="card onboarding-card">
+  <h2>Invitation is ready</h2><p>Share this one-use link with the named recipient through an approved channel.</p>
+  <label for="staff-invitation-link">Invitation link</label><input id="staff-invitation-link" readonly value="{{ invitation_link }}">
+  <p><a class="button secondary" href="{{ invitation_link }}" rel="noopener noreferrer" target="_blank">Preview invitation</a></p>
+</section>{% endif %}
+<section class="card onboarding-card"><h2>{% if renewing %}Renew invitation{% else %}Invite a person{% endif %}</h2>
+  <form method="post">{% csrf_token %}{{ form.non_field_errors }}{{ form.revision }}{{ form.project_review }}{{ form.name.as_field_group }}{{ form.username.as_field_group }}{{ form.email.as_field_group }}
+    {% if lead %}
+      <p>The invitation is for a member of {{ lead.team.name }}. They can work on their own assignments in this workspace.</p>
+    {% else %}
+    <fieldset><legend>Role and work scope</legend>{{ form.base_role.as_field_group }}{{ form.role_mode.as_field_group }}{{ form.team.as_field_group }}
+      <p>Choose a lead for an existing team or a standalone role for CEO or CTO. Team leads invite their own members.</p>
+    </fieldset>
+    {% endif %}
+    <p>Project responsibilities and approval authority are assigned separately.</p><button class="button primary">Create invitation link</button></form>
+</section>
+<section class="card"><h2>Invitation history</h2><ul>{% for row in rows %}<li>
+  {{ row.name }} · {{ row.email }} · {% if row.role_scope.team_name %}{{ row.role_scope.team_name }} · {% endif %}{% if row.admission %}Accepted
+  {% elif row.superseded %}Replaced{% elif not row.role_scope %}Needs a role invitation{% elif row.expires_at <= as_of %}Expired{% else %}Expires {{ row.expires_at }}{% endif %}
+  {% if not row.admission and not row.superseded %}{% if lead %}<a href="{% url 'staff_team_renew' case.pk lead.team_id row.pk %}">Renew link</a>{% elif row.role_scope.mode != 'member' %}<a href="{% url 'staff_renew_invite' case.pk row.pk %}">Renew link</a>{% endif %}{% endif %}
+</li>{% empty %}<li>No staff invitation recorded.</li>{% endfor %}</ul></section>
+{% endblock %}

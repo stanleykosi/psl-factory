@@ -1,0 +1,19 @@
+<div class="detail-table">
+  <table>
+    <caption>{{ panel.page.paginator.count }} issue{{ panel.page.paginator.count|pluralize }}</caption>
+    <thead><tr><th scope="col">Issue</th><th scope="col">Description</th><th scope="col">Severity</th>
+      <th scope="col">Owner</th><th scope="col">State</th><th scope="col">Age</th></tr></thead>
+    <tbody>
+      {% for item in panel.items %}
+      <tr>
+        <th scope="row"><a href="{{ item.url }}">{{ item.title }}</a></th>
+        <td data-label="Description">{{ item.detail }}</td>
+        <td data-label="Severity">{{ item.severity|default:'Unknown' }}</td>
+        <td data-label="Owner"><div>{{ item.owner }}{% if item.coordinator %}<br><small>Coordinator {{ item.coordinator }}</small>{% endif %}</div></td>
+        <td data-label="State">{{ item.state }}</td>
+        <td data-label="Age">{% if item.closed %}—{% elif item.age_days is None %}Unknown{% else %}{{ item.age_days }} day{{ item.age_days|pluralize }}{% endif %}</td>
+      </tr>
+      {% empty %}<tr><td colspan="6">{% if q %}No records match this search.{% else %}No current records to show.{% endif %}</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>

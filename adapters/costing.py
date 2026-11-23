@@ -80,3 +80,15 @@ class LocalCostingReportAdapter:
     def read(self,actor,case_id,run_id):
         from apps.pmo.costing import report
         return report(actor,case_id,run_id)
+
+
+class LocalCostingProposalAdapter:
+    def read(self, actor, case_id, proposal_id, oracle_id):
+        from apps.pmo.costing_proposal_models import CostingProposal
+        from apps.pmo.costing_proposals import compare_examples
+
+        proposal = CostingProposal.objects.select_related('base__case').filter(
+            pk=proposal_id, base__case_id=case_id).first()
+        if proposal is None:
+            raise ValidationError('Select a calculator proposal in this project.')
+        return compare_examples(actor, proposal, oracle_id)

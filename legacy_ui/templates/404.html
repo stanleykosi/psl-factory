@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="card">
+  <h1>Page unavailable</h1>
+  <p>Return to My work to find your current projects and actions.</p>
+  <a class="button" href="{% url 'home' %}">Back to My work</a>
+  {% if access_reference %}<a class="button secondary" href="{% url 'work_access_request' access_reference %}">Ask for access</a>{% endif %}
+</section>
+{% endblock %}

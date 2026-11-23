@@ -1,9 +1,22 @@
 import hashlib
 import os
+from contextlib import contextmanager
 
 from django.core.exceptions import ValidationError
 
 LIMIT = 5 * 1024 * 1024
+
+
+@contextmanager
+def storage_client():
+    try:
+        from botocore.exceptions import BotoCoreError, ClientError
+    except ImportError as exc:
+        raise OSError('Private file storage client is unavailable.') from exc
+    try:
+        yield bucket()
+    except (BotoCoreError, ClientError) as exc:
+        raise OSError('Private file storage request failed.') from exc
 
 
 def bucket():
@@ -23,17 +36,22 @@ def bucket():
 
 
 def put(key, data):
-    client, name = bucket()
-    client.put_object(Bucket=name, Key=key, Body=data, ContentType='application/octet-stream')
+    with storage_client() as (client, name):
+        client.put_object(Bucket=name, Key=key, Body=data, ContentType='application/octet-stream')
+
+
+def discard_unbound(key):
+    with storage_client() as (client, name):
+        client.delete_object(Bucket=name, Key=key)
 
 
 def read(upload):
-    client, name = bucket()
-    stream = client.get_object(Bucket=name, Key=upload.key)['Body']
-    try:
-        data = stream.read(LIMIT + 1)
-    finally:
-        stream.close()
+    with storage_client() as (client, name):
+        stream = client.get_object(Bucket=name, Key=upload.key)['Body']
+        try:
+            data = stream.read(LIMIT + 1)
+        finally:
+            stream.close()
     if len(data) != upload.size or hashlib.sha256(data).hexdigest() != upload.sha256:
         raise ValidationError('File integrity check failed.')
     return data

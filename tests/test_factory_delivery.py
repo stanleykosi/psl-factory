@@ -14,7 +14,7 @@ from apps.pmo.models import DeliveryRecord,DeliverySourceVerification
 from apps.workflows import factory,factory_delivery
 from apps.workflows.models import FactoryWork,HumanTask
 from tests.test_delivery import DeliveryFixture
-from tests.helpers import rev
+from tests.helpers import rev, worker_test_environment
 
 
 def setup(configure=True):
@@ -30,6 +30,21 @@ def release_sources(f):
     f.plan();f.gates(delivery.UPSTREAM_GATES)
     delivery.record_release_request(f.actor,f.case.pk,f.d.pk,'SYNTHETIC-GLPI-1',f.e['requirements'].pk,'Recorded fixture deployment request reference',rev(f.case))
     f.gates(delivery.GLPI_GATES,'SYNTHETIC-GLPI-1')
+
+
+def return_fixture():
+    from apps.pmo.issues import log_issue
+    from tests.document_helpers import artifact
+
+    f = setup()
+    for kind in delivery.PLANNING:
+        f.source(kind, {'requires_ui': False, 'client_signoff_required': False} if kind == 'ui_applicability' else {})
+    artifact(f.actor, f.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+             {'rules': [{'role': 'PMO Lead', 'actions': ['return', 'reject']}]}, f.e['policy_decision'])
+    issue = log_issue(f.actor, f.case.pk, 'SYNTHETIC-RELEASE-BLOCKER', 'Sample login issue', 'Test defect',
+                      f.actor.pk, 'Repair the login retry behavior', f.e['requirements'].pk,
+                      'Synthetic issue evidence from the release review', rev(f.case), severity='Medium')
+    return f, issue, f.evidence('resolution', 'Synthetic QA observation of the corrected login retry behavior')
 
 
 class FactoryDeliveryTests(TestCase):
@@ -61,6 +76,48 @@ class FactoryDeliveryTests(TestCase):
         factory_delivery.decide(f.actor,f.work.pk,f.work.revision,'return',f.e['plan'].pk,'Source owner must correct the plan',rev(f.case),panel['decision_packet'])
         with self.assertRaises(ValidationError):delivery.approved_plan(f.d)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='release_ready').exists())
+        f.source('technical_design')
+        with self.assertRaisesMessage(ValidationError, 'Record and verify corrected Planning evidence'):
+            delivery.decide_planning(f.actor,f.case.pk,f.d.pk,'approve',f.e['plan'].pk,'Unchanged content',rev(f.case))
+        f.source('technical_design', evidence=f.evidence('requirements', 'Synthetic corrected retry design'))
+        approval = delivery.decide_planning(f.actor,f.case.pk,f.d.pk,'approve',f.e['plan'].pk,'Corrected current source',rev(f.case))
+        self.assertEqual(delivery.approved_plan(f.d), approval)
+
+    def test_returned_release_needs_the_exact_linked_issue_fix_before_fresh_decision(self):
+        from apps.pmo.issues import update_issue
+
+        f, state, fix = return_fixture()
+        self.client.force_login(f.actor)
+        url = reverse('factory_invoice_decision', args=[f.work.pk])
+        panel = factory_delivery.projection(f.actor, f.work)
+        self.assertRedirects(self.client.post(url, {'action': 'delivery_decision', 'verdict': 'return',
+            'revision': f.work.revision, 'case_revision': rev(f.case), 'packet': panel['decision_packet'],
+            'evidence': f.e['plan'].pk, 'note': 'Review this exact issue fix first', 'blocking_issue': state.issue_id,
+        }), url)
+        returned = delivery.latest(f.d, 'planning_decision')
+        api = f'/api/v1/work/{f.work.pk}/planning-exit'
+        held = self.client.get(api).json()
+        self.assertNotIn('approve', held['verdicts'])
+        self.assertEqual(returned.data['blocking_issue'], {'issue': state.issue_id, 'state': state.pk})
+        self.assertContains(self.client.get(url), 'Delivery returned')
+        self.assertNotContains(self.client.get(url), 'Approve exact Planning exit')
+        with self.assertRaisesMessage(ValidationError, 'Record the fix for the linked issue'):
+            delivery.decide_planning(f.actor, f.case.pk, f.d.pk, 'approve', f.e['plan'].pk, 'Still open', rev(f.case))
+        ack = update_issue(f.actor, f.case.pk, state.issue_id, state.pk, 'acknowledge', f.e['requirements'].pk,
+                           'Owner confirmed the exact issue', rev(f.case))
+        resolved = update_issue(f.actor, f.case.pk, state.issue_id, ack.pk, 'resolve', f.e['requirements'].pk,
+                                'Owner recorded the exact fix', rev(f.case), fix_id=fix.pk)
+        self.assertContains(self.client.get(url), 'Approve exact Planning exit')
+        current = self.client.get(api).json()
+        self.assertIn('approve', current['verdicts'])
+        recorded = self.client.post(api, {**{key: current[key] for key in ('expected_revision', 'case_revision', 'packet')},
+            'verdict': 'approve', 'evidence_id': f.e['plan'].pk, 'note': 'Reviewed current native fix'},
+            content_type='application/json')
+        self.assertEqual(recorded.status_code, 200, recorded.content)
+        approval = DeliveryRecord.objects.get(pk=recorded.json()['record_id'])
+        self.assertEqual(approval.parent_id, returned.pk)
+        self.assertEqual(approval.data['issue_remedy'], {'issue': state.issue_id, 'state': resolved.pk, 'fix': fix.pk})
+        self.assertEqual(delivery.approved_plan(f.d), approval)
 
     def test_delivery_reader_never_receives_private_source_bodies_or_agent_history(self):
         from django.contrib.auth import get_user_model
@@ -85,7 +142,12 @@ class FactoryDeliveryTests(TestCase):
         self.client.force_login(f.actor);self.assertContains(self.client.get(reverse('home')+'?queue=exceptions'),'Prior release evidence needs review')
         self.assertNotContains(self.client.get(reverse('home')+'?queue=verified'),'Delivery factory example')
         self.assertNotContains(self.client.get(reverse('factory_detail',args=[f.work.pk])),'The current source approvals and release readiness record match.')
-        factory_delivery.reassess(f.actor,f.work.pk,f.work.revision,'Review the actual successor source gate')
+        decision = reverse('factory_invoice_decision', args=[f.work.pk])
+        recovery = reverse('factory_invoice_recovery', args=[f.work.pk])
+        self.assertNotContains(self.client.get(decision),'Reassess changed delivery evidence')
+        self.assertContains(self.client.get(recovery),'Reassess changed delivery evidence')
+        self.assertRedirects(self.client.post(recovery, {'action':'reassess','revision':f.work.revision,
+                              'reason':'Review the actual successor source gate'}), recovery)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'waiting',f.work.finding)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='release_ready').count(),1)
         delivery.record_release_request(f.actor,f.case.pk,f.d.pk,'SYNTHETIC-GLPI-2',f.e['requirements'].pk,'Actual fixture successor request after upstream change',rev(f.case))
@@ -116,26 +178,60 @@ class FactoryDeliveryTests(TestCase):
         self.assertEqual(connection.vendor,'postgresql');f=setup();w=f.work
         factory.run_until_wait(w.pk);w.refresh_from_db()
         self.assertEqual(w.status,'waiting',w.finding);self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='release_ready').exists())
-        spent=w.budget_used;release_sources(f);factory.run_until_wait(w.pk);w.refresh_from_db()
+        spent=w.budget_used
+        self.client.force_login(f.actor)
+        api = f'/api/v1/work/{w.pk}/release-register'
+        held = self.client.get(api).json()
+        self.assertEqual(held['readiness_ids'], [])
+        self.assertTrue(any(item['status'] != 'current' for phase in held['phases'] for item in phase['checks']))
+        release_sources(f)
+        opened = self.client.get(api)
+        self.assertEqual(opened.status_code, 200, opened.content)
+        self.assertIsNone(opened.json()['release'])
+        self.assertEqual(len(opened.json()['phases']), 4)
+        self.assertTrue(opened.json()['current_scope'])
+        self.assertTrue(all(phase['checks'] for phase in opened.json()['phases']))
+        versions = {key: opened.json()[key] for key in ('expected_revision', 'case_revision')}
+        prepared = self.client.post(api, {'action': 'prepare_readiness', **versions}, content_type='application/json')
+        self.assertEqual(prepared.status_code, 200, prepared.content)
+        self.assertEqual(self.client.post(api, {'action': 'prepare_readiness', **versions}, content_type='application/json').status_code, 409)
+        factory.run_until_wait(w.pk);w.refresh_from_db()
         self.assertEqual(w.status,'verified',w.finding);self.assertGreater(w.budget_used,spent);self.assertEqual(w.budget_limit,20000)
         ready=factory_delivery.prepared(w);self.assertIsNotNone(ready)
         self.assertEqual(ready.snapshot,delivery.readiness_inputs(f.d))
+        current = self.client.get(api).json()
+        self.assertIn(ready.pk, current['readiness_ids'])
+        self.assertIsNone(current['release'])
         proof=factory_delivery.verify(w);self.assertFalse(proof['deployment_authorized']);self.assertFalse(proof['financial_release_granted']);self.assertFalse(proof['external_authenticity_verified'])
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='release_ready').count(),1)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='release_outcome').exists())
         self.assertFalse(HumanTask.objects.filter(case=f.case,kind='factory_review').exists())
+        observed = self.client.post(api, {'action': 'observe_release', 'expected_revision': w.revision,
+            'case_revision': rev(f.case), 'readiness_id': ready.pk, 'released_at': timezone.now().isoformat(),
+            'reference': 'Synthetic actual release', 'evidence_id': f.e['requirements'].pk, 'note': 'Observed sample event',
+            'environment': 'synthetic acceptance', 'private_log_id': None}, content_type='application/json')
+        self.assertEqual(observed.status_code, 200, observed.content)
+        self.assertEqual(delivery.valid_release(f.d).pk, observed.json()['record_id'])
+        self.assertEqual(self.client.get(api).json()['release']['reference'], 'Synthetic actual release')
 
     def test_native_planning_decision_is_available_in_primary_ui_without_finance(self):
         f=setup();w=f.work
         for kind in delivery.PLANNING:f.source(kind,{'requires_ui':False,'client_signoff_required':False} if kind=='ui_applicability' else {})
         Grant.objects.filter(case=f.case,user=f.actor,action='finance.read').update(active=False)
         factory.run_until_wait(w.pk);w.refresh_from_db();self.assertTrue(factory_delivery.projection(f.actor,w)['can_decide'])
-        self.client.force_login(f.actor);url=reverse('factory_detail',args=[w.pk])+'?queue=decisions&q=Delivery'
+        self.client.force_login(f.actor);url=reverse('factory_invoice_decision',args=[w.pk])+'?queue=decisions&q=Delivery'
         self.assertContains(self.client.get(url),'Planning exit decision')
-        data={'action':'delivery_decision','revision':w.revision,'case_revision':rev(f.case),'packet':factory_delivery.projection(f.actor,w)['decision_packet'],'verdict':'approve','evidence':f.e['plan'].pk,'note':'Synthetic PMO Lead exact Planning exit'}
-        self.assertRedirects(self.client.post(url,data),url)
+        self.assertNotContains(self.client.get(reverse('factory_invoice_recovery',args=[w.pk])),'Approve exact Planning exit')
+        api = f'/api/v1/work/{w.pk}/planning-exit'
+        panel = self.client.get(api).json()
+        self.assertIn('approve', panel['verdicts'])
+        data = {'expected_revision': panel['expected_revision'], 'case_revision': panel['case_revision'],
+                'packet': panel['packet'], 'verdict': 'approve', 'evidence_id': f.e['plan'].pk,
+                'note': 'Synthetic PMO Lead exact Planning exit'}
+        result = self.client.post(api, data, content_type='application/json')
+        self.assertEqual(result.status_code, 200, result.content)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='planning_decision').count(),1)
-        self.assertContains(self.client.post(url,data),'Stale revision; refresh before retrying')
+        self.assertEqual(self.client.post(api, data, content_type='application/json').status_code, 409)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='planning_decision').count(),1)
         factory.run_until_wait(w.pk);w.refresh_from_db();self.assertEqual(w.status,'waiting',w.finding)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='kickoff').exists())
@@ -155,6 +251,10 @@ class FactoryDeliveryTests(TestCase):
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'owner_needed',f.work.finding)
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='planning_decision').exists())
+        self.client.force_login(f.actor)
+        api = f'/api/v1/work/{f.work.pk}'
+        self.assertEqual(self.client.get(api).json()['state'], 'owner_needed')
+        self.assertNotIn('approve', self.client.get(api + '/planning-exit').json()['verdicts'])
         self.assertEqual(FactoryWork.objects.filter(case=f.case).count(),1)
 
     def test_idempotent_intake_forged_source_and_false_completion_guards(self):
@@ -188,9 +288,9 @@ from django.test import TransactionTestCase
 
 class FactoryDeliveryConcurrencyTests(TransactionTestCase):
     def test_real_process_interruption_after_native_preparation_rolls_back_then_recovers_once(self):
-        import os,sys,subprocess
+        import sys,subprocess
         from datetime import timedelta
-        f=setup();release_sources(f);env=dict(os.environ,PGDATABASE=connection.settings_dict['NAME'])
+        f=setup();release_sources(f);env=worker_test_environment(connection)
         result=subprocess.run([sys.executable,'-m','tests.factory_worker_scenario',str(f.work.pk),'interrupt_after_action'],env=env,capture_output=True,timeout=60)
         self.assertEqual(result.returncode,38,result.stderr.decode())
         f.work.refresh_from_db();spent=f.work.budget_used;self.assertGreaterEqual(spent,200)

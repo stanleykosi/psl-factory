@@ -1,0 +1,39 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Payments and follow-up · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Payments and follow-up</h1>
+  <p>Recorded invoice balances as of {{ as_of|date:'d M Y' }}</p></div></header>
+<section class="card" aria-label="Payment coverage">
+  <dl class="decision-facts"><dt>Bank data through</dt><dd>Unknown</dd>
+    <dt>Total received this month</dt><dd>Unknown</dd></dl>
+  <p>Balances use confirmed invoices and verified payments applied in the workspaces you can access.</p>
+  {% if totals %}<h2>Outstanding on this page</h2><ul>{% for group in totals %}
+    <li>{{ group.currency }} · {{ group.basis|readable }} · {% if group.owed is None %}Outstanding unknown{% else %}{{ group.owed|decimal_display }} outstanding{% endif %}
+      · {% if group.overdue is None %}Overdue amount unknown{% else %}{{ group.overdue|decimal_display }} overdue{% endif %}</li>
+  {% endfor %}</ul>{% endif %}
+</section>
+<form class="actions" method="get" aria-label="Find payments">
+  <div><label for="payments-search">Search invoices and projects</label><input id="payments-search" type="search" name="q" value="{{ search }}" maxlength="100"></div>
+  <div><label for="payments-state">State</label><select id="payments-state" name="state">
+    {% for value, label in states %}<option value="{{ value }}"{% if state == value %} selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select></div>
+  <button type="submit">Search</button><a href="{% url 'design_payments' %}">Clear filters</a>
+</form>
+<section class="card"><div class="table-wrap detail-table"><table>
+  <caption>Invoice payments and follow-up</caption>
+  <thead><tr><th scope="col">Invoice and project</th><th scope="col">Invoiced</th><th scope="col">Applied receipts</th>
+    <th scope="col">Still owed</th><th scope="col">State</th><th scope="col">Overdue by</th><th scope="col">Next action</th></tr></thead>
+  <tbody>{% for row in rows %}<tr>
+    <th scope="row"><a href="{{ row.records }}">{{ row.reference }}</a><p>{{ row.workspace }} · {{ row.customer }} · {{ row.contract }}</p></th>
+    <td data-label="Invoiced">{% if row.face is None %}Unknown{% else %}{{ row.currency }} {{ row.face|decimal_display }}{% endif %}</td>
+    <td data-label="Applied receipts">{% if row.paid is None %}Unknown{% else %}{{ row.currency }} {{ row.paid|decimal_display }}{% endif %}</td>
+    <td data-label="Still owed">{% if row.owed is None %}Unknown{% else %}{{ row.currency }} {{ row.owed|decimal_display }}{% endif %}</td>
+    <td data-label="State"><div>{{ row.state }}{% if row.reason %}<p>{{ row.reason }}</p>{% endif %}</div></td>
+    <td data-label="Overdue by">{% if row.age_days is None %}Unknown{% elif row.age_days %}{{ row.age_days }} day{{ row.age_days|pluralize }}{% else %}—{% endif %}</td>
+    <td data-label="Next action"><div>{% if row.reminder %}<p><a href="{{ row.reminder }}">{% if row.has_draft %}Open reminder draft{% else %}Payment follow-up{% endif %}</a></p>{% endif %}
+      {% if row.record_payment %}<p><a href="{{ row.record_payment }}">Record a payment received</a></p>{% elif row.review_payment %}<p><a href="{{ row.review_payment }}">Review a recorded payment</a></p>{% endif %}</div></td>
+  </tr>{% empty %}<tr><td colspan="7">No available invoice records match this search.</td></tr>{% endfor %}</tbody>
+</table></div>
+{% if limited %}<p role="status">This view reached its reading limit. Narrow the search to check the remaining records.</p>{% endif %}
+{% if next_url %}<a href="{{ next_url }}">More invoice records</a>{% endif %}</section>
+{% endblock %}

@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.test import TestCase
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import connection,transaction,DatabaseError
+from django.utils import timezone
 from apps.pmo import costing as d
 from apps.pmo.costing_models import CostingRule,CostingOracle,CostingReview,CostingRun,CostingBinding,CostingAF13Binding
 from apps.pmo.services import prepare_baseline,decide,sign_baseline
@@ -15,6 +16,37 @@ from .costing_helpers import fixture,evidence,run,review,policy,package
 from .helpers import rev
 
 class CostingTests(TestCase):
+    def test_api_rule_oracle_reviews_bind_supported_calculation_and_preserve_source_scope(self):
+        f = self.f
+        a, c, rule, oracle = (f[k] for k in ('actor', 'case', 'rule', 'oracle'))
+        transition(a, f['policy'].pk, 'revoked')
+        self.client.force_login(a)
+        url = f'/api/v1/projects/{c.pk}/costing'
+
+        def submit(action, **fields):
+            response = self.client.post(url, {'action': action, 'revision': rev(c), **fields}, content_type='application/json')
+            self.assertEqual(response.status_code, 201, response.content)
+            return response.json()['id']
+
+        controls = self.client.get(url).json()
+        self.assertIn('draft_calculator', controls['actions'])
+        self.assertEqual(controls['rules'][0]['id'], rule.pk)
+        self.assertEqual(self.client.get(f'{url}/sources/rule/{rule.pk}').json()['sha256'], rule.sha256)
+        self.assertEqual(self.client.get(f'{url}/sources/oracle/{oracle.pk}').json()['payload'], oracle.payload)
+        settings = submit('draft_calculator', value=f['policy_value'], evidence_id=f['sources']['policy_decision'].pk,
+                          effective_from=(timezone.now() - timedelta(seconds=1)).isoformat())
+        transition(a, settings, 'validated'); transition(a, settings, 'active')
+        run_id = submit('calculate', plan_id=f['sources']['plan'].pk, engineering_id=f['sources']['engineering_estimate'].pk,
+                        security_id=f['sources']['security_estimate'].pk, inputs_id=f['inputs'].pk, operation_key='api-calculation')
+        submit('bind', run_id=run_id)
+        result = self.client.get(f'{url}/calculations/{run_id}').json()
+        self.assertTrue(result['current_usable'])
+        self.assertTrue(result['outputs'])
+        self.assertFalse(result['cost_approved'])
+        Grant.objects.filter(case=c, user=a, action='costing.source.read').update(active=False)
+        self.assertEqual(self.client.get(f'{url}/sources/oracle/{oracle.pk}').status_code, 403)
+        self.assertIsNone(self.client.get(f'{url}/calculations/{run_id}').json()['outputs'])
+
     @classmethod
     def setUpTestData(cls):cls.f=fixture()
     def test_connected_calculation_cost_approvals_signature_and_af13(self):
@@ -82,8 +114,8 @@ class CostingTests(TestCase):
     def test_withdrawal_does_not_erase_proven_historical_calculation(self):
         f=self.f;r=run(f);review(f,f['oracle'],verdict='withdraw',key='withdraw-independent');self.assertEqual(CostingRun.objects.count(),1);self.assertFalse(d.report(f['actor'],f['case'].pk,r.pk)['current_usable'])
     def test_scoped_ui_report_and_private_source_guards(self):
-        f=self.f;r=run(f);self.client.force_login(f['actor']);base=f"/cases/{f['case'].pk}/costing/";self.assertContains(self.client.get(base),'Commercial costing rules and independent reference examples');self.assertEqual(self.client.get(base+f'source/rule/{f["rule"].pk}/').status_code,200)
-        Grant.objects.filter(case=f['case'],user=f['actor']).exclude(action__in=['case.read','costing.read']).update(active=False);self.assertContains(self.client.get(base),'Read-only access.');self.assertEqual(self.client.get(base+f'source/rule/{f["rule"].pk}/').status_code,403);value=self.client.get(base+f'report/{r.pk}/').json();self.assertNotIn('result',value);self.assertNotIn('inputs',value)
+        f=self.f;r=run(f);self.client.force_login(f['actor']);base=f"/cases/{f['case'].pk}/costing/";self.assertContains(self.client.get(base),'Costing rules and worked examples');self.assertEqual(self.client.get(base+f'source/rule/{f["rule"].pk}/').status_code,200)
+        Grant.objects.filter(case=f['case'],user=f['actor']).exclude(action__in=['case.read','costing.read']).update(active=False);self.assertContains(self.client.get(base),'Your access allows reading these records.');self.assertEqual(self.client.get(base+f'source/rule/{f["rule"].pk}/').status_code,403);value=self.client.get(base+f'report/{r.pk}/').json();self.assertNotIn('result',value);self.assertNotIn('inputs',value)
     def test_agents_and_generic_readers_cannot_repackage_private_costing(self):
         f=self.f;run(f);agent=investigate(f['actor'],f['case'].pk);self.assertFalse(agent.result['source_body_read']);self.assertFalse(agent.result['expected_outputs_generated'])
         from apps.agents.services import extract_evidence
@@ -129,7 +161,7 @@ class CostingTests(TestCase):
     def test_server_rendered_calculation_post_calls_real_domain(self):
         f=self.f;s=f['sources'];self.client.force_login(f['actor']);url=f"/cases/{f['case'].pk}/costing/"
         response=self.client.post(url,{'action':'calculate','revision':rev(f['case']),'plan':s['plan'].pk,'engineering':s['engineering_estimate'].pk,'security':s['security_estimate'].pk,'inputs':f['inputs'].pk,'operation_key':'ui-calculation'})
-        self.assertEqual(response.status_code,302);self.assertEqual(CostingRun.objects.get().operation_key,'ui-calculation');self.assertContains(self.client.get(url),'Evidence confirmation history')
+        self.assertEqual(response.status_code,302);self.assertEqual(CostingRun.objects.get().operation_key,'ui-calculation');self.assertContains(self.client.get(url),'Source reviews')
 
     def test_rule_confirmation_does_not_wait_for_oracle_owner_configuration(self):
         f=self.f;v=copy.deepcopy(f['rule'].payload);v.update(oracle_owner_id=None,oracle_role=None);r=d.capture_rule(f['actor'],f['case'].pk,'pending-oracle-owner',evidence(f,'p14_rule',v).pk)

@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from django.test import TestCase,TransactionTestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 from django.db import connection,transaction,DatabaseError
@@ -16,7 +17,7 @@ from apps.pmo.delivery_documents import draft_delivery_document
 from apps.workflows import factory,factory_hypercare
 from apps.workflows.models import FactoryWork,HumanTask
 from tests.test_delivery import DeliveryFixture
-from tests.helpers import rev
+from tests.helpers import rev,worker_test_environment
 
 
 def setup(configure=True):
@@ -29,6 +30,127 @@ def setup(configure=True):
 
 
 class FactoryHypercareTests(TestCase):
+    def test_snapshot_reuses_go_live_proof_and_rechecks_successors_and_authority(self):
+        self.assertEqual(connection.vendor, 'postgresql')
+        sample = setup()
+        sample.accepted()
+        sample.criteria()
+        sample.observations()
+        work = sample.work
+        work.refresh_from_db()
+        _, profile = factory.profile(work)
+
+        with CaptureQueriesContext(connection) as queries:
+            first = factory_hypercare.snapshot(work, profile)[0]['checks']
+        proof_reads = [query for query in queries.captured_queries if 'SELECT psl_gl_attestation(' in query['sql']]
+        self.assertEqual(len(proof_reads), 1)
+        self.assertEqual(first['acceptance']['status'], 'ready')
+        self.assertIs(first['stability']['inputs']['qualified'], True)
+
+        sample.observations(errors=2)
+        work.refresh_from_db()
+        successor = factory_hypercare.snapshot(work, profile)[0]['checks']
+        self.assertEqual(successor['acceptance'], first['acceptance'])
+        self.assertNotEqual(successor['stability']['inputs']['sources']['Engineering'],
+                            first['stability']['inputs']['sources']['Engineering'])
+        self.assertIs(successor['stability']['inputs']['qualified'], False)
+
+        class RevokeAfterObservation:
+            def choose(self, context):
+                Grant.objects.filter(case=sample.case, user=sample.actor, action='delivery.manage').update(active=False)
+                return {'activity': context['eligible'][0], 'citations': context['evidence_ids']}
+
+        self.assertFalse(factory.run_once(work.pk, provider=RevokeAfterObservation()))
+        work.refresh_from_db()
+        self.assertEqual(work.status, 'blocked')
+        self.assertIn('STALE_VERSION', work.finding)
+        revoked = factory_hypercare.snapshot(work, profile)[0]['checks']
+        self.assertEqual(revoked['acceptance']['status'], 'held')
+        self.assertEqual(revoked['stability']['status'], 'held')
+        self.assertFalse(DeliveryRecord.objects.filter(dossier=sample.d, kind='hypercare').exists())
+
+    def test_release_stability_progress_follows_an_actual_claim_and_stops_at_observed_result(self):
+        from apps.workflows import factory_progress
+        f = setup()
+        f.accepted()
+        f.criteria()
+        f.observations()
+        f.work.refresh_from_db()
+        enrolled = factory_progress.set_progress(f.actor, f.work.pk, f.work.revision, True)
+        self.assertEqual(factory_progress.claim().pk, enrolled.pk)
+        self.client.force_login(f.actor)
+        url = reverse('factory_detail', args=[f.work.pk])
+        self.assertContains(self.client.get(url), 'The factory is checking release stability against the recorded observations.')
+        api = f'/api/v1/work/{f.work.pk}'
+        in_progress = self.client.get(api).json()
+        self.assertEqual(in_progress['progress']['status'], 'running')
+        self.assertIsNone(self.client.get(api + '/stability').json()['assessment_id'])
+        enrolled.available_at = timezone.now() - timedelta(seconds=1)
+        enrolled.save(update_fields=['available_at'])
+        self.assertContains(self.client.get(url), 'The background step is waiting to be checked again.')
+        factory.run_until_wait(f.work.pk)
+        f.work.refresh_from_db()
+        self.assertEqual(f.work.status, 'verified', f.work.finding)
+        self.assertNotContains(self.client.get(url), 'The factory is checking release stability against the recorded observations.')
+        self.assertTrue(self.client.get(api + '/stability').json()['verified'])
+
+    def test_typed_observation_uses_current_rule_unknown_metrics_and_source_permissions(self):
+        f=setup();f.accepted();f.criteria();f.observations(errors=2)
+        factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
+        self.client.force_login(f.actor)
+        url=reverse('factory_detail',args=[f.work.pk])
+        page = self.client.get(url)
+        self.assertContains(page,'Engineering stability observation')
+        self.assertTrue(page.context['row']['needs_me'])
+        waiting = self.client.get(reverse('home'), {'queue': 'waiting'})
+        self.assertNotIn(f.work.pk, [row['work'].pk for row in waiting.context['rows']])
+        from apps.pmo.models import DeliverySource
+        from apps.workflows.stability_forms import observation_forms
+        form=observation_forms(f.actor,f.work)[0]
+        values={'action':'stability_source','revision':f.work.revision,'case_revision':rev(f.case),
+            'configuration':form.configuration_id,'owner':'Engineering',
+            'observed_at':timezone.now().isoformat(),'confirmed':'yes','reference':'SUPPLIED-METRICS',
+            'evidence':f.e['requirements'].pk,'verify_sample':'on','metric_0':''}
+        self.assertRedirects(self.client.post(url,values),url)
+        source=DeliverySource.objects.filter(dossier=f.d,kind='hypercare_engineering').latest('pk')
+        self.assertIsNone(source.payload['metrics']['errors']['value'])
+        factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
+        self.assertNotEqual(f.work.status,'verified')
+        values.update(revision=f.work.revision,case_revision=rev(f.case),configuration=0,metric_0='0')
+        count=DeliverySource.objects.filter(dossier=f.d).count()
+        self.assertContains(self.client.post(url,values),'stability rule or source owner changed')
+        self.assertEqual(DeliverySource.objects.filter(dossier=f.d).count(),count)
+        values['configuration']=form.configuration_id
+        api = f'/api/v1/work/{f.work.pk}/stability'
+        before = self.client.get(api)
+        self.assertEqual(before.status_code, 200, before.content)
+        panel = before.json()
+        self.assertIsNone(panel['qualified'])
+        self.assertIn('Engineering', panel['observation_owners'])
+        draft = self.client.post(api + '/criteria', {'case_revision': panel['case_revision'], 'criteria': panel['criteria'],
+            'evidence_id': f.e['policy_decision'].pk, 'effective_from': timezone.now().isoformat()},
+            content_type='application/json')
+        self.assertEqual(draft.status_code, 201, draft.content)
+        self.assertNotEqual(draft.json()['configuration_id'], panel['configuration_id'])
+        panel = self.client.get(api).json()
+        observation = {**{key: panel[key] for key in ('expected_revision', 'case_revision', 'configuration_id')},
+            'owner': 'Engineering', 'observed_at': timezone.now().isoformat(), 'confirmed': True,
+            'reference': 'Corrected synthetic metrics', 'evidence_id': f.e['requirements'].pk,
+            'metrics': {'errors': 0}, 'verify_sample': True}
+        saved = self.client.post(api, observation, content_type='application/json')
+        self.assertEqual(saved.status_code, 201, saved.content)
+        self.assertEqual(self.client.post(api, observation, content_type='application/json').status_code, 409)
+        factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
+        self.assertEqual(f.work.status,'verified',f.work.finding)
+        self.assertTrue(self.client.get(api).json()['verified'])
+        values.update(revision=f.work.revision,case_revision=rev(f.case),metric_0='2')
+        self.assertRedirects(self.client.post(url,values),url)
+        f.work.refresh_from_db()
+        self.assertTrue(factory_hypercare.projection(f.actor,f.work)['readiness_changed'])
+        Grant.objects.filter(case=f.case,user=f.actor,action='delivery.source').update(active=False)
+        values.update(revision=f.work.revision,case_revision=rev(f.case))
+        self.assertEqual(self.client.post(url,values).status_code,403)
+
     def test_technical_policy_refuses_business_authority_invalid_allowance_and_private_source_requirements(self):
         from apps.policy.factory_validators import validate_reference,HYPERCARE_COMPONENT,HYPERCARE_SCHEMA
         from types import SimpleNamespace
@@ -147,17 +269,77 @@ class FactoryHypercareTests(TestCase):
         self.assertContains(self.client.get(reverse('factory_create')+'?definition=delivery-hypercare/v1&case='+str(f.case.pk)),'Start release follow-up')
         self.assertContains(self.client.get(reverse('factory_configuration',args=[f.case.pk])+'?definition=delivery-hypercare/v1'),'Release observations and hypercare')
 
+    def test_api_records_observed_release_and_acceptance_before_stability_work_runs(self):
+        from tests.test_delivery import CRITERIA
+
+        f = setup()
+        readiness = f.ready()
+        self.client.force_login(f.actor)
+        root = f'/api/v1/work/{f.work.pk}/stability'
+        url = root + '/events'
+        options = self.client.get(url)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertIn(readiness.pk, options.json()['readiness_ids'])
+
+        def post(action, **fields):
+            f.work.refresh_from_db()
+            return self.client.post(url, {'action': action, 'expected_revision': f.work.revision,
+                'case_revision': rev(f.case), **fields}, content_type='application/json')
+
+        observed = post('release', readiness_id=readiness.pk, released_at=timezone.now().isoformat(),
+                        reference='SAMPLE API actual release', evidence_id=f.e['completion'].pk,
+                        note='Independent observation of the actual environment.', environment=None, private_log_id=None)
+        self.assertEqual(observed.status_code, 201, observed.content)
+        inputs = {key: f.evidence(kind).pk for key, kind in [('checklist', 'deployment_checklist'),
+                  ('incident_reporting', 'incident_reporting'), ('rollback', 'rollback_plan')]}
+        version = draft_delivery_document(f.actor, f.case.pk, f.d.pk, 'go_live', f.t.pk, inputs, rev(f.case))
+        receipt = f.publish(version)
+        pm, client = f.evidence('signature', 'Observed PM signature'), f.evidence('signature', 'Observed client signature')
+        options = self.client.get(url)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertEqual(options.json()['receipts'][0]['version_id'], version.pk)
+        payload = f.attestation(receipt, pm, client)
+        signatures = {role: {key: value for key, value in fact.items() if key not in {'evidence', 'purpose'}}
+                      for role, fact in payload['signatures'].items()}
+        accepted = post('acceptance', packet=options.json()['acceptance_packet'], receipt_id=receipt.pk,
+                        pm_signature_id=pm.pk, client_signature_id=client.pk, signers=signatures,
+                        note='Exact PM and client signatures were recorded.')
+        self.assertEqual(accepted.status_code, 201, accepted.content)
+        self.assertEqual(closure.accepted_go_live(f.d).pk, accepted.json()['record_id'])
+        draft = self.client.post(root + '/criteria', {'criteria': CRITERIA, 'case_revision': rev(f.case),
+            'evidence_id': f.e['policy_decision'].pk, 'effective_from': timezone.now().isoformat()}, content_type='application/json')
+        self.assertEqual(draft.status_code, 201, draft.content)
+        config = draft.json()['configuration_id']
+        transition(f.actor, config, 'validated')
+        transition(f.actor, config, 'active')
+        f.observations()
+        factory.run_until_wait(f.work.pk)
+        f.work.refresh_from_db()
+        self.assertEqual(f.work.status, 'verified', f.work.finding)
+        self.assertTrue(factory_hypercare.assessed(f.work).snapshot['qualified'])
+        assessment = self.client.get(root).json()
+        self.assertTrue(assessment['verified'])
+        self.assertTrue(assessment['qualified'])
+        self.assertEqual(assessment['assessment_id'], factory_hypercare.assessed(f.work).pk)
+
     def test_unknown_and_negative_observations_are_recorded_without_false_qualification(self):
         f=setup();f.accepted();f.criteria();f.observations(errors=None,confirmed=None)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();row=factory_hypercare.assessed(f.work)
         self.assertEqual(f.work.status,'waiting',f.work.finding);self.assertIsNone(row.snapshot['qualified']);spent=f.work.budget_used
+        self.client.force_login(f.actor)
+        url = f'/api/v1/work/{f.work.pk}/stability'
+        self.assertIsNone(self.client.get(url).json()['qualified'])
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=f.work.pk).update(status='verified')
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.budget_used,spent)
         f.observations(errors=2,availability=99,confirmed=True);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'waiting',f.work.finding);self.assertIs(factory_hypercare.assessed(f.work).snapshot['qualified'],False)
+        unmet = self.client.get(url).json()
+        self.assertIs(unmet['qualified'], False)
+        self.assertFalse(unmet['verified'])
         f.observations();factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'verified',f.work.finding);self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='hypercare').count(),3)
         self.assertEqual(f.work.budget_limit,20000)
+        self.assertTrue(self.client.get(url).json()['qualified'])
 
     def test_current_go_live_receipt_and_distinct_signature_evidence_are_human_controlled(self):
         f=setup();f.release()
@@ -182,10 +364,16 @@ class FactoryHypercareTests(TestCase):
         f=setup();f.accepted();f.observations();factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'configuration_needed',f.work.finding);self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='hypercare').exists())
         self.assertTrue(DeliveryRecord.objects.filter(dossier=f.d,kind='release_outcome').exists())
+        self.client.force_login(f.actor)
+        url = f'/api/v1/work/{f.work.pk}/stability'
+        held = self.client.get(url).json()
+        self.assertIsNone(held['configuration_id'])
+        self.assertFalse(held['verified'])
         f.criteria();self.client.force_login(f.actor);page=self.client.get(reverse('factory_detail',args=[f.work.pk]))
         self.assertContains(page,'Prerequisites need recheck');self.assertNotContains(page,'A current stability period, confirmation and metric rule is required.')
         factory.manage(f.actor,f.work.pk,f.work.revision,'resume');factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
         self.assertEqual(f.work.status,'verified',f.work.finding)
+        self.assertTrue(self.client.get(url).json()['verified'])
 
     def test_new_form_keeps_one_candidate_allowance_and_unregistered_approval_is_rejected(self):
         f=setup();same=factory_hypercare.start(f.actor,f.case.pk,'NEW-FORM',f.d.pk,'Same hypercare intent',rev(f.case));self.assertEqual(same.pk,f.work.pk)
@@ -217,8 +405,8 @@ class FactoryHypercareConcurrencyTests(TransactionTestCase):
         self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='hypercare').exists())
 
     def test_real_process_exit_rolls_back_assessment_and_recovers_without_resetting_allowance(self):
-        import os,sys,subprocess
-        f=setup();f.accepted();f.criteria();f.observations();env=dict(os.environ,PGDATABASE=connection.settings_dict['NAME'])
+        import sys,subprocess
+        f=setup();f.accepted();f.criteria();f.observations();env=worker_test_environment(connection)
         result=subprocess.run([sys.executable,'-m','tests.factory_worker_scenario',str(f.work.pk),'interrupt_after_action'],env=env,capture_output=True,timeout=90)
         self.assertEqual(result.returncode,38,result.stderr.decode());f.work.refresh_from_db();spent=f.work.budget_used
         self.assertGreater(spent,0);self.assertFalse(DeliveryRecord.objects.filter(dossier=f.d,kind='hypercare').exists())

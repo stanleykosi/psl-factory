@@ -1,0 +1,13 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page-heading"><h1>Finance document review</h1></header>
+{% if case %}<section class="card"><h2>{{ case.title }}</h2>
+<form method="post" enctype="multipart/form-data">{% csrf_token %}
+<label>Original Finance file <input type="file" name="file" accept=".pdf,.xlsx,.csv,.docx,.txt" required></label>
+<p>Choose a PDF, including a scan, or a spreadsheet, Word or text file. Chidi uses OpenRouter to read the file and prepare the figures for Finance to check.</p>
+<button>Upload for reading</button></form></section>
+{% else %}<section class="card"><h2>Choose a Finance workspace</h2>
+{% for item in cases %}<p><a href="{% url 'finance_document_inbox' item.pk %}">{{ item.title }}</a></p>{% empty %}<p>Your account has no Finance workspaces.</p>{% endfor %}</section>{% endif %}
+<section class="card"><h2>Files</h2>{% for doc in page %}<p><a href="{% url 'finance_document_review' doc.case_id doc.pk %}">{{ doc.name }}</a> · {{ doc.status_label }}</p>{% empty %}<p>No Finance files have been submitted here.</p>{% endfor %}
+{% if page.has_previous %}<a href="?page={{ page.previous_page_number }}">Previous</a>{% endif %}
+{% if page.has_next %}<a href="?page={{ page.next_page_number }}">Next</a>{% endif %}</section>
+{% endblock %}

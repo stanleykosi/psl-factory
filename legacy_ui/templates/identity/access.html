@@ -1,0 +1,47 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Workspace access · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>People and access</h1><p class="lede">{{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'case' case.pk %}">Back to workspace</a></header>
+<section class="card table-wrap"><h2>Work access requests</h2>
+  {% if work_requests %}<table><thead><tr><th>Account</th><th>Work reference</th><th>Requested</th></tr></thead>
+  <tbody>{% for record in work_requests %}<tr><td>{{ record.requester__username }}</td><td>{{ record.work_reference }}</td><td>{{ record.created_at }}</td></tr>{% endfor %}</tbody></table>
+  {% else %}<p>No requests for this workspace.</p>{% endif %}
+  {% if work_requests.has_other_pages %}<nav class="factory-queues" aria-label="Work access request pages">
+    {% if work_requests.has_previous %}<a href="?person={{ search|urlencode }}&amp;page={{ people.number }}&amp;request_page={{ work_requests.previous_page_number }}">Previous requests</a>{% endif %}
+    <span>Page {{ work_requests.number }} of {{ work_requests.paginator.num_pages }}</span>
+    {% if work_requests.has_next %}<a href="?person={{ search|urlencode }}&amp;page={{ people.number }}&amp;request_page={{ work_requests.next_page_number }}">Next requests</a>{% endif %}
+  </nav>{% endif %}
+</section>
+<section class="card table-wrap">
+  <h2>Staff accounts in this workspace</h2>
+  {% if staff_access.allow_invite %}<p><a class="button secondary" href="{% url 'staff_invites' case.pk %}">Invite staff</a></p>{% endif %}
+  <form method="get"><label for="staff-search">Name or email</label> <input id="staff-search" name="person" value="{{ search }}" maxlength="100"> <button class="button secondary" type="submit">Search</button></form>
+  <table><thead><tr><th>Person</th><th>Account</th><th>Workspace access</th></tr></thead>
+    <tbody>{% for person in people %}<tr>
+      <td>{% firstof person.user__first_name person.user__username %}{% if person.user__first_name and person.user__last_name %} {{ person.user__last_name }}{% endif %}{% if person.user__email %}<br>{{ person.user__email }}{% endif %}</td>
+      <td>{{ person.user__is_active|yesno:'Active,Inactive' }}<br>Account {{ person.user_id }}
+        {% if staff_access.allow_profile_edit and person.user__is_active and person.user_id != user.pk %}<br><a href="{% url 'staff_profile_access' case.pk person.user_id %}">Review named access</a>{% endif %}
+        {% if staff_access.allow_deactivation and person.active_actions and person.user_id != user.pk %}
+          <br><a href="{% url 'staff_departure' case.pk person.user_id %}">Remove workspace access</a>
+        {% endif %}
+      </td>
+      <td>{% if person.record_actions %}<details><summary>{{ person.active_actions }} permitted action{{ person.active_actions|pluralize }}</summary><ul>{% for action in person.record_actions %}<li>{{ action|readable }}</li>{% endfor %}</ul></details>{% else %}No current access in this list{% endif %}</td>
+    </tr>{% empty %}<tr><td colspan="3">No matching accounts in the access you manage.</td></tr>{% endfor %}</tbody>
+  </table>
+  {% if people.has_other_pages %}<nav class="factory-queues" aria-label="Staff accounts pages">
+    {% if people.has_previous %}<a href="?person={{ search|urlencode }}&amp;page={{ people.previous_page_number }}">Previous</a>{% endif %}
+    <span>Page {{ people.number }} of {{ people.paginator.num_pages }}</span>
+    {% if people.has_next %}<a href="?person={{ search|urlencode }}&amp;page={{ people.next_page_number }}">Next</a>{% endif %}
+  </nav>{% endif %}
+</section>
+<details class="card onboarding-card">
+  <summary>Individual access controls</summary><h2>Grant or remove access</h2>
+  <p>Choose which action the account can take in this workspace.</p>
+  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button primary" type="submit">Save access change</button></form>
+</details>
+<section class="card table-wrap"><h2>Access history</h2>
+  <table><thead><tr><th>Account</th><th>Action</th><th>Access</th><th>Reason</th><th>When</th></tr></thead>
+    <tbody>{% for record in history %}<tr><td>{{ record.subject_id }}</td><td>{{ record.action }}</td><td>{{ record.enabled|yesno:'Granted,Removed' }}</td><td>{{ record.reason }}</td><td>{{ record.created_at }}</td></tr>{% empty %}<tr><td colspan="5">No access changes recorded.</td></tr>{% endfor %}</tbody>
+  </table>
+</section>
+{% endblock %}

@@ -402,3 +402,39 @@ The design engineer chose concept B ("Summary and next panel") from the four on 
 - on a phone the zone says "Take a photo or choose a file";
 - a closed record shows a grey zone saying why ("Uploads are closed · The record is verified.").
 The assistant's attach button in the chat composer stays an icon button (a message attachment, not a form field). Existing boards that draw other upload looks are superseded by this rule and the FileUpload component spec.
+
+## D-172 (23 Nov 2026): connecting the frontend to the live API starts with wave 0, split in two
+The backend shipped API 1.22.0 on main, and the connection map (`delivery/connect/`, PR #95) lays out the waves. The design engineer said "Yes, start wave 0". Readiness found it gated and too large, and asked three questions. The answers:
+- "Approve both decisions": D-API-STYLE r3 and D-AUTH r3 are approved as built (source `architecture/sources/decisions-2026-11-23.md`, architecture package v8).
+- "Split in two": F-56 (task FE-CONNECT-1, part a) removes the Django embed main added (`FactoryDesk`, the `native` branch in `AppShell`, the Django rewrites and catch-all in `next.config.ts`) and adds the authenticated download routes. F-57 (FE-CONNECT-1, part b) adds live types and a live client next to the v7 one, session and error handling per the live contract, and the frame on the live `GET /api/v1/me`.
+- "Accept both": until backend question A-1 is answered, role words come from `GET /api/v1/role-dashboard` `positions[]`, with the name alone if that read fails. Until wave 1 builds SCR-17, the app has no sign-in page. That gap only matters against the live API, not the mock.
+Engineering rule for every wave (proposal, two-way door): when a screen is connected, its operations' mock fixtures move to the live shape and are validated against `contracts/psl-factory.openapi.json`. Unconnected screens keep the v7 mock.
+
+## D-173 (23 Nov 2026): design exception for the current design version
+F-56 readiness was refused because the design is STALE against the 13 Nov client approval. Since D-89 (15 Nov) the design changed only through the design engineer's own live changes, 18 commits under `design/` (D-92a, D-93, D-144, D-151, D-156, D-158 to D-161, D-163, D-166, D-169), and no screen was added or removed. Asked whether to record a design exception for the current version (06305ba6), the design engineer answered "Record exception". It is recorded in `design/review.json`. PSL's approval of those changes is still required.
+
+## D-174 (23 Nov 2026): F-57 board conflicts accepted as the spec proposes
+The F-57 spec listed where the frame boards cannot be met with live data. The design engineer answered:
+- "Accept both": role words are the person's distinct role names from `GET /role-dashboard` `positions[].name`, joined with commas, or the name alone if that read fails, where the boards draw one role. Setup shows in the menu for everyone, because live `/me` lists the same six destinations for every account (CMP-01 says Leads only). Backend questions A-1 and A-2 stay open.
+- "Keep the extra line": the signed-out state reads "You're signed out." plus "Sign-in opens in a later release. Ask your administrator if you need access now." with no link, until SCR-17 (wave 1).
+- "Use this wording": a refused write with a stale session token shows "Your session was refreshed. Press the action again. Nothing was changed." in that screen's own error spot. The write is never repeated automatically.
+Also accepted with the recommendation: mock persona `none` shows only "Sample Person", and "No sections" can only occur in the mock.
+
+## D-175 (23 Nov 2026): wave 1 starts with sign-in; D-SIGNIN approved as built
+"Yes, start wave 1". Wave 1 covers SCR-17 (sign-in, error, reset, account set-up) as F-58 (task FE-SIGNIN), then SCR-15 (alerts and account preferences), one at a time. FE-SIGNIN was gated on D-SIGNIN. Asked whether to approve it as the backend built it, the design engineer answered "Approve as built": D-SIGNIN r2 is approved in architecture package v9 (source `architecture/sources/decisions-2026-11-23-signin.md`). Asked about an unexplained change to `delivery/features/F-52/round-1/build.md` in the main checkout, they answered "Set it aside": it is kept in `git stash` ("F-52 round-1 build.md change found 23 Nov …") and can be restored. F-58 is built on branch `fe-signin-sign-in-reset-and-set-up` from main 44878365 plus the v9 commit 12181de9.
+
+## D-176 (23 Nov 2026): sign-in split in three
+Readiness found SCR-17 too large for one review. Asked whether to split it into (a) sign in, error, sign out and every Sign in link, (b) forgotten password and (c) account set-up from an invitation, the design engineer answered "Split in three". F-58 is part (a), F-59 part (b) and F-60 part (c), all on task FE-SIGNIN and built one after another.
+
+## D-177 (23 Nov 2026): F-58 sign-in board conflicts settled
+The F-58 spec listed nine places where the SCR-17 boards cannot be met against the live API. The design engineer answered:
+- "Email or sign-in name": the first field is labelled "Work email or sign-in name", where the board says "Work email", because the API accepts either.
+- "Remove all three": "You'll go straight to INV-0412…" (it would show a record to a signed-out person), "3 tries left… 15 minutes" (the API gives no numbers and has no attempt limit) and the phone footer "Only PMO, Finance, HR and leadership roles have accounts…" (an admission rule the backend owns) are all left out, with no replacement.
+- "Text plus a hint": until F-59, "Forgot your password?" is plain text: "Reset opens in a later release. Ask your administrator for help."
+- "Accept all": the account menu has only the name and "Sign out" (the rest comes with FE-ALERTS-MENU). On phones, Sign out sits in the existing phone menu. After sign-out the person lands on /sign-in. Loading, "can't get ready", and signed-in-but-not-admitted use existing components with no new board. The frame's signed-out text becomes "You're signed out. Sign in", which replaces the D-174 interim line.
+
+## D-178 (23 Nov 2026): sign-in fidelity exceptions and phone waiver
+F-58's single fidelity run scored 70% coverage and 85.7 visual on SCR-17-desktop, 63.6% and 81.9 on desktop-error, 60% and 56.7 on mobile, and 54.5% and 56.4 on mobile-error. The gaps are the D-177 removals plus the boards' sample values. Asked whether to record them as approved exceptions citing D-177, with a visual waiver for the phone boards because the gap comes from that removed content, the design engineer answered "Approve, fix two details". The approved exceptions are the D-177 items (the INV-0412 line, the "Work email" label wording, the attempt count, the phone footer, the forgot-password link as plain text) and the boards' sample values (pre-filled email and password, the ticked checkbox). The two details to fix: centre the forgot-password text where the board's link sits, and match the phone top bar's height to the board.
+
+## D-179 (23 Nov 2026): the sign-in visual waiver covers all four boards
+After the D-178 fixes (head 473090df), with `fidelity-exceptions.json`, sign-in fidelity is 100% coverage on all four SCR-17 boards. Visual scores are 86.9 desktop, 81.9 desktop error, 65.1 mobile and 59.3 mobile error. Asked whether to extend the visual waiver to the two desktop boards for the same reason (the removed INV-0412 line shifts the form up, the sample values are not filled in, the label is longer), the design engineer answered "Extend the waiver". Also on their word ("Delete it"), a stray cache folder created by a mistyped builder command (`/Users/Hunchoo/psl-factory/node_modules`, holding only .vite and .vitest-cache) was deleted.

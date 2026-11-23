@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block title %}Record team resolution · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'issues' case.pk %}">← Issues</a><h1>Record team resolution</h1><p class="lede">{{ issue.current.title }}</p></div></header>
+<section class="card"><dl class="workspace-summary"><div><dt>Responsible team</dt><dd>{{ team.label }}</dd></div><div><dt>Follow-up coordinator</dt><dd>{% firstof team.assignment.recorder.get_full_name team.assignment.recorder.username %}</dd></div></dl>
+<p>Record the team's actual reply and documented fix. This sends the resolved issue to quality assurance and the project manager for closure.</p>
+{% if team.can_resolve %}<form method="post">{% csrf_token %}{{ form.as_p }}<button>Record resolution for closure checks</button></form>{% else %}<p role="status">{{ team.resolution_finding }}</p><a href="{% url 'issue_team_configuration' case.pk %}">Team response settings</a>{% endif %}
+</section>{% endblock %}

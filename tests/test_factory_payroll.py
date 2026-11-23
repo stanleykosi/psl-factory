@@ -1,5 +1,6 @@
 """Native restricted payroll factory integration; requires accepted payroll schema."""
 import json
+from datetime import timedelta
 from pathlib import Path
 from django.test import TestCase
 from django.core.exceptions import PermissionDenied,ValidationError
@@ -11,6 +12,7 @@ from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import transition
 from apps.finance import payroll as native
 from apps.finance.payroll_models import PayrollPublication,PayrollReportReceipt
+from apps.finance.hrfinance_models import HRHandoffRecord
 from apps.workflows import factory,factory_payroll as payroll
 from apps.workflows.models import FactoryWork,FactoryAttempt
 from tests.payroll_helpers import fixture,approve,capture
@@ -52,6 +54,113 @@ class FactoryPayrollTests(TestCase):
         self.assertEqual(native.read_publication(f['manager'],p.pk)['by_bu'],{'BU-A':'250.00'});self.assertEqual(connection.vendor,'postgresql')
         text=json.dumps(list(FactoryAttempt.objects.filter(activity__work=self.work).values('observation','result')))
         for secret in ['E001','E002','employee_id','effective_from','BASIC']:self.assertNotIn(secret,text)
+
+    def test_api_start_choices_follow_current_exact_hr_recipient_and_start(self):
+        f = self.f
+        self.client.force_login(f['preparer'])
+        url = f'/api/v1/projects/{f["case"].pk}/payroll/requests/{f["request"].pk}/start-choices'
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200, response.content)
+        choices = response.json()
+        self.assertEqual({item['id'] for item in choices['inputs']}, {item.pk for item in f['inputs']})
+        self.assertEqual([item['id'] for item in choices['hr_snapshots']], [f['hr'].pk])
+        self.assertNotContains(response, 'E001')
+        payload = {'line': payroll.DEFINITION, 'case_id': str(f['case'].pk), 'case_revision': choices['case_revision'],
+                   'idempotency_key': 'API matching payroll', 'reference': 'SAMPLE payroll',
+                   'background': False, 'intake': {'request_id': f['request'].pk,
+                       'inputs': {'input_ids': [item['id'] for item in choices['inputs']], 'hr_snapshot_id': f['hr'].pk}}}
+        response = self.client.post('/api/v1/work', payload, content_type='application/json')
+        self.assertEqual(response.status_code, 200, response.content)
+        Grant.objects.filter(case=f['case'], user=f['preparer'], action='hrfinance.snapshot.read').update(active=False)
+        self.assertEqual(self.client.get(url).json()['hr_snapshots'], [])
+    def test_focused_reviews_bind_each_subject_and_publication_has_recipient_status(self):
+        self.start();self.advance();f=self.f
+        url=reverse('factory_invoice_decision',args=[self.work.pk])
+        publication=reverse('factory_work_response',args=[self.work.pk])
+        recovery=reverse('factory_invoice_recovery',args=[self.work.pk])
+        self.client.force_login(f['reviewer'])
+        page=self.client.get(url);self.assertContains(page,'Review payroll input',count=2)
+        self.assertNotContains(page,'Exact subject ID')
+        work_api = f'/api/v1/work/{self.work.pk}'
+
+        def approve_on_screen(kind,item):
+            payload={'action':'review','kind':kind,'subject_id':item.pk,'evidence_id':f['e']['payroll_review'].pk,
+                     'verdict':'approve','operation_key':f'http-{kind}-{item.pk}','revision':self.work.revision,
+                     'case_revision':rev(f['case'])}
+            self.assertContains(self.client.post(publication,payload),'Choose an available action on this page.')
+            response = self.client.post(work_api + '/reviews', {
+                'kind': 'payroll', 'subject': kind, 'subject_id': item.pk,
+                'expected_revision': self.work.revision, 'case_revision': rev(f['case']),
+                'verdict': 'approve', 'operation_key': payload['operation_key'],
+                'evidence_id': payload['evidence_id'], 'note': 'Synthetic independent payroll review.',
+            }, content_type='application/json')
+            self.assertEqual(response.status_code, 200, response.content)
+            self.assertEqual(item.reviews.get(verdict='approve').pk, response.json()['review_id'])
+        for item in f['inputs']:approve_on_screen('input',item)
+        for stage,title in [('combine','Review combined payroll'),('match','Review staff match'),('aggregate','Review payroll totals')]:
+            self.advance();self.assertContains(self.client.get(url),title);approve_on_screen('run',payroll.run(self.work,stage))
+        self.client.force_login(f['preparer']);self.assertContains(self.client.get(publication),'Publish exact reviewed aggregate')
+        saved = self.client.post(work_api + '/payroll-operations', {
+            'action': 'publish', 'expected_revision': self.work.revision, 'case_revision': rev(f['case']),
+        }, content_type='application/json')
+        self.assertEqual(saved.status_code, 200, saved.content)
+        report=payroll.publication(self.work)
+        self.assertEqual(report.pk, saved.json()['record_id'])
+        self.assertFalse(PayrollReportReceipt.objects.filter(publication=report).exists())
+        self.assertContains(self.client.get(recovery),'Waiting for payroll receipts')
+        self.client.force_login(f['manager']);page=self.client.get(recovery)
+        self.assertContains(page,'Acknowledge receipt as myself');self.assertNotContains(page,'Inspect restricted payroll input')
+        self.assertEqual(self.client.get(url).status_code,403)
+        FactoryWork.objects.filter(pk=self.work.pk).update(revision=self.work.revision+1,lease_until=timezone.now()+timedelta(minutes=1))
+        readback = self.client.get(f'/api/v1/projects/{f["case"].pk}/payroll/reports/{report.pk}')
+        self.assertEqual(readback.status_code, 200, readback.content)
+        self.assertTrue(readback.json()['can_acknowledge'])
+        self.assertNotContains(readback, 'E001')
+        received = self.client.post(work_api + '/aggregate-receipt', {'publication_id': report.pk},
+                                    content_type='application/json')
+        self.assertEqual(received.status_code, 200, received.content)
+        self.assertEqual(PayrollReportReceipt.objects.get(publication=report, actor=f['manager']).pk,
+                         received.json()['receipt_id'])
+        FactoryWork.objects.filter(pk=self.work.pk).update(lease_until=None)
+        self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        receipt = self.client.get(work_api).json()
+        self.assertEqual((receipt['state'], receipt['aggregate']['receipt_id']), ('verified', received.json()['receipt_id']))
+    def test_missing_hr_receipt_requires_exact_matcher_and_new_match(self):
+        from unittest.mock import patch
+        from tests import payroll_helpers
+
+        from tests.helpers import setup_case
+        owner,case=setup_case(username='missing-receipt-owner')
+        from django.contrib.auth import get_user_model
+        def principal(role):return get_user_model().objects.create_user(username='missing-receipt-'+role)
+        with patch.object(payroll_helpers,'setup_case',return_value=(owner,case)):
+            f=fixture(principal=principal,preparer_receipt=False)
+        value=json.loads(Path('fixtures/factory-payroll.json').read_text());value.pop('classification')
+        policy=draft_operator_policy(owner,case.pk,'OPS.factory_payroll_execution',value,f['e']['policy_decision'].pk,timezone.now())
+        transition(owner,policy.pk,'validated');transition(owner,policy.pk,'active')
+        self.f=f;self.start()
+        for item in f['inputs']:approve(f,item)
+        self.advance();approve(f,payroll.run(self.work,'combine'));self.advance()
+        held=payroll.run(self.work,'match');self.assertIn('hr_receipt_missing',held.metadata['codes'])
+        url=reverse('factory_invoice_recovery',args=[self.work.pk]);data={'action':'receive_hr','revision':self.work.revision,
+                'case_revision':rev(case),'snapshot_id':f['hr'].pk,'evidence_id':f['e']['hr_disclosure_decision'].pk}
+        self.client.force_login(f['reviewer']);self.assertNotContains(self.client.get(url),'Confirm HR snapshot receipt')
+        self.assertContains(self.client.post(url,data),'The assigned matcher must confirm')
+        self.client.force_login(f['preparer']);self.assertContains(self.client.get(url),'Confirm HR snapshot receipt')
+        self.assertContains(self.client.post(url,{**data,'snapshot_id':999999}),'The assigned matcher must confirm')
+        api = f'/api/v1/work/{self.work.pk}/payroll-operations'
+        options = self.client.get(api)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertTrue(options.json()['hr_receipt']['can_acknowledge'])
+        command = {key: value for key, value in data.items() if key != 'revision'} | {'expected_revision': data['revision']}
+        received = self.client.post(api, command, content_type='application/json')
+        self.assertEqual(received.status_code, 200, received.content)
+        self.assertEqual(self.client.get(api).json()['hr_receipt']['receipt_id'], received.json()['record_id'])
+        self.assertTrue(HRHandoffRecord.objects.filter(snapshot=f['hr'],kind='receipt',actor=f['preparer']).exists())
+        payroll.correct(f['preparer'],self.work.pk,self.work.revision,rev(case),f['request'].pk,self.inputs,'Confirmed the assigned matcher receipt')
+        self.advance();approve(f,payroll.run(self.work,'combine'));self.advance()
+        new=payroll.run(self.work,'match');self.assertNotEqual(new.pk,held.pk)
+        self.assertEqual(new.metadata['status'],'complete');self.assertFalse(new.reviews.exists())
     def test_exact_sources_idempotency_and_database_verified_guard(self):
         f=self.f;self.start()
         self.assertEqual(payroll.start(f['preparer'],f['case'].pk,'OTHER',f['request'].pk,self.inputs,'Same native request').pk,self.work.pk)
@@ -95,6 +204,70 @@ class FactoryPayrollTests(TestCase):
         payroll.human_action(f['manager'],self.work.pk,self.work.revision,rev(f['case']),'receive',{'publication_id':p.pk})
         self.work.refresh_from_db();self.assertEqual(self.work.status,'followup_needed')
         self.assertEqual(PayrollReportReceipt.objects.get(publication=p).actor_id,f['manager'].pk)
+    def test_withdrawal_preserves_original_receipt_and_requires_new_reviewed_sources(self):
+        f=self.f;p=self.pipeline();self.work.refresh_from_db()
+        payroll.human_action(f['manager'],self.work.pk,self.work.revision,rev(f['case']),'receive',{'publication_id':p.pk})
+        payroll.cancel(f['preparer'],self.work.pk,self.work.revision);self.work.refresh_from_db()
+        url=reverse('factory_invoice_recovery',args=[self.work.pk])
+        api = f'/api/v1/work/{self.work.pk}/payroll-operations'
+
+        def command(action, **fields):
+            self.work.refresh_from_db()
+            return self.client.post(api, {'action': action, 'expected_revision': self.work.revision,
+                'case_revision': rev(f['case']), **fields}, content_type='application/json')
+
+        self.client.force_login(f['preparer'])
+        self.assertNotContains(self.client.get(url),'Withdraw original report')
+        with self.assertRaisesMessage(ValidationError,'An independent withdrawal'):
+            payroll.prepare_successor(f['preparer'],self.work.pk,self.work.revision,rev(f['case']),p.pk,
+                                      f['request'].pk,self.inputs,'Attempt before exact withdrawal')
+        self.client.force_login(f['reviewer']);self.assertContains(self.client.get(url),'Withdraw original report')
+        withdrawn = command('withdraw', publication_id=p.pk, evidence_id=f['e']['payroll_review'].pk,
+                            reason='A provider supplied a correction for this period.')
+        self.assertEqual(withdrawn.status_code, 200, withdrawn.content)
+        self.work.refresh_from_db();self.assertTrue(payroll.withdrawal(self.work,p.pk))
+        self.client.force_login(f['manager']);page=self.client.get(url)
+        self.assertContains(page,'Your published payroll report was withdrawn')
+        self.assertNotContains(page,'Acknowledge receipt as myself');self.assertNotContains(page,'Amounts by business unit')
+        recovery_url = f'/api/v1/work/{self.work.pk}/payroll-recovery'
+        recovered = self.client.get(recovery_url)
+        self.assertEqual(recovered.status_code, 200, recovered.content)
+        history = recovered.json()['previous_receipt']
+        self.assertEqual(history['publication'], p.pk)
+        self.assertEqual(history['receipt_id'], PayrollReportReceipt.objects.get(publication=p, actor=f['manager']).pk)
+        self.assertIsNone(recovered.json()['restart'])
+        with self.assertRaisesMessage(ValidationError,'This published payroll version was withdrawn'):
+            approve(f,p.run,'replay-withdrawn-publication')
+        with self.assertRaisesMessage(ValidationError,'Choose a corrected provider input'):
+            payroll.prepare_successor(f['preparer'],self.work.pk,self.work.revision,rev(f['case']),p.pk,
+                                      f['request'].pk,self.inputs,'Attempt with original sources')
+        replacement=capture(f,0,'publication-correction',source_version='A-v2')
+        corrected=[replacement.pk,f['inputs'][1].pk]
+        self.client.force_login(f['preparer']);self.assertContains(self.client.get(url),'Start corrected run')
+        revised = command('successor', publication_id=p.pk, request_id=f['request'].pk,
+                          inputs={'input_ids': corrected, 'hr_snapshot_id': f['hr'].pk},
+                          reason='The provider supplied a corrected version.')
+        self.assertEqual(revised.status_code, 200, revised.content)
+        self.work.refresh_from_db();self.assertFalse(self.work.cancel_requested)
+        self.assertIsNone(payroll.publication(self.work));self.assertTrue(PayrollReportReceipt.objects.filter(publication=p).exists())
+        self.client.force_login(f['manager']);self.assertContains(self.client.get(url),'Your published payroll report was withdrawn')
+        approve(f,replacement)
+        for stage in ['combine','match','aggregate']:
+            self.advance();approve(f,payroll.run(self.work,stage))
+        self.advance()
+        self.client.force_login(f['preparer'])
+        published = command('publish')
+        self.assertEqual(published.status_code, 200, published.content)
+        new = PayrollPublication.objects.get(pk=published.json()['record_id'])
+        self.assertGreater(new.version,p.version)
+        self.client.force_login(f['manager'])
+        receipt = self.client.post(f'/api/v1/work/{self.work.pk}/aggregate-receipt',
+                                   {'publication_id': new.pk}, content_type='application/json')
+        self.assertEqual(receipt.status_code, 200, receipt.content)
+        self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        self.assertEqual(PayrollReportReceipt.objects.filter(publication__in=[p,new]).count(),2)
+        self.client.force_login(f['manager'])
+        self.assertEqual(self.client.get(recovery_url).json()['previous_receipt'], history)
     def test_returned_work_rebuilds_without_erasing_prior_native_result(self):
         f=self.f;self.start()
         for i in f['inputs']:approve(f,i)

@@ -4,6 +4,7 @@ from django.db import transaction
 from django.utils import timezone
 from apps.core.services import lock_case, event, bump
 from apps.identity.models import Grant
+from apps.identity.services import require
 from apps.policy.services import decision_authority
 from apps.documents.contracts import validate
 from .models import Issue, IssueState, IssueClosureEntry
@@ -64,7 +65,20 @@ def log_issue(actor,case_id,reference,title,kind,owner_id,next_action,evidence_i
 @transaction.atomic
 def update_issue(actor,case_id,issue_id,state_id,operation,evidence_id,note,expected,next_action=None,owner_id=None,severity=None,fix_id=None,root_cause_id=None):
     case=lock_case(actor,case_id,'issue.manage' if operation=='manage' else 'issue.work',expected)
-    issue=current_issue(case,issue_id,state_id);old=issue.current
+    issue=current_issue(case,issue_id,state_id)
+    if operation != 'manage':
+        from .issue_team_models import IssueTeamAssignment
+        assignment = IssueTeamAssignment.objects.filter(issue=issue).order_by('-number').first()
+        if assignment and assignment.mode == 'team':
+            raise ValidationError('Record the actual external team response with its source proof and reply time.')
+    return _update_state(actor, case, issue, operation, evidence_id, note, next_action,
+                         owner_id, severity, fix_id, root_cause_id)
+
+
+def _update_state(actor, case, issue, operation, evidence_id, note, next_action=None,
+                  owner_id=None, severity=None, fix_id=None, root_cause_id=None):
+    """Shared state construction after the public command has checked its source authority."""
+    old=issue.current
     if old.status=='Closed':raise ValidationError('Closed history is preserved; reopen policy is not configured')
     note_required(note)
     values={k:getattr(old,k) for k in ['title','kind','severity','owner','next_action','status','acknowledged_at','resolved_at','fix','root_cause','external_links']}
@@ -105,8 +119,14 @@ def close_issue_log(actor,case_id,issue_id,state_id,role,evidence_id,note,expect
     issue=current_issue(case,issue_id,state_id);state=issue.current
     if role not in ['QA','PM'] or state.status!='Resolved':raise ValidationError('QA and PM log updates close a resolved issue; no separate approval task')
     decision_authority(actor,case,role)
+    from .coordinator_intake import accept
+    accept(actor,case,state,"P54")
     note_required(note)
     if IssueClosureEntry.objects.filter(state=state,role=role).exists():raise ValidationError('This role already updated the closure log for this exact resolution')
+    for entry in state.closure_entries.select_related('actor'):
+        require(entry.actor,case,'issue.close_log')
+        decision_authority(entry.actor,case,entry.role)
+        subject(case,entry.evidence_id)
     result=IssueClosureEntry.objects.create(state=state,role=role,evidence=subject(case,evidence_id),note=note,actor=actor)
     event(actor,case,'issue.closure_log',issue=issue.pk,entry=result.pk,role=role)
     if set(state.closure_entries.values_list('role',flat=True))=={'QA','PM'}:

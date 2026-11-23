@@ -11,4 +11,8 @@ class Grant(models.Model):
     class Meta:
         constraints = [models.UniqueConstraint(fields=['case', 'user', 'action'], name='record_action_grant')]
 
-from .intake_models import TenantAuthority,CaseIntake,AccessChange
+from .intake_models import TenantAuthority,CaseIntake,AccessChange,WorkAccessRequest
+from .staff_models import StaffInvitation, StaffAdmission, StaffDeparture, StaffAccountChange, StaffProfileChange
+from .staff_models import StaffPrimaryRoleChange, StaffRoleDefinition
+from .team_models import (StaffAssignment, StaffFactoryReviewUse, StaffMembership, StaffReviewUse, StaffScheduleReviewUse,
+                          StaffScopeMove, StaffTeam)

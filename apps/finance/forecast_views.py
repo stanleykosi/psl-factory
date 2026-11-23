@@ -16,7 +16,7 @@ from .models import ForecastScenario,ForecastRun,ForecastActual,ForecastReview,F
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'finance.read');forms=commands(case,request.POST if request.method=='POST' else None)
+    case=accessible_case(request.user,case_id,source_action='finance.read');require(request.user,case,'finance.read');forms=commands(case,request.POST if request.method=='POST' else None)
     if request.method=='POST':
         try:
             f=next((r['form'] for r in forms if r['action']==request.POST.get('action')),None)
@@ -70,6 +70,7 @@ def workbench(request,case_id):
         except (ValidationError,PermissionDenied) as exc:row['finding']=str(exc)
         groups.append(row)
     response=render(request,'finance/forecast.html',{'case':case,'groups':groups,'commands':forms,'runs':runs,'actuals':actuals,
+        'opening_sources': case.evidence.filter(kind='forecast_opening').order_by('-pk').values('pk', 'version', 'source', 'created_at')[:30],
         'scenarios':ForecastScenario.objects.filter(case=case).order_by('-pk')[:30],'reviews':ForecastReview.objects.filter(run__case=case).order_by('-pk')[:30],
         'matches':ForecastMatch.objects.filter(case=case).order_by('-pk')[:50],'bindings':ForecastBinding.objects.filter(run__case=case).select_related('version__document').order_by('-pk')[:20],
         'priorities':ForecastPriority.objects.filter(review__run__case=case).select_related('action__current').order_by('-pk')[:30],

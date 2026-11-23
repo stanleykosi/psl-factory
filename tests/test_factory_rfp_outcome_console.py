@@ -61,12 +61,13 @@ class FactoryRFPOutcomeConsoleTests(TestCase):
         work=helpers.start(f)
         url=reverse('factory_detail',args=[work.pk])+'?queue=decisions&q=Actual+customer'
         page=self.client.get(url)
-        self.assertContains(page,'Actual submitted response covered by this evidence')
+        self.assertContains(page,'<label>Actual submitted response')
         self.assertContains(page,'Choose the response actually submitted')
         self.assertContains(page,'Conversion waits for a configured outcome selection method')
         self.assertContains(page,'Showing 2 of 2 recorded submitted responses')
-        self.assertContains(page,'value="'+str(first.pk)+'"')
-        self.assertContains(page,'value="'+str(second.pk)+'"')
+        selector = page.context['submission_selector']
+        for submission in (first, second):
+            self.assertIn(f'<option value="{submission.pk}">Submission {submission.pk}', selector)
         for submission,result in [(second,'lost'),(first,'won')]:
             work.refresh_from_db()
             posted=self.client.post(url,{'action':'outcome','revision':work.revision,'case_revision':rev(case),
@@ -86,3 +87,14 @@ class FactoryRFPOutcomeConsoleTests(TestCase):
             'evidence':e['rfp_outcome'].pk,'note':'Unrelated target cannot be recorded'})
         self.assertEqual(invalid.status_code,200)
         self.assertEqual(RFPOutcome.objects.filter(submission__response__rfp__case=case).count(),2)
+        api = f'/api/v1/work/{work.pk}/bid-outcomes'
+        multiple = self.client.get(api).json()
+        self.assertEqual(multiple['submission_count'], 2)
+        self.assertEqual({item['id'] for item in multiple['submissions']}, {first.pk, second.pk})
+        self.assertTrue(multiple['selection_required'])
+        self.assertIsNone(multiple['handoff'])
+        for submission, verdict in ((first, 'won'), (second, 'lost')):
+            exact = self.client.get(api, {'submission_id': submission.pk}).json()
+            self.assertEqual(exact['outcome']['submission_id'], submission.pk)
+            self.assertEqual(exact['outcome']['result'], verdict)
+        self.assertEqual(self.client.get(api, {'submission_id': 999999999}).status_code, 404)

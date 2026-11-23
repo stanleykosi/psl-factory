@@ -33,6 +33,143 @@ class ControlledDocumentTests(TestCase):
     def action_matrix(self,actions):
         return artifact(self.actor,self.case,'D05.decision_action_matrix','schema:psl/decision-actions/v1',{'rules':[{'role':'PMO Lead','actions':actions},{'role':'PM','actions':['withdraw']}]},self.owner)
 
+    def test_workbench_form_labels_are_unique_and_legacy_gate_fields_still_submit(self):
+        from collections import Counter
+        from html.parser import HTMLParser
+        from apps.pmo.gates import register_candidate
+
+        class FieldIds(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.ids = []
+
+            def handle_starttag(self, tag, attrs):
+                self.ids.extend(value for name, value in attrs if name == 'id')
+
+        self.client.force_login(self.actor)
+        url = f'/cases/{self.case.pk}/documents/'
+        page = self.client.get(url)
+        fields = FieldIds()
+        fields.feed(page.content.decode())
+        self.assertFalse([key for key, count in Counter(fields.ids).items() if count > 1])
+        self.assertContains(page, '<label for="gate_evidence">Evidence:</label>', html=True)
+        source = add_evidence(self.actor, self.case.pk, 'requirements',
+            'SAMPLE candidate requirements for source-gate form verification.', 'synthetic:gate-labels')
+        candidate = register_candidate(self.actor, self.case.pk, 'SAMPLE-GATE-LABELS', source.pk, rev(self.case))
+        response = self.client.post(url, {'action': 'gate', 'revision': rev(self.case),
+            'candidate': candidate.pk, 'kind': 'qa_exit', 'evidence': source.pk,
+            'external_ref': 'SAMPLE-QA-SOURCE'})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(candidate.gates.get().external_ref, 'SAMPLE-QA-SOURCE')
+
+    def test_publication_batch_checks_each_original_once_before_later_work(self):
+        from functools import partial
+        from io import StringIO
+        from unittest.mock import patch
+        from django.core.management import call_command
+
+        jobs=[]
+        for title in ('Uncertain first delivery', 'Independent second delivery'):
+            version=create_version(self.actor,self.case.pk,self.template.pk,title,'client',fields(self.source),rev(self.case))
+            request_review(self.actor,self.case.pk,version.pk,rev(self.case))
+            review_version(self.actor,self.case.pk,version.pk,'approve','Synthetic exact review',rev(self.case))
+            jobs.append(reserve_publication(self.actor,self.case.pk,version.pk,rev(self.case)).job)
+        first,second=jobs
+        class LostResponse(InternalPublicationAdapter):
+            def deliver(self,job_id,fence):
+                if job_id==first.pk:raise TimeoutError('Synthetic original result unknown')
+                return super().deliver(job_id,fence)
+
+        with patch('apps.documents.management.commands.work_publications.run_publication_once',
+                   side_effect=partial(run_publication_once,LostResponse())):
+            call_command('work_publications','--limit','20',stdout=StringIO())
+        first.refresh_from_db();second.refresh_from_db()
+        self.assertEqual((first.status,first.attempts),('unknown',1))
+        self.assertEqual(second.status,'confirmed')
+        self.assertEqual(PublicationReceipt.objects.get().publication_id,second.publication_id)
+
+    def test_focused_status_report_returns_revises_and_shows_original_receipt(self):
+        from django.urls import reverse
+
+        self.action_matrix(['return'])
+        version = create_version(self.actor, self.case.pk, self.template.pk, 'Client status update',
+                                 'client', fields(self.source), rev(self.case))
+        self.client.force_login(self.actor)
+        url = reverse('design_document_review', args=[self.case.pk, version.pk])
+        self.assertContains(self.client.get(url), 'Audience preview')
+        self.assertNotContains(self.client.get(url), 'PRIVATE TRACE')
+        original_api = f'/api/v1/projects/{self.case.pk}/document-reviews/{version.pk}/publication'
+
+        def submit(target, **values):
+            response = self.client.post(target, {**values, 'revision': rev(self.case)})
+            self.assertEqual(response.status_code, 302)
+            return response.url
+
+        def command(target, action, **values):
+            result = self.client.post(target, {'action': action, 'revision': rev(self.case), **values},
+                                      content_type='application/json')
+            self.assertEqual(result.status_code, 200, result.content)
+            return result.json()
+
+        self.assertTrue(self.client.get(original_api).json()['can_request_review'])
+        command(original_api, 'request_review')
+        self.assertContains(self.client.get(url), 'Return for changes')
+        submit(url, action='review', verdict='return:0', note='Update the wording')
+        self.assertContains(self.client.get(url), 'Update the wording')
+        controls = self.client.get(original_api).json()
+        self.assertNotIn('internal_notes', {section['key'] for section in controls['editable']})
+        corrected = {key: section['text'] for key, section in version.fields.items()}
+        corrected['status'] = 'Clarified status for the client'
+        corrected['internal_notes'] = 'Attempted change outside the audience'
+        rejected = self.client.post(original_api, {'action': 'revise', 'revision': rev(self.case),
+            'sections': {'internal_notes': 'Attempted change outside the audience'}}, content_type='application/json')
+        self.assertEqual(rejected.status_code, 422)
+        revision = command(original_api, 'revise', sections={'status': corrected['status']})
+        successor_url = reverse('design_document_review', args=[self.case.pk, revision['version_id']])
+        successor = version.document.versions.get(number=2)
+        self.assertEqual(successor.source_manifest, version.source_manifest)
+        self.assertEqual(successor.fields['internal_notes'], version.fields['internal_notes'])
+        self.assertNotContains(self.client.get(successor_url), 'PRIVATE TRACE')
+        self.assertNotContains(self.client.get(url), 'Clarified status for the client')
+        submit(successor_url, action='request')
+        review_api = f'/api/v1/projects/{self.case.pk}/document-reviews/{successor.pk}'
+        preview = self.client.get(review_api)
+        self.assertContains(preview, 'Clarified status for the client')
+        self.assertNotContains(preview, 'PRIVATE TRACE')
+        self.assertIn('approve:0', preview.json()['decisions'])
+        decision = self.client.post(review_api, {'verdict':'approve', 'delegated':False,
+            'expected_revision':rev(self.case), 'note':'Reviewed changed status'}, content_type='application/json')
+        self.assertEqual(decision.json()['verdict'], 'approve')
+        page = self.client.get(successor_url)
+        self.assertContains(page, 'Recipients for version 2')
+        token = page.context['publication']['token']
+        self.assertContains(self.client.post(successor_url, {'action': 'publish', 'packet': 'stale',
+                            'revision': rev(self.case)}), 'Publication details changed')
+        self.assertFalse(Publication.objects.exists())
+        publication_api = review_api + '/publication'
+        self.assertEqual(self.client.get(publication_api).json()['publication']['packet'], token)
+        command(publication_api, 'publish', packet=token)
+        class Held(InternalPublicationAdapter):
+            def deliver(self, *args):
+                raise ValueError('Synthetic delivery refusal')
+
+        self.assertTrue(run_publication_once(Held()))
+        self.assertContains(self.client.get(successor_url), 'Retry this delivery')
+        held = self.client.get(publication_api).json()['delivery']
+        self.assertIn('retry', held['recovery_actions'])
+        command(publication_api, 'retry', reason='Original channel recovered', job_id=held['job_id'])
+        self.assertTrue(run_publication_once(PublicationTimeoutAfterAccept()))
+        uncertain = self.client.get(successor_url)
+        self.assertContains(uncertain, 'check for the original receipt')
+        self.assertNotContains(uncertain, 'Retry this delivery')
+        self.assertTrue(run_publication_once())
+        self.assertContains(self.client.get(successor_url), 'Receipt recorded')
+        delivered = self.client.get(publication_api).json()['delivery']
+        self.assertEqual(delivered['state'], 'confirmed')
+        self.assertEqual(len(delivered['receipts']), 1)
+        self.assertEqual(PublicationReceipt.objects.filter(publication__version=successor).count(), 1)
+        self.assertFalse(PublicationReceipt.objects.filter(publication__version=version).exists())
+
     def test_staff_draft_review_publication_and_recipient_projection(self):
         import json
         self.client.force_login(self.actor);url=f'/cases/{self.case.pk}/documents/'

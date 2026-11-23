@@ -28,10 +28,13 @@ INSTALLED_APPS = ['django.contrib.auth', 'django.contrib.contenttypes', 'django.
     f'apps.{name}' for name in ['core', 'identity', 'policy', 'workflows', 'pmo', 'finance', 'baas', 'documents', 'agents']]
 MIDDLEWARE = ['django.middleware.security.SecurityMiddleware', 'django.contrib.sessions.middleware.SessionMiddleware',
               'django.middleware.common.CommonMiddleware', 'django.middleware.csrf.CsrfViewMiddleware',
-              'django.contrib.auth.middleware.AuthenticationMiddleware', 'django.contrib.messages.middleware.MessageMiddleware',
+              'django.contrib.auth.middleware.AuthenticationMiddleware', 'apps.identity.staff_sessions.StaffSessionMiddleware',
+              'django.contrib.messages.middleware.MessageMiddleware',
               'django.middleware.clickjacking.XFrameOptionsMiddleware']
-ROOT_URLCONF = 'config.urls'
-TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates', 'DIRS': [BASE_DIR / 'templates'],
+PSL_DJANGO_UI = os.getenv('PSL_DJANGO_UI', '0' if RAILWAY_DOMAIN else '1') == '1'
+ROOT_URLCONF = 'legacy_ui.preview_urls' if PSL_DJANGO_UI else 'config.urls'
+LEGACY_UI_DIR = BASE_DIR / 'legacy_ui'
+TEMPLATES = [{'BACKEND': 'django.template.backends.django.DjangoTemplates', 'DIRS': [LEGACY_UI_DIR / 'templates'],
               'APP_DIRS': True, 'OPTIONS': {'context_processors': ['django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth', 'django.contrib.messages.context_processors.messages','apps.core.context.interface']}}]
 DATABASES = {'default': {'ENGINE': 'django.db.backends.postgresql', 'NAME': os.getenv('PGDATABASE', 'psl'),
@@ -41,16 +44,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 USE_TZ = True
 TIME_ZONE = 'Africa/Lagos'
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [LEGACY_UI_DIR / 'static'] if PSL_DJANGO_UI else []
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-if RAILWAY_DOMAIN:
+if RAILWAY_DOMAIN and PSL_DJANGO_UI:
     MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
+from .contact_runtime import load as load_contact_runtime
+CONTACT_DELIVERY = load_contact_runtime()
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
+# A separately hosted frontend can forward same-origin browser requests to Django.
+# Trust only deployment-selected frontend origins. Django still requires the session CSRF token.
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.getenv('PSL_FRONTEND_ORIGINS', '').split(',') if origin.strip()]
+if any('*' in origin for origin in CSRF_TRUSTED_ORIGINS):
+    raise ValueError('Set PSL_FRONTEND_ORIGINS to exact frontend origins.')
+CSRF_FAILURE_VIEW = 'apps.core.error_views.csrf_failure'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 

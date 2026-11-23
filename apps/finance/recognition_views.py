@@ -17,7 +17,7 @@ from . import recognition as domain
 
 @login_required
 def workbench(request,case_id):
- case=accessible_case(request.user,case_id);require(request.user,case,'recognition.read')
+ case=accessible_case(request.user,case_id,source_action='recognition.read');require(request.user,case,'recognition.read')
  forms=commands(case,request.POST if request.method=='POST' else None)
  if request.method=='POST':
   try:

@@ -13,7 +13,7 @@ from apps.policy.services import transition
 from apps.workflows import factory,factory_ppe as flow
 from apps.workflows.models import FactoryWork,FactoryAttempt
 from .ppe_helpers import fixture,capture,review,policy
-from .helpers import rev
+from .helpers import check_investigation_progress, rev
 
 class FactoryPPETests(TestCase):
     def setUp(self):
@@ -33,8 +33,22 @@ class FactoryPPETests(TestCase):
         f=self.f;self.work=flow.start(f['actor'],f['case'].pk,'PPE-1',f['register'].pk,None,f['parent'].pk,'factory-assets',rev(f['case']));return self.work
     def advance(self):factory.run_until_wait(self.work.pk);self.work.refresh_from_db();return self.work
     def test_native_chain_exact_reviews_note_and_read_only_console(self):
-        f=self.f;self.start();self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);self.assertEqual(s.result['status'],'ready');self.assertNotEqual(self.work.status,'verified')
-        review(f,s);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        f=self.f;self.start()
+        check_investigation_progress(self, f['actor'], self.work, 'Investigating the asset register and supporting records.')
+        self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding);self.assertEqual(s.result['status'],'ready');self.assertNotEqual(self.work.status,'verified')
+        api = f'/api/v1/work/{self.work.pk}'
+        self.client.force_login(f['reviewer'])
+        scheduled = self.client.get(api + '/assets').json()
+        option = next(item for item in scheduled['review_options']
+                      if item['target_id'] == s.pk and item['purpose'] == 'schedule')
+        self.assertIn('approve', option['verdicts'])
+        approved = self.client.post(api + '/reviews', {'kind': 'asset', 'target_id': s.pk, 'purpose': 'schedule',
+            'verdict': 'approve', 'evidence_id': f['e']['finance_review'].pk, 'note': 'Review exact depreciation schedule',
+            'expected_revision': scheduled['expected_revision'], 'case_revision': scheduled['case_revision']},
+            content_type='application/json')
+        self.assertEqual(approved.status_code, 200, approved.content)
+        self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        self.assertEqual(self.client.get(api + '/assets').json()['schedule_review_id'], approved.json()['review_id'])
         proof=flow.verify(self.work,f['actor']);self.assertEqual(proof['ledger'],f['parent'].pk);self.assertFalse(proof['ledger_posted']);self.assertEqual(proof['full_owner_oracle_acceptance'],'unresolved')
         self.client.force_login(f['actor']);before=self.rows()
         response=self.client.get('/work/'+str(self.work.pk)+'/');self.assertContains(response,'Full owner-oracle acceptance remains unresolved');self.assertIn('no-store',response['Cache-Control'])
@@ -43,6 +57,58 @@ class FactoryPPETests(TestCase):
         review(f,s,verdict='revoke');self.assertTrue(flow.projection(f['actor'],self.work)['readiness_changed'])
         with self.assertRaises((ValidationError,PermissionDenied)):flow.verify(self.work,f['actor'])
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
+
+    def test_live_calculation_step_requires_current_lease_and_authority(self):
+        from django.contrib.auth import get_user_model
+        from django.urls import reverse
+        from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
+
+        f = self.f
+        self.start()
+        check_investigation_progress(self, f['actor'], self.work, 'Investigating the asset register and supporting records.')
+        path = reverse('factory_detail', args=[self.work.pk])
+        decision = reverse('factory_invoice_decision', args=[self.work.pk])
+        label = 'Calculating the asset schedule.'
+        reader = get_user_model().objects.create_user(username='calculation-status-reader')
+        Grant.objects.bulk_create([Grant(case=f['case'], user=reader, action=action)
+                                   for action in ('case.read', 'factory.read', 'finance.read', 'ppe.read')])
+        self.client.force_login(reader)
+        self.assertNotContains(self.client.get(path), label)
+        api = f'/api/v1/work/{self.work.pk}'
+
+        class ObserveCalculation(SyntheticFactoryCoordinator):
+            def choose(provider, context):
+                self.assertEqual(context['eligible'], ['ACT08'])
+                self.assertIsNone(flow.schedule(self.work))
+                page = self.client.get(path)
+                self.assertContains(page, label)
+                self.assertEqual(self.client.get(api).json()['current_activity']['label'], label)
+                self.assertContains(page, 'data-work-watch')
+                self.assertNotContains(self.client.get(decision), label)
+
+                grants = Grant.objects.filter(case=f['case'], user=f['actor'], action='finance.calculate')
+                grants.update(active=False)
+                try:
+                    self.assertNotContains(self.client.get(path), label)
+                finally:
+                    grants.update(active=True)
+
+                read_grant = Grant.objects.filter(case=f['case'], user=reader, action='ppe.read')
+                read_grant.update(active=False)
+                page = self.client.get(path)
+                self.assertNotIn(label, page.content.decode())
+                read_grant.update(active=True)
+                self.assertContains(self.client.get(path), label)
+                return super().choose(context)
+
+        self.assertTrue(factory.run_once(self.work.pk, provider=ObserveCalculation()))
+        self.assertNotContains(self.client.get(path), label)
+        self.assertNotIn('current_activity', self.client.get(api).json())
+        self.work.refresh_from_db()
+        schedule = flow.schedule(self.work)
+        self.assertIsNotNone(schedule, self.work.finding)
+        self.assertIsNone(ppe.latest(schedule, 'schedule'))
+
     def test_unknown_rows_and_source_review_remain_human_with_safe_correction(self):
         f=self.f;review(f,f['register'],'register','revoke');self.start();self.advance();self.assertIsNone(flow.schedule(self.work))
         review(f,f['register'],'register');self.advance();old=flow.schedule(self.work);self.assertIsNotNone(old,self.work.finding);spent=self.work.budget_used
@@ -52,6 +118,36 @@ class FactoryPPETests(TestCase):
         with self.assertRaises(ValidationError):review(f,new)
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
         self.assertTrue(ScheduleWork.objects.filter(pk=old.pk).exists())
+    def test_focused_asset_schedule_return_requires_a_new_exact_version(self):
+        from django.urls import reverse
+
+        f=self.f;self.start();self.advance();original=flow.schedule(self.work)
+        self.client.force_login(f['reviewer'])
+        decision=reverse('factory_invoice_decision',args=[self.work.pk])
+        recovery=reverse('factory_invoice_recovery',args=[self.work.pk])
+        self.assertContains(self.client.get(decision),'Calculated schedule decision')
+        response=self.client.post(decision,{'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),
+            'target':original.pk,'purpose':'schedule','verdict':'return','evidence':f['e']['finance_review'].pk,
+            'note':'Reconcile the opening asset evidence'})
+        self.assertRedirects(response,decision,fetch_redirect_response=False)
+        page=self.client.get(decision)
+        self.assertContains(page,'Returned for correction')
+        self.assertNotContains(page,'Approve exact schedule')
+        with self.assertRaisesMessage(ValidationError,'Record corrected asset evidence'):
+            review(f,original)
+        self.client.force_login(f['actor'])
+        self.assertContains(self.client.get(recovery),'Select corrected sources and rebuild')
+        body=copy.deepcopy(f['ppe']['body'])
+        from tests.schedule_helpers import evidence
+        body['opening_evidence_id']=evidence(f,'ppe_opening','Synthetic corrected opening reference').pk
+        register=capture(f,body);review(f,register,'register')
+        response=self.client.post(recovery,{'action':'correct','revision':self.work.revision,'case_revision':rev(f['case']),
+            'register_id':register.pk,'ledger_id':f['parent'].pk,'reason':'Use the corrected register version'})
+        self.assertRedirects(response,recovery,fetch_redirect_response=False)
+        self.advance();successor=flow.schedule(self.work)
+        self.assertNotEqual(successor.pk,original.pk)
+        review(f,successor);self.advance();self.assertEqual(self.work.status,'verified')
+        self.assertEqual(original.reviews.get().verdict,'return')
     def test_access_csrf_forgery_cancellation_and_no_automatic_restart(self):
         f=self.f;self.start();self.client.force_login(f['actor']);url='/work/'+str(self.work.pk)+'/'
         response=self.client.post(url,{'action':'advance','revision':self.work.revision,'approved_by':'Finance'});self.assertContains(response,'exact typed PPE command');self.assertIsNone(flow.schedule(self.work))
@@ -91,14 +187,29 @@ class FactoryPPETests(TestCase):
         self.assertFalse(s.reviews.exists())
     def test_typed_http_intake_and_human_decisions_keep_exact_source(self):
         from django.urls import reverse
+        from apps.workflows import factory_progress
+
         f=self.f;review(f,f['register'],'register','revoke');self.client.force_login(f['actor'])
-        payload={'definition':flow.DEFINITION,'key':'PPE-HTTP','case':f['case'].pk,'reference':'http-assets','revision':rev(f['case']),'register_id':f['register'].pk,'prior_id':'','ledger_id':f['parent'].pk}
+        payload={'definition':flow.DEFINITION,'key':'PPE-HTTP','case':f['case'].pk,'reference':'http-assets','revision':rev(f['case']),'register_id':f['register'].pk,'prior_id':'','ledger_id':f['parent'].pk,'background':'on'}
         response=self.client.post(reverse('factory_create'),payload);self.assertEqual(response.status_code,302)
-        self.work=FactoryWork.objects.get(key='PPE-HTTP');self.advance();self.assertIsNone(flow.schedule(self.work))
+        self.work=FactoryWork.objects.get(key='PPE-HTTP');job=self.work.background_progress
+
+        def progress_to_stop():
+            job.available_at=timezone.now()-timedelta(seconds=1)
+            job.save(update_fields=['available_at'])
+            for _ in range(20):
+                self.assertEqual(factory_progress.run_once(),job.pk)
+                job.refresh_from_db()
+                if job.status!='queued':
+                    self.work.refresh_from_db()
+                    return job.status
+            self.fail('The background request did not reach a step requiring a decision')
+
+        self.assertEqual(progress_to_stop(),'waiting');self.assertIsNone(flow.schedule(self.work))
         self.client.force_login(f['reviewer']);url=reverse('factory_detail',args=[self.work.pk]);response=self.client.post(url,{'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),'target':f['register'].pk,'purpose':'register','verdict':'approve','evidence':f['e']['finance_review'].pk,'note':'Human reviewed exact selected register'})
-        self.assertEqual(response.status_code,302);self.advance();s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding)
+        self.assertEqual(response.status_code,302);self.assertEqual(progress_to_stop(),'waiting');s=flow.schedule(self.work);self.assertIsNotNone(s,self.work.finding)
         response=self.client.post(url,{'action':'review','revision':self.work.revision,'case_revision':rev(f['case']),'target':s.pk,'purpose':'schedule','verdict':'approve','evidence':f['e']['finance_review'].pk,'note':'Human reviewed exact calculated output'})
-        self.assertEqual(response.status_code,302);self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        self.assertEqual(response.status_code,302);self.assertEqual(progress_to_stop(),'finished');self.assertEqual(self.work.status,'verified',self.work.finding)
     def test_reader_without_report_permission_sees_current_verified_metadata(self):
         f=self.f;self.start();self.advance();review(f,flow.schedule(self.work));self.advance();self.assertEqual(self.work.status,'verified')
         Grant.objects.filter(user=f['reviewer'],case=f['case'],action='ppe.report').update(active=False)

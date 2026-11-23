@@ -1,0 +1,6 @@
+account,amount,currency,period
+sales,-1000,NGN,2026-10
+direct_cost,199,NGN,2026-10
+shared_opex,100.01,NGN,2026-10
+staff_pool,90,NGN,2026-10
+asset,500,NGN,2026-10

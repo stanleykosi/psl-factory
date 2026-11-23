@@ -1,0 +1,16 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Link a change to a signed milestone · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'design_project_tab' case.pk 'milestones' %}">← Milestones</a>
+  <h1>Link a change to a signed milestone</h1><p>{{ case|workspace_name }}</p></div></header>
+<section class="card">
+  <p>The signed amount stays in place. A signed amendment is needed to confirm the price of added work.</p>
+  {% if limited %}<p role="status">Only a limited set of current change plans could be checked.</p>{% endif %}
+  {% if form.is_bound or stages and plans %}<form method="post" class="form-stack">{% csrf_token %}
+    {{ form.non_field_errors }}{{ form.revision }}{{ form.revision.errors }}
+    {% for field in form.visible_fields %}<div>{{ field.label_tag }}{{ field }}{{ field.errors }}</div>{% endfor %}
+    <button type="submit">Link change to milestone</button>
+  </form>{% elif not stages %}<p>There are no current reviewed terms for a delivery milestone.</p>
+  {% else %}<p>There are no unlinked current changes with a recorded project plan.</p>{% endif %}
+</section>
+{% endblock %}

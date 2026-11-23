@@ -3,7 +3,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 import hashlib
 import json
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.utils import timezone
 from jsonschema import Draft202012Validator, FormatChecker
@@ -54,6 +54,28 @@ def validate_envelope(case, envelope, runtime=False, *, budget=None):
         if not ref.startswith('evidence:') or not ref.split(':')[-1].isdigit() or not Evidence.objects.filter(case=case, pk=ref.split(':')[-1]).exists():
             raise ValidationError('Evidence/decision references must identify evidence on this case')
     value = envelope['value']
+    from .registry import PROJECT_USE_COMPONENTS
+    if envelope['component_id'] in PROJECT_USE_COMPONENTS:
+        if case.kind != 'project':
+            raise ValidationError('This permission needs a project workspace.')
+        if envelope['component_id'] == 'OPS.specialist_source_reading':
+            from apps.agents.specialists import validate_selection
+            validate_selection(value['processes'], value['roles'], value['source_kinds'],
+                               coordinate=value.get('coordinate_specialists', False))
+        if envelope['component_id'] == 'OPS.winning_bid_reuse':
+            from apps.pmo.models import RFPOutcome
+            from apps.core.models import Case
+
+            for entry in value['answers']:
+                outcome = RFPOutcome.objects.filter(pk=entry['outcome_id'], submission__response__rfp__case=case,
+                                                    result='won').select_related('submission__response').first()
+                if not outcome or not any(row['key'] == entry['requirement'] and row['disposition'] == 'addressed'
+                                          for row in outcome.submission.response.matrix):
+                    raise ValidationError('Choose an answered requirement in a winning submission from this project.')
+                if not Case.objects.filter(pk=entry['destination'], tenant=case.tenant, synthetic=case.synthetic,
+                                           kind='project').exists():
+                    raise ValidationError('Choose a destination project in the same organisation and data environment.')
+        return
     if envelope['component_id'] == 'D04.iana_timezone':
         try:
             ZoneInfo(value)
@@ -189,7 +211,7 @@ def validate_envelope(case, envelope, runtime=False, *, budget=None):
             validate_reference(envelope['component_id'],target,case,runtime=runtime)
         elif envelope['component_id'] == 'D05.role_principal_assignments':
             from .role_assignments import validate_reference as validate_role_assignment
-            validate_role_assignment(target,case)
+            validate_role_assignment(target,case,runtime=runtime)
         elif envelope['component_id'] == 'D06.source_schema_ref':
             if target.schema_ref != 'schema:psl/controlled-csv/v1' or target.content != {'columns': ['account', 'amount', 'currency', 'period']}:
                 raise ValidationError('Expected the reviewed controlled CSV schema')
@@ -377,8 +399,24 @@ def reference_values(configuration, *, budget=None):
     return values
 
 
+def _decision_matrix_actions(case, role):
+    matrix = active_component('D05.decision_action_matrix', case)
+    actions = {action for row in reference_values(matrix)[0].get('rules', []) if row['role'] == role
+               for action in row['actions']}
+    return matrix, actions
+
+
+def assigned_decision_options(actor, case, role, actions):
+    """Observe available decisions for one assigned role in the current request."""
+    role_policy(actor, case, role)
+    try:
+        _, configured = _decision_matrix_actions(case, role)
+    except (PermissionDenied, ValidationError):
+        configured = set()
+    return [action for action in actions if action == 'approve' or action in configured]
+
+
 def decision_authority(actor,case,role,action='approve',delegated=False,delegation_context=None):
-    from django.core.exceptions import PermissionDenied
     pinned={}
     if type(delegated) is not bool:raise ValidationError('Delegated authority mode must be boolean')
     if delegation_context is not None and not isinstance(delegation_context,dict):raise ValidationError('Typed delegation context required')
@@ -386,7 +424,8 @@ def decision_authority(actor,case,role,action='approve',delegated=False,delegati
     assignment=active_component('D05.role_principal_assignments',case)
     pinned[assignment.component]=assignment.pk
     if not delegated:
-        role_policy(actor,case,role)
+        from .role_assignments import assert_assigned
+        assert_assigned(actor,case,reference_values(assignment),role)
     else:
         delegation=active_component('D05.delegation_rules',case)
         now=timezone.now()
@@ -429,8 +468,8 @@ def decision_authority(actor,case,role,action='approve',delegated=False,delegati
                 'scope_sha256':hashlib.sha256(json.dumps(record['decision_scope'],sort_keys=True,separators=(',',':')).encode()).hexdigest(),
                 'scope_checks':{'project':'matched','decision':'matched','action':'matched','currency':'matched','amount':'within_configured_limit'}}
     if action!='approve':
-        matrix=active_component('D05.decision_action_matrix',case)
-        if not any(r['role']==role and action in r['actions'] for r in reference_values(matrix)[0].get('rules',[])):
+        matrix,configured=_decision_matrix_actions(case,role)
+        if action not in configured:
             raise PermissionDenied('Decision action is not granted by configured authority')
         pinned[matrix.component]=matrix.pk
     return pinned

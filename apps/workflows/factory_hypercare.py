@@ -7,6 +7,7 @@ from django.utils import timezone
 from apps.core.models import Evidence
 from apps.core.services import lock_case,event
 from apps.core.evidence_access import public_evidence
+from apps.core.read_observation import read_observation
 from apps.identity.models import Grant
 from apps.identity.services import require
 from apps.policy.services import resolve,decision_authority
@@ -43,6 +44,7 @@ def assessed(work):
     pk=Attempt.objects.filter(activity__work=work,phase='observed',result__head=work.source_head_id,result__has_key='hypercare').order_by('-pk').values_list('result__hypercare',flat=True).first()
     return DeliveryRecord.objects.filter(pk=pk,dossier_id=work.request['dossier'],kind='hypercare').first() if pk else None
 
+@read_observation
 def snapshot(work,value,reader=None):
     from .factory import access
     actor=reader or work.execution_actor
@@ -54,9 +56,10 @@ def snapshot(work,value,reader=None):
     missing=[k for k in value['required_evidence_kinds'] if k not in latest]
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
     p=resolve('D11.hypercare_criteria_ref',work.case)
+    assessment=assessed(work)
     state={'case_revision':work.case.revision,'profile':work.policy_id,'sources':[(e.pk,e.sha256) for e in latest.values()],
         'native':native,'checks':checks(d),'criteria':[p.status,p.configuration.pk if p.configuration else None],
-        'assessed':assessed(work).pk if assessed(work) else None}
+        'assessed':assessment.pk if assessment else None}
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,[],[]
 
@@ -110,13 +113,19 @@ def receipts(d):
     if len(rows)>100:raise ValidationError('Narrow the go-live receipt history before acceptance')
     return rows
 
-def projection(actor,work):
+def event_subject(actor, work):
     from .factory import access
-    access(actor,work.case,envelope=DEFINITION)
-    try:d=subject(work,actor,current=False);subject(work,actor);intake_valid=True
-    except (ValidationError,PermissionDenied):
-        d=delivery.dossier_for(work.case,work.request['dossier'],current=False);intake_valid=False
-    observed=checks(d);can_release=can_accept=False;packet=None;current_receipts=[]
+    access(actor, work.case, envelope=DEFINITION)
+    try:
+        dossier = subject(work, actor, current=False)
+        subject(work, actor)
+    except (ValidationError, PermissionDenied):
+        return delivery.dossier_for(work.case, work.request['dossier'], current=False), False
+    return dossier, True
+
+
+def event_controls(actor, work, d, observed):
+    can_release=can_accept=False;packet=None;current_receipts=[]
     stopped=work.cancel_requested or work.status in ['verified','cancelled','followup_needed']
     if not stopped and not d.records.filter(kind='release_outcome').exists():
         try:require(actor,work.case,'delivery.release_record');can_release=True
@@ -132,6 +141,14 @@ def projection(actor,work):
                     'receipts':[(r.pk,r.publication.version_id,r.payload_sha256,r.publication.version.deliverydocumentbinding.snapshot) for r in current_receipts]})
                 can_accept=True
         except (ValidationError,PermissionDenied):pass
+    return {'dossier': d, 'can_record_release': can_release, 'can_accept_go_live': can_accept,
+            'acceptance_packet': packet, 'go_live_receipts': current_receipts}
+
+
+def projection(actor,work):
+    d,intake_valid=event_subject(actor,work)
+    observed=checks(d);events=event_controls(actor,work,d,observed)
+    can_release=events['can_record_release'];can_accept=events['can_accept_go_live'];current_receipts=events['go_live_receipts']
     changed=False
     if work.status=='verified':
         try:verify(work,actor=actor)
@@ -149,9 +166,22 @@ def projection(actor,work):
     except PermissionDenied:author_current=False
     from apps.pmo.go_live_attestations import declaration_draft
     for receipt in current_receipts:receipt.attestation_draft=declaration_draft(d,receipt,actor)
-    return {'dossier':d,'checks':observed,'assessment':assessed(work),'source_coverage':coverage,'intake_valid':intake_valid,'can_record_release':can_release,
+    from .stability_forms import observation_forms
+    from apps.pmo.hypercare_issues import project_issue_clearance
+    logs = None
+    if can_release:
+        try:
+            require(actor, work.case, 'evidence.add')
+            from apps.pmo.release_proofs import own_pdfs
+            logs = list(own_pdfs(actor, work.case).order_by('-pk')[:50])
+        except PermissionDenied:
+            pass
+    return {**events,'checks':observed,'assessment':assessed(work),'source_coverage':coverage,'intake_valid':intake_valid,
+        'issue_clearance': project_issue_clearance(actor, d) if observed['stability']['status'] == 'ready' else None,
+        'private_release_logs': logs, 'can_attach_release_log': logs is not None,
+        'observation_forms':observation_forms(actor,work),
         'can_reaffirm':instruction_packet is not None,'intake_authority_current':author_current,
-        'can_accept_go_live':can_accept,'acceptance_packet':packet,'go_live_receipts':current_receipts,'readiness_changed':changed,
+        'readiness_changed':changed,
         'public_sources':list(public_evidence(Evidence.objects.filter(case=work.case,pk__in=public_ids))),
         'decision_evidence':list(public_evidence(Evidence.objects.filter(case=work.case))) if can_release or can_accept else [],
         'readiness_records':list(d.records.filter(kind='release_ready').order_by('-pk')[:100]) if can_release else []}
@@ -165,11 +195,13 @@ def observe(actor,work_id,expected,case_expected,kind,data):
     case=lock_case(actor,work.case_id,'delivery.read',case_expected);work.case=case
     list(Grant.objects.select_for_update().filter(case=case).order_by('pk'))
     if work.revision!=expected or work.cancel_requested:raise ValidationError('STALE_VERSION: refresh current stability work')
-    panel=projection(actor,work);d=panel['dossier']
+    d,_=event_subject(actor,work)
+    panel=event_controls(actor,work,d,checks(d))
     if kind=='release':
         if not panel['can_record_release']:raise PermissionDenied('Current actual-release recording authority required')
         if not public_evidence(Evidence.objects.filter(case=case,pk=data['evidence'])).exists():raise ValidationError('Available public event evidence required')
-        result=delivery.capture_release(actor,case.pk,d.pk,data['readiness'],data['released_at'],data['reference'],data['evidence'],data['note'],case.revision)
+        result=delivery.capture_release(actor,case.pk,d.pk,data['readiness'],data['released_at'],data['reference'],data['evidence'],data['note'],
+            case.revision,deployment_environment=data.get('deployment_environment'),private_log_id=data.get('private_log'))
     elif kind=='acceptance':
         if not panel['can_accept_go_live'] or data['packet']!=panel['acceptance_packet']:raise ValidationError('STALE_VERSION: exact current go-live receipt and authority required')
         if data['receipt'] not in [r.pk for r in panel['go_live_receipts']]:raise ValidationError('Select an available current go-live receipt')
@@ -178,6 +210,39 @@ def observe(actor,work_id,expected,case_expected,kind,data):
     work.revision+=1
     if work.status not in ['configuration_needed','owner_needed','blocked']:work.status='ready';work.finding=''
     work.save();return result
+
+
+@transaction.atomic
+def record_stability(actor,work_id,expected,case_expected,data):
+    from .factory import access
+    from .stability_forms import observation_forms
+    work=Work.objects.select_for_update(of=('self',)).select_related('case','actor','source_head').get(pk=work_id,definition=DEFINITION)
+    access(actor,work.case,envelope=DEFINITION)
+    case=lock_case(actor,work.case_id,'delivery.source',case_expected)
+    work.case=case
+    if work.revision!=expected or work.cancel_requested:
+        raise ValidationError('The stability work changed. Review its current evidence.')
+    forms=observation_forms(actor,work,data)
+    form=next((form for form in forms if form.owner_name==data.get('owner')),None)
+    if form is None:
+        raise ValidationError('A current reviewed stability rule and permitted source owner are required.')
+    if not form.is_valid():
+        raise ValidationError([message for messages in form.errors.values() for message in messages])
+    subject(work,actor)
+    values=form.cleaned_data
+    source=delivery.capture_source(actor,case.pk,work.request['dossier'],'hypercare_'+form.owner_name.lower(),
+        values['reference'],values['evidence'].pk,form.payload(),case.revision)
+    if values.get('verify_sample'):
+        case.refresh_from_db()
+        delivery.verify_source(actor,case.pk,source.pk,case.revision)
+    work.revision+=1
+    if work.status not in {'verified','configuration_needed','owner_needed','blocked'}:
+        work.status='ready'
+        work.finding=''
+    work.save()
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
+    return source
 
 @transaction.atomic
 def reassess(actor,work_id,expected,reason):

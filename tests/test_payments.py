@@ -62,6 +62,52 @@ class PaymentTests(DeliveryFixture,TestCase):
         self.assertFalse(out['deployment_dispatched']);self.assertFalse(out['debt_waived'])
         self.assertEqual(reservation.manifest['independent_release']['glpi'].__len__(),3)
 
+    def test_api_payment_exception_and_release_keep_independent_authorities(self):
+        self.config()
+        url = f'/api/v1/projects/{self.case.pk}/payment-controls'
+        self.client.force_login(self.actor)
+
+        def submit(action, **fields):
+            return self.client.post(url, {'action': action, 'revision': rev(self.case), **fields},
+                                    content_type='application/json')
+
+        def succeeded(action, **fields):
+            response = submit(action, **fields)
+            self.assertEqual(response.status_code, 201, response.content)
+            return response.json()
+
+        control = self.client.get(url).json()
+        self.assertIn('assess', control['actions'])
+        assessment = succeeded('assess', dossier_id=self.d.pk, coverage_id=self.cov.pk)['id']
+        result = self.client.get(f'{url}/assessments/{assessment}').json()['result']
+        self.assertEqual((result['status'], Decimal(result['qualifying_funds'])), ('BELOW_EXPECTATION', Decimal('10')))
+        request = succeeded('request', assessment_id=assessment, operation_key='api-shortfall',
+            reason='Review the recorded shortfall', evidence_id=self.e['requirements'].pk,
+            valid_from=(timezone.now() - timedelta(seconds=5)).isoformat(),
+            valid_until=(timezone.now() + timedelta(minutes=5)).isoformat())['id']
+        reservation_fields = {'assessment_id': assessment, 'request_id': request, 'operation_key': 'api-release'}
+        self.assertEqual(submit('reserve', **reservation_fields).status_code, 422)
+        fields = {'request_id': request, 'verdict': 'approve', 'reason': 'Independently checked shortfall',
+                  'evidence_id': self.e['policy_decision'].pk}
+        self.assertEqual(submit('decide', **fields).status_code, 403)
+        self.client.force_login(self.approver)
+        self.assertIn('approve', self.client.get(url).json()['verdicts'])
+        decision = succeeded('decide', **fields)['id']
+        self.assertEqual(self.client.get(f'{url}/exceptions/{request}').json()['decisions'][0]['id'], decision)
+        self.assertEqual(submit('reserve', **reservation_fields).status_code, 403)
+        self.client.force_login(self.actor)
+        before = receivables.calculate(self.case, timezone.localdate())[1]
+        reserved = succeeded('reserve', **reservation_fields)['id']
+        checked = succeeded('check', reservation_id=reserved)['controls']
+        self.assertTrue(checked['controls_current'])
+        self.assertFalse(checked['deployment_dispatched'])
+        self.assertFalse(checked['debt_waived'])
+        self.assertEqual(receivables.calculate(self.case, timezone.localdate())[1], before)
+        self.client.force_login(self.approver)
+        succeeded('decide', **{**fields, 'verdict': 'revoke'})
+        self.client.force_login(self.actor)
+        self.assertEqual(submit('check', reservation_id=reserved).status_code, 422)
+
     def test_exception_approval_does_not_require_or_override_independent_glpi_gate(self):
         self.config();proof=self.evidence('document','A newer unverified Security decision')
         record_gate(self.actor,self.case.pk,self.candidate.pk,GLPI_GATES[0],'GLPI-001',proof.pk,rev(self.case))

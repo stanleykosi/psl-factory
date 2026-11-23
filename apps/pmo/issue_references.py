@@ -94,6 +94,9 @@ def correct(actor,case_id,issue_id,state_id,previous_id,references,relations,evi
         if item.get('observation_id') is not None:
             row=observation(actor,case,item['observation_id'],issue)
             if [row.contract.kind,row.source_ref]!=list(identity):raise ValidationError('Observation must match the selected external owner record')
+            from .coordinator_intake import accept
+            if row.contract.kind in ('risk','incident'):
+                accept(actor,case,row,'P51' if row.contract.kind == 'risk' else 'P55')
     validate({'type':'array','maxItems':20,'uniqueItems':True,'items':{'type':'object','properties':{
         'incident_ref':{'type':'string','minLength':1,'maxLength':240},'change_ref':{'type':'string','minLength':1,'maxLength':240},
         'evidence_id':{'type':'integer','minimum':1},'confirmed':{'const':True}},'required':['incident_ref','change_ref','evidence_id','confirmed'],'additionalProperties':False}},relations)

@@ -18,19 +18,23 @@ from apps.documents.models import Template,Publication,PublicationJob,Publicatio
 from apps.pmo import meetings,reporting
 from apps.pmo.models import Meeting,MeetingVersion,ActionItem,MinutesReportBinding
 from apps.pmo.services import subject
-from apps.agents.models import AgentRun
+from apps.agents.models import AgentRun, CaseUpload
 from .models import FactoryWork as Work,FactoryActivity as Activity,FactoryAttempt as Attempt
+from .models import HumanTask
 from .factory_delivery import investigation_key
 from .factory_handover import pending_job
 
 DEFINITION='pmo-minutes/v1'
 KIND='agent_private_minutes_intake'
 PROTOCOL='factory-minutes-intake/v1'
+UPLOADED_NOTES='psl:minutes-notes-upload:'
+UPLOADED_NOTES_AUDIT='factory.minutes_upload_admitted'
 ID={'type':'integer','minimum':1}
 NULLID={'anyOf':[ID,{'type':'null'}]}
 def obj(properties):return {'type':'object','properties':properties,'required':list(properties),'additionalProperties':False}
 def text(limit):return {'type':'string','minLength':1,'maxLength':limit}
 SELECTION=obj({'protocol':{'const':PROTOCOL},'meeting_version_id':NULLID,'evidence_id':ID,'template_id':ID,'audience':{'enum':['internal','client']},'publish':{'type':'boolean'}})
+UPLOAD_SELECTION = obj({**SELECTION['properties'], 'evidence_id': {'type': 'null'}})
 FIELDS=obj({'kind':{'enum':meetings.MEETING_KINDS},'occurred_at':text(80),'purpose':text(240),'summary':text(16000),'participant_ids':{'type':'array','maxItems':50,'uniqueItems':True,'items':ID},
  'decisions':{'type':'array','maxItems':50,'items':obj({'text':text(2000),'evidence_id':ID,'change_evidence_id':NULLID})},
  'actions':{'type':'array','maxItems':50,'items':obj({'reference':text(160),'description':text(1000),'owner_id':NULLID,'due_at':{'anyOf':[text(80),{'type':'null'}]},'evidence_id':ID,'change_evidence_id':NULLID,'reason':text(4000)})},
@@ -47,6 +51,15 @@ def selection(actor,case,data):
     if case.kind!='project' or data['publish']!=(data['audience']=='client'):raise ValidationError('Choose internal repository minutes or explicitly requested client publication')
     e=subject(case,data['evidence_id'],'meeting_notes')
     if restricted(e) or not e.body.strip() or len(e.body)>16000:raise ValidationError('Bounded authorized meeting notes required')
+    if e.source.startswith(UPLOADED_NOTES):
+        pin = Audit.objects.filter(case=case, actor_id=e.created_by_id, action=UPLOADED_NOTES_AUDIT,
+                                   data__evidence=e.pk, data__notes_sha256=e.sha256).first()
+        upload_id = pin.data.get('upload') if pin else None
+        upload = CaseUpload.objects.filter(case=case, actor_id=e.created_by_id, pk=upload_id).first() if type(upload_id) is int else None
+        if not upload or e.source != UPLOADED_NOTES + str(upload.pk) or upload.sha256 != pin.data.get('file_sha256'):
+            raise ValidationError('The exact uploaded notes and their source proof are required')
+        readable(e.created_by, case)
+        require(e.created_by, case, 'evidence.add')
     t=Template.objects.filter(case=case,pk=data['template_id'],definition__document_type='minutes').first()
     if not t or data['audience'] not in t.definition['audience_fields']:raise ValidationError('Same-project minutes template and supported audience required')
     if data['meeting_version_id'] is not None and not MeetingVersion.objects.filter(pk=data['meeting_version_id'],meeting__case=case).exists():raise ValidationError('Select an existing meeting version from this project')
@@ -92,6 +105,58 @@ def start(actor,case_id,key,reference,data,expected):
     meeting_intent(c,reference,data)
     w=Work.objects.create(case=c,actor=actor,key=key,definition=DEFINITION,request=request,request_hash=sha,business_key=business,source_head=capture(actor,c,data,'factory.minutes_intake'))
     event(actor,c,'factory.started',work=w.pk,definition=DEFINITION);return w
+
+
+@transaction.atomic
+def start_uploaded(actor, case_id, key, reference, data, expected, file):
+    from pathlib import PurePath
+    from xml.etree.ElementTree import ParseError
+    from zipfile import BadZipFile
+    from pypdf.errors import PdfReadError
+    from adapters import case_uploads, upload_text
+    from apps.agents.upload_views import upload_file
+    from .factory import access
+
+    case = lock_case(actor, case_id, 'factory.start')
+    access(actor, case, 'factory.start', DEFINITION)
+    require(actor, case, 'evidence.add')
+    if file is None or not 0 < file.size <= case_uploads.LIMIT or PurePath(file.name).suffix.lower() not in ('.txt', '.docx', '.pdf', '.xlsx'):
+        raise ValidationError('Choose a readable text, Word, Excel or PDF file up to 5 MiB.')
+    if (not isinstance(key, str) or not re.fullmatch(r'[A-Za-z0-9_.:-]{1,100}', key)
+            or not isinstance(reference, str) or not reference.strip() or len(reference) > 160):
+        raise ValidationError('Provide a valid meeting reference.')
+    validate(UPLOAD_SELECTION, data)
+    template = Template.objects.filter(case=case, pk=data['template_id'], definition__document_type='minutes').first()
+    if not template or data['audience'] not in template.definition['audience_fields'] or data['publish'] != (data['audience'] == 'client'):
+        raise ValidationError('Choose a current minutes template for the intended audience.')
+    file_bytes = file.read(case_uploads.LIMIT + 1)
+    file.seek(0)
+    if len(file_bytes) != file.size:
+        raise ValidationError('The file changed while it was read. Choose it again.')
+    fingerprint = hashlib.sha256(file_bytes).hexdigest()
+    upload = CaseUpload.objects.filter(case=case, actor=actor, sha256=fingerprint).order_by('pk').first()
+    note = (Evidence.objects.filter(case=case, created_by=actor, kind='meeting_notes',
+                                    source=UPLOADED_NOTES + str(upload.pk)).first() if upload else None)
+    if note:
+        return start(actor, case.pk, key, reference, {**data, 'evidence_id': note.pk}, expected)
+    if case.revision != expected:
+        raise ValidationError('Stale revision; refresh before retrying')
+    meeting_intent(case, reference, data)
+    try:
+        text = upload_text.extract(file.name, file_bytes)
+    except (BadZipFile, ParseError, PdfReadError, ValueError, IndexError) as exc:
+        raise ValidationError('The file could not be read as meeting notes. Choose another copy.') from exc
+    try:
+        upload = upload_file(actor, case, file)
+    except OSError as exc:
+        raise ValidationError('Private storage is unavailable. Try again later.') from exc
+    if upload.sha256 != fingerprint:
+        raise ValidationError('The file changed during upload. Choose it again.')
+    note = add_evidence(actor, case.pk, 'meeting_notes', text, UPLOADED_NOTES + str(upload.pk))
+    event(actor, case, UPLOADED_NOTES_AUDIT, evidence=note.pk, notes_sha256=note.sha256,
+          upload=upload.pk, file_sha256=upload.sha256)
+    case.refresh_from_db(fields=['revision'])
+    return start(actor, case.pk, key, reference, {**data, 'evidence_id': note.pk}, case.revision)
 
 def observed(work,field):
     return Attempt.objects.filter(activity__work=work,phase='observed',result__head=work.source_head_id,**{'result__has_key':field}).order_by('-pk').values_list('result__'+field,flat=True).first()
@@ -154,7 +219,10 @@ def confirm(actor,work_id,expected,case_expected,fields,extraction_id):
         if pk not in linked:
             w.case.refresh_from_db();meetings.link_action(actor,w.case_id,v.meeting_id,pk,note.pk,w.case.revision)
     a=event(actor,w.case,'factory.minutes_confirmed',work=w.pk,head=w.source_head_id,meeting_version=v.pk,extraction=extraction_id,fields=fields,scope_changed=False,actions_completed=False)
-    w.status='ready';w.finding='';w.revision+=1;w.save();return a
+    w.status='ready';w.finding='';w.revision+=1;w.save()
+    from .factory_progress import wake_waiting
+    wake_waiting(w.pk)
+    return a
 
 def publisher(work,value):
     from django.contrib.auth import get_user_model
@@ -172,6 +240,40 @@ def current_document(work,actor=None):
     if b.manifest!=reporting.meeting_manifest(m):raise ValidationError('Meeting or action state changed; rebuild current minutes')
     return b
 
+def exact_outward_draft(work, actor, version_id):
+    """Resolve the current draft whose client audience requires publication intent."""
+    if type(version_id) is not int or version_id < 1 or work.status == 'verified':
+        raise ValidationError('Select the exact current client minutes draft.')
+    draft = current_document(work, actor)
+    if draft.version.audience != 'client' or draft.version_id != version_id:
+        raise ValidationError('Select the exact current client minutes draft.')
+    return draft
+
+
+@transaction.atomic
+def request_outward_review(actor, work_id, expected, case_expected, version_id):
+    from apps.documents.controlled import request_review
+    from .factory_progress import wake_waiting
+
+    work = human_work(actor, work_id, expected, case_expected)
+    draft = exact_outward_draft(work, actor, version_id)
+    task = request_review(actor, work.case_id, draft.version_id, case_expected)
+    wake_waiting(work.pk)
+    return task
+
+
+@transaction.atomic
+def review_outward_draft(actor, work_id, expected, case_expected, version_id, verdict, note):
+    from apps.documents.controlled import review_version
+    from .factory_progress import wake_waiting
+
+    work = human_work(actor, work_id, expected, case_expected)
+    draft = exact_outward_draft(work, actor, version_id)
+    review = review_version(actor, work.case_id, draft.version_id, verdict, note, case_expected)
+    wake_waiting(work.pk)
+    return review
+
+
 def verify(work,actor=None):
     from .factory import profile
     from apps.documents.controlled import validate_review,publication_requirements
@@ -182,15 +284,23 @@ def verify(work,actor=None):
     p=Publication.objects.filter(version=b.version,factory_work=work,factory_source=work.source_head,factory_policy=config,actor=u).first()
     if not p or p.review_id!=review.pk or p.policies!=policies or p.recipient_ids!=recipients or p.retention_days!=retention:raise ValidationError('Await exact reviewed outward minutes publication')
     receipts=list(PublicationReceipt.objects.filter(publication=p).order_by('pk'))
-    if not receipts or {r.recipient_id for r in receipts}!=set(recipients) or any(r.payload!=b.version.payload or r.payload_sha256!=b.version.payload_sha256 for r in receipts):raise ValidationError('Every exact outward minutes recipient receipt required')
+    if not receipts or {r.recipient_id for r in receipts}!=set(recipients) or any(
+            r.payload!=b.version.payload or r.payload_sha256!=b.version.payload_sha256 or
+            r.operation_key!=f'{p.operation_key}:user:{r.recipient_id}' for r in receipts):
+        raise ValidationError('Every exact outward minutes recipient receipt required')
     result.update(publication=p.pk,receipt_ids=[r.pk for r in receipts]);return result
 
 def report(work,actor):
-    result={'stage':'confirmation','finding':''}
+    result={'stage':'confirmation','finding':'','review_request_needed':False}
     try:
         confirmed_meeting(work,actor);result['stage']='draft'
         if not document(work):return result
-        result['stage']='rework';current_document(work,actor);result['stage']='publication';verify(work,actor);result['stage']='complete'
+        result['stage']='rework';draft=current_document(work,actor);result['stage']='publication'
+        if draft.version.audience == 'client' and not HumanTask.objects.filter(case=work.case, version=draft.version).exists():
+            result['review_request_needed'] = True
+            result['finding'] = 'Send the exact client minutes draft for review.'
+            return result
+        verify(work,actor);result['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
     return result
 
@@ -213,6 +323,8 @@ def eligible(work,value,state,latest,missing,stale,tasks,jobs):
     if stage=='draft':return ['ACT09'],'Prepare current native minutes without completing actions'
     if stage=='complete':return ['ACT13'],'Verify current repository minutes and selected outward receipts'
     if stage=='publication':
+        if state['native']['review_request_needed']:
+            return [],state['native']['finding']
         try:
             from apps.documents.controlled import validate_review
             validate_review(work.case,document(work).version);publisher(work,value)
@@ -237,9 +349,6 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         return {'head':work.source_head_id,'extraction':r.pk if r else None,'human_confirmation_required':True,'scope_changed':False,'commitments_assigned':False}
     if kind=='ACT09':
         m=confirmed_meeting(work,work.execution_actor);b=reporting.draft_minutes(work.execution_actor,c.pk,m.pk,data['template_id'],data['audience'],c.revision)
-        if data['publish']:
-            from apps.documents.controlled import request_review
-            c.refresh_from_db();request_review(work.execution_actor,c.pk,b.version_id,c.revision)
         return {'head':work.source_head_id,'document_version':b.version_id,'meeting_version':m.current_id}
     if kind in ['ACT11','ACT12']:
         j=pending_job(jobs)
@@ -289,34 +398,125 @@ def projection(actor,work):
         _,v=profile(work,recovery=True);s,latest,missing,stale,tasks,jobs=snapshot(work,v,reader=actor);options,message=eligible(work,v,s,latest,missing,stale,tasks,jobs)
         if work.status=='verified':verify(work,actor)
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified';options=[]
-    can_review=False;reviewers=[]
-    if n['stage']=='publication' and not work.cancel_requested:
+    review_verdicts = []
+    reviewers=[];binding=document(work)
+    can_request_review = False
+    if n['review_request_needed'] and not work.cancel_requested:
+        try:
+            require(actor, work.case, 'document.request_review')
+        except PermissionDenied:
+            pass
+        else:
+            can_request_review = True
+    if (n['stage']=='publication' and not n['review_request_needed'] and not work.cancel_requested and binding
+            and HumanTask.objects.filter(case=work.case,version=binding.version,status='open').exists()):
         from django.contrib.auth import get_user_model
         from apps.policy.services import decision_authority
         for u in get_user_model().objects.filter(is_active=True,grant__case=work.case,grant__active=True,grant__action='document.review_controlled').distinct():
-            try:decision_authority(u,work.case,'PMO Lead','approve')
-            except (ValidationError,PermissionDenied):continue
-            reviewers.append(u.get_full_name() or u.username);can_review=can_review or actor.pk==u.pk
+            available = []
+            for verdict in ('approve', 'return'):
+                try:
+                    decision_authority(u, work.case, 'PMO Lead', verdict)
+                except (ValidationError, PermissionDenied):
+                    continue
+                available.append(verdict)
+                if actor.pk != u.pk:
+                    break
+            if available:
+                reviewers.append(u.get_full_name() or u.username)
+            if actor.pk == u.pk:
+                review_verdicts = available
     m=Meeting.objects.filter(case=work.case,reference=work.request['reference']).first()
-    return {'can_review':can_review,'reviewer_names':reviewers,'jobs':list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk')),'document':document(work),'extraction':extraction(work),'confirmation':confirmation(work),'actions':list(meetings.meeting_actions(m)) if m else [],'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed}
+    return {'can_review':bool(review_verdicts),'can_request_review':can_request_review,'review_verdicts':review_verdicts,'reviewer_names':reviewers,'jobs':list(PublicationJob.objects.filter(publication__factory_work=work).select_related('publication').order_by('pk')),'document':binding,'extraction':extraction(work),'confirmation':confirmation(work),'actions':list(meetings.meeting_actions(m)) if m else [],'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed}
+
+
+def delivery_readback(work, actor):
+    from apps.documents.delivery_readback import recipient_rows
+
+    try:
+        require(actor, work.case, 'document.read')
+        binding = current_document(work, actor)
+    except (PermissionDenied, ValidationError):
+        return []
+    job = PublicationJob.objects.filter(publication__factory_work=work, publication__factory_source=work.source_head,
+                                        publication__version=binding.version).select_related('publication').first()
+    if not job:
+        return []
+    receipts = PublicationReceipt.objects.filter(publication=job.publication).order_by('pk')
+    return recipient_rows(job, binding.version, receipts)
+
+
+def confirmed_waiting_job(work, jobs):
+    if work.status != 'waiting_effect' or work.cancel_requested or any(
+            job.status in ('pending', 'leased', 'unknown', 'held') for job in jobs):
+        return None
+    from apps.agents.factory_coordinator import pending
+
+    if pending(work) is not None:
+        return None
+    version_id = observed(work, 'document_version')
+    return next((job for job in jobs if job.status == 'confirmed'
+                 and job.publication.version_id == version_id
+                 and job.publication.factory_source_id == work.source_head_id
+                 and job.publication.factory_policy_id == work.policy_id), None)
+
+
+def acknowledge_original_receipt(work, actor, job):
+    if job.status != 'confirmed' or PublicationJob.objects.filter(publication__factory_work=work,
+            status__in=('pending', 'leased', 'unknown', 'held')).exists():
+        raise ValidationError('Resolve the original minutes delivery before continuing.')
+    proof = verify(work, actor)
+    if not proof['receipt_ids'] or proof['publication'] != job.publication_id:
+        raise ValidationError('Check the original exact minutes receipts before continuing.')
+    work.status = 'ready'
+    work.finding = ''
+    work.observation_hash = ''
+    work.revision += 1
+    work.save(update_fields=['status', 'finding', 'observation_hash', 'revision', 'updated_at'])
+    event(actor, work.case, 'factory.minutes_receipt_checked', work=work.pk, publication_job=job.pk,
+          receipts=proof['receipt_ids'])
+    return work
 
 
 def reconcile(actor,work_id,expected,adapter=None):
     from .factory import access,cancellation_status
     from .factory_execution import require_control
     from apps.documents.delivery import run_publication_once
+    from apps.identity.models import Grant
+
     with transaction.atomic():
         w=Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id,definition=DEFINITION)
         access(actor,w.case,'factory.execute',DEFINITION);require_control(actor,w)
         if type(expected) is not int or w.revision!=expected or w.lease_until and w.lease_until>timezone.now():raise ValidationError('Refresh exact original minutes delivery')
-        job=PublicationJob.objects.filter(publication__factory_work=w).filter(Q(status='unknown')|Q(status='leased',lease_until__lte=timezone.now())).order_by('pk').first()
-        if not job:raise ValidationError('No original uncertain minutes delivery')
+        w.case = lock_case(actor, w.case_id, 'factory.execute')
+        list(Grant.objects.select_for_update().filter(case=w.case).order_by('pk'))
+        require_control(actor, w)
+        jobs = list(PublicationJob.objects.select_for_update(of=('self',)).filter(publication__factory_work=w)
+                    .select_related('publication').order_by('pk'))
+        now = timezone.now()
+        job = next((item for item in jobs if item.status == 'unknown' or
+                    (item.status == 'leased' and item.lease_until and item.lease_until <= now)), None)
+        if not job:
+            original = confirmed_waiting_job(w, jobs)
+            if original:
+                return acknowledge_original_receipt(w, actor, original)
+            raise ValidationError('No original uncertain minutes delivery')
         event(actor,w.case,'factory.reconciliation_requested',work=w.pk,publication_job=job.pk)
     # Receipt lookup only: even authoritative absence cannot silently resend.
     run_publication_once(adapter,case_id=w.case_id,job_id=job.pk,lookup_only=True)
     with transaction.atomic():
-        w=Work.objects.select_for_update().get(pk=work_id);job.refresh_from_db()
-        w.status=cancellation_status(w) if w.cancel_requested else 'waiting_effect' if job.status=='unknown' else 'blocked' if job.status=='held' else 'ready'
+        w=Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id)
+        if w.revision != expected or w.lease_until and w.lease_until > timezone.now():
+            return w
+        w.case = lock_case(actor, w.case_id, 'factory.execute')
+        list(Grant.objects.select_for_update().filter(case=w.case).order_by('pk'))
+        require_control(actor, w)
+        job = PublicationJob.objects.select_for_update(of=('self',)).get(pk=job.pk)
+        if job.status == 'leased':
+            return w
+        if job.status == 'confirmed' and not w.cancel_requested:
+            return acknowledge_original_receipt(w, actor, job)
+        w.status=cancellation_status(w) if w.cancel_requested else 'waiting_effect' if job.status=='unknown' else 'blocked'
         w.finding=job.error if job.status in ['held','unknown'] else '';w.observation_hash='';w.revision+=1;w.save()
     return w
 

@@ -48,11 +48,84 @@ class FactoryLeadershipTests(TestCase):
         self.assertEqual(self.work.status,'verified',self.work.finding)
         v=reporting.document(self.work);self.assertFalse(v.reviews.exists());self.assertFalse(HumanTask.objects.filter(version=v).exists())
         self.assertIsNone(Publication.objects.get(version=v).review_id);self.assertEqual(len(reporting.verify(self.work,self.actor)['receipt_ids']),1)
+        self.client.force_login(self.actor)
+        projection = self.client.get(f'/api/v1/work/{self.work.pk}/leadership-report').json()
+        self.assertEqual([item['receipt_id'] for item in projection['recipients']],
+                         reporting.verify(self.work, self.actor)['receipt_ids'])
     def test_monthly_human_themes_and_exact_role(self):
         artifact(self.actor,self.case,'OPS.leadership_review_authority','schema:psl/leadership-review-authority/v1',{'role':'Head of PMO'},self.owner)
         self.start_work();self.advance();v=reporting.document(self.work);self.assertEqual(HumanTask.objects.get(version=v).required_role,'Head of PMO')
         self.review();self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
         self.assertIn('performance',v.fields);self.assertIn('critical_incidents',v.fields)
+
+    def test_api_cited_monthly_report_returns_for_fresh_review_and_records_receipt(self):
+        artifact(self.actor, self.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+                 {'rules': [{'role': 'PMO Lead', 'actions': ['return']}]}, self.owner)
+        self.client.force_login(self.actor)
+        intake = f'/api/v1/projects/{self.case.pk}/leadership-report-intake'
+        options = self.client.get(intake, {'kind': self.kind, 'domain': 'meetings'}).json()
+        self.assertIn(self.template.pk, [row['id'] for row in options['templates']])
+        selected = dict(self.inputs, content_id=None)
+        sections = json.loads(self.content.body)['sections']
+        body = {'action': 'start', 'case_revision': options['revision'], 'selection': selected, 'sections': sections,
+                'key': 'API-LEADERSHIP', 'reference': 'Synthetic monthly report', 'background': False}
+        started = self.client.post(intake, body, content_type='application/json')
+        self.assertEqual(started.status_code, 201, started.content)
+        self.work = FactoryWork.objects.get(pk=started.json()['work_id'])
+        detail = f'/api/v1/work/{self.work.pk}/leadership-report'
+        self.advance()
+        reviews = f'/api/v1/work/{self.work.pk}/reviews'
+
+        def review(verdict):
+            version = reporting.document(self.work)
+            response = self.client.post(reviews, {'kind': 'document', 'version_id': version.pk,
+                'verdict': verdict, 'note': 'Independent decision on the exact Leadership report.',
+                'expected_revision': self.work.revision, 'case_revision': rev(self.case)},
+                content_type='application/json')
+            self.assertEqual(response.status_code, 200, response.content)
+            self.assertIsNotNone(response.json()['review_id'])
+            return version
+
+        old = review('return')
+        panel = self.client.get(detail).json()
+        self.assertEqual(panel['editable_sections'], sections)
+        self.assertEqual(panel['document_version_id'], old.pk)
+        sections['risks']['text'] = 'The recorded risks relate to the selected reporting period and evidence.'
+        corrected = self.client.post(detail, {'expected_revision': panel['expected_revision'], 'case_revision': panel['case_revision'],
+            'selection': selected, 'sections': sections, 'reason': 'Review requested clearer risk coverage'}, content_type='application/json')
+        self.assertEqual(corrected.status_code, 200, corrected.content)
+        self.advance()
+        new = review('approve')
+        self.advance()
+        self.assertNotEqual(new.pk, old.pk)
+        proof = reporting.verify(self.work, self.actor)
+        delivery = self.client.get(detail).json()
+        self.assertEqual([row['receipt_id'] for row in delivery['recipients']], proof['receipt_ids'])
+
+    def test_live_drafting_uses_the_current_claim_and_stops_at_review(self):
+        from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
+
+        self.start_work()
+        self.assertTrue(factory.run_once(self.work.pk))
+        self.client.force_login(self.actor)
+        url = reverse('factory_detail', args=[self.work.pk])
+        label = 'Drafting the leadership report from the selected sources.'
+        client = self.client
+        test = self
+
+        class ObserveDraft(SyntheticFactoryCoordinator):
+            def choose(self, context):
+                test.assertEqual(context['eligible'], ['ACT09'])
+                test.assertContains(client.get(url), label)
+                active = client.get(f'/api/v1/work/{test.work.pk}').json()
+                test.assertEqual(active['state'], 'processing')
+                test.assertIsNone(active['output_url'])
+                return super().choose(context)
+
+        self.assertNotContains(self.client.get(url), label)
+        self.assertTrue(factory.run_once(self.work.pk, provider=ObserveDraft()))
+        self.assertNotContains(self.client.get(url), label)
+        self.assertTrue(HumanTask.objects.filter(version=reporting.document(self.work), status='open').exists())
     def test_return_requires_fresh_version_without_budget_reset(self):
         artifact(self.actor,self.case,'D05.decision_action_matrix','schema:psl/decision-actions/v1',{'rules':[{'role':'PMO Lead','actions':['return']}]},self.owner)
         self.start_work();self.advance();old=self.review('return');self.advance();spent=self.work.budget_used

@@ -3,19 +3,23 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError,PermissionDenied
+from django.core.paginator import Paginator
 from django.db import IntegrityError,transaction
+from django.db.models import Count, Exists, OuterRef, Q
 from django.shortcuts import render,redirect
 from django.http import JsonResponse
 from apps.core.views import accessible_case
 from . import intake as d
 from .intake_models import AccessChange
 from .intake_models import TenantAuthority
+from apps.workflows.models import FactoryWork
+from .models import Grant, WorkAccessRequest
 
 class NewCase(forms.Form):
-    tenant=forms.ChoiceField()
-    reference=forms.SlugField(max_length=100)
-    title=forms.CharField(max_length=240)
-    kind=forms.ChoiceField(choices=[('project','PMO project'),('support','BaaS support')])
+    tenant=forms.ChoiceField(label='Organization')
+    reference=forms.SlugField(max_length=100, label='Reference')
+    title=forms.CharField(max_length=240, label='Workspace name')
+    kind=forms.ChoiceField(label='Workspace type', choices=[('project','Project'),('support','Customer support')])
 
 @login_required
 def create(request):
@@ -33,6 +37,8 @@ def create(request):
 @transaction.atomic
 def access(request,case_id):
     c=accessible_case(request.user,case_id);cfg=d.current(request.user,c.tenant,'manage_access')
+    if c.synthetic != (cfg.value['classification']=='synthetic'):
+        raise PermissionDenied('Exact technical classification required')
     class Change(forms.Form):
         subject=forms.IntegerField(min_value=1,label='Existing account ID (active required when granting)')
         action=forms.ChoiceField(choices=[(a,a) for a in cfg.value['allowed_actions']])
@@ -46,7 +52,31 @@ def access(request,case_id):
             messages.success(request,'Record action access change recorded. Business decision roles require their own configured authority.')
             return redirect('case_access',case_id=c.pk)
         except (ValidationError,get_user_model().DoesNotExist) as exc:form.add_error(None,'Select an existing account; granting requires it to be active.' if isinstance(exc,get_user_model().DoesNotExist) else str(exc))
-    return render(request,'identity/access.html',{'case':c,'form':form,'history':AccessChange.objects.filter(case=c).order_by('-pk')[:100]})
+    search=request.GET.get('person','').strip()[:100]
+    grants=Grant.objects.filter(case=c,action__in=cfg.value['allowed_actions'])
+    if search:
+        grants=grants.filter(Q(user__username__icontains=search)|Q(user__first_name__icontains=search)|
+                             Q(user__last_name__icontains=search)|Q(user__email__icontains=search))
+    accounts=grants.values('user_id','user__username','user__first_name','user__last_name','user__email','user__is_active')
+    accounts=accounts.annotate(active_actions=Count('pk',filter=Q(active=True))).order_by('user__username','user_id')
+    page=Paginator(accounts,25).get_page(request.GET.get('page'))
+    access_by_account={row['user_id']:[] for row in page.object_list}
+    for user_id,action in grants.filter(active=True,user_id__in=access_by_account).order_by('action').values_list('user_id','action'):
+        access_by_account[user_id].append(action)
+    for row in page.object_list:
+        row['record_actions']=access_by_account[row['user_id']]
+    same_workspace = FactoryWork.objects.filter(case=c, pk=OuterRef('work_reference'), created_at__lte=OuterRef('created_at'))
+    requests = WorkAccessRequest.objects.filter(Exists(same_workspace)).order_by('-pk').values(
+        'requester__username', 'work_reference', 'created_at')
+    request_page = Paginator(requests, 25).get_page(request.GET.get('request_page'))
+    response=render(request,'identity/access.html',{
+        'case':c,'form':form,'search':search,'people':page,
+        'staff_access':cfg.value.get('staff_lifecycle',{}),
+        'history':AccessChange.objects.filter(case=c,action__in=cfg.value['allowed_actions']).order_by('-pk')[:100],
+        'work_requests': request_page,
+    })
+    response['Cache-Control']='no-store'
+    return response
 
 @login_required
 def provision(request):

@@ -23,9 +23,14 @@ from .forms import EvidenceForm, PolicyForm, ReferenceForm
 from .services import add_evidence
 
 
-def accessible_case(actor, case_id):
+def accessible_case(actor, case_id, *, source_action=None):
     try:
-        return visible_cases(actor).get(pk=case_id)
+        cases = visible_cases(actor)
+        if source_action:
+            from .workbench import source_workspaces
+
+            cases = cases | source_workspaces(actor, source_action)
+        return cases.get(pk=case_id)
     except Exception as exc:
         from .models import Case
         if isinstance(exc, Case.DoesNotExist):
@@ -44,7 +49,14 @@ def coverage(request):
 
 @login_required
 def case_detail(request, case_id):
-    case = accessible_case(request.user, case_id)
+    try:
+        case = accessible_case(request.user, case_id)
+    except Http404:
+        from apps.identity.factory_access import management_cases
+
+        if request.method in ('GET', 'HEAD') and management_cases(request.user).filter(pk=case_id).exists():
+            return redirect('design_project', case_id=case_id)
+        raise
     evidence_form = EvidenceForm()
     if request.method == 'POST':
         try:
@@ -105,7 +117,7 @@ def policy_workbench(request, case_id):
     from apps.policy.role_forms import RoleAssignmentsForm,DelegationsForm
     from apps.policy.role_assignments import draft as draft_roles,draft_delegations,SCHEMAS as ROLE_SCHEMAS
     from apps.policy.delegation_validators import SCHEMAS as DELEGATION_SCHEMAS
-    case = accessible_case(request.user, case_id)
+    case = accessible_case(request.user, case_id, source_action='policy.read')
     require(request.user, case, 'policy.read')
     form = PolicyForm()
     role_form=RoleAssignmentsForm(case,request.POST if request.method=='POST' and request.POST.get('action')=='roles_draft' else None)

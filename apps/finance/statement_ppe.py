@@ -1,5 +1,6 @@
 """Native PPE source selection and immutable inventory for selected statement lines."""
 from django.core.exceptions import ValidationError
+from django.db import connection
 from apps.identity.services import active_case_grants
 from apps.policy.statement_ppe import validate_binding
 from . import ppe
@@ -57,3 +58,26 @@ def denied_statement_runs(actor, runs, budget):
     grants = active_case_grants(actor, cases, actions=ppe.READ_ACTIONS)
     denied_cases = {case_id for case_id in cases if any((case_id, action) not in grants for action in ppe.READ_ACTIONS)}
     return [run.pk for run in protected if run.case_id in denied_cases]
+
+
+def held_opening_statement_ids(case):
+    """Select only identities before any statement or controlled draft body is loaded."""
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            WITH RECURSIVE selected(statement_id, schedule_id, depth) AS (
+                SELECT line.statement_id, line.schedule_id, 0
+                FROM finance_financestatementppeinput line
+                JOIN finance_financerun statement ON statement.id=line.statement_id
+                WHERE statement.case_id=%s
+                UNION ALL
+                SELECT selected.statement_id, (schedule.payload->>'prior_id')::bigint, selected.depth + 1
+                FROM selected
+                JOIN finance_schedulework schedule ON schedule.id=selected.schedule_id
+                WHERE schedule.case_id=%s AND selected.depth < 36 AND schedule.payload->>'prior_id' IS NOT NULL
+            )
+            SELECT DISTINCT selected.statement_id
+            FROM selected
+            JOIN finance_schedulework schedule ON schedule.id=selected.schedule_id AND schedule.case_id=%s
+            WHERE NOT psl_ppe_opening_owner_current((schedule.payload->>'register_id')::bigint)
+        """, [case.pk, case.pk, case.pk])
+        return [row[0] for row in cursor.fetchall()]

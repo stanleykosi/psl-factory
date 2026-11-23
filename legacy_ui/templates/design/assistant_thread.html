@@ -1,0 +1,54 @@
+{% extends 'base.html' %}{% load studio_ui static %}
+{% block title %}{{ persona.0 }} · PSL Factory{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'design_agents' %}">← Assistant</a>
+<header class="page-heading"><div><h1>{{ persona.0 }}</h1><p class="lede">{{ persona.1 }} · {% if conversation.scope == 'department' %}All department projects{% else %}{{ case|workspace_name }}{% endif %}</p>{% if conversation.persona == 'zainab' %}{% if not payroll_only %}<p>The live HR system is not connected yet.</p>{% endif %}<a href="{% url 'payroll_received_reports' %}">My acknowledged payroll reports</a>{% endif %}</div></header>
+<div class="factory-case-layout"><section class="card assistant-thread" aria-label="Conversation">
+  {% for turn in turns %}
+  <article class="assistant-turn">
+    <div class="assistant-question"><strong>You</strong><p>{{ turn.question|linebreaksbr }}</p></div>
+    <div class="assistant-reply">
+      <strong>{{ persona.0 }}</strong>
+      {% if turn.status == 'queued' %}<p role="status">Question queued. You can leave and check Alerts when the answer is ready.</p>
+      {% elif turn.status == 'running' %}<p role="status">Checking your project records for this answer.</p>
+        {% if turn.started_at %}<p><small>Started <time datetime="{{ turn.started_at|date:'c' }}">{{ turn.started_at|date:'H:i:s T' }}</time></small></p>{% endif %}
+      {% elif turn.status == 'held' %}<p role="status">An answer could not be completed. Check your access or <a href="#assistant-compose">ask again</a>.</p>
+      {% elif turn.stale %}<p role="status">This answer needs a fresh check because a source changed or is no longer available.</p>
+      {% else %}<p>{{ turn.answer|linebreaksbr }}</p>
+        {% if turn.sources %}<details><summary>Records checked</summary><ul>{% for source in turn.sources %}<li><a href="{{ source.url }}">{{ source.label }}</a> · {{ source.fact }}</li>{% endfor %}</ul></details>{% endif %}
+        {% if turn.insufficient %}<a href="#assistant-compose">Ask about a different record</a>{% endif %}
+      {% endif %}
+      {% if turn.started_url or turn.next_url %}<section class="assistant-draft" aria-label="{{ turn.draft_label|default:'Work' }}">
+        {% if turn.draft_label %}<h2>{{ turn.draft_label }}</h2>{% endif %}
+        {% if turn.started_url %}
+          {% if turn.reviewed_number %}<p>{{ turn.reviewed_reference }} · Started from draft {{ turn.reviewed_number }}</p>{% endif %}
+          <p>Work started. <a href="{{ turn.started_url }}">Open the work item →</a></p>
+        {% else %}
+          {% if turn.saved_number %}<p>{{ turn.saved_reference }} · Draft {{ turn.saved_number }}{% if turn.draft_needs_refresh %} · Project records changed{% endif %}</p>{% endif %}
+          <p>Check the draft before starting work.</p>
+          <a href="{{ turn.next_url }}" class="button secondary">Edit draft →</a>
+        {% endif %}
+      </section>{% endif %}
+      {% if turn.transfer_url %}<p><a href="{{ turn.transfer_url }}">Open the conversation with {{ turn.transfer_name }} →</a></p>
+      {% elif turn.transfer_action %}<form action="{{ turn.transfer_action }}" method="post">{% csrf_token %}<button type="submit" class="button secondary">Ask {{ turn.transfer_name }} instead</button></form>{% endif %}
+    </div>
+  </article>
+  {% empty %}<p>{% if conversation.scope == 'department' %}Ask about all your department’s projects, or name one project to look at it more closely.{% else %}Ask about this project. {{ persona.0 }} will check its records.{% endif %}</p>{% endfor %}
+  {% if waiting %}{{ form.errors }}<p><a href="{% url 'assistant_thread' conversation.pk %}" data-assistant-wait>Check for an answer</a></p>
+    <script defer src="{% static 'assistant-progress.js' %}"></script>
+  {% else %}<form method="post" id="assistant-compose" class="assistant-compose">{% csrf_token %}{{ form.key }}{{ form.non_field_errors }}{{ form.question.as_field_group }}
+  {% if form.focus.field.choices %}<details class="assistant-source-picker" data-source-picker{% if form.focus.errors or form.is_bound %} open{% endif %}>
+    <summary>Select project records</summary>
+    <label data-source-search hidden>Find a project record <input type="search" autocomplete="off"></label>
+    <p data-source-no-matches role="status" hidden>No matching project records.</p>
+    <div data-source-choices>{{ form.focus.as_field_group }}</div>
+  </details><script defer src="{% static 'assistant-source-picker.js' %}"></script>{% endif %}
+  {% if not payroll_only %}<div data-dictation hidden>
+    <button class="button secondary" type="button" data-dictate aria-describedby="dictation-status">Dictate message</button>
+    <span id="dictation-status" role="status"></span>
+  </div><script defer src="{% static 'assistant-dictation.js' %}"></script>{% endif %}
+  <button class="button primary" type="submit">Send</button></form>{% endif %}
+</section>
+{% if earlier %}<aside class="card" aria-label="Earlier conversations"><h2>Earlier conversations</h2><ul>{% for item in earlier %}
+<li><a href="{% url 'assistant_thread' item.pk %}">{% if item.scope == 'department' %}All department projects{% else %}{{ item.case|workspace_name }}{% endif %} · {{ item.persona|title }}</a></li>{% endfor %}</ul></aside>{% endif %}</div>
+{% endblock %}

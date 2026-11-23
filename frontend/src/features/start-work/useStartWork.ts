@@ -401,7 +401,12 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
         setUncertain(true);
         return show({ kind: 'uncertain' });
       }
-      if (response.status === 201) return onStarted((data as { work_id: string }).work_id);
+      if ((response.status === 200 || response.status === 201) && data && typeof data === 'object' && 'work_id' in data) {
+        const id = data.work_id;
+        if ((typeof id === 'string' && id.trim()) || (typeof id === 'number' && Number.isSafeInteger(id) && id > 0)) {
+          return onStarted(String(id));
+        }
+      }
       if (response.status >= 500 || response.status < 400) {
         setUncertain(true);
         return show({ kind: 'uncertain' });
@@ -427,7 +432,7 @@ export function useStartForm(line: Line, onStarted: (workId: string) => void, in
       }
       if (response.status === 409) {
         setKey(newIdempotencyKey());
-        if (apiError.code === 'idempotency_key_reused') return show({ kind: 'problem', message: apiError.message });
+        if (apiError.code === 'idempotency_conflict') return show({ kind: 'problem', message: apiError.message });
         onConflict?.();
         return await reloadRevision();
       }

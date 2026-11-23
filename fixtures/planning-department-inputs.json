@@ -1,0 +1,11 @@
+{
+  "classification": "Synthetic acceptance choices only. Operational department requirements and authority remain deferred.",
+  "rules": {
+    "required_departments": ["Engineering", "QA", "Security", "Product", "Infrastructure"],
+    "effort_required_for": ["Engineering"],
+    "recorder_roles": ["PM"],
+    "reviewer_roles": ["PM"],
+    "allow_recorder_review": true,
+    "changed_effort_action": "review_required"
+  }
+}

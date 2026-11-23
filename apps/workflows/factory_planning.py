@@ -8,13 +8,24 @@ from apps.core.models import Evidence,Audit
 from apps.core.evidence_access import public_evidence
 from apps.core.services import lock_case,event
 from apps.documents.contracts import digest
+from apps.identity.services import require
 from apps.pmo import planning,engagement
-from apps.pmo.models import DeliverySource,ApprovalRequest,ApprovalRouteJob,ApprovalRouteReceipt,Baseline
+from apps.pmo.models import DeliverySource,ApprovalRequest,ApprovalRouteJob,ApprovalRouteReceipt,Baseline,CommercialRevision
+from apps.pmo.planning_input_models import DEPARTMENTS
 from adapters.factory_planning import NativePlanningAdapter
 from .models import FactoryWork as Work,FactoryActivity as Activity
 
 DEFINITION='planning/v1'
 PROCESS_IDS=['P17','P21','P25','P26','P63']
+
+
+def investigation_key(work, observed):
+    values=['ACT04',observed['sources'],work.source_head_id]
+    collection=observed['report'].get('department_inputs')
+    if collection is not None:
+        values.append({'inputs':[{'id':row['record']['id'],'source_hash':row['record']['source_hash']}
+                       if row['record'] else None for row in collection['rows']], 'context':collection['context']})
+    return digest(values)
 
 @transaction.atomic
 def start(actor,case_id,key,packet_id,reference,expected):
@@ -36,7 +47,7 @@ def start(actor,case_id,key,packet_id,reference,expected):
     event(actor,case,'factory.started',work=work.pk,definition=DEFINITION)
     return work
 
-def snapshot(work,value,reader=None):
+def snapshot(work,value,reader=None,*,report=None):
     from .factory import access
     actor=reader or work.execution_actor
     access(actor,work.case,'factory.read' if reader is not None else 'factory.execute',DEFINITION);planning.readable(actor,work.case)
@@ -54,7 +65,7 @@ def snapshot(work,value,reader=None):
     latest={e.kind:e for e in records if e.pk in primary_ids}
     missing=[k for k in value['required_evidence_kinds'] if k not in latest]
     stale=[k for k in value['required_evidence_kinds'] if k in latest and latest[k].created_at<timezone.now()-timedelta(seconds=value['max_age_seconds'])]
-    report=planning.report(actor,work.case_id)
+    report=planning.report(actor,work.case_id) if report is None else dict(report)
     # A superseded readiness artifact does not block preparing a valid successor.
     if report['status']!='source_referenced_ready':
         try:
@@ -71,13 +82,65 @@ def snapshot(work,value,reader=None):
     state['hash']=digest(state);state['work_revision']=work.revision
     return state,latest,missing,stale,[],jobs
 
+
+def reviewed_costing(actor, case, collection):
+    review_id = collection.get('review_id')
+    if not review_id:
+        return None
+    try:
+        for action in ('commercial.read', 'costing.read', 'costing.source.read'):
+            require(actor, case, action)
+        review = planning.latest(case, 'department_review')
+        if not review or review.pk != review_id:
+            return None
+        decision = planning.read(case, review, 'department_review', 'coordinate')
+        if decision['context'] != {key: value for key, value in collection.items() if key != 'review_id'}:
+            return None
+        current = decision['commercial']
+        proposal = CommercialRevision.objects.filter(pk=current['proposal'], dossier__case=case,
+            dossier__current_id=current['proposal']).select_related('previous').only(
+            'number', 'dossier_id', 'sources', 'previous__number', 'previous__dossier_id', 'previous__sources').first()
+        result = {'disposition': 'Use the fresh reviewed costing' if decision['disposition'] == 'new_costing' else 'Keep the reviewed costing'}
+        if proposal and proposal.sources['costing'] == current['costing']:
+            planning.proof(case, current['costing'], ('costing',), metadata_only=True)
+            result['proposal'] = proposal.number
+            if proposal.previous and proposal.previous.dossier_id == proposal.dossier_id:
+                planning.proof(case, proposal.previous.sources['costing'], ('costing',), metadata_only=True)
+                result['previous'] = proposal.previous.number
+        return result
+    except (ValidationError, PermissionDenied):
+        return None
+
+
+def readiness_progress(actor, work, report):
+    """Explain only a matching live claim over this reader's current Planning sources."""
+    from .factory import TERMINAL, profile
+    from .factory_progress import current_plan_step
+
+    if work.cancel_requested or work.status in TERMINAL or not work.lease_until or work.lease_until <= timezone.now():
+        return None
+    try:
+        _, value = profile(work)
+        state, *facts = snapshot(work, value, reader=actor, report=report)
+        collection = (state['report'].get('readiness_inputs') or {}).get('department_inputs') or {}
+        departments = {item['department'] for item in collection.get('inputs', [])}
+        if departments != set(DEPARTMENTS):
+            return None
+        options, _ = eligible(work, value, state, *facts)
+        if current_plan_step(work, state['hash'], options) == 'ACT08':
+            return {'label': 'Preparing readiness from 5 of 5 recorded department inputs.', 'watching': True,
+                    'costing': reviewed_costing(actor, work.case, collection)}
+    except (ValidationError, PermissionDenied):
+        pass
+    return None
+
 def eligible(work,value,observed,latest,missing,stale,tasks,jobs):
     if work.source_head_id!=observed['current_packet']:
         pending=next((j for j in jobs if j.status in ['pending','unknown','leased']),None)
         if pending:return (['ACT12'],'Reconcile the original department request before adopting changed sources') if pending.status=='unknown' else ([], 'Stop or reconcile outstanding department routing before adopting changed sources')
         return ['ACT07'],'Adopt the current native packet within the same planning engagement'
     if missing or stale:return [],'Planning source information needs correction: '+', '.join(missing+stale)
-    key=digest(['ACT04',observed['sources'],work.source_head_id])
+    key=investigation_key(work,observed)
     if not Activity.objects.filter(work=work,key=key,status='succeeded').exists():return ['ACT04'],'Investigate planning evidence and dependencies'
     correlation=observed['report'].get('source_correlation')
     if correlation and not correlation['complete']:return [],observed['report'].get('finding','Resolve exact source correlation with the internal owner')
@@ -257,10 +320,41 @@ def attempt_projection(attempt):
     out={key:value for key,value in result.items() if key in keys}
     if 'investigation' in result:
         investigation=result['investigation']
-        out['investigation']={key:investigation[key] for key in ['capability','provider','status','native_verified','unknown_source_fields','unresolved_question_keys'] if key in investigation}
+        out['investigation']={key:investigation[key] for key in ['capability','provider','status','native_verified','unknown_source_fields','unresolved_question_keys','department_input_questions'] if key in investigation}
     if 'department_requests' in result:out['department_requests']='Separate native requests recorded; no approval granted'
     if 'approval_job' in result:out['request_delivery']='Selected native receipt worker requested; inspect its observed status'
     return out
+
+
+@transaction.atomic
+def department_action(actor,work_id,expected,case_expected,action,data):
+    from . import factory
+    from apps.pmo import planning_inputs
+    from apps.pmo.planning_input_forms import DepartmentInputForm,DepartmentReviewForm,DepartmentRulesForm
+    work=Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id,definition=DEFINITION)
+    factory.access(actor,work.case,'factory.read',DEFINITION)
+    if work.revision!=expected or work.cancel_requested or work.status=='cancelled':
+        raise ValidationError('The planning work changed. Review its current inputs.')
+    forms={'department_input':DepartmentInputForm,'department_effort_review':DepartmentReviewForm,
+           'department_input_rules':DepartmentRulesForm}
+    if action not in forms:raise ValidationError('Choose a department input action.')
+    form=forms[action](data)
+    if not form.is_valid():raise ValidationError([message for messages in form.errors.values() for message in messages])
+    values=form.cleaned_data
+    if action=='department_input_rules':
+        case=lock_case(actor,work.case_id,'policy.configure',case_expected)
+        result=form.save(actor,case)
+    else:
+        if values['packet_id']!=work.source_head_id:
+            raise ValidationError('Use the current planning work packet.')
+        command=planning_inputs.record if action=='department_input' else planning_inputs.review
+        result=command(actor,work.case_id,expected=case_expected,**values)
+    work.revision+=1
+    if work.status=='waiting':work.status='ready';work.finding=''
+    work.save()
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
+    return result
 
 @transaction.atomic
 def reassess(actor,work_id,expected,reason):

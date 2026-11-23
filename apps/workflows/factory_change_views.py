@@ -3,8 +3,9 @@ from apps.pmo.change_signatures import parse_declaration, declaration_draft
 from uuid import uuid4
 from django import forms
 from django.contrib import messages
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.shortcuts import render,redirect
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from apps.core.models import Case,Evidence
 from apps.core.workbench import granted
@@ -13,6 +14,7 @@ from apps.core.evidence_access import public_evidence
 from apps.documents.models import Template
 from apps.pmo.models import ChangeVersion,ChangeAuthorization
 from . import factory,factory_change as change
+from .factory_progress_views import StartWithBackground, start_work
 
 class InputsForm(forms.Form):
     def __init__(self,case,*args,change_id=None,**kwargs):
@@ -26,7 +28,7 @@ class InputsForm(forms.Form):
         self.fields['template_id']=forms.ModelChoiceField(queryset=Template.objects.filter(case=case,definition__document_type__in=['project_artifact','status_report']),required=False,label='Controlled change template')
     def inputs(self):return {k:self.cleaned_data[k].pk if self.cleaned_data[k] else None for k in ['template_id','authorization_id']}
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=change.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(max_length=100,widget=forms.HiddenInput)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
@@ -49,8 +51,9 @@ def create(request):
         try:
             d=form.cleaned_data
             if d['definition']!=change.DEFINITION:raise ValidationError('Choose the registered controlled change definition')
-            w=change.start(request.user,d['case'].pk,d['key'],inputs.cleaned_data['version_id'].pk,inputs.inputs(),d['reference'],d['revision'])
-            return redirect('factory_detail',w.pk)
+            return start_work(request, lambda: change.start(request.user, d['case'].pk, d['key'],
+                              inputs.cleaned_data['version_id'].pk, inputs.inputs(), d['reference'], d['revision']),
+                              d['background'])
         except ValidationError as exc:form.add_error(None,change.finding(exc))
     return render(request,'factory/change_start.html',{'form':form,'inputs_form':inputs,'case':form.selected})
 
@@ -77,7 +80,11 @@ def detail(request,work):
                     from apps.pmo.change_impacts import assessment_form
                     values.update(assessment_form(p))
                     values.update(contributor=p.get('contributor',''),**{k:flags[p[k]] for k in ['cost_impact','timeline_impact','client_facing']})
-                elif action=='decide':values.update(role=p.get('role',''),verdict=p.get('verdict',''))
+                elif action=='decide':
+                    role, verdict = p.get('role',''), p.get('verdict','')
+                    if 'decision_action' in p:
+                        role, _, verdict = p['decision_action'].partition(':')
+                    values.update(role=role,verdict=verdict)
                 elif action=='authorize':values['commercial']=int(p['commercial']) if p.get('commercial') else None
                 else:
                     from apps.pmo.change_impacts import execution_form
@@ -91,11 +98,49 @@ def detail(request,work):
             elif action=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(p.get('configuration','0')),p.get('reason',''))
             else:raise ValidationError('Choose a current native change action')
             messages.success(request,'Controlled change action recorded');return redirect(request.get_full_path())
-        except (ValidationError,ValueError) as exc:messages.error(request,str(exc));work.refresh_from_db();work.case.refresh_from_db()
+        except (ValidationError,ValueError) as exc:messages.error(request,change.finding(exc));work.refresh_from_db();work.case.refresh_from_db()
     row=presentation(request.user,work);panel=row['change']
     human_permissions={a:permitted(request.user,work,a) for a in ['change.manage','change.authorize','change.decide','change.progress:Engineering','change.progress:QA']}
     assessors=[c for c in change.changes.CONTRIBUTORS if permitted(request.user,work,'change.assess:'+c)]
+    decisions = actions = None
+    if v.category == 'Normal':
+        from apps.policy.services import decision_authority
+
+        decisions = []
+        actions = []
+        if v.change.current_id == v.pk:
+            try:
+                change.changes.current_change(work.case, v.pk)
+                decisions = change.changes.normal_decision_status(v)
+            except (PermissionDenied, ValidationError):
+                pass
+        if (human_permissions['change.decide'] and not work.cancel_requested
+                and work.status not in ['verified', 'cancelled', 'followup_needed']
+                and not (work.lease_until and work.lease_until > timezone.now())):
+            for decision in decisions:
+                role = decision['role']
+                for verdict, label in [('approve', 'Approve'), ('return', 'Return'), ('reject', 'Reject')]:
+                    try:
+                        decision_authority(request.user, work.case, role, verdict)
+                    except (PermissionDenied, ValidationError):
+                        continue
+                    actions.append((f'{role}:{verdict}', f'{role} · {label}'))
+        if (any(d['status'] == 'Rejected' for d in decisions) and not work.cancel_requested
+                and work.status not in ['verified', 'cancelled', 'followup_needed']
+                and not any(j.status in ['pending', 'leased', 'unknown', 'held'] for j in panel['jobs'])):
+            row.update(state='Change rejected', can_advance=False, blocker='',
+                       next_action='Review the recorded rejection before starting further change work')
+            human_permissions['change.authorize'] = False
     evidence=public_evidence(Evidence.objects.filter(case=work.case)).order_by('-pk')
+    impact_rows = impact_pdfs = ()
+    can_upload_impact_proof = False
+    if v.category == 'Normal':
+        from apps.pmo.change_impacts import impact_rows as observed_impacts
+        from apps.pmo.release_proofs import own_pdfs
+        impact_rows = observed_impacts(request.user, work.case, v)
+        can_upload_impact_proof = bool(assessors) and permitted(request.user, work, 'evidence.add')
+        if can_upload_impact_proof:
+            impact_pdfs = own_pdfs(request.user, work.case).order_by('-pk')[:30]
     for doc in panel.get('documents',[]):
         for receipt in doc['receipts']:
             binding=receipt.publication.version.changedocumentbinding
@@ -104,4 +149,6 @@ def detail(request,work):
                 from apps.pmo.change_applicability import presentation as applicability_presentation
                 receipt.applicability=applicability_presentation(binding.authorization,receipt,request.user)
     signatures=public_evidence(Evidence.objects.filter(case=work.case,kind='signature')).order_by('-pk') if panel['can_close'] else []
-    return render(request,'factory/change_detail.html',{'row':row,'case':work.case,'inputs_form':form,'signatures':signatures,'activities':work.activities.order_by('pk'),'can_configure':permitted(request.user,work,'policy.configure'),'assessors':assessors,'can_decide':human_permissions['change.decide'],'can_authorize':human_permissions['change.authorize'],'can_execution':any(human_permissions[k] for k in ['change.manage','change.progress:Engineering','change.progress:QA']),'evidence':evidence,'decision_roles':change.changes.DECISION_ROLES})
+    return render(request,'factory/change_detail.html',{'row':row,'case':work.case,'inputs_form':form,'signatures':signatures,'activities':work.activities.order_by('pk'),'can_configure':permitted(request.user,work,'policy.configure'),'assessors':assessors,'can_decide':human_permissions['change.decide'],'can_authorize':human_permissions['change.authorize'],'can_execution':any(human_permissions[k] for k in ['change.manage','change.progress:Engineering','change.progress:QA']),'evidence':evidence,'decision_roles':change.changes.DECISION_ROLES,'normal_decisions':decisions,'normal_decision_actions':actions,
+                  'impact_rows':impact_rows,'impact_pdfs':impact_pdfs,
+                  'can_upload_impact_proof':can_upload_impact_proof})

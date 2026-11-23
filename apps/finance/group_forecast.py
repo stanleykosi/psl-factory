@@ -145,7 +145,7 @@ def review(actor,case_id,version_id,role,verdict,note,expected):
 
 
 def approved(version):
-    r=version.reviews.order_by('-pk').first()
+    r=version.reviews.defer('note').order_by('-pk').first()
     if not r or r.verdict!='approve' or r.payload_sha256!=version.payload_sha256:
         raise ValidationError('Exact group disclosure and recipient approval required')
     case=version.document.case

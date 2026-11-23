@@ -14,10 +14,11 @@ from apps.agents.models import AgentRun
 from .hrfinance_forms import commands
 from .hrfinance_models import HRFinanceNeed,HRDisclosure,HRReadSnapshot
 from . import hrfinance as domain
+from .payroll_correction_views import reviewer as payroll_correction_reviewer
 
 @login_required
 def workbench(request,case_id):
- case=accessible_case(request.user,case_id);require(request.user,case,'hrfinance.read')
+ case=accessible_case(request.user,case_id,source_action='hrfinance.read');require(request.user,case,'hrfinance.read')
  forms=commands(request.user,case,request.POST if request.method=='POST' else None)
  if request.method=='POST':
   try:
@@ -62,7 +63,9 @@ def workbench(request,case_id):
    try:domain.check_snapshot_access(request.user,s);readable=True
    except (ValidationError,PermissionDenied):readable=False
    d.snapshot_status.append({'id':s.pk,'status':s.status,'current':current,'readable':readable,'retain_until':s.retain_until,'findings':s.manifest['findings']})
- response=render(request,'finance/hrfinance.html',{'case':case,'scope_questions':scope_questions,'needs':HRFinanceNeed.objects.filter(case=case).order_by('-pk')[:30],'contracts':contracts,'commands':forms,'policies':[resolve(k,case) for k in SCHEMAS],'schemas':SCHEMAS,'need_schema':domain.NEED,'agents':AgentRun.objects.filter(case=case,provider='deterministic-hrfinance-v1').order_by('-pk')[:5]})
+ try:payroll_correction_reviewer(request.user,case);payroll_corrections=True
+ except PermissionDenied:payroll_corrections=False
+ response=render(request,'finance/hrfinance.html',{'case':case,'payroll_corrections':payroll_corrections,'scope_questions':scope_questions,'needs':HRFinanceNeed.objects.filter(case=case).order_by('-pk')[:30],'contracts':contracts,'commands':forms,'policies':[resolve(k,case) for k in SCHEMAS],'schemas':SCHEMAS,'need_schema':domain.NEED,'agents':AgentRun.objects.filter(case=case,provider='deterministic-hrfinance-v1').order_by('-pk')[:5]})
  response['Cache-Control']='no-store';return response
 
 @login_required

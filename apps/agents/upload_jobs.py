@@ -1,5 +1,5 @@
 import os
-from datetime import timedelta
+from uuid import uuid4
 
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
@@ -8,6 +8,7 @@ from django.utils import timezone
 from adapters import case_uploads, openrouter, upload_text
 from apps.identity.services import require
 from .models import AgentJob
+from .upload_recovery import LEASE, audit
 
 ROLES = {
     'A01': ('Intake and triage', 'Classify the request and identify ambiguities or missing intake details.'),
@@ -34,28 +35,81 @@ FOLLOW_UP = {
 
 
 def authorize(actor, upload):
+    # A saved model instance must not preserve a deactivated account's access.
+    from django.contrib.auth import get_user_model
+    if not get_user_model().objects.filter(pk=actor.pk, is_active=True).exists():
+        raise PermissionDenied('This file review is unavailable for the current account.')
     require(actor, upload.case, 'case.read')
     require(actor, upload.case, 'agent.extract')
     if not upload.case.synthetic or upload.actor_id != actor.pk:
         raise PermissionDenied('Only your own files in synthetic cases can be sent to the test provider.')
 
 
+@transaction.atomic
+def claim_next():
+    expired = list(AgentJob.objects.select_for_update(skip_locked=True).select_related('upload__case', 'actor')
+                   .filter(status='running', started_at__lt=timezone.now() - LEASE).order_by('pk')[:25])
+    for old in expired:
+        old.status, old.settled_token = 'interrupted', old.claim_token
+        old.save(update_fields=['status', 'settled_token'])
+        audit(old, 'interrupted', provider_result='unknown')
+    job = (AgentJob.objects.select_for_update(skip_locked=True).select_related('upload__case', 'actor')
+           .filter(status='queued').order_by('pk').first())
+    if job is not None:
+        job.status, job.started_at = 'running', timezone.now()
+        job.claim_token, job.settled_token = uuid4(), None
+        job.attempt += 1
+        job.save(update_fields=['status', 'started_at', 'claim_token', 'settled_token', 'attempt'])
+        audit(job, 'claimed')
+    return job
+
+
+@transaction.atomic
+def finish(job, result=None, *, failure=''):
+    from apps.core.models import Case
+
+    # Same case→job order as human review/recovery, with current authority at commit.
+    Case.objects.select_for_update().get(pk=job.upload.case_id)
+    current = AgentJob.objects.select_for_update().select_related('upload__case', 'actor').get(pk=job.pk)
+    if current.status != 'running' or current.claim_token != job.claim_token:
+        return False
+    if current.started_at is None or current.started_at < timezone.now() - LEASE:
+        current.status, current.settled_token = 'interrupted', current.claim_token
+        current.save(update_fields=['status', 'settled_token'])
+        audit(current, 'interrupted', provider_result='unknown')
+        return False
+    if not failure:
+        try:
+            authorize(current.actor, current.upload)
+        except PermissionDenied:
+            failure = 'access_changed'
+    current.status = 'held' if failure else 'draft'
+    current.settled_token = current.claim_token
+    fields = ['status', 'settled_token']
+    if not failure:
+        current.result = result
+        fields.append('result')
+    current.save(update_fields=fields)
+    audit(current, current.status, failure=failure, provider_result='unknown' if failure else 'received')
+    return True
+
+
 def run_once():
     model = os.getenv('OPENROUTER_MODEL')
     if not model or not os.getenv('OPENROUTER_API_KEY'):
         return False
-    with transaction.atomic():
-        AgentJob.objects.filter(status='running', started_at__lt=timezone.now() - timedelta(minutes=10)).update(
-            status='interrupted')
-        job = AgentJob.objects.select_for_update(skip_locked=True).filter(status='queued').order_by('pk').first()
-        if job is None:
-            return False
-        job.status, job.started_at = 'running', timezone.now()
-        job.save(update_fields=['status', 'started_at'])
+    job = claim_next()
+    if job is None:
+        return False
+    stage = 'source'
     try:
         authorize(job.actor, job.upload)
         source = upload_text.extract(job.upload.name, case_uploads.read(job.upload))
+        # Source grants/account can change while private storage is being read.
+        authorize(job.actor, job.upload)
+        stage = 'provider'
         result = openrouter.review(model, ROLES[job.role][1], source)
+        stage = 'output'
         authorize(job.actor, job.upload)
         lines = {str(number): line for number, line in enumerate(source.splitlines(), 1)
                  if line.strip() and len(line) <= 1000}
@@ -71,9 +125,9 @@ def run_once():
         result['quotes'] = [lines[number] for number in result['quotes']]
         result['model'] = model
         result['source_sha256'] = job.upload.sha256
-        AgentJob.objects.filter(pk=job.pk, status='running').update(status='draft', result=result)
+        finish(job, result)
     except Exception as exc:
         import logging
         logging.getLogger(__name__).warning('Agent job %s held: %s', job.pk, type(exc).__name__)
-        AgentJob.objects.filter(pk=job.pk, status='running').update(status='held')
+        finish(job, failure='access_changed' if isinstance(exc, PermissionDenied) else stage + '_unavailable')
     return True

@@ -28,6 +28,23 @@ def setup(configured=True,department_configured=True):
     return f
 
 class FactoryPlanningTests(TestCase):
+    def test_saved_planning_work_starts_background_and_waits_for_sources(self):
+        f = setup()
+        work = f['work']
+        self.client.force_login(f['a'])
+        url = f'/api/v1/work/{work.pk}'
+        page = self.client.get(url).json()
+        self.assertEqual(page['state'], 'ready')
+        self.assertIsNone(page['progress'])
+        accepted = self.client.post(url + '/background', {'expected_revision': page['revision'], 'enabled': True},
+                                    content_type='application/json')
+        self.assertEqual(accepted.status_code, 202, accepted.content)
+        factory.run_until_wait(work.pk)
+        held = self.client.get(url).json()
+        self.assertEqual(held['state'], 'waiting')
+        self.assertIn('department', held['blocker'].lower())
+        self.assertEqual(ApprovalRequest.objects.filter(case=f['c']).count(), 2)
+
     def test_missing_department_policy_retains_requests_and_holds_only_delivery(self):
         f=setup(department_configured=False);w=f['work']
         successor=planning.capture(f['a'],f['c'].pk,f['payload'],f['packet'].pk)
@@ -39,6 +56,18 @@ class FactoryPlanningTests(TestCase):
         self.assertEqual(len(pair['requests']),2)
         used=w.budget_used;factory.run_until_wait(w.pk);w.refresh_from_db();self.assertEqual(w.budget_used,used)
         self.assertFalse(HumanTask.objects.filter(case=f['c']).exists())
+        self.client.force_login(f['a'])
+        page=self.client.get(reverse('factory_detail',args=[w.pk]))
+        self.assertContains(page,'Owner configuration required')
+        self.assertNotContains(page,'None:')
+        settings = reverse('workspace_settings', args=[f['c'].pk])
+        self.assertContains(page, settings + '?area=roles')
+        rules = self.client.get(settings, {'area': 'roles'})
+        item = next(row for row in rules.context['items'] if row['label'] == 'Department approval routes')
+        self.assertEqual(item['status'], 'MISSING')
+        Grant.objects.filter(case=f['c'], user=f['a'], action='policy.read').update(active=False)
+        self.assertNotContains(self.client.get(reverse('factory_detail', args=[w.pk])), settings + '?area=roles')
+        self.assertEqual(self.client.get(settings, {'area': 'roles'}).status_code, 403)
 
     def test_exact_department_panel_records_only_native_owner_observation(self):
         f=setup();w=f['work'];factory.run_until_wait(w.pk)
@@ -47,8 +76,14 @@ class FactoryPlanningTests(TestCase):
         page=self.client.get(url);self.assertContains(page,'Product Owner source review');self.assertNotContains(page,'Engineering Lead source review')
         w.refresh_from_db();revision=w.revision
         with self.assertRaises(PermissionDenied):factory_planning.observe_department(f['owners']['scope'],w.pk,revision,receipt.request_id,receipt.pk,wrong.pk)
-        response=self.client.post(url,{'action':'observe_department','revision':revision,'request':receipt.request_id,'receipt':receipt.pk,'evidence':proof.pk})
-        self.assertEqual(response.status_code,302)
+        api = f'/api/v1/work/{w.pk}/planning-owner-requests'
+        options = self.client.get(api)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertEqual([row['receipt_id'] for row in options.json()['requests']], [receipt.pk])
+        data = {'expected_revision': revision, 'request_id': receipt.request_id, 'receipt_id': receipt.pk, 'evidence_id': proof.pk}
+        self.assertEqual(self.client.post(api, data | {'evidence_id': wrong.pk}, content_type='application/json').status_code, 403)
+        response = self.client.post(api, data, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
         observation=receipt.observations.get();self.assertEqual(observation.actor_id,f['owners']['scope'].pk)
         self.assertEqual(observation.evidence_id,proof.pk);self.assertFalse(HumanTask.objects.filter(case=f['c']).exists())
         with self.assertRaises(ValidationError):factory_planning.observe_department(f['owners']['scope'],w.pk,revision,receipt.request_id,receipt.pk,proof.pk)
@@ -62,7 +97,23 @@ class FactoryPlanningTests(TestCase):
         self.assertEqual(w.status,'waiting',w.finding);self.assertIn('department',w.finding)
         used=w.budget_used;factory.run_until_wait(w.pk);w.refresh_from_db();self.assertEqual(w.budget_used,used)
         self.assertFalse(HumanTask.objects.filter(case=f['c']).exists())
-        observe(f);factory.run_until_wait(w.pk);w.refresh_from_db()
+        self.client.force_login(f['a'])
+        planning_api = f"/api/v1/projects/{f['c'].pk}/planning"
+        self.assertIsNone(self.client.get(planning_api).json()['readiness'])
+        owner_api = f'/api/v1/work/{w.pk}/planning-owner-requests'
+        receipts = []
+        for name in ('scope', 'estimates'):
+            receipt, proof = supplied_observation(f, name)
+            receipts.append(receipt.pk)
+            self.client.force_login(f['owners'][name])
+            panel = self.client.get(owner_api).json()
+            [item] = panel['requests']
+            self.assertEqual(item['receipt_id'], receipt.pk)
+            self.assertEqual(self.client.post(owner_api, {'expected_revision': panel['expected_revision'],
+                'request_id': receipt.request_id, 'receipt_id': receipt.pk, 'evidence_id': proof.pk},
+                content_type='application/json').status_code, 201)
+        self.assertEqual(len(set(receipts)), 2)
+        factory.run_until_wait(w.pk);w.refresh_from_db()
         self.assertEqual(w.status,'verified',w.finding)
         self.assertEqual(DeliveryDossier.objects.filter(case=f['c']).count(),1)
         self.assertEqual(DeliverySource.objects.filter(dossier__case=f['c']).count(),1)
@@ -73,6 +124,9 @@ class FactoryPlanningTests(TestCase):
         self.assertEqual(ApprovalRequest.objects.filter(case=f['c']).count(),2)
         self.assertEqual(ApprovalRouteReceipt.objects.filter(job__request__case=f['c']).count(),2)
         self.assertTrue(all(not r.payload['approval_granted'] for r in ApprovalRouteReceipt.objects.filter(job__request__case=f['c'])))
+        self.client.force_login(f['a'])
+        ready = self.client.get(planning_api).json()['readiness']
+        self.assertEqual(ready['source_ids'], list(DeliverySource.objects.filter(dossier__case=f['c']).values_list('pk', flat=True)))
 
     def test_successor_packet_keeps_business_identity_and_spent_allowance(self):
         f=setup();w=f['work'];factory.run_until_wait(w.pk);w.refresh_from_db();spent=w.budget_used
@@ -88,6 +142,11 @@ class FactoryPlanningTests(TestCase):
     def test_missing_profile_holds_execution_not_capture(self):
         f=setup(False);factory.run_until_wait(f['work'].pk);f['work'].refresh_from_db()
         self.assertEqual(f['work'].status,'configuration_needed');self.assertEqual(f['work'].budget_used,0)
+        self.client.force_login(f['a'])
+        held = self.client.get(f'/api/v1/work/{f["work"].pk}').json()
+        self.assertEqual(held['state'], 'setup_needed')
+        self.assertIsNone(held['output_url'])
+        self.assertEqual(f['work'].source_head_id, f['packet'].pk)
 
     def test_restricted_source_and_invented_reviewer_rejected(self):
         f=setup(False)
@@ -154,13 +213,31 @@ class FactoryPlanningTests(TestCase):
     def test_lost_internal_route_response_reconciles_same_receipt_without_approval(self):
         f=setup();w=f['work']
         from adapters.approvals import InternalApprovalRoutingAdapter
+        from apps.pmo import approval_routing
+        from apps.workflows import factory_progress
+
         class Lost(InternalApprovalRoutingAdapter):
             def deliver(self,pk,fence):
                 super().deliver(pk,fence);raise TimeoutError('Synthetic response lost after internal receipt')
+
+        class DelayedLookup(InternalApprovalRoutingAdapter):
+            def lookup(self, job):
+                return None
+
+            def deliver(self, pk, fence):
+                raise AssertionError('An uncertain original may only be looked up')
+
+        background = factory_progress.set_progress(f['a'], w.pk, w.revision, True)
         # Investigation, reservation, selected delivery loses its response.
         factory.run_once(w.pk);factory.run_once(w.pk);factory.run_once(w.pk,adapter=Lost())
         job=ApprovalRouteJob.objects.filter(request__case=f['c'],status='unknown').get()
         self.assertEqual(ApprovalRouteReceipt.objects.filter(job=job).count(),1)
+        self.assertEqual(factory_progress.run_once(), background.pk)
+        background.refresh_from_db()
+        self.assertEqual(background.status, 'held')
+        self.assertTrue(approval_routing.run_once(DelayedLookup(), job_id=job.pk))
+        job.refresh_from_db()
+        self.assertEqual(job.status, 'unknown')
         factory.run_until_wait(w.pk);job.refresh_from_db();w.refresh_from_db()
         self.assertEqual(job.status,'confirmed');self.assertEqual(w.status,'waiting',w.finding)
         self.assertEqual(ApprovalRouteReceipt.objects.filter(job=job).count(),1)

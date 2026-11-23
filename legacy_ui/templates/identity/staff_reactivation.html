@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Restore staff sign-in · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Reactivate {{ person.get_full_name|default:person.username }}?</h1><p>Restore sign-in, then review fresh workspace access. Previous grants and sessions stay closed.</p></div><a class="button secondary" href="{% url 'staff_roster' %}">Back to staff</a></header>
+{% if held %}<section class="card"><h2>Account needs review</h2><p>{{ held }}</p></section>{% endif %}
+{% if prepared %}<section class="card"><h2>Reviewed workspaces</h2><ul>{% for scope in prepared.scopes %}<li>{{ scope.case.title }} · <a href="{% url 'workspace_settings' scope.case.pk %}">Project role review</a></li>{% endfor %}</ul><p>Past work and approvals retain their original names. Fresh access and any project responsibility need their own reviewed allocation.</p></section>{% endif %}
+{% if prepared.assistance %}<section class="card"><h2>Restoration checks</h2><p>{{ prepared.assistance.next_action }}</p></section>{% endif %}
+{% if form and not held %}<section class="card"><form method="post">{% csrf_token %}{{ form.as_p }}<button>Restore sign-in without old access</button><a class="button secondary" href="{% url 'staff_roster' %}">Cancel</a></form></section>{% endif %}
+{% endblock %}

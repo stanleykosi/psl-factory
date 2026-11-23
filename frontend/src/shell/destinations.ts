@@ -1,6 +1,6 @@
-import type { Destination } from '@/api/types';
+import type { DestinationKey, Me } from '@/api/types';
 
-export type DestinationInfo = { key: Destination; label: string; href: string };
+export type DestinationInfo = { key: DestinationKey; label: string; href: string };
 
 // Display order and labels from the site map (SITEMAP-desktop) and CMP-01.
 export const DESTINATIONS: readonly DestinationInfo[] = [
@@ -11,9 +11,14 @@ export const DESTINATIONS: readonly DestinationInfo[] = [
   { key: 'setup', label: 'Setup', href: '/setup' },
 ];
 
-/** The destinations /me lists, in display order. Presentation only; the API enforces access. */
-export function visibleDestinations(allowed: readonly Destination[]): DestinationInfo[] {
-  return DESTINATIONS.filter((d) => allowed.includes(d.key));
+/** The destinations /me lists, matched by key, in display order. Keys the frame has no link for (clients) draw none. Presentation only; the API enforces access. */
+export function visibleDestinations(listed: Me['destinations']): DestinationInfo[] {
+  return DESTINATIONS.filter((d) => listed.some((l) => l.key === d.key));
+}
+
+/** Whether /me lists this destination (clients included, which has no link of its own). */
+export function hasDestination(me: Me, key: DestinationKey): boolean {
+  return me.destinations.some((d) => d.key === key);
 }
 
 export function destinationForPath(pathname: string): DestinationInfo | undefined {

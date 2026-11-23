@@ -1,7 +1,10 @@
 from django.conf import settings
+from .specialist_models import SpecialistPacket, SpecialistReading
 from django.db import models
 from apps.core.models import AppendOnly
 from .boundary_models import EvidenceProjection,EvidenceProjectionReview,EvidenceExtraction,EvidenceExtractionReceipt,EvidenceExtractionReview
+from .assistant_models import AssistantConversation, AssistantDraftVersion, AssistantTurn
+from .rfp_answer_models import RFPAnswerSuggestion, RFPAnswerReview
 
 class AgentRun(AppendOnly):
     case = models.ForeignKey('core.Case', on_delete=models.PROTECT)
@@ -29,6 +32,18 @@ class AgentJob(models.Model):
     status = models.CharField(max_length=12, default='queued', db_index=True)
     result = models.JSONField(default=dict)
     started_at = models.DateTimeField(null=True)
+    attempt = models.PositiveIntegerField(default=0)
+    claim_token = models.UUIDField(null=True, unique=True)
+    settled_token = models.UUIDField(null=True)
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=['upload', 'actor', 'role'], name='unique_upload_agent_job')]
+
+
+class FileDraftReview(AppendOnly):
+    job = models.OneToOneField(AgentJob, on_delete=models.PROTECT, related_name='file_review')
+    evidence = models.OneToOneField('core.Evidence', on_delete=models.PROTECT)
+    draft_sha256 = models.CharField(max_length=64)
+    summary = models.TextField()
+    gaps = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True)

@@ -77,6 +77,20 @@ def match(work,w,actor):
     if w is None or w.evidence_id!=e.pk or w.payload!=body or w.predecessor_id!=data['predecessor_id'] or w.identity!=work.request['identity']:raise ValidationError('Exact captured supplied lineage required')
     return w
 
+
+def conflicting_source(work, data, selected=None):
+    """Show only a same-case conflict; the native verifier checks the full scope."""
+    claims=LedgerLineage.objects.filter(case=work.case,identity=work.request['identity'])
+    if selected:
+        from apps.finance.ledger_resolution import ancestors, exclusions
+        retired,_=exclusions(selected)
+        claims=claims.exclude(pk__in={selected.pk}|set(ancestors(selected))|set(retired))
+    elif data['predecessor_id'] is None:
+        claims=claims.exclude(evidence_id=data['evidence_id'])
+    else:
+        return None
+    return claims.order_by('pk').first()
+
 def verify(work,actor):
     w=match(work,lineage(work),actor);result=native.report(actor,work.case_id,w.pk);x=w.checks.latest('pk');r=x.decisions.latest('pk')
     if r.actor_id in [w.actor_id,x.actor_id]:raise ValidationError('Independent Finance review required for factory verification')
@@ -172,8 +186,11 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     if kind=='ACT04':
         require(actor,c,'agent.ledger');return investigation(work,actor)
     if kind=='ACT08':
+        native.identity_lock(work.request['identity'])
         existing=list(LedgerLineage.objects.filter(case=c,evidence=e,predecessor_id=data['predecessor_id'],identity=work.request['identity']).order_by('pk')[:2])
         if len(existing)>1:raise ValidationError('Ambiguous existing captures require native Finance resolution; never recapture or retry')
+        if not existing and conflicting_source(work,data):
+            raise ValidationError('Duplicate source refused. Correct the earlier lineage with the supplied replacement instead.')
         w=existing[0] if existing else native.capture(actor,c.pk,e.pk,data['predecessor_id'],c.revision)
         match(work,w,actor)
         return {'head':work.source_head_id,'captured_lineage':w.pk,'reused_existing_lineage':bool(existing),'posting_performed':False}
@@ -192,19 +209,25 @@ def act(work,choice,value,latest,missing,tasks,jobs):
     raise ValidationError('Ledger posting and human decisions are not agent capabilities')
 
 @transaction.atomic
-def command(actor,work_id,expected,case_expected,action,target=None,evidence=None,verdict=None):
+def command(actor,work_id,expected,case_expected,action,target=None,evidence=None,verdict=None,*,outcome=None,reason=''):
     from .factory import access
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION);access(actor,w.case,'factory.read',DEFINITION)
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or w.status in ['cancelled','followup_needed']:raise ValidationError('Refresh active incumbent work')
     settled(w);s=match(w,lineage(w),actor)
     if action=='observe':
         if target!=s.pk:raise ValidationError('Exact selected lineage required')
+        if outcome is not None:
+            proof=subject(w.case,evidence,'quickbooks_verification')
+            if SuppliedQuickBooksReadAdapter().read(proof,native.RESPONSE)['state']!=outcome:
+                raise ValidationError('The selected outcome must match the supplied evidence.')
         return native.verify(actor,w.case_id,s.pk,evidence,case_expected)
     if action=='review':
         x=s.checks.order_by('-pk').first()
         if not x or target!=x.pk:raise ValidationError('Exact latest selected observation required')
         if actor.pk in [s.actor_id,x.actor_id]:raise PermissionDenied('Independent Finance reviewer required')
-        return native.review(actor,w.case_id,x.pk,evidence,verdict,case_expected)
+        if not isinstance(reason,str) or len(reason)>2000 or (verdict=='reject' and not reason.strip()):
+            raise ValidationError('Record why the observation was rejected.')
+        return native.review(actor,w.case_id,x.pk,evidence,verdict,case_expected,reason=reason.strip())
     raise ValidationError('Typed native observation or review command required')
 
 @transaction.atomic
@@ -220,12 +243,25 @@ def correct(actor,work_id,expected,case_expected,evidence_id,predecessor_id,reas
     if s and predecessor_id!=s.pk:raise ValidationError('Correction must explicitly extend this captured lineage')
     before=w.source_head_id;w.source_head=capture_intake(actor,c,new,'factory.ledger_source');w.status='ready';w.finding='';w.revision+=1;w.save();event(actor,c,'factory.ledger_corrected',work=w.pk,previous=before,current=w.source_head_id,reason=reason);return w
 
-def projection(actor,work):
+def projection(actor,work,*,include_progress=False):
     from .factory import profile
+    from .factory_execution import available_actor
+    from .factory_progress import current_plan_step
+
     readable(actor,work.case);source(work,actor,False);n={'stage':'held'};options=[];message='';changed=False
+    progress = None
     try:
         _,v=profile(work,recovery=True);state,latest,missing,stale,tasks,jobs=snapshot(work,v,reader=actor);n=state['native'];options,message=eligible(work,v,state,latest,missing,stale,tasks,jobs)
         if work.status=='verified':verify(work,actor)
+        if include_progress and current_plan_step(work, state['hash'], options) == 'ACT04':
+            worker = available_actor(work)
+            if worker is not None:
+                try:
+                    require(worker, work.case, 'agent.ledger')
+                except PermissionDenied:
+                    pass
+                else:
+                    progress = {'label': 'Investigating the supplied ledger reference.', 'watching': True}
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified'
     w=lineage(work);names=[];can_review=False
     if w and n['stage']=='review' and not work.cancel_requested:
@@ -236,7 +272,7 @@ def projection(actor,work):
             try:readable(reviewer,work.case);native.authority(reviewer,x)
             except (ValidationError,PermissionDenied):continue
             names.append(reviewer.get_full_name() or reviewer.username);can_review=can_review or reviewer.pk==actor.pk
-    return {'lineage':w,'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed,'reviewer_names':names,'can_review':can_review}
+    return {'lineage':w,'native':n,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed,'reviewer_names':names,'can_review':can_review,'progress':progress}
 
 @transaction.atomic
 def recheck(actor,work_id,expected,case_expected,reason):

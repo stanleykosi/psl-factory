@@ -26,6 +26,18 @@ class Template(AppendOnly):
         constraints = [models.UniqueConstraint(fields=['case','name','version'],name='document_template_version')]
 
 
+class TemplateFile(AppendOnly):
+    case = models.ForeignKey('core.Case', on_delete=models.PROTECT)
+    template = models.OneToOneField(Template, on_delete=models.PROTECT, related_name='source_file')
+    previous = models.ForeignKey(Template, null=True, on_delete=models.PROTECT, related_name='+')
+    upload = models.ForeignKey('agents.CaseUpload', on_delete=models.PROTECT)
+    request_key = models.UUIDField()
+    filename = models.CharField(max_length=160)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['case', 'request_key'], name='template_file_request')]
+
+
 class Document(models.Model):
     case = models.ForeignKey('core.Case', on_delete=models.PROTECT)
     title = models.CharField(max_length=240)

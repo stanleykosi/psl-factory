@@ -1,0 +1,10 @@
+{% extends 'base.html' %}{% block content %}
+<header class="page-heading"><div><h1>Investigate an issue and follow up</h1><p>Review the issue evidence and collect the responsible owner’s next action.</p></div></header>
+{% if case %}
+<section class="card"><h2>{{ case.title }}</h2><p><a href="{% url 'issues' case.pk %}">Review the issue register</a></p>
+<form method="post">{% csrf_token %}{{ form.as_p }}<button>Open issue follow-up</button></form>
+</section>
+{% else %}
+<section class="card"><form method="get"><input type="hidden" name="definition" value="pmo-issues/v1">{{ form.case.as_field_group }}<button>Choose project</button></form></section>
+{% endif %}
+{% endblock %}

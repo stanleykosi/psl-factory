@@ -6,6 +6,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
 from apps.core.models import Audit
+from apps.core.evidence_access import restricted
 from apps.core.services import lock_case,add_evidence,event
 from apps.identity.models import Grant
 from apps.identity.services import require
@@ -20,6 +21,7 @@ from .factory_delivery import investigation_key
 DEFINITION='finance-schedules/v1'
 KIND='agent_private_schedules_intake'
 PROTOCOL='factory-schedules-intake/v1'
+INCOME_RELATIONSHIPS = tuple(native.ROW['properties']['relationship']['enum'])
 ID={'anyOf':[{'type':'integer','minimum':1},{'type':'null'}]}
 SCHEMA={'type':'object','properties':{'protocol':{'const':PROTOCOL},'kind':{'enum':['income','inventory']},'parent_id':ID,'evidence_id':{'type':'integer','minimum':1},'payload':{'anyOf':[native.DETAIL,{'type':'null'}]}},'required':['protocol','kind','parent_id','evidence_id','payload'],'additionalProperties':False}
 
@@ -29,11 +31,12 @@ def inputs(actor,case,kind,parent_id,evidence_id,payload,check=True):
     native.readable(actor,case)
     data={'protocol':PROTOCOL,'kind':kind,'parent_id':parent_id,'evidence_id':evidence_id,'payload':payload};validate(SCHEMA,data)
     if type(evidence_id) is not int or parent_id is not None and type(parent_id) is not int:raise ValidationError('Exact integer native references required')
-    e=subject(case,evidence_id,'income_detail' if kind=='income' else 'schedule_inventory')
+    evidence_kind='income_detail' if kind=='income' else 'schedule_inventory'
+    e=subject(case,evidence_id,evidence_kind)
     parent=FinanceRun.objects.filter(case=case,pk=parent_id,kind='mapping').first() if parent_id else None
     if kind=='income' and not parent:raise ValidationError('Select this case exact mapping note')
     if kind=='inventory' and (parent_id is not None or payload is not None):raise ValidationError('Inventory comes only from exact supplied evidence')
-    body=payload if kind=='income' else SuppliedScheduleAdapter().read(e)
+    body=payload if kind=='income' and payload is not None else SuppliedScheduleAdapter().read(e,evidence_kind)
     validate(native.DETAIL if kind=='income' else native.INVENTORY_BODY,body)
     if len(json.dumps(data))>120000:raise ValidationError('Bounded supplied schedule input required')
     if check and parent:analysis.ensure_current(parent)
@@ -89,6 +92,11 @@ def report(work,actor):
         if not w:return result
         result['stage']='rebuild';match(work,w,data,e,parent,body)
         if w.result['status']!='ready':result['stage']='source_correction';raise ValidationError(w.result['findings'])
+        latest_review = w.reviews.order_by('-pk').first()
+        if latest_review and latest_review.verdict in ('return', 'reject', 'revoke'):
+            if latest_review.verdict == 'revoke':
+                return dict(result, stage='withdrawn', finding='Finance must review whether to restore the approval of this exact version.')
+            return dict(result, stage='returned', finding='Correct the source and prepare a new version for Finance review.')
         result['stage']='output_review';native.approved(w)
         result['stage']='complete'
     except (ValidationError,PermissionDenied) as exc:result['finding']=finding(exc)
@@ -139,7 +147,8 @@ def act(work,choice,value,latest,missing,tasks,jobs):
             findings=[{'key':r['key'],'owner_selected':r['owner_id'] is not None,'unselected_dependencies':sorted(set(r['dependencies'])-keys),'source_link_count':len(r['source_evidence_ids']),'formula_link_count':len(r['formula_evidence_ids']),'validation_package':r['validation_package_id'],'consumer_refs':r['consumer_refs']} for r in body['schedules']]
         return {'head':work.source_head_id,'source_findings':findings,'investigation':report(work,work.execution_actor),'questions':['Finance must decide manual detail treatment and resolve duplicate evidence.','Supplied inventory does not establish complete native workbook scope. Each schedule needs its own owner, dependencies and AF13 evidence.'],'private_amounts_disclosed':False,'approval_granted':False}
     if kind=='ACT08':
-        w=native.prepare(work.execution_actor,c.pk,data['kind'],work.request['reference'],data['parent_id'],data['payload'],e.pk,c.revision)
+        w=native.prepare(work.execution_actor,c.pk,data['kind'],work.request['reference'],data['parent_id'],
+                         body if data['kind']=='income' else None,e.pk,c.revision)
         return {'head':work.source_head_id,'schedule':w.pk,'status':w.result['status'],'ledger_posted':False}
     if kind=='ACT13':
         require(work.execution_actor,c,'schedules.report');result=verify(work,work.execution_actor);work.status='verified';return result
@@ -167,15 +176,122 @@ def correct(actor,work_id,expected,case_expected,kind,parent_id,evidence_id,payl
         except (ValidationError,PermissionDenied):pass
         else:raise ValidationError('Current target awaits human review or has already been reviewed; do not rebuild that wait')
     before=w.source_head_id;w.source_head=capture(actor,c,new,'factory.schedules_source');w.status='ready';w.finding='';w.revision+=1;w.save()
-    event(actor,c,'factory.schedules_corrected',work=w.pk,previous=before,current=w.source_head_id,reason=reason);return w
+    event(actor,c,'factory.schedules_corrected',work=w.pk,previous=before,current=w.source_head_id,reason=reason)
+    from .factory_progress import wake_waiting
+    wake_waiting(w.pk)
+    return w
+
+
+def returned_income_review(schedule):
+    if schedule is None or schedule.kind != 'income' or schedule.result['status'] != 'ready':
+        return None
+    review = schedule.reviews.order_by('-pk').first()
+    if review and review.verdict == 'return' and review.snapshot == schedule.snapshot:
+        return review
+    return None
+
+
+@transaction.atomic
+def resubmit_returned_row(actor, work_id, expected, case_expected, target, return_id, row_key, relationship):
+    from .factory_execution import require_control
+    from .factory_progress import set_progress
+
+    if any(type(value) is not int or value < 1 for value in (work_id, expected, case_expected, target, return_id)):
+        raise ValidationError('Open the current returned schedule before submitting a correction.')
+    work = Work.objects.select_for_update(of=('self',)).select_related('source_head', 'case').get(
+        pk=work_id, definition=DEFINITION)
+    if actor.pk != work.actor_id:
+        raise PermissionDenied('The assigned preparer corrects the returned row.')
+    require_control(actor, work)
+    case = native.locked(actor, work.case_id, 'schedules.prepare', case_expected)
+    work.case = case
+    for action in ('factory.manage', 'schedules.report', 'evidence.add'):
+        require(actor, case, action)
+    if work.revision != expected or work.cancel_requested or work.status in ('cancelled', 'followup_needed'):
+        raise ValidationError('Open the current returned schedule before submitting a correction.')
+    settled(work)
+    current = schedule(work)
+    returned = returned_income_review(current)
+    if not returned or current.pk != target or returned.pk != return_id:
+        raise ValidationError('Correct the exact schedule and decision that Finance returned.')
+    data, evidence, parent, body = source(work, actor)
+    match(work, current, data, evidence, parent, body)
+    selected = next((row for row in body['rows'] if row['key'] == row_key), None)
+    if selected is None or relationship not in INCOME_RELATIONSHIPS:
+        raise ValidationError('Choose a row from the returned schedule and its relationship.')
+    if relationship == selected['relationship']:
+        raise ValidationError('Choose a different relationship for the selected row.')
+    corrected = dict(body, rows=[dict(row, relationship=relationship) if row is selected else row for row in body['rows']])
+    native.inputs(actor, case, 'income', parent, corrected)
+    native.income_result(case, parent, corrected)
+    revised = correct(actor, work.pk, expected, case_expected, 'income', parent.pk, evidence.pk, corrected,
+                      'Preparer corrected one relationship on the returned schedule.')
+    event(actor, case, 'finance.schedule_returned_row_corrected', work=work.pk, previous_schedule=current.pk,
+          return_review=returned.pk, row=row_key, previous_relationship=selected['relationship'],
+          relationship=relationship, current_source=revised.source_head_id)
+    set_progress(actor, revised.pk, revised.revision, True)
+    return revised
+
+
+def duplicate_rows(schedule):
+    if not schedule or schedule.kind != 'income' or schedule.result['status'] != 'held':
+        return []
+    unresolved = {finding.split(':', 1)[1] for finding in schedule.result['findings']
+                  if finding.startswith('duplicate_unresolved:')}
+    return [row for row in schedule.payload['rows'] if row['relationship'] == 'additive' and row['key'] in unresolved]
+
+
+@transaction.atomic
+def resolve_duplicates(actor, work_id, expected, case_expected, target, choices, proof_id, reason):
+    from .factory import access
+    from .factory_progress import set_progress
+
+    work = Work.objects.select_for_update(of=('self',)).select_related('case', 'actor', 'source_head').get(
+        pk=work_id, definition=DEFINITION)
+    access(actor, work.case, 'factory.manage', DEFINITION)
+    case = lock_case(actor, work.case_id, 'schedules.prepare', case_expected)
+    require(actor, case, 'schedules.report')
+    work.case = case
+    data, evidence, parent, body = source(work, actor)
+    schedule_version = schedule(work)
+    if not schedule_version or schedule_version.pk != target or work.revision != expected:
+        raise ValidationError('Review the current held schedule before recording the duplicate checks.')
+    match(work, schedule_version, data, evidence, parent, body)
+    rows = duplicate_rows(schedule_version)
+    allowed = {'already_represented', 'separately_justified'}
+    if (not isinstance(choices, dict) or not rows or set(choices) != {row['key'] for row in rows}
+            or any(not isinstance(choice, str) or choice not in allowed for choice in choices.values())):
+        raise ValidationError('Choose a treatment for every shown addition.')
+    proof = subject(case, proof_id, 'finance_review')
+    if restricted(proof):
+        raise ValidationError('Choose accessible Finance evidence for these duplicate checks.')
+    updated_rows = []
+    for row in body['rows']:
+        treatment = choices.get(row['key'])
+        if treatment == 'already_represented':
+            continue
+        if treatment == 'separately_justified':
+            row = dict(row, duplicate_state=treatment, duplicate_resolution_evidence_id=proof.pk)
+        updated_rows.append(row)
+    revised = correct(actor, work.pk, expected, case_expected, 'income', parent.pk, evidence.pk,
+                      dict(body, rows=updated_rows), reason)
+    event(actor, case, 'finance.schedule_duplicates_resolved', work=work.pk, previous_schedule=target,
+          current_source=revised.source_head_id, evidence=proof.pk, choices=choices)
+    set_progress(actor, revised.pk, revised.revision, True)
+    return revised
+
 
 @transaction.atomic
 def review(actor,work_id,expected,case_expected,target,verdict,evidence,note):
     from .factory import access
+    from .factory_progress import wake_waiting
     w=Work.objects.select_for_update(of=('self',)).select_related('case','source_head','actor').get(pk=work_id,definition=DEFINITION)
     access(actor,w.case,'factory.read',DEFINITION);source(w,actor);s=schedule(w)
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or not s or s.pk!=target:raise ValidationError('Review exact active native target')
-    settled(w);return native.review(actor,w.case_id,target,verdict,evidence,note,case_expected)
+    settled(w)
+    decision = native.review(actor,w.case_id,target,verdict,evidence,note,case_expected)
+    wake_waiting(w.pk)
+    return decision
 
 @transaction.atomic
 def export(actor,work_id,expected,case_expected,target,kind,evidence):
@@ -185,21 +301,26 @@ def export(actor,work_id,expected,case_expected,target,kind,evidence):
     if type(expected) is not int or w.revision!=expected or w.cancel_requested or not s or s.pk!=target:raise ValidationError('Export exact active reviewed target')
     settled(w);return native.export_adjustment(actor,w.case_id,target,kind,evidence,case_expected)
 
-def projection(actor,work):
+def projection(actor,work,*,include_progress=False):
     from .factory import profile
+    from .factory_progress import current_plan_step
     native.readable(actor,work.case);source(work,actor,False);s=schedule(work);options=[];changed=False;message='';n={}
+    step = None
     try:
         _,v=profile(work,recovery=True);state,latest,missing,stale,tasks,jobs=snapshot(work,v,reader=actor);n=state['native'];options,message=eligible(work,v,state,latest,missing,stale,tasks,jobs)
         if work.status=='verified':verify(work,actor)
+        if include_progress:
+            step = current_plan_step(work, state['hash'], options)
     except (ValidationError,PermissionDenied) as exc:message=finding(exc);changed=work.status=='verified'
     pending_reviews=[];names=[];can_review=False
-    if s and n.get('stage')=='output_review' and not work.cancel_requested:
+    if s and n.get('stage') in ('output_review', 'withdrawn') and s.result['status']=='ready' and not work.cancel_requested:
         pending_reviews=[s.pk]
         for user in __import__('django.contrib.auth',fromlist=['get_user_model']).get_user_model().objects.filter(is_active=True,grant__case=work.case,grant__action='schedules.review',grant__active=True).distinct():
             try:native.authority(user,s)
             except (ValidationError,PermissionDenied):continue
             names.append(user.get_full_name() or user.username);can_review=can_review or user.pk==actor.pk
-    return {'schedule':s,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed,'pending_reviews':pending_reviews,'reviewer_names':names,'can_review':can_review,'native':n,'links':list(ScheduleAdjustment.objects.filter(work=s).select_related('adjustment')) if s else []}
+    progress = {'label': 'Investigating the selected income and schedule evidence.', 'watching': True} if step == 'ACT04' else None
+    return {'schedule':s,'next_options':options,'next_action':message,'finding':message if not options else '', 'readiness_changed':changed,'pending_reviews':pending_reviews,'reviewer_names':names,'can_review':can_review,'native':n,'links':list(ScheduleAdjustment.objects.filter(work=s).select_related('adjustment')) if s else [],'progress':progress}
 
 @transaction.atomic
 def restart(actor,work_id,expected,case_expected,reason):

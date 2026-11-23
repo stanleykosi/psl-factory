@@ -18,6 +18,8 @@ SRC = {
     'S-DECISIONS-V4': ('Sample tag hidden; remaining frontend screens split to build in parallel, 14 Nov 2026', 'sources/decisions-2026-11-14.md', '2026-11-14', 'private'),
     'S-DECISIONS-V5': ('Build in parallel, split where the contract is missing, frontend drafts contract proposals, 14 Nov 2026', 'sources/decisions-2026-11-14-v2.md', '2026-11-14b', 'private'),
     'S-DECISIONS-V6': ('Boards are the spec with a fidelity gate; overnight contract proposals and screen-family splits, 14-15 Nov 2026', 'sources/decisions-2026-11-15.md', '2026-11-15', 'private'),
+    'S-DECISIONS-V7': ('API style and sign-in approved as the backend built them (OpenAPI 1.22.0), 23 Nov 2026', 'sources/decisions-2026-11-23.md', '2026-11-23', 'private'),
+    'S-DECISIONS-V8': ('Sign-in, reset and invitation set-up approved as the backend built them, 23 Nov 2026', 'sources/decisions-2026-11-23-signin.md', '2026-11-23b', 'private'),
 }
 def sha(p): return hashlib.sha256(open(os.path.join(HERE, p), 'rb').read()).hexdigest()
 sources = [{'id': k, 'title': t, 'path': p, 'version': v, 'classification': c, 'sha256': sha(p)} for k, (t, p, v, c) in SRC.items()]
@@ -1261,13 +1263,23 @@ for v in views:
         v['nodes'] = v['nodes'] + ['REC-CLIENT']; v['refs'] = v['nodes']; v['edges'].append({'from': 'REC-CLIENT', 'to': 'REC-CASE', 'label': 'has cases (proposed)'})
         v['notes'] += ' v7 proposes REC-CLIENT (client and billing contact).'
 
+# ---- v8 (23 Nov 2026): the design engineer approves D-API-STYLE and D-AUTH as the backend built them (OpenAPI 1.22.0)
+add_rev('D-API-STYLE', 'approved', 'Plain Django JSON views under /api/v1 (apps/core/factory_api) call the existing domain services; no new API framework. The contract is generated from the mounted routes and checked in at contracts/psl-factory.openapi.json, and the server also serves it at /api/v1/openapi.json. Lists page by page and next_page; errors are {code, message, fields?}.',
+        'Approved by the design engineer, 23 Nov 2026, as built and shipped by the backend developer (OpenAPI 1.22.0, main 9bac3109). The views live in apps/core/factory_api rather than the apps/api package r1 proposed.', ['Add Django REST framework', 'Separate API service'], ['S-DECISIONS-V7'])
+add_rev('D-AUTH', 'approved', 'The Django session cookie authenticates; writes send X-CSRFToken. Sign-in, sign-out and token refresh use GET and POST /api/v1/session and POST /api/v1/session/logout; the token rotates on sign-in, sign-out and password change. The Next.js app serves /api/v1 same-origin through its proxy; a separate frontend origin must be listed exactly in PSL_FRONTEND_ORIGINS.',
+        'Approved by the design engineer, 23 Nov 2026, as built and shipped by the backend developer (OpenAPI 1.22.0, main 9bac3109).', ['Separate origins with CORS and credentials', 'Token or JWT login'], ['S-DECISIONS-V7'])
+
+# ---- v9 (23 Nov 2026): D-SIGNIN approved as the backend built it (wave 1, FE-SIGNIN)
+add_rev('D-SIGNIN', 'approved', 'The Next.js app draws sign-in, error, reset and account set-up (SCR-17) on /api/v1/session (GET, POST, /logout), /api/v1/accounts/recovery/request, /link and /password, and /api/v1/accounts/invitations/preview and /accept. Reset and invitation emails open /accounts/recovery/link/ and /staff/join/ with the token in the URL fragment, sent in the JSON body. Who may sign in is the backend admission and role model.',
+        'Approved by the design engineer, 23 Nov 2026, as built and shipped by the backend developer (OpenAPI 1.22.0).', ['Styled Django sign-in templates'], ['S-DECISIONS-V8'])
+
 model = {
     'schema_version': '1.0', 'pins': {'skill': '0.1.0', 'generator': '0.1.0'},
     'project': {'id': 'psl-factory-frontend', 'title': 'PSL operations factory — frontend and data API', 'scope': 'Scope v2: new Next.js frontend in frontend/ on a data API added to the existing Django backend (S-08, I-02).',
                 'stage': 'existing', 'roles': ['operator', 'developer', 'frontend developer', 'backend developer', 'technical reviewer', 'business owner', 'delivery owner', 'release authority'],
                 'constraints': ['Django keeps login, permissions and every business rule (C-05).', 'No deployment, live AI or external connections authorised in this phase.', 'Never invent financial rules or real approvers.']},
     'security_schemes': {
-        'Session': {'type': 'apiKey', 'name': 'sessionid', 'in': 'cookie', 'description': 'Django session cookie from the existing sign-in (D-AUTH, proposed).'},
+        'Session': {'type': 'apiKey', 'name': 'sessionid', 'in': 'cookie', 'description': 'Django session cookie from POST /api/v1/session (D-AUTH, approved r3).'},
         'Csrf': {'type': 'apiKey', 'name': 'X-CSRFToken', 'in': 'header', 'description': 'Django CSRF token, required on every write together with the session.'}},
     'sources': sources, 'requirements': requirements, 'decisions': decisions, 'components': components, 'records': records, 'invariants': invariants,
     'endpoints': endpoints, 'integrations': integrations, 'jobs': jobs, 'journeys': journeys, 'views': views, 'scenarios': scenarios, 'runbooks': runbooks,

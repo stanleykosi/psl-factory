@@ -8,6 +8,7 @@ GO_LIVE_KINDS=['go_live','go_live_reaffirmation']
 
 
 class DeliveryDossier(AppendOnly):
+    declined_reply=models.ForeignKey('pmo.GoLiveClientReply',null=True,on_delete=models.PROTECT,related_name='successor_candidates')
     case=models.ForeignKey('core.Case',on_delete=models.PROTECT)
     candidate=models.OneToOneField('pmo.DeliveryCandidate',on_delete=models.PROTECT)
     baseline=models.JSONField()

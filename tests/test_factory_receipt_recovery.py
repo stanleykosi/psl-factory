@@ -14,7 +14,7 @@ from apps.workflows import factory,readiness,readiness_delivery,factory_receipt_
 from apps.workflows.models import FactoryPlanningReceipt,FactoryPlanningRecovery,FactoryPlanningReceiptUse
 from apps.finance.models import FinanceRun
 from apps.agents import factory_coordinator as coordinator
-from tests.factory_coordinator_helpers import gateway
+from tests.factory_coordinator_helpers import gateway, historical_request
 from tests.readiness_helpers import endpoint
 from tests.helpers import rev
 
@@ -43,7 +43,7 @@ class ReceiptRecoveryTests(TestCase):
     def test_reviewed_rotated_lookup_keeps_original_receipt_without_another_request(self):
         with endpoint() as state:
             f=gateway(state,prefix='receipt-rotation');a,c,w=f['actor'],f['case'],f['work']
-            state['lose_planning_response']=True;factory.run_once(w.pk);w.refresh_from_db()
+            historical_request(f,state)
             self.assertEqual(w.status,'waiting_effect');attempt=coordinator.pending(w);spent=w.budget_used
             self.assertEqual(state['planning_calls'],1)
             original=dict(attempt.result)
@@ -124,7 +124,7 @@ class ReceiptRecoveryTests(TestCase):
         from apps.policy.services import reference_values
         with endpoint() as state:
             f=gateway(state,prefix='receipt-negative');a,c,w=f['actor'],f['case'],f['work']
-            state['lose_planning_response']=True;factory.run_once(w.pk);w.refresh_from_db()
+            historical_request(f,state)
             attempt=coordinator.pending(w);spent=w.budget_used
             state['secret']='negative-rotated-synthetic-token';os.environ['PSL_TEST_READINESS_TOKEN']=state['secret']
             with override_settings(READINESS_SECRET_REFS={'secret:fixture':{'env':'PSL_TEST_READINESS_TOKEN','revision':'fixture-v2'}}):
@@ -132,9 +132,7 @@ class ReceiptRecoveryTests(TestCase):
                 record=recovery.review(a,w.pk,w.revision,rev(c),attempt.pk,contract.pk,f['evidence']['policy_decision'].pk,'Reviewed same-provider receipt recovery')
                 w.refresh_from_db()
                 result=state['receipts'].pop(attempt.result['operation_key'])
-                from unittest.mock import patch
-                with patch('adapters.factory_planner.FactoryPlannerAdapter.plan',side_effect=AssertionError('Receipt recovery cannot send')):
-                    with self.assertRaises(coordinator.PlanningUnknown):coordinator.fetch(attempt,a,send_allowed=True)
+                with self.assertRaises(coordinator.PlanningUnknown):coordinator.fetch(attempt,a)
                 self.assertEqual(state['planning_calls'],1);self.assertFalse(FactoryPlanningReceipt.objects.exists())
                 state['receipts'][attempt.result['operation_key']]=result
                 with override_settings(READINESS_ENDPOINTS={'endpoint:fixture':{'url':'http://127.0.0.1:1','classification':'synthetic'}}):
@@ -143,7 +141,7 @@ class ReceiptRecoveryTests(TestCase):
                 with self.assertRaises(PermissionDenied):recovery.transport(attempt,a)
                 Grant.objects.filter(case=c,user=a,action='integration.review').update(active=True)
                 transition(a,policy.pk,'revoked')
-                with self.assertRaises(ValidationError):coordinator.fetch(attempt,a,send_allowed=True)
+                with self.assertRaises(ValidationError):coordinator.fetch(attempt,a)
                 independent=self.configure(f,independent_of_requester=True)
                 with self.assertRaises(PermissionDenied):recovery.review(a,w.pk,w.revision,rev(c),attempt.pk,contract.pk,f['evidence']['policy_decision'].pk,'Must remain an independent reviewer')
                 authority=deepcopy(record.authority);authority['rule']=reference_values(independent)[0]
@@ -157,7 +155,7 @@ class ReceiptRecoveryTests(TestCase):
         import time
         with endpoint() as state:
             f=gateway(state,prefix='receipt-expiry');a,c,w=f['actor'],f['case'],f['work']
-            state['lose_planning_response']=True;factory.run_once(w.pk);w.refresh_from_db();attempt=coordinator.pending(w);spent=w.budget_used
+            attempt=historical_request(f,state);spent=w.budget_used
             state['secret']='expiry-rotated-synthetic-token';os.environ['PSL_TEST_READINESS_TOKEN']=state['secret']
             with override_settings(READINESS_SECRET_REFS={'secret:fixture':{'env':'PSL_TEST_READINESS_TOKEN','revision':'fixture-v2'}}):
                 contract=self.rotate(f);end=timezone.now()+timedelta(seconds=6)

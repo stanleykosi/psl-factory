@@ -1,0 +1,33 @@
+{% load studio_ui %}
+{% if preauthorization_options or preauthorization_history %}
+<section class="card">
+  <h2>Emergency change decisions</h2>
+  <p><strong>Proposed plan</strong> {{ row.emergency.profile.version.description }}</p>
+  {% if preauthorization_history %}
+    <ul>
+      {% for decision in preauthorization_history %}
+        <li><strong>{{ decision.role|role_name }}</strong> · {{ decision.verdict|readable }} · {{ decision.created_at|date:'d M Y H:i T' }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% for option in preauthorization_options %}
+    <form method="post">
+      <h3>{{ option.role|role_name }} decision</h3>
+      {% if preauthorization_evidence %}
+        <input type="hidden" name="action" value="preauthorization_decision">
+        <input type="hidden" name="role" value="{{ option.role }}">
+        <input type="hidden" name="authority_role" value="{{ option.authority_role }}">
+        {% include 'factory/emergency_human_fields.html' with evidence=preauthorization_evidence %}
+        <p>This decision applies to the current emergency request. A source change requires a new review.</p>
+        <div class="actions">
+          {% if 'approve' in option.verdicts %}<button name="verdict" value="approve">Approve emergency change</button>{% endif %}
+          {% if 'return' in option.verdicts %}<button name="verdict" value="return">Return emergency change</button>{% endif %}
+          {% if 'reject' in option.verdicts %}<button name="verdict" value="reject">Reject emergency change</button>{% endif %}
+        </div>
+      {% else %}
+        <p>Record the supporting emergency decision evidence before submitting a decision.</p>
+      {% endif %}
+    </form>
+  {% endfor %}
+</section>
+{% endif %}

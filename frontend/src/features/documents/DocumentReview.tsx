@@ -19,7 +19,7 @@ import { ProjectTabs, PANEL_ID } from '@/features/projects/ProjectTabs';
 import { routeCaseId } from '@/features/projects/model';
 import { useProject } from '@/features/projects/useProject';
 import { useMe, usePhoneBack } from '@/shell/AppShell';
-import { visibleDestinations } from '@/shell/destinations';
+import { hasDestination, visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
 
 import { amountsTag, draftedByText, firstFlag, parseVersion, sectionsOf, textOf, type DocumentView } from './documentModel';
@@ -338,7 +338,7 @@ function DocumentRoute({ caseId, documentId }: { caseId: string; documentId: str
   const me = useMe();
   usePhoneBack({ label: 'Projects', href: '/projects' });
   const version = parseVersion(params?.get('v'));
-  if (!me.destinations.includes('projects')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
+  if (!hasDestination(me, 'projects')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   // The latest version is never guessed: a missing or unreadable v is not found, and nothing is requested.
   if (!version) return <DocumentNoAccess />;
   return <DocumentLoaded key={`${documentId}:${version}`} routeCase={caseId} documentId={documentId} version={version} />;

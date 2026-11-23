@@ -70,7 +70,7 @@ def owner_metadata(request, case_id):
 def workbench(request, case_id):
     import json
 
-    case = accessible_case(request.user, case_id)
+    case = accessible_case(request.user, case_id, source_action='document.read')
     require(request.user, case, 'document.read')
     forms = {'source': SourceForm(), 'scope': ScopeForm(), 'claim': ClaimForm(), 'owner_policy': OwnerPolicyForm()}
     action = request.POST.get('action') if request.method == 'POST' else None

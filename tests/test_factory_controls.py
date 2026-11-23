@@ -22,6 +22,10 @@ class FactoryControlTests(TransactionTestCase):
         f=fixture();w=f['work'];factory.run_until_wait(w.pk);w.refresh_from_db();original=w.invoice
         t=HumanTask.objects.get(kind='factory_review');t=factory.claim_task(f['actor'],t.pk,t.revision)
         factory.decide(f['actor'],t.pk,t.revision,'return',f['proof'].pk,'Synthetic amount requires source correction')
+        self.client.force_login(f['actor'])
+        page=self.client.get(f'/work/{w.pk}/recovery/')
+        self.assertContains(page,'Synthetic amount requires source correction')
+        self.assertContains(page,'Review billing sources and corrections')
         policy(f['actor'],f['case'],'D12.stage_terms',[{'coverage_id':f['coverage'].pk,'stage':'completion','amount':'43.00','due_date':(timezone.localdate()+timedelta(days=7)).isoformat()}])
         w.refresh_from_db();used=w.budget_used;factory.manage(f['actor'],w.pk,w.revision,'resume');factory.run_until_wait(w.pk);w.refresh_from_db()
         self.assertNotEqual(w.invoice_id,original.pk);self.assertEqual(w.invoice.version,2)

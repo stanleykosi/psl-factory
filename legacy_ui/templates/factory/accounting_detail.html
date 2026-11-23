@@ -1,0 +1,73 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}
+<a class="back-link" href="{% url 'home' %}{% work_queue_query row.work %}">← Back to the same work view</a>
+<div class="page-heading"><div><p class="eyebrow">ACCOUNTING PREPARATION AND REVIEWED REPORTS</p><h1>{{ row.work.request.reference }}</h1><p class="lede">{{ row.state }} · {{ case|workspace_name }}</p></div><a class="button secondary" href="{% url 'finance_analysis' case.pk %}">Source and accounting records</a></div>
+<div class="workspace-summary"><div><small>Next action</small><strong>{{ row.next_action }}</strong></div><div><small>Current owner</small><strong>{{ row.owner }}</strong></div><div><small>Last observed</small>{{ row.work.updated_at|date:'d M Y, H:i:s T' }}</div></div>
+{% include 'factory/work_focus.html' %}
+{% include 'factory/current_step.html' with progress=row.accounting.progress only %}
+{% if row.accounting.setup %}
+{% with setup=row.accounting.setup %}
+<section class="card" aria-label="Missing Finance settings">
+  <h2>{% if setup.hold %}Calculation is held{% else %}Finance settings still needed{% endif %}</h2>
+  <p>The recorded reviews remain in the work history. Finance can complete the available reviews while these settings are open.</p>
+  <dl class="decision-facts">
+    {% for setting in setup.missing %}<dt>{{ setting }}</dt><dd>Not set</dd>{% endfor %}
+    {% if setup.mapping_revision %}<dt>Account-to-business-unit map</dt><dd>Set · version {{ setup.mapping_revision }}</dd>{% endif %}
+  </dl>
+  {% if setup.rules_url %}<a class="button secondary" href="{{ setup.rules_url }}">Open Finance rules</a>{% endif %}
+</section>
+{% endwith %}
+{% endif %}
+{% if review_stations %}
+<section class="card" aria-label="Finance review stations">
+  <h2>Reviews · one per part</h2>
+  <div class="table-wrap"><table><thead><tr><th>What's reviewed</th><th>State</th></tr></thead><tbody>
+    {% for station in review_stations %}<tr><th scope="row">{{ station.label }}</th><td>
+      {% for subject in station.subjects %}
+        <p>{{ subject.status }}{% if subject.decision %} · {{ subject.decision.actor.get_full_name|default:subject.decision.actor.username }}{% endif %}</p>
+        {% if subject.decision %}<details><summary>Recorded decision</summary><p>{{ subject.decision.created_at|recorded_time }} · Evidence {{ subject.decision.evidence_id }}</p></details>{% endif %}
+      {% empty %}{{ station.unavailable }}{% endfor %}
+    </td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endif %}
+<div class="factory-case-layout"><div><section class="card"><h2>Accounting work and output</h2>{% if row.blocker %}<p role="status">{{ row.blocker }}</p>{% endif %}<p>Mapping, allocation and formulas are performed by the Finance service using the configured rules. Unknown values remain unconfirmed. This workflow posts no ledger transactions and records no customer payment.</p>
+{% if row.accounting.formula %}<table><thead><tr><th>Company figure</th><th>Value</th><th>Unit</th></tr></thead><tbody>{% for key,figure in row.accounting.formula.result.company.items %}<tr><th>{{ key|readable }}</th><td>{{ figure.value|default_if_none:'Not confirmed' }}</td><td>{{ figure.unit|readable }}</td></tr>{% endfor %}</tbody></table>{% else %}<p>A current formula output has not yet been prepared.</p>{% endif %}
+<details><summary>Native input, calculation and policy references</summary><pre>{{ row.accounting.state }}</pre></details></section>
+{% if not focus %}
+<section class="card"><h2>Trial-balance intake lineage</h2><p>{{ intake_provenance.description }}</p><p>Checked {{ intake_provenance.examined }} of {{ intake_provenance.total }} recorded intake results; showing {{ intake_provenance.shown }} verified links. {% if intake_provenance.omitted %}{{ intake_provenance.omitted }} older results are outside this display.{% endif %}{% if intake_provenance.unavailable %}{{ intake_provenance.unavailable }} links could not be established and are withheld.{% endif %}</p>
+{% if not intake_provenance.selected_source_recorded %}<p>No factory intake receipt for the selected source is established in this displayed history. Existing-source intake does not create a supplied-file receipt.</p>{% endif %}
+{% for item in intake_provenance.items %}<details><summary>Intake #{{ item.receipt }} · validation #{{ item.validation }} · {% if item.selected_source %}selected source{% else %}earlier source{% endif %}</summary><p>{{ item.entity }} · {{ item.period }} · {{ item.currency }} · {{ item.validation_status }}</p><p>Source #{{ item.source }} · import #{{ item.batch }} · result #{{ item.result }} · work #{{ item.work }}</p><p>Submitted evidence #{{ item.submitted_evidence }} · original import evidence #{{ item.import_evidence }} · extraction evidence #{{ item.context_evidence }}</p><p>Source hash: {{ item.sha256 }}</p><p>Validation policy versions: {{ item.validation_policies }}</p></details>{% endfor %}</section>
+{% endif %}
+{% if not focus %}
+<section class="card"><h2>Agent activity</h2><p>Investigations and preparation remain distinct from human decisions and actual delivery.</p>{% for activity in activities %}<details><summary>{{ activity.business_title }} · {{ activity.status|readable }}</summary>{% for attempt in activity.attempts.all %}<p>{{ attempt.phase|readable }} · {{ attempt.created_at|date:'d M H:i:s T' }}</p><pre>{{ attempt.result }}</pre>{% endfor %}</details>{% empty %}<p>No agent activity yet.</p>{% endfor %}</section>
+{% endif %}
+<section class="card"><h2>Report receipts</h2>{% for receipt in receipts %}<p>Confirmed for {{ receipt.current_recipient_name }} · {{ receipt.created_at|date:'d M Y H:i:s T' }}</p><details><summary>Exact operation reference</summary><p>{{ receipt.operation_key }}</p></details>{% empty %}<p>No recipient receipt has been verified.</p>{% endfor %}</section></div>
+<aside class="factory-action-panel"><section class="card"><h2>Next permitted action</h2><p>{{ row.next_action }}</p>{% if row.can_advance and not focus %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="advance"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Continue eligible accounting work</button></form>{% endif %}{% if row.can_cancel and not focus or row.can_cancel and focus == 'recovery' %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Request cancellation</button></form><p>Stopping new work cannot retract a report already delivered.</p>{% endif %}</section>
+{% if held_review_labels %}
+<section class="card"><h2>Finance reviewer needed</h2><p>A current reviewer is needed for {{ held_review_labels|join:', ' }}. Any other available Finance decisions can continue.</p>
+  {% if can_read_review_rules %}<p><a href="{% url 'policy' case.pk %}">Review Finance role settings</a></p>{% endif %}
+  {% if can_recheck_reviewers %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="recheck_reviewers"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Recheck reviewer assignments</button></form>{% endif %}
+</section>
+{% endif %}
+{% if not focus or focus == 'decision' %}
+{% for task in row.tasks %}<section class="card"><h2>{{ task.label }}</h2><p>{{ task.status|readable }} · {% if task.claimed_by %}{{ task.claimed_by.get_full_name|default:task.claimed_by.username }}{% else %}Not claimed{% endif %}</p><p>Review the exact native source, rule or output. This decision cannot waive other required Finance controls.</p><details><summary>Exact subject and authority references</summary><pre>{{ task.context.packet }}</pre></details>
+{% if task.can_claim %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="claim"><input type="hidden" name="task" value="{{ task.pk }}"><input type="hidden" name="task_revision" value="{{ task.revision }}"><button>Claim Finance review</button></form>{% endif %}
+{% if task.can_decide %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="decide"><input type="hidden" name="task" value="{{ task.pk }}"><input type="hidden" name="task_revision" value="{{ task.revision }}"><label for="accounting-proof-{{ task.pk }}">Review evidence</label><select id="accounting-proof-{{ task.pk }}" name="evidence" required>{% for evidence in review_evidence %}<option value="{{ evidence.pk }}">{{ evidence.source }} · version {{ evidence.version }}</option>{% endfor %}</select><label for="accounting-reason-{{ task.pk }}">Decision reason</label><textarea id="accounting-reason-{{ task.pk }}" name="reason" required maxlength="4000"></textarea>{% for verdict in task.verdicts %}<button name="verdict" value="{{ verdict }}">{{ verdict|capfirst }} exact Finance subject</button>{% endfor %}</form>{% endif %}</section>{% endfor %}
+{% endif %}
+{% if not focus or focus == 'recovery' %}
+{% if correction_url or replacement_work or earlier_work %}
+<section class="card">
+  <h2>{% if earlier_work %}Corrected trial-balance source{% else %}Trial-balance source returned{% endif %}</h2>
+  {% if correction_url %}<p>Submit the corrected extract for this same accounting period. It starts a fresh review.</p><a class="button" href="{{ correction_url }}">Correct and resubmit</a>{% endif %}
+  {% if replacement_work %}<p>The original source and its decisions remain here.</p><a href="{% url 'factory_detail' replacement_work %}">Open corrected accounting work</a>{% endif %}
+  {% if earlier_work %}<p>The returned extract and its decisions are recorded separately.</p><a href="{% url 'factory_invoice_recovery' earlier_work %}">Review the original returned work</a>{% endif %}
+</section>
+{% endif %}
+{% if row.can_reassess %}<details class="card"{% if row.work.status == 'followup_needed' %} open{% endif %}><summary>Recheck corrected accounting inputs</summary><p>Review the source and adjustment records. The same work and its previous decisions will be retained.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="recheck"><input type="hidden" name="revision" value="{{ row.work.revision }}"><label for="accounting-source">Current source</label><select id="accounting-source" name="source" required><option value="">Choose the reviewed source</option>{% for source in sources %}<option value="{{ source.pk }}"{% if source.pk == current_source %} selected{% endif %}>{{ source }}</option>{% endfor %}</select><label for="accounting-adjustments">Adjustment record numbers, separated by commas. Leave blank if there are none.</label><input id="accounting-adjustments" name="adjustments" value="{{ current_adjustments }}"><label for="accounting-recheck-reason">Reason</label><textarea id="accounting-recheck-reason" name="reason" required maxlength="2000"></textarea><button>Record reviewed inputs</button></form></details>{% endif %}
+{% endif %}
+{% if not focus %}
+{% if row.adoption %}<section class="card"><h2>Reviewed execution update available</h2><p>Revision {{ row.adoption.revision }} keeps earlier work and its spent allowance. Effective allowance: {{ row.adoption.effective_allowance }}.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="adopt_profile"><input type="hidden" name="revision" value="{{ row.work.revision }}"><input type="hidden" name="configuration" value="{{ row.adoption.id }}"><label for="accounting-adoption-reason">Reason for adopting this version</label><textarea id="accounting-adoption-reason" name="reason" required maxlength="2000"></textarea><button>Adopt reviewed execution version</button></form></section>{% endif %}
+{% endif %}
+{% if not focus %}<section class="card"><h2>Execution setup</h2>{% if row.work.policy_id %}<p>Shared allowance: {{ row.work.budget_used }} of {{ row.work.budget_limit }}. Retries do not reset it.</p>{% elif row.accounting.value %}<p>Allowance has not been reserved. Configured limit: {{ row.accounting.value.max_tokens }}.</p>{% else %}<p>Execution allowance is not configured.</p>{% endif %}{% if row.coordination_needed and row.can_configure_coordination %}<p><a href="{% url 'factory_coordinator_configuration' case.pk %}">Review work coordination</a></p>{% endif %}<a href="{% url 'factory_configuration' case.pk %}?definition=finance-accounts/v1">Review accounting execution setup</a></section>{% endif %}</aside></div>
+{% if row.can_reconcile and not focus or row.can_reconcile and focus == 'recovery' %}<section class="card"><h2>Check the original report delivery</h2><p>Look for verified recipient receipts. This action cannot send the report again.</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="reconcile"><input type="hidden" name="revision" value="{{ row.work.revision }}"><button>Check original delivery receipts</button></form></section>{% endif %}
+{% endblock %}

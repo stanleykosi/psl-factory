@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 
-import { api, call, setCsrfToken } from '@/api/client';
+import { call, liveApi, refreshSession, setCsrfToken } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
 import type { Me } from '@/api/types';
 import { ToastProvider, useIsPhone } from '@/components';
@@ -13,9 +13,10 @@ import { needsYou, needsYouKnown } from '@/features/alerts/model';
 import { useAlertsFeed } from '@/features/alerts/useAlertsFeed';
 
 import { destinationForPath, visibleDestinations } from './destinations';
-import { ForbiddenState, LoadErrorState, LoadingState, NoSectionsState, SignedOutState } from './FrameStates';
+import { ForbiddenState, FrameSignedOutState, LoadErrorState, LoadingState, NoSectionsState } from './FrameStates';
 import { PhoneBar, type PhoneBack } from './PhoneBar';
 import { TopNav } from './TopNav';
+import { useRoleWords } from './useRoleWords';
 
 type MeState = { status: 'loading' } | { status: 'ready'; me: Me } | { status: 'error'; error: ApiError };
 
@@ -53,12 +54,26 @@ export function AppShell({ children }: { children: ReactNode }) {
   const load = useCallback(async () => {
     setState({ status: 'loading' });
     try {
-      const me = await call(api.GET('/api/v1/me'));
+      let me: Me;
+      try {
+        me = await call(liveApi.GET('/api/v1/me'));
+      } catch (error) {
+        if (!(error instanceof ApiError)) throw error;
+        if (error.kind === 'unauthenticated') {
+          // The session read prepares the token for sign-in; a session that appeared meanwhile gets one more /me.
+          const session = await refreshSession().catch(() => null);
+          if (!session?.signed_in) throw error;
+        } else if (error.kind !== 'csrf') throw error;
+        // csrf: call() has already refreshed the token. One more read, never more.
+        me = await call(liveApi.GET('/api/v1/me'));
+      }
       setCsrfToken(me.csrf_token);
       setState({ status: 'ready', me });
     } catch (error) {
-      setCsrfToken(null);
-      setState({ status: 'error', error: error instanceof ApiError ? error : networkError() });
+      const apiError = error instanceof ApiError ? error : networkError();
+      // Signed out and csrf keep the token the session read just stored.
+      if (apiError.kind !== 'unauthenticated' && apiError.kind !== 'csrf') setCsrfToken(null);
+      setState({ status: 'error', error: apiError });
     }
   }, []);
 
@@ -68,6 +83,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     void load();
   }, [load]);
 
+  const roleWords = useRoleWords();
   const me = state.status === 'ready' ? state.me : null;
   const destinations = me ? visibleDestinations(me.destinations) : [];
   const current = destinations.find((d) => d.key === destinationForPath(pathname)?.key);
@@ -128,7 +144,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   if (state.status === 'loading') main = <LoadingState />;
   else if (state.status === 'error') {
     const { error } = state;
-    if (error.kind === 'unauthenticated') main = <SignedOutState pathname={pathname} />;
+    if (error.kind === 'unauthenticated') main = <FrameSignedOutState />;
     else if (error.kind === 'forbidden') main = <ForbiddenState error={error} />;
     else main = <LoadErrorState error={error} onRetry={() => void load()} />;
   } else if (destinations.length === 0) main = <NoSectionsState />;
@@ -145,10 +161,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         Skip to main content
       </a>
       <div className="shell-topbar">
-        <TopNav me={me} destinations={destinations} current={current} bell={bell} />
+        <TopNav me={me} roleWords={roleWords} destinations={destinations} current={current} bell={bell} />
       </div>
       <div className="shell-phone" inert={alertsOpen}>
-        <PhoneBar key={pathname} me={me} destinations={destinations} current={current} back={phoneBack} bell={bell} />
+        <PhoneBar key={pathname} me={me} roleWords={roleWords} destinations={destinations} current={current} back={phoneBack} bell={bell} />
       </div>
       <main id="main" tabIndex={-1} className="shell-main" inert={alertsOpen}>
         {main}

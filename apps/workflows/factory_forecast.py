@@ -104,10 +104,20 @@ def principal(work, value, name, *, calculation_only=False):
     return u
 
 
-def report(work, actor=None):
+def report(work, actor=None, *, read_verified_group=False):
     _, value = source(work, actor)
+    verification_finding = None
+    if read_verified_group and value['audience'] == 'group' and work.status == 'verified':
+        # Final verification includes the native calculation, approval and disclosure checks.
+        try:
+            result = verify(work, actor)
+            return {'stage': 'complete', 'audience': 'group', 'run': result['forecast_run'], 'finding': ''}
+        except (ValidationError, PermissionDenied) as exc:
+            # Identify the earliest withheld station without rereading final delivery.
+            verification_finding = finding(exc)
     r = calculation(work, actor)
-    status = {'stage':'calculate','audience':value['audience'], 'run':r.pk if r else None, 'finding':''}
+    status = {'stage':'calculate','audience':value['audience'], 'run':r.pk if r else None,
+              'finding':verification_finding or ''}
     if not r:
         return status
     try:
@@ -124,8 +134,9 @@ def report(work, actor=None):
                 status['stage']='group_review'
                 group_forecast.approved(binding.version)
         status['stage'] = 'publication'
-        verify(work, actor)
-        status['stage'] = 'complete'
+        if verification_finding is None:
+            verify(work, actor)
+            status['stage'] = 'complete'
     except (ValidationError, PermissionDenied) as exc:
         status['finding'] = finding(exc)
     return status
@@ -144,7 +155,7 @@ def snapshot(work, value, reader=None):
     missing = [k for k in value['required_evidence_kinds'] if k not in latest]
     cutoff = timezone.now()-timedelta(seconds=value['max_age_seconds'])
     stale = [k for k in value['required_evidence_kinds'] if any(e.kind == k and e.created_at < cutoff for e in rows)]
-    native = report(work, actor)
+    native = report(work, actor, read_verified_group=reader is not None)
     jobs = list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'))
     state = {'case_revision':work.case.revision, 'profile':work.policy_id, 'sources':[(e.pk, e.sha256) for e in rows]+[(work.source_head_id,work.source_head.sha256)], 'native':native, 'checks':{'selection':digest(selected)}, 'jobs':[(j.pk,j.status) for j in jobs]}
     state['hash'] = digest(state)
@@ -360,25 +371,39 @@ def human_action(actor, work_id, expected, case_expected, scenario_id, action, d
     return result
 
 
-def projection(actor, work):
+def projection(actor, work, *, include_progress=False):
     from .factory import access, profile
+    from .factory_progress import current_plan_step
     access(actor,work.case,'factory.read',DEFINITION)
     scenario,selected = source(work,actor,False)
     status={'stage':'source','finding':''};options=[];next_action='Review selected forecast sources';issue=''
+    group = selected['audience'] == 'group'
     current=True
+    step = None
     try:
         source(work,actor)
-        status=report(work,actor)
+        if not group:
+            status=report(work,actor)
         _,value=profile(work)
         state,*args=snapshot(work,value,reader=actor)
+        if group:
+            status=state['native']
         options,next_action=eligible(work,value,state,*args)
+        if include_progress:
+            step = current_plan_step(work, state['hash'], options)
     except (ValidationError,PermissionDenied) as exc:
         current=False;issue=finding(exc);next_action=issue
-    jobs=list(PublicationJob.objects.filter(publication__factory_work=work).order_by('pk'))
+    jobs=list(PublicationJob.objects.filter(publication__factory_work=work).select_related('publication').order_by('pk'))
     changed=False
     if work.status=='verified':
-        try:verify(work,actor)
-        except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
+        if group and current:
+            # The read snapshot already checked the original publication and recipients.
+            changed = status['stage'] != 'complete'
+            if changed:
+                issue = status['finding']
+        else:
+            try:verify(work,actor)
+            except (ValidationError,PermissionDenied) as exc:changed=True;issue=finding(exc)
     can_correct=False
     try:
         require(actor,work.case,'factory.manage');require(actor,work.case,'evidence.add')
@@ -391,7 +416,7 @@ def projection(actor, work):
         job.receipts=list(PublicationReceipt.objects.filter(publication=job.publication).order_by('pk'))
         try:
             require(actor,work.case,'document.operate')
-            job.can_operate=not (work.lease_until and work.lease_until>timezone.now()) and not job.receipts and (job.status in ['pending','unknown','held'] or job.status=='leased' and job.lease_until and job.lease_until<=timezone.now())
+            job.can_operate=not (work.lease_until and work.lease_until>timezone.now()) and not job.receipts and job.status in ['pending','held']
             job.can_retry=job.can_operate and not work.cancel_requested and job.status=='held'
         except PermissionDenied:pass
     review_roles=[]
@@ -419,26 +444,14 @@ def projection(actor, work):
         group_disclosure={'configuration':group_binding.snapshot['projection_config'],
             'recipients':list(get_user_model().objects.filter(pk__in=group_binding.snapshot['projection']['recipient_ids']).order_by('pk').values('id','username')),
             'payload_sha256':group_binding.version.payload_sha256}
-    return {'group_disclosure':group_disclosure,'can_restart':can_restart,'restart_policy':restart_policy,'review_roles':review_roles,'scenario':scenario,'selection':selected,'run':r,'document':document(work),'jobs':jobs,'status':status,'finding':issue,'intake_current':current,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct}
+    progress = {'label': 'Investigating the selected cash forecast sources.', 'watching': True} if step == 'ACT04' else None
+    return {'group_disclosure':group_disclosure,'can_restart':can_restart,'restart_policy':restart_policy,'review_roles':review_roles,'scenario':scenario,'selection':selected,'run':r,'document':document(work),'jobs':jobs,'status':status,'finding':issue,'intake_current':current,'readiness_changed':changed,'next_options':options,'next_action':next_action,'can_correct':can_correct,'progress':progress}
 
 
 def reconcile(actor,work_id,expected,adapter=None):
-    from .factory import access,cancellation_status
-    from apps.documents.delivery import run_publication_once
-    with transaction.atomic():
-        w=Work.objects.select_for_update(of=('self',)).select_related('case').get(pk=work_id,definition=DEFINITION)
-        access(actor,w.case,'factory.execute',DEFINITION)
-        if actor.pk!=w.actor_id:require(actor,w.case,'factory.manage')
-        if type(expected) is not int or w.revision!=expected or w.lease_until and w.lease_until>timezone.now():raise ValidationError('STALE_VERSION: refresh original forecast delivery')
-        job=PublicationJob.objects.filter(publication__factory_work=w).filter(Q(status='unknown')|Q(status='leased',lease_until__lte=timezone.now())).order_by('pk').first()
-        if not job:raise ValidationError('No original uncertain forecast delivery needs reconciliation')
-        event(actor,w.case,'factory.reconciliation_requested',work=w.pk,publication_job=job.pk)
-    run_publication_once(adapter,case_id=w.case_id,job_id=job.pk)
-    with transaction.atomic():
-        w=Work.objects.select_for_update().get(pk=work_id);job.refresh_from_db()
-        w.status=cancellation_status(w) if w.cancel_requested else 'waiting_effect' if job.status=='unknown' else 'blocked' if job.status=='held' else 'ready'
-        w.finding=job.error if job.status in ['held','unknown'] else '';w.observation_hash='';w.revision+=1;w.save()
-    return w
+    from .factory_forecast_recovery import reconcile as check_original
+
+    return check_original(actor, work_id, expected, adapter)
 
 
 @transaction.atomic

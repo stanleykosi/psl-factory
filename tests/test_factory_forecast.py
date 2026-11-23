@@ -6,17 +6,24 @@ from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import connection, DatabaseError, transaction
 from django.urls import reverse
 from django.utils import timezone
+from adapters.publications import InternalPublicationAdapter
 from apps.workflows import factory, factory_forecast as service
 from apps.workflows.factory_forecast_sources import PROTOCOL
 from apps.workflows.models import FactoryWork
-from apps.finance.models import ForecastReview, ForecastActualVerification, ForecastMatch
+from apps.finance.models import ForecastActual, ForecastReview, ForecastActualVerification, ForecastMatch
 from apps.documents.models import Publication, PublicationJob, PublicationReceipt
 from apps.identity.models import Grant
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import transition
 from tests.forecast_helpers import fixture,scenario,publication,review,actual
 from tests.billing_helpers import evidence
-from tests.helpers import rev
+from tests.helpers import check_investigation_progress, rev
+
+
+class PublicationTimeoutBeforeAcceptance(InternalPublicationAdapter):
+    def deliver(self, job_id, fence):
+        raise TimeoutError('Synthetic missing transport response without accepted delivery')
+
 
 class ForecastFactoryTests(TestCase):
     def setUp(self):
@@ -37,8 +44,85 @@ class ForecastFactoryTests(TestCase):
     def advance(self):
         factory.run_until_wait(self.work.pk);self.work.refresh_from_db();return self.work
 
+    def test_api_intake_picker_requires_current_scenario_source_grant(self):
+        self.client.force_login(self.actor)
+        url = f'/api/v1/projects/{self.case.pk}/intake-sources'
+        query = {'line': 'finance-forecast/v1', 'field': 'value.scenario_id'}
+        current = self.client.get(url, query).json()
+        self.assertEqual([row['id'] for row in current['items']], [self.scenario.pk])
+        selection_url = f'/api/v1/projects/{self.case.pk}/forecast-scenarios/{self.scenario.pk}/intake'
+        exact = self.client.get(selection_url).json()
+        self.assertEqual(exact['source_ids'], self.selected['source_ids'])
+        self.assertEqual(exact['months'], self.selected['months'])
+        Grant.objects.filter(case=self.case, user=self.actor, action='finance.forecast.capture').update(active=False)
+        self.assertEqual(self.client.get(url, query).json()['items'], [])
+        self.assertEqual(self.client.get(selection_url).status_code, 403)
+
+    def test_api_forecast_approval_actual_match_and_original_receipt(self):
+        self.start()
+        self.advance()
+        proof = evidence(self.actor, self.case, 'forecast_review', 'Human review of the exact test forecast.')
+        self.client.force_login(self.actor)
+        url = f'/api/v1/work/{self.work.pk}/forecast'
+
+        def read():
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200, response.content)
+            return response.json()
+
+        def post(action, **values):
+            state = read()
+            fields = {key: state[key] for key in ('expected_revision', 'case_revision', 'scenario_id')}
+            return self.client.post(url, {**fields, 'action': action, **values}, content_type='application/json')
+
+        state = read()
+        self.assertEqual(state['stage'], 'review')
+        self.assertIn('Finance', state['review_roles'])
+        self.assertEqual(state['result']['items'][0]['key'], 'receipt-1')
+        decision = post('review', run_id=state['run_id'], role='Finance', verdict='approve', evidence_id=proof.pk,
+                        reason='The exact configured reviewer checked the synthetic forecast.')
+        self.assertEqual(decision.status_code, 201, decision.content)
+        self.advance()
+        state = read()
+        original = PublicationReceipt.objects.get(publication__factory_work=self.work)
+        self.assertEqual(state['stage'], 'complete')
+        self.assertEqual(state['jobs'][0]['receipt_ids'], [original.pk])
+
+        cash_data = {'entity': 'synthetic-company', 'account': 'account-1', 'currency': 'NGN', 'basis': 'gross_cash',
+                     'source': 'supplied-source', 'transaction': 'TEST-ACTUAL-API', 'direction': 'inflow',
+                     'amount': '15', 'occurred_on': timezone.localdate().isoformat()}
+        source = evidence(self.actor, self.case, 'forecast_actual', json.dumps(cash_data))
+        captured = post('actual', evidence_id=source.pk, lot_id=None)
+        self.assertEqual(captured.status_code, 201, captured.content)
+        actual_id = captured.json()['record_id']
+        month_url = f"{url}/actuals/{self.scenario.payload['months'][0]}"
+        current = self.client.get(month_url)
+        self.assertEqual(current.status_code, 200, current.content)
+        self.assertEqual(current.json()['actuals'][0]['id'], actual_id)
+        self.assertFalse(current.json()['actuals'][0]['verified'])
+        fields = {key: current.json()[key] for key in ('expected_revision', 'case_revision')}
+        noted = self.client.post(month_url, {**fields, 'item_key': 'receipt-1', 'actual_id': actual_id,
+                                            'reason': 'Waiting for verification before matching.'},
+                                 content_type='application/json')
+        self.assertEqual(noted.status_code, 201, noted.content)
+        verification = evidence(self.actor, self.case, 'forecast_actual_verification', json.dumps(cash_data))
+        verified = post('verify', actual_id=actual_id, role='Finance', evidence_id=verification.pk)
+        self.assertEqual(verified.status_code, 201, verified.content)
+        matching = evidence(self.actor, self.case, 'forecast_match', 'Synthetic exact actual reconciliation.')
+        matched = post('match', item_key='receipt-1', actual_id=actual_id, amount='15', operation_key='TEST-MATCH-API',
+                       evidence_id=matching.pk)
+        self.assertEqual(matched.status_code, 201, matched.content)
+        current = self.client.get(month_url).json()
+        self.assertEqual(current['rows'][0]['status'], 'Part matched')
+        self.assertEqual(current['rows'][0]['notes'][0]['actual_id'], actual_id)
+        self.assertEqual(current['history'][0]['id'], matched.json()['record_id'])
+        original.refresh_from_db()
+        self.assertEqual(PublicationReceipt.objects.filter(publication__factory_work=self.work).count(), 1)
+
     def test_complete_native_review_and_aggregate_receipt_chain(self):
-        self.start();self.advance()
+        self.start()
+        check_investigation_progress(self, self.actor, self.work, 'Investigating the selected cash forecast sources.')
+        self.advance()
         r=service.calculation(self.work,self.actor)
         self.assertIsNotNone(r,self.work.finding)
         self.assertEqual(service.report(self.work,self.actor)['stage'],'review',self.work.finding)
@@ -61,7 +145,17 @@ class ForecastFactoryTests(TestCase):
 
     def test_native_actual_change_recalculates_without_verification_or_match(self):
         self.start();self.advance();old=service.calculation(self.work,self.actor)
-        a=actual(self.actor,self.case,verified=False)
+        value={'entity':'synthetic-company','account':'account-1','currency':'NGN','basis':'gross_cash',
+               'source':'supplied-source','transaction':'TEST-ACTUAL','direction':'inflow',
+               'amount':'15','occurred_on':timezone.localdate().isoformat()}
+        proof=evidence(self.actor,self.case,'forecast_actual',json.dumps(value))
+        self.client.force_login(self.actor)
+        response=self.client.post(reverse('factory_work_response',args=[self.work.pk]),{
+            'action':'actual','work_revision':self.work.revision,'revision':rev(self.case),
+            'selected_scenario':self.scenario.pk,'evidence':proof.pk,
+        })
+        self.assertEqual(response.status_code,302)
+        a=ForecastActual.objects.get(case=self.case,evidence=proof)
         self.advance();self.assertEqual(service.calculation(self.work,self.actor).pk,old.pk)
         self.assertEqual(service.report(self.work,self.actor)['stage'],'rework')
         service.correct(self.actor,self.work.pk,self.work.revision,rev(self.case),self.selected,'Explicitly recalculate after native actual inventory changed')
@@ -104,6 +198,37 @@ class ForecastFactoryTests(TestCase):
         service.cancel(self.actor,self.work.pk,self.work.revision);self.work.refresh_from_db()
         service.reconcile(self.actor,self.work.pk,self.work.revision);self.work.refresh_from_db();job.refresh_from_db()
         self.assertEqual(job.status,'confirmed');self.assertEqual(self.work.status,'followup_needed')
+        self.assertEqual(Publication.objects.filter(factory_work=self.work).count(),1)
+
+    def test_unconfirmed_delivery_without_background_request_never_resends(self):
+        from apps.documents.delivery import run_publication_once
+        from apps.workflows.models import FactoryProgress
+
+        self.start();self.advance();review(self.actor,self.case,service.calculation(self.work,self.actor))
+        for _ in range(16):
+            factory.run_once(self.work.pk,adapter=PublicationTimeoutBeforeAcceptance())
+            if PublicationJob.objects.filter(publication__factory_work=self.work,status='unknown').exists():
+                break
+        job=PublicationJob.objects.get(publication__factory_work=self.work,status='unknown')
+        self.assertFalse(FactoryProgress.objects.filter(work=self.work).exists())
+        self.assertTrue(run_publication_once(job_id=job.pk))
+        job.refresh_from_db();self.assertEqual(job.status,'unknown')
+        self.work.refresh_from_db();self.client.force_login(self.actor)
+        url=reverse('factory_invoice_recovery',args=[self.work.pk])
+        page=self.client.get(url)
+        self.assertContains(page,'Delivery uncertain')
+        self.assertContains(page,'Reconcile original delivery')
+        self.assertNotContains(page,'Cancel original delivery')
+        response=self.client.post(url,{'action':'reconcile','revision':self.work.revision})
+        self.assertEqual(response.status_code,302)
+        job.refresh_from_db();self.assertEqual(job.status,'unknown')
+        self.work.refresh_from_db();self.assertEqual(self.work.status,'waiting_effect')
+        api = self.client.get(f'/api/v1/work/{self.work.pk}')
+        self.assertEqual(api.status_code, 200, api.content)
+        self.assertEqual(api.json()['state'], 'effect_uncertain')
+        self.assertIn('reconcile', api.json()['actions'])
+        self.assertIsNone(api.json()['output_url'])
+        self.assertFalse(PublicationReceipt.objects.filter(publication=job.publication).exists())
         self.assertEqual(Publication.objects.filter(factory_work=self.work).count(),1)
 
     def test_unconfigured_preparer_holds_without_granting_authority(self):
@@ -187,10 +312,24 @@ class ForecastFactoryTests(TestCase):
         self.start();self.advance();r=service.calculation(self.work,self.actor)
         proof=evidence(self.actor,self.case,'forecast_review','Human checked exact native calculation')
         self.client.force_login(self.actor)
-        response=self.client.post(reverse('factory_detail',args=[self.work.pk]),{'action':'review','work_revision':self.work.revision,'selected_scenario':self.scenario.pk,'revision':rev(self.case),'run':r.pk,'role':'Finance','verdict':'approve','evidence':proof.pk,'reason':'Actual configured human approval'})
+        decision=reverse('factory_invoice_decision',args=[self.work.pk])
+        response_url=reverse('factory_work_response',args=[self.work.pk])
+        recovery=reverse('factory_invoice_recovery',args=[self.work.pk])
+        command={'action':'review','work_revision':self.work.revision,'selected_scenario':self.scenario.pk,'revision':rev(self.case),'run':r.pk,'role':'Finance','verdict':'approve','evidence':proof.pk,'reason':'Actual configured human approval'}
+        page=self.client.get(decision)
+        self.assertContains(page,'Human Finance decisions')
+        self.assertNotContains(page,'<h2>Actual cash and matching</h2>',html=True)
+        self.assertNotContains(page,'Apply exact source selection')
+        self.assertContains(self.client.get(response_url),'<h2>Actual cash and matching</h2>',html=True)
+        refused=self.client.post(response_url,command)
+        self.assertContains(refused,'Choose an available action on this page.')
+        self.assertFalse(ForecastReview.objects.filter(run=r).exists())
+        response=self.client.post(decision,command)
         self.assertEqual(response.status_code,302)
         self.assertEqual(ForecastReview.objects.get(run=r).actor_id,self.actor.pk)
         self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
+        receipt=PublicationReceipt.objects.get(publication__factory_work=self.work)
+        self.assertContains(self.client.get(recovery),f'Aggregate delivery receipt {receipt.pk}')
 
     def test_database_rejects_audited_but_inexact_source_inventory(self):
         from apps.core.services import add_evidence,event

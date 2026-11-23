@@ -2,9 +2,9 @@
 // F-41 SCR-20 Payments and follow-up against the contract mock's E-INVOICES (mock/invoices.mjs, PROPOSAL G-SCR20-1 to -6).
 // The fetch stub stands in for the backend: nothing here proves a real ledger, a real total or a real overdue figure;
 // it proves the page shows only what it is given, computes nothing and sends its queries to the server.
-import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { matchingSources } from './source-files';
 
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -14,7 +14,7 @@ import { AppShell } from '@/shell/AppShell';
 
 // @ts-expect-error plain ESM module without type declarations
 import { contractBody, invoices } from '../mock/invoices.mjs';
-import { bellFeed, isBellFeed } from './bell-feed';
+import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 const nav = vi.hoisted(() => ({ search: '', listeners: new Set<() => void>(), replaced: [] as string[] }));
 vi.mock('next/navigation', async () => {
@@ -68,6 +68,7 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (request: Request) => {
       if (isBellFeed(request)) return bellFeed();
+      if (isRoleDashboard(request)) return roleDashboard();
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me);
       const call = { method: request.method, path: url.pathname, params: url.searchParams };
@@ -135,10 +136,12 @@ describe('rows from data (AC 1, 2, 7, 10)', () => {
   it('no board value is written in src (AC 1, 12)', () => {
     const root = join(__dirname, '..');
     // the files this feature adds or changes in src (older comments elsewhere in src quote board names)
-    const files = 'src/features/finance/payments src/app/finance/payments src/features/workspace/proposals.ts src/features/workspace/Sections.tsx src/features/workspace/Workspace.tsx';
-    const grep = (pattern: string) => execSync(`grep -rn "${pattern}" ${files} || true`, { cwd: root, encoding: 'utf8' }).trim();
-    expect(grep('Harmattan\\|Lagoon Health\\|INV-0391\\|PART PAID\\|BANK DATA MISSING\\|7,300,000\\|7300000')).toBe('');
-    expect(grep('7 days\\|second reminder')).toBe('');
+    const files = [
+      'src/features/finance/payments', 'src/app/finance/payments', 'src/features/workspace/proposals.ts',
+      'src/features/workspace/Sections.tsx', 'src/features/workspace/Workspace.tsx',
+    ].map((file) => join(root, file));
+    expect(matchingSources(files, /Harmattan|Lagoon Health|INV-0391|PART PAID|BANK DATA MISSING|7,300,000|7300000/)).toEqual([]);
+    expect(matchingSources(files, /7 days|second reminder/)).toEqual([]);
   });
 
   it('an amount is the decimal string as sent: "500000.10" reads ₦500,000.10, never rounded (AC 2)', async () => {
@@ -286,10 +289,9 @@ describe('the page computes nothing (AC 4, 5, 6, 7)', () => {
     expect(screen.queryByRole('link', { name: /record a payment|short/i })).toBeNull();
     expect(document.querySelectorAll('main input:not([type=search])')).toHaveLength(0);
     const root = join(__dirname, '..');
-    const out = execSync('grep -rniE "written off|write off|settled|cleared|balance" src/features/finance/payments || true', { cwd: root, encoding: 'utf8' });
-    expect(out.trim()).toBe('');
-    const sums = execSync('grep -rnE "parseFloat|\\.reduce\\(|compactAmount|Date\\.now|new Date\\(" src/features/finance/payments || true', { cwd: root, encoding: 'utf8' });
-    expect(sums.trim()).toBe('');
+    const files = [join(root, 'src/features/finance/payments')];
+    expect(matchingSources(files, /written off|write off|settled|cleared|balance/i)).toEqual([]);
+    expect(matchingSources(files, /parseFloat|\.reduce\(|compactAmount|Date\.now|new Date\(/)).toEqual([]);
   });
 });
 
@@ -486,7 +488,7 @@ describe('empty, error and access (AC 11, 21)', () => {
     expect(calls.some((c) => c.path === '/api/v1/me')).toBe(false);
     expect(calls.every((c) => c.method === 'GET')).toBe(true);
     const root = join(__dirname, '..');
-    const out = execSync('grep -rn "useMe\\|/api/v1/me" src/features/finance/payments src/features/workspace/proposals.ts || true', { cwd: root, encoding: 'utf8' });
-    expect(out.trim()).toBe('');
+    const files = [join(root, 'src/features/finance/payments'), join(root, 'src/features/workspace/proposals.ts')];
+    expect(matchingSources(files, /useMe|\/api\/v1\/me/)).toEqual([]);
   });
 });

@@ -2,8 +2,9 @@
 // F-21: the weekly client report line on the F-17 workspace frame (PROPOSAL D-LINE-WORKSPACE, contract mock only).
 // The fetch stub stands in for the backend; nothing here proves a real backend, the idempotency promise or a working
 // weekly line. The client template is a test template.
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { matchingSources } from './source-files';
 
 import { act, configure, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import Ajv2020 from 'ajv/dist/2020';
@@ -469,11 +470,10 @@ describe('unknown, restricted, empty (AC 20)', () => {
 });
 
 describe('returned and received are not built (AC 21)', () => {
-  it('no weekly-specific source exists and no src file names those states', async () => {
-    const { execSync } = await import('node:child_process');
-    const found = execSync('grep -rlE "received|returned" src/features/workspace || true', { cwd: join(__dirname, '..') }).toString();
+  it('no weekly-specific source exists and no src file names those states', () => {
+    const found = matchingSources([join(__dirname, '../src/features/workspace')], /received|returned/);
     // the generic renderer's receipt vocabulary (recipients) is older than this feature; nothing weekly-specific
-    expect(found.split('\n').filter(Boolean).every((f) => !/weekly/i.test(f))).toBe(true);
-    expect(execSync('ls src/features', { cwd: join(__dirname, '..') }).toString()).not.toMatch(/weekly/);
+    expect(found.every((file) => !/weekly/i.test(file))).toBe(true);
+    expect(readdirSync(join(__dirname, '../src/features')).some((name) => /weekly/i.test(name))).toBe(false);
   });
 });

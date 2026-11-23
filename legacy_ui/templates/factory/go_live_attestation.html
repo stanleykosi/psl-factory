@@ -1,0 +1,30 @@
+{% if row.go_live.previous_acceptance %}
+<section class="card"><h2>Earlier go-live evidence</h2><p>The original go-live event and every prior attestation remain in history. Reviewed evidence changes need explicitly configured PM reaffirmation authority and actual signatures for changed artifacts. Unchanged historical artifacts can use explicit metadata binding without another physical signature.</p><details><summary>Current recorded evidence head</summary><p>{{ row.go_live.previous_acceptance.pk }} · {{ row.go_live.previous_acceptance.created_at|date:'d M Y, H:i T' }}</p><p>{{ row.go_live.previous_acceptance.data.note }}</p></details>{% if can_configure %}<p><a href="{% url 'policy' case.pk %}">Review evidence-reaffirmation authority →</a></p>{% endif %}</section>
+{% endif %}
+{% if row.go_live.can_accept %}
+<section class="card">
+<h2>{% if row.go_live.previous_acceptance %}Reaffirm the exact delivered report{% else %}Record actual PM and Client sign-off{% endif %}</h2>
+<p>Attest actual distinct signature evidence for this exact delivered client report. The agent cannot supply this attestation.</p>
+{% if signature_limited %}<p>The 100 most recent signature records are shown.</p>{% endif %}
+{% if row.go_live.legacy_unbound %}<p>The earlier acceptance needs its original signer details before it can be verified.</p>{% endif %}
+<form method="post">{% csrf_token %}
+<input type="hidden" name="action" value="accept">
+<input type="hidden" name="revision" value="{{ row.work.revision }}">
+<input type="hidden" name="case_revision" value="{{ case.revision }}">
+<input type="hidden" name="version" value="{{ row.go_live.document.pk }}">
+{% if row.go_live.previous_acceptance %}<input type="hidden" name="previous_acceptance" value="{{ row.go_live.previous_acceptance.pk }}">{% endif %}
+<label for="go-live-receipt">Exact delivered report</label>
+<select name="receipt" id="go-live-receipt" required>{% for r in row.go_live.receipts %}<option value="{{ r.pk }}"{% if r.pk|stringformat:'s' == selected_receipt %} selected{% endif %}>Delivered {{ r.created_at|date:'d M Y, H:i T' }} · reference {{ r.pk }}</option>{% endfor %}</select>
+{% if row.go_live.previous_acceptance %}<label>Evidence recording mode<select name="mode"><option value="fresh_signatures">Actual signatures for this report</option><option value="metadata_binding"{% if selected_mode == 'metadata_binding' %} selected{% endif %}>Supply missing details for the same recorded signatures and report</option></select></label>{% endif %}
+<p>Enter the actual go-live signing times in {{ signer_time_zone }}.</p>
+<fieldset><legend>Project Manager</legend><label for="pm-signature">Project Manager signature evidence</label>
+<select name="pm_signature" id="pm-signature" required><option value="">Choose actual recorded evidence</option>{% for e in signature_choices %}<option value="{{ e.pk }}"{% if e.pk|stringformat:'s' == selected_pm %} selected{% endif %}>{{ e.body|truncatechars:80 }} · version {{ e.version }} · reference {{ e.pk }}</option>{% endfor %}</select>
+{{ pm_signer.as_p }}</fieldset>
+<fieldset><legend>Client</legend><label for="client-signature">Client signature evidence</label>
+<select name="client_signature" id="client-signature" required><option value="">Choose different actual recorded evidence</option>{% for e in signature_choices %}<option value="{{ e.pk }}"{% if e.pk|stringformat:'s' == selected_client %} selected{% endif %}>{{ e.body|truncatechars:80 }} · version {{ e.version }} · reference {{ e.pk }}</option>{% endfor %}</select>
+{{ client_signer.as_p }}</fieldset>
+<details><summary>Review recorded signature sources</summary>{% for e in signature_choices %}<p><strong>Reference {{ e.pk }} · version {{ e.version }}</strong></p><p>{{ e.body|truncatechars:600 }}</p><p>{{ e.source }}</p>{% endfor %}</details>
+<label>Actual sign-off rationale<textarea name="note" required maxlength="4000">{{ signer_note }}</textarea></label>
+<button>{% if row.go_live.previous_acceptance %}Record reviewed evidence reaffirmation{% else %}Record actual sign-off for this report{% endif %}</button>
+</form></section>
+{% endif %}

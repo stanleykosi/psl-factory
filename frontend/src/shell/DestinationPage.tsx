@@ -2,18 +2,18 @@
 
 import Link from 'next/link';
 
-import type { Destination } from '@/api/types';
+import type { DestinationKey } from '@/api/types';
 import { EmptyState } from '@/components';
 
 import { useMe } from './AppShell';
-import { DESTINATIONS, visibleDestinations } from './destinations';
+import { DESTINATIONS, hasDestination, visibleDestinations } from './destinations';
 import { NotOpenState } from './FrameStates';
 
 /** A destination whose screen arrives in a later task: page title plus the shared empty pattern. */
-export function DestinationPage({ destination }: { destination: Destination }) {
+export function DestinationPage({ destination }: { destination: DestinationKey }) {
   const me = useMe();
   const info = DESTINATIONS.find((d) => d.key === destination)!;
-  if (!me.destinations.includes(destination)) {
+  if (!hasDestination(me, destination)) {
     return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   }
   return (

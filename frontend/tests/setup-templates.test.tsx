@@ -13,7 +13,7 @@ import { boardDay, boardStamp } from '@/features/setup/format';
 import { TemplatesPageView } from '@/features/setup/TemplatesView';
 import { SetupLayoutFrame } from '@/features/setup/SetupFrame';
 import { AppShell } from '@/shell/AppShell';
-import { bellFeed, isBellFeed } from './bell-feed';
+import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 const pathname = { value: '/setup/templates' };
 vi.mock('next/navigation', () => ({
@@ -70,6 +70,7 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (request: Request) => {
       if (isBellFeed(request)) return bellFeed();
+      if (isRoleDashboard(request)) return roleDashboard();
       const url = new URL(request.url);
       const text = request.method === 'GET' ? '' : await request.clone().text();
       const c: Call = { method: request.method, path: url.pathname, query: url.search, body: text ? JSON.parse(text) : undefined, csrf: request.headers.get('X-CSRFToken') };

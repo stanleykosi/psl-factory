@@ -1,1 +1,1 @@
-{"name":"Ngozi Adeyemi","roles":["HR Lead"],"destinations":["my_work","overview","assistant"],"startable_lines":["hr_staff_list"],"csrf_token":"mock-csrf-hr_lead","assistant_agents":["zainab"]}
+{"name":"Ngozi Adeyemi","work_desk_url":"/retired/","destinations":[{"key":"my_work","title":"My work","django_url":"/retired/"},{"key":"overview","title":"Overview","django_url":"/retired/"},{"key":"assistant","title":"Assistant","django_url":"/retired/"}],"startable_lines":["hr_staff_list"],"csrf_token":"mock-csrf-hr_lead","assistant_agents":["zainab"]}

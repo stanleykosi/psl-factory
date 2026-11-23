@@ -166,8 +166,15 @@ class FactoryHandoverTests(TestCase):
         self.client.force_login(receiver);url=reverse('factory_detail',args=[f.work.pk]);page=self.client.get(url)
         self.assertContains(page,'Record your actual receipt or gaps');self.assertNotContains(page,'Continue eligible work')
         generic=self.client.get(reverse('case',args=[f.case.pk]));self.assertEqual(list(generic.context['runs']),[])
-        body={'action':'acknowledge','revision':f.work.revision,'case_revision':rev(f.case),'receipt':r.pk,'status':'received','evidence':f.e['requirements'].pk,'note':'Actual synthetic Support received this exact package'}
-        self.assertRedirects(self.client.post(url,body),url);self.assertContains(self.client.post(url,body),'Stale revision')
+        api = f'/api/v1/work/{f.work.pk}/support-receipt'
+        options = self.client.get(api)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertEqual(options.json()['receipts'], [{'id': r.pk, 'status': None, 'can_acknowledge': True}])
+        body = {'expected_revision': f.work.revision, 'case_revision': rev(f.case), 'receipt_id': r.pk,
+                'status': 'received', 'evidence_id': f.e['requirements'].pk, 'note': 'Actual synthetic Support receipt'}
+        saved = self.client.post(api, body, content_type='application/json')
+        self.assertEqual(saved.status_code, 200, saved.content)
+        self.assertEqual(self.client.post(api, body, content_type='application/json').status_code, 409)
         factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
         self.assertEqual(DeliveryRecord.objects.filter(dossier=f.d,kind='handover').get().actor_id,receiver.pk)
 
@@ -213,7 +220,7 @@ class FactoryHandoverTests(TestCase):
         self.assertEqual(f.work.status,'verified',f.work.finding);self.assertTrue(PublicationReceipt.objects.filter(pk=old.pk).exists())
         self.assertEqual(Publication.objects.filter(factory_work=f.work).count(),2);self.assertEqual(f.work.budget_limit,20000)
 
-    def test_cancelled_expired_delivery_is_reconciled_without_send_then_settled_by_native_operator(self):
+    def test_cancelled_expired_delivery_lookup_miss_retains_stop_and_uncertain_original(self):
         from apps.documents.delivery import claim_publication
         f=setup();ready(f)
         for _ in range(12):
@@ -224,9 +231,10 @@ class FactoryHandoverTests(TestCase):
         PublicationJob.objects.filter(pk=job.pk).update(lease_until=timezone.now()-timedelta(seconds=1))
         self.client.force_login(f.actor);url=reverse('factory_detail',args=[f.work.pk]);self.assertContains(self.client.get(url),'Reconcile original delivery')
         self.assertRedirects(self.client.post(url,{'action':'reconcile','revision':f.work.revision}),url)
-        f.work.refresh_from_db();job.refresh_from_db();self.assertEqual(job.status,'held');self.assertFalse(PublicationReceipt.objects.filter(publication=job.publication).exists())
-        handover.operate(f.actor,f.work.pk,f.work.revision,rev(f.case),job.pk,'cancel','Settle the stopped original delivery with no internal receipts')
-        f.work.refresh_from_db();self.assertEqual(f.work.status,'cancelled');self.assertEqual(f.work.budget_used,spent)
+        f.work.refresh_from_db();job.refresh_from_db();self.assertEqual(job.status,'unknown');self.assertFalse(PublicationReceipt.objects.filter(publication=job.publication).exists())
+        with self.assertRaisesMessage(ValidationError, 'receipt-only reconciliation'):
+            handover.operate(f.actor,f.work.pk,f.work.revision,rev(f.case),job.pk,'cancel','A missing receipt cannot settle the original')
+        f.work.refresh_from_db();self.assertTrue(f.work.cancel_requested);self.assertEqual(f.work.status,'waiting_effect');self.assertEqual(f.work.budget_used,spent)
 
     def test_agent_prepares_and_delivers_then_waits_for_actual_gaps_and_recipient_receipt(self):
         self.assertEqual(connection.vendor,'postgresql');f=setup();ready(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db()
@@ -250,7 +258,13 @@ class FactoryHandoverTests(TestCase):
         self.assertContains(page,'Exact recipient document');self.assertContains(page,'SYNTHETIC Support operations instructions')
         self.assertNotContains(page,v.fields['executive_summary']['text']);self.assertNotContains(page,v.fields['status']['text'])
         self.assertNotContains(page,'Continue eligible work')
+        from apps.workflows.factory_progress import set_progress
+        from apps.workflows.models import FactoryProgress
+        progress = set_progress(f.actor, f.work.pk, f.work.revision, True)
+        FactoryProgress.objects.filter(pk=progress.pk).update(status='waiting', observation='review-pending')
         response=self.client.post(url,{'action':'review','revision':f.work.revision,'case_revision':rev(f.case),'version':v.pk,'verdict':'approve','note':'Exact synthetic controlled package reviewed'})
+        progress.refresh_from_db()
+        self.assertEqual(progress.observation, '')
         self.assertRedirects(response,url);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'waiting')
         ack(f);factory.run_until_wait(f.work.pk);f.work.refresh_from_db();self.assertEqual(f.work.status,'verified',f.work.finding)
 

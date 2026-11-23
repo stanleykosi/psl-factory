@@ -2,6 +2,7 @@
 from django.core.exceptions import ValidationError
 
 DEFINITIONS={
+    'process-handoff/v1':{'component':'OPS.factory_native_station_execution','read':'agent.extract','title':'Department evidence handoff'},
     'pmo-issues/v1':{'component':'OPS.factory_issue_execution','read':'issue.read','title':'Issue investigation and owner follow-up'},
     'pmo-leadership-report/v1':{'component':'OPS.factory_leadership_execution','read':'report.read','title':'Internal Tuesday and monthly leadership report'},
     'finance-ledger/v1':{'component':'OPS.factory_ledger_execution','read':'ledger.read','title':'Supplied incumbent transaction reference'},

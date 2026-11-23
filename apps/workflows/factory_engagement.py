@@ -182,7 +182,13 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         return {'investigation':investigate(actor,case.pk),'planning_inputs':'Unknown requirements, contacts and estimates stay unknown; no plan or approval is fabricated'}
     if kind=='ACT07':
         old,_=planning_context(work,actor)
-        packet=old or planning.capture(actor,case.pk,empty_planning_payload())
+        if old:packet=old
+        elif source.data['route']=='A':
+            from apps.pmo import engagement_won
+            try:require(actor,case,'rfp.read')
+            except PermissionDenied:packet=planning.capture(actor,case.pk,empty_planning_payload())
+            else:packet=engagement_won.adopt(actor,case.pk)
+        else:packet=planning.capture(actor,case.pk,empty_planning_payload())
         return {'planning_packet':packet.pk,'unknowns_preserved':True,'plan_evidence_created':False}
     if kind=='ACT11':
         assignment=engagement.current_assignment(case)
@@ -202,6 +208,13 @@ def act(work,choice,value,latest,missing,tasks,jobs):
         data={'work':work.pk,'capture':source.pk,'assignment':assignment.pk,'packet':packet.pk,'planning_work':child.pk,'head':work.source_head_id}
         if receipt and receipt.data!=data:raise ValidationError('Original handoff receipt is retained; no implicit replacement')
         if not receipt:receipt=event(actor,case,LINKED,**data)
+        from .factory_progress import ACTIVE, set_progress
+        from .models import FactoryProgress
+        if FactoryProgress.objects.filter(work=work, status__in=ACTIVE).exists():
+            try:
+                set_progress(actor, child.pk, child.revision, True, initial=True)
+            except (PermissionDenied, ValidationError):
+                event(actor, case, 'factory.planning_handoff_attention', work=work.pk, planning_work=child.pk)
         return {'planning_work':child.pk,'planning_packet':packet.pk,'handoff':receipt.pk,'approval_granted':False,'registration_due':True}
     if kind=='ACT13':
         result=verify(work,actor);work.status='verified';return result
@@ -229,9 +242,9 @@ def verified_output(work):
 
 
 @transaction.atomic
-def reassess(actor,work_id,expected,reason,capture_id=None):
+def reassess(actor,work_id,expected,reason,capture_id=None,*,case_expected=None):
     work=Work.objects.select_for_update().select_related('case').get(pk=work_id,definition=DEFINITION)
-    case=lock_case(actor,work.case_id,'factory.manage');readable(actor,case,'factory.manage')
+    case=lock_case(actor,work.case_id,'factory.manage',case_expected);readable(actor,case,'factory.manage')
     if type(expected) is not int or work.revision!=expected or work.cancel_requested or work.status in ['cancelled','followup_needed']:raise ValidationError('STALE_VERSION: refresh the current engagement work')
     if work.lease_until and work.lease_until>timezone.now():raise ValidationError('CONFLICT: wait for the current worker')
     if not isinstance(reason,str) or not reason.strip() or len(reason)>2000:raise ValidationError('Explain the source-owned reassessment')
@@ -247,21 +260,28 @@ def reassess(actor,work_id,expected,reason,capture_id=None):
         else:raise ValidationError('The recorded handoff remains current')
     work.status='ready';work.finding='';work.revision+=1;work.save()
     event(actor,case,'factory.engagement_reassessed',work=work.pk,previous=previous.pk,capture=source.pk,reason=reason,spent=work.budget_used)
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
     return work
 
 
 @transaction.atomic
 def human(actor,work_id,expected,case_revision,operation,data):
     work=Work.objects.select_for_update().select_related('case').get(pk=work_id,definition=DEFINITION)
-    case=lock_case(actor,work.case_id,'engagement.'+operation,case_revision);readable(actor,case)
+    case=lock_case(actor,work.case_id,'engagement.'+('capture' if operation=='details' else operation),case_revision);readable(actor,case)
     if work.revision!=expected or work.cancel_requested or work.status in ['verified','cancelled','followup_needed']:raise ValidationError('STALE_VERSION: refresh the open engagement work')
     if work.lease_until and work.lease_until>timezone.now():raise ValidationError('CONFLICT: wait for current worker observation')
     capture_current(case,pointer(case,work.source_head).pk)
-    if operation not in ['assign','register']:raise ValidationError('Choose a native human assignment or registration command')
-    result=getattr(engagement,operation)(actor,case.pk,**data)
+    if operation not in ['assign','register','details']:raise ValidationError('Choose a current project decision or details command')
+    if operation=='details':
+        from apps.pmo.engagement_details import save
+        result=save(actor,case.pk,**data)
+    else:result=getattr(engagement,operation)(actor,case.pk,**data)
     if work.status=='waiting':work.status='ready';work.finding=''
     work.revision+=1;work.save()
     event(actor,case,'factory.engagement_human_recorded',work=work.pk,record=result.pk,kind=operation)
+    from .factory_progress import wake_waiting
+    wake_waiting(work.pk)
     return result
 
 

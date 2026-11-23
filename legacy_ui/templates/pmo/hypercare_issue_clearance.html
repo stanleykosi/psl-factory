@@ -1,0 +1,13 @@
+{% if clearance %}
+<section class="card">
+  <h2>Project issues and release stability</h2>
+  {% if clearance.status == 'met' %}<p>Current project issues meet the reviewed stability rule.</p>
+  {% elif clearance.status == 'not_met' %}<p>Current project issues must be addressed before stability can be confirmed.</p>
+  {% else %}<p>Unknown. The current issue evidence needs review.</p>{% endif %}
+  {% if clearance.blockers %}
+  <ul>
+    {% for issue in clearance.blockers %}<li>{{ issue.severity }} severity · <a href="{{ issue.url }}">Open {{ issue.reference }}</a></li>{% endfor %}
+  </ul>
+  {% endif %}
+</section>
+{% endif %}

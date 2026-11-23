@@ -150,6 +150,12 @@ def candidate_requests(candidate,kind):
  rows=ApprovalRequest.objects.filter(candidate=candidate,gate_kind=kind).select_related('case','candidate')
  return [r for r in rows if not ApprovalRequest.objects.filter(candidate=candidate,reference=r.reference,version__gt=r.version).exists()]
 def gate_current(candidate,kind,verification):
+ if kind=='uat_client':
+  from adapters.client_uat import TARGET
+  from .models import DeliverySource
+  if DeliverySource.objects.filter(dossier__candidate=candidate,kind=TARGET).exists():
+   from .client_uat import gate_current as client_current
+   client_current(candidate,verification)
  requests=candidate_requests(candidate,kind)
  if not requests:return
  if len(requests)!=1:raise ValidationError('Conflicting prerequisite requests require owner investigation')

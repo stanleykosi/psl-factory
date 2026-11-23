@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Cost calculation · PSL Factory{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'costing' case.pk %}">← Costing rules and worked examples</a>
+<header class="page-heading"><div><h1>Cost calculation {{ report.run }}</h1><p class="lede">{{ case|workspace_name }} · {{ report.recorded_status|readable }}</p></div></header>
+<section class="card"><h2>Current evidence</h2><p>{% if report.current_usable %}The recorded calculation has current supporting evidence.{% else %}This calculation needs reassessment.{% endif %}</p>{% for hold in report.holds %}<p role="status">{{ hold }}</p>{% endfor %}</section>
+{% if report.result %}
+<div class="factory-case-layout"><section class="card"><h2>Calculated amounts</h2><table><thead><tr><th>Result</th><th>Amount</th><th>Unit</th></tr></thead><tbody>{% for value in report.result.values %}<tr><td>{{ value.key|readable }}</td><td>{{ value.value|default_if_none:'Unknown' }}</td><td>{{ value.unit }}</td></tr>{% empty %}<tr><td colspan="3">The supplied inputs do not establish an amount.</td></tr>{% endfor %}</tbody></table>{% if report.result.holds %}<h3>Missing inputs</h3>{% for hold in report.result.holds %}<p>{{ hold }}</p>{% endfor %}{% endif %}</section><aside class="card"><h2>Project inputs</h2><dl>{% for input in report.inputs %}<dt>{{ input.key|readable }}</dt><dd>{{ input.value|default_if_none:'Unknown' }} {{ input.unit }}</dd>{% endfor %}</dl></aside></div>
+<details class="card"><summary>Recorded calculation and source references</summary><pre>{{ report.result }}</pre><pre>{{ report.snapshot }}</pre></details>
+{% else %}<p>Detailed figures require costing-source access.</p>{% endif %}
+<p><a href="{% url 'commercial' case.pk %}">Continue project costing approvals</a></p>
+{% endblock %}

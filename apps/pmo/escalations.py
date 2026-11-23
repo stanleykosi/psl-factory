@@ -74,7 +74,15 @@ def timing(profile,as_of=None):
         result['gaps'].append('Severity-to-PMO/CTO routing is unknown')
     if 'acknowledgement_hours' in parameters:
         due=anchor+timedelta(hours=parameters['acknowledgement_hours']);result['acknowledgement_due_at']=due.isoformat()
-        result['acknowledgement_status']=('LATE' if s.acknowledged_at>due else 'ON_TIME') if s.acknowledged_at else ('OVERDUE' if now>=due else 'PENDING')
+        from .issue_teams import acknowledgement_clock
+        ack=acknowledgement_clock(s.issue,s)
+        result['acknowledgement_clock']={k:v for k,v in ack.items() if k!='at'}
+        result['acknowledgement_at']=ack['at'].isoformat() if ack['at'] else None
+        result['policies'].update(ack['policies'])
+        if ack['status']=='unknown':
+            result['gaps'].append(ack['finding'])
+        else:
+            result['acknowledgement_status']=('LATE' if ack['at']>due else 'ON_TIME') if ack['at'] else ('OVERDUE' if now>=due else 'PENDING')
     return result
 
 
@@ -118,7 +126,9 @@ def approved_request(case,r):
     if r.target!='Client':return None
     d=r.decisions.order_by('-pk').first()
     if not d or d.verdict!='approve':raise ValidationError('Client escalation/de-escalation decision is pending')
-    require(d.actor,case,'issue.escalation_decide')
+    from apps.identity.role_factory_decisions import recorded_access
+
+    recorded_access(case,d.actor,'escalation',d.pk,'issue.escalation_decide')
     if decision_authority(d.actor,case,d.role,'approve',d.delegated)!=d.authority:
         raise ValidationError('Escalation decision authority changed; obtain a current decision')
     return d

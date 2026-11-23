@@ -11,8 +11,8 @@ from .helpers import rev
 def values():return json.loads((Path(__file__).resolve().parent.parent/'fixtures/ppe.json').read_text(encoding='utf-8'))
 def policy(f,key,value):
  p=draft_ppe_policy(f['actor'],f['case'].pk,key,value,f['e']['policy_decision'].pk,timezone.now()-timedelta(seconds=1));transition(f['actor'],p.pk,'validated');transition(f['actor'],p.pk,'active');return p
-def fixture(username='human',reviewer_username='schedule-reviewer',recipient_username='finance-reader'):
- f=schedule_fixture(username,reviewer_username,recipient_username);v=values();f['ppe']=v
+def fixture(username='human',reviewer_username='schedule-reviewer',recipient_username='finance-reader',reviewer=None):
+ f=schedule_fixture(username,reviewer_username,recipient_username,reviewer=reviewer);v=values();f['ppe']=v
  for kind in ['ppe_opening','ppe_classification','ppe_event','ppe_policy','ppe_basis_explanation']:f['e'][kind]=evidence(f,kind,'Explicit synthetic '+kind+' evidence; not native or actual owner acceptance')
  v['body']['opening_evidence_id']=f['e']['ppe_opening'].pk;v['body']['assets'][0]['classification_evidence_id']=f['e']['ppe_classification'].pk;v['body']['extracted_at']=(timezone.now()-timedelta(minutes=1)).isoformat();v['calculation']['rules'][0]['method_evidence_id']=f['e']['ppe_policy'].pk;v['authority']['assignments'][0]['user_id']=f['reviewer'].pk
  for key,value in [(SOURCE,v['source']),(CALC,v['calculation']),(AUTH,v['authority'])]:policy(f,key,value)

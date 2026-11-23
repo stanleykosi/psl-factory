@@ -24,6 +24,28 @@ class LedgerResolutionTests(TestCase):
   report=current(f,a);self.assertEqual(report['source']['source_reference'],'TX-001');self.assertEqual(report['incumbent']['target_reference'],'QB-101');self.assertFalse(report['posting_performed']);self.assertFalse(report['native_authenticity_verified'])
   with self.assertRaises(ValidationError):ledger.report(f['actor'],f['case'].pk,b.pk)
   self.assertEqual(ledger.LedgerLineage.objects.count(),2)
+ def test_api_duplicate_resolution_requires_independent_review_and_fresh_original_check(self):
+  f=self.f;a,b=aliases(f);previous=a.checks.latest('pk');case=f['case']
+  for actor in (f['actor'],f['reviewer']):
+   Grant.objects.get_or_create(case=case,user=actor,action='ledger.private.read')
+  self.client.force_login(f['actor'])
+  url=f'/api/v1/projects/{case.pk}/incumbent-resolutions'
+  page=self.client.get(url)
+  self.assertEqual(page.status_code,200,page.content)
+  values={'action':'propose','case_revision':page.json()['case_revision'],'selected_id':a.pk,'retired_ids':[b.pk],
+          'member_ids':[a.pk,b.pk],'mode':'duplicate_alias','reference':'API-duplicate','predecessor_id':None,
+          'evidence_id':f['resolution_evidence'].pk,'reason':'Exact duplicate reference selection.'}
+  response=self.client.post(url,values,content_type='application/json')
+  self.assertEqual(response.status_code,201,response.content)
+  decision={'action':'review','case_revision':response.json()['case_revision'],'resolution_id':response.json()['id'],
+            'verdict':'confirm','evidence_id':f['resolution_review_evidence'].pk}
+  self.assertEqual(self.client.post(url,decision,content_type='application/json').status_code,403)
+  self.client.force_login(f['reviewer'])
+  confirmed=self.client.post(url,decision,content_type='application/json')
+  self.assertEqual(confirmed.status_code,201,confirmed.content)
+  self.assertTrue(self.client.get(url).json()['resolutions'][0]['current_reviewed'])
+  with self.assertRaises(ValidationError):review(f,previous)
+  self.assertFalse(current(f,a)['posting_performed'])
  def test_corrected_reference_uses_exact_new_incumbent_evidence_and_retains_prior_history(self):
   f=self.f;old=capture(f);verify(f,old);value=dict(old.payload,target_reference='QB-102');new=capture(f,value,old.pk)
   self.assertEqual(fresh(f,new).status,'held');verify(f,old,{'target_reference':'QB-102'})

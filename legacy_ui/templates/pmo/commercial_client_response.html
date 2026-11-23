@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<header class="page-heading"><div><a href="{% url 'commercial' case.pk %}">← Statement of work</a>
+<h1>Record the client’s response</h1><p>The client does not need an account. Keep the exact delivered version and the proof of what they actually said.</p></div></header>
+{% if error %}<p role="alert">{{ error }}</p>{% endif %}
+{% if unavailable %}<p role="status">Earlier private response proof needs current recorder authority or your specific proof access. Its history is retained.</p>{% endif %}
+{% if record %}<section class="card"><h2>{{ outcome_label }}</h2>
+{% if adoption %}<p role="status">The verified signed documents are recorded as the project baseline.</p><p>{% if finance_intake %}Finance received its intake.{% else %}Finance intake is not yet confirmed.{% endif %} Billing terms and invoice review remain separate.</p>{% endif %}
+<dl><dt>Who responded</dt><dd>{{ record.client_name }}</dd><dt>When they responded</dt><dd>{{ actual_at|date:"j M Y, H:i:s T" }}</dd>
+<dt>Delivered document</dt><dd>{{ response.receipt.publication.version }}</dd></dl>
+<h3>Recorded response note</h3><p>{{ response.note|linebreaksbr }}</p>
+<p>Recorded by {{ metadata.created_by }} at {{ metadata.created_at|date:"j M Y, H:i:s T" }}. Corrections add a new record.</p>
+{% for file in proof_files %}<p><a href="{% url 'commercial_client_proof' case.pk metadata.pk file.pk %}">Download {{ file.name }}</a></p>{% endfor %}
+{% if own_test_proof %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="agent"><input type="hidden" name="revision" value="{{ case.revision }}"><button>Ask the evidence agent to check the proof</button></form>
+<p><a href="{% url 'case_uploads' case.pk %}">Read the agent’s cited file review</a>. The agent cannot vouch for the client or authenticate a signature.</p>{% endif %}
+{% if record.outcome == 'changes_requested' %}<p>The client asked for a revised statement of work. The revised version needs fresh approvals and document review before it can be sent.</p>
+{% if revision_desk.prepared %}<p role="status">The revised proposal is prepared and waiting for fresh commercial decisions.</p>
+{% elif response_is_current_version and revision_desk %}
+  {% if not revision_desk.pending and not revision_desk.approved %}
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="review_changes"><input type="hidden" name="revision" value="{{ case.revision }}"><button>Ask the planning agent to review the changes</button></form>{% endif %}
+  {% if revision_desk.pending %}<p role="status">The planning file is awaiting review.</p><p><a href="{% url 'case_uploads' case.pk %}">Review the planning file</a></p>{% endif %}
+  {% for job, advice in revision_desk.approved %}<details><summary>Reviewed advice for {{ job.upload.name }}</summary><p>{{ advice.summary|linebreaksbr }}</p>{% if advice.gaps %}<ul>{% for gap in advice.gaps %}<li>{{ gap }}</li>{% endfor %}</ul>{% endif %}</details>{% endfor %}
+  {% if revision_desk.form %}<details{% if error %} open{% endif %}><summary>{% if revision_desk.saved %}Correct the saved revision draft{% else %}Write the revised scope{% endif %}</summary><p>Leave unconfirmed sources blank. Saving does not approve the revision or set a price.</p>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="save_revision"><input type="hidden" name="revision" value="{{ case.revision }}">{{ revision_desk.form.as_p }}<button>Save revised wording for review</button></form></details>{% endif %}
+  {% if revision_desk.saved %}<h3>Saved revised scope</h3><p>{{ revision_desk.saved.scope|linebreaksbr }}</p>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="prepare_revision"><input type="hidden" name="draft" value="{{ revision_desk.head.pk }}"><input type="hidden" name="revision" value="{{ case.revision }}"><button>Prepare revised proposal for approvals</button></form>{% endif %}
+{% endif %}
+<a href="{% url 'commercial' case.pk %}">Open commercial approvals and document review</a>{% elif record.outcome == 'declined' %}<p>The client declined. The project cannot use this response as a signed baseline.</p>{% else %}
+{% if adoption %}<p role="status">{% if baseline_current %}The signed documents pass the current signature checks.{% else %}The signed documents are retained, but their current signature checks need fresh review.{% endif %}</p>{% else %}<p>Check both document signatures before confirming the project baseline.</p>{% endif %}<p>Planning, release and Finance keep their own controls.</p>
+{% if signing %}<details><summary>Review the required document signatures</summary><p>The statement of work and product requirements have separate signature evidence. Missing owner rules hold their qualification only.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="signatures"><input type="hidden" name="revision" value="{{ case.revision }}">{{ signing.as_p }}<button>Record the document signature checks</button></form></details>{% endif %}
+{% if signature_status and not adoption %}<p>Statement of work: {% if signature_status.sow == 'human reference captured' %}human check recorded{% else %}human check still needed{% endif %}. Product requirements: {% if signature_status.prd == 'human reference captured' %}human check recorded{% else %}human check still needed{% endif %}.</p><p>Confirm the project baseline to check the recorded signatures against the current rules.</p>{% if signature_status.contract != 'pinned' %}<p>The owner’s signature rules are not confirmed yet.</p>{% endif %}{% endif %}
+{% if adoption and signing and packet %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="reaffirm"><input type="hidden" name="packet" value="{{ packet.pk }}"><input type="hidden" name="revision" value="{{ case.revision }}"><button>Reconfirm the unchanged signed documents</button></form>{% endif %}
+{% if can_adopt %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="adopt"><input type="hidden" name="revision" value="{{ case.revision }}"><button>Use the verified signed documents as the project baseline</button></form>{% endif %}
+{% endif %}</section>{% endif %}
+{% if revision and can_record and not adoption %}<section class="card"><h2>{% if metadata %}Record a correction{% else %}Client response{% endif %}</h2>
+<p>Times are shown in {{ timezone_name }}. A blank value stays unknown; recording a response never supplies missing billing terms.</p>
+<details><summary>Add private proof</summary><form method="post" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="upload"><input type="hidden" name="revision" value="{{ case.revision }}"><label>Proof file <input type="file" name="file" required></label><button>Upload privately</button></form></details>
+<p>The latest 50 delivered versions and your latest 50 private files are available here.</p>
+<form method="post">{% csrf_token %}<input type="hidden" name="action" value="record"><input type="hidden" name="revision" value="{{ case.revision }}">{{ form.as_p }}<button>Record response</button></form>
+</section>{% elif adoption %}<p>New contract changes need a separate review. <a href="{% url 'changes' case.pk %}">Open controlled changes</a>.</p>{% elif not revision %}<p>Prepare and deliver a statement of work before recording its client response.</p>{% else %}<p>A currently authorised project manager is needed to record the client’s response.</p>{% endif %}
+<p><a href="{% url 'commercial' case.pk %}">Earlier commercial responses and document history</a></p>
+{% endblock %}

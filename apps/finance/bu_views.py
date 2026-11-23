@@ -17,7 +17,7 @@ from .bu_models import BUWork,BUReport
 from . import bu as domain
 @login_required
 def workbench(request,case_id):
- c=accessible_case(request.user,case_id);require(request.user,c,'bu.read');forms=commands(request.user,c,request.POST if request.method=='POST' else None)
+ c=accessible_case(request.user,case_id,source_action='bu.read');require(request.user,c,'bu.read');forms=commands(request.user,c,request.POST if request.method=='POST' else None)
  if request.method=='POST':
   try:
    f=next((x['form'] for x in forms if x['action']==request.POST.get('action')),None)

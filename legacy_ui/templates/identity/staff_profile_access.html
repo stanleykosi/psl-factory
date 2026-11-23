@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Review staff access · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Review {{ person.get_full_name|default:person.username }}’s access</h1><p>{{ case.title }}</p></div><a class="button secondary" href="{% url 'staff_person' person.pk %}">Back to staff access</a></header>
+<section class="card"><h2>Current access</h2><p>{{ current_access }}</p><p>Removing access requires any active work to be handed over. This change does not appoint a project approver or transfer past decisions.</p></section>
+<section class="card"><h2>Choose the new access</h2>{% if profiles %}<form method="post">{% csrf_token %}{{ form.as_p }}<button>Save reviewed access</button><a class="button secondary" href="{% url 'staff_person' person.pk %}">Cancel</a></form>{% else %}<p>Named profiles have not been configured for this workspace. Existing access and work can continue.</p>{% endif %}</section>
+<details class="card"><summary>Functions in each profile</summary>{% for profile in profiles %}<h3>{{ profile.label }}</h3><ul>{% for action in profile.actions %}<li>{{ action }}</li>{% endfor %}</ul>{% endfor %}</details>
+{% endblock %}

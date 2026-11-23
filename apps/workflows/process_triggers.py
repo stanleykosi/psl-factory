@@ -1,0 +1,105 @@
+"""Staff guidance for the source events registered by the department workflows."""
+
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class Trigger:
+    screen: str
+    action: str
+    section: str
+
+
+# These are the read permissions on the destination screens. The destination
+# still checks its own commands, appointments and record-level access.
+SCREENS = {
+    "approvals": ("Department-owned prerequisites", "approval.read"),
+    "bu": ("Business-unit attribution", "bu.read"),
+    "case": ("Project record", "case.read"),
+    "changes": ("Change requests", "change.read"),
+    "commercial": ("Commercial revisions and client decisions", "commercial.read"),
+    "delivery": ("Delivery and release evidence", "delivery.read"),
+    "documents": ("Documents and reviews", "document.read"),
+    "finance_analysis": ("Finance mapping and allocation", "finance.read"),
+    "finance_contract_coverage": ("Contract coverage", "coverage.read"),
+    "finance_forecast": ("Cash forecast", "finance.read"),
+    "finance_performance": ("Monthly and year-to-date performance", "finance.read"),
+    "finance_settlement": ("Invoices and receipts", "finance.read"),
+    "finance_usage_intake": ("Client usage intake", "finance.read"),
+    "hrfinance": ("HR-authorised Finance handoff", "hrfinance.read"),
+    "issues": ("Issue register", "issue.read"),
+    "meetings": ("Meetings, commitments and reporting", "meeting.read"),
+    "planning": ("Requirements and planning sources", "planning.read"),
+    "policy": ("Business rule settings", "policy.read"),
+    "recognition": ("Project progress and Finance recognition", "recognition.read"),
+    "rfp": ("Bid intake and response", "rfp.read"),
+    "template_current": ("Owner template claims and conflicts", "document.read"),
+    "validation": ("Process validation", "validation.read"),
+}
+
+
+TRIGGERS = {
+    "P01": Trigger("commercial", "Choose Prepare approved proposal for document review. Saving the bound statement of work draft starts its sharing checks.", "commercial-draft"),
+    "P02": Trigger("approvals", "Choose Capture prerequisite request subject and select the delivery candidate. The saved request starts routing to the responsible department.", "prerequisite-actions"),
+    "P04": Trigger("meetings", "Choose Draft period report with a period, template and audience. A scheduled report starts the same handoff when its draft is created.", "period-report"),
+    "P05": Trigger("policy", "Choose Activate validated version for the project report-sharing rule. Activation starts tracking the authorised audience’s acknowledgement.", "policy-history"),
+    "P08": Trigger("commercial", "Choose Save new proposal revision with costing different from the existing proposal. The changed costing starts revision checks.", "commercial-proposal"),
+    "P09": Trigger("commercial", "Choose Save new proposal revision with the project’s statement of work and costing sources. The saved revision starts its review handoff.", "commercial-proposal"),
+    "P10": Trigger("template_current", "Under Define exact applicability, select a statement of work or another supported PMO document type and choose Record scope. Saving starts the template selection handoff.", "template-scope"),
+    "P11": Trigger("documents", "Choose Register template for an owner-backed PMO template version. Registration starts checks for the template’s governed claims or resolution.", "template-library"),
+    "P12": Trigger("case", "Supply the milestone’s completion evidence and choose Complete and hand off to Finance. Saving the completed milestone starts the Finance handoff.", "milestone-completion"),
+    "P13": Trigger("validation", "Choose Capture procedure or clarification with document kind PMO procedure and include P13 in the process list. Saving starts owner validation.", "action-source"),
+    "P15": Trigger("validation", "Choose Prepare selected validation scope or revision with P15 and its supporting examples. The saved package starts process-owner review.", "action-package"),
+    "P17": Trigger("planning", "Choose Record planning packet version with the requirements and delivery stakeholders. Saving the packet starts the requirements and stakeholder check.", "planning-packet"),
+    "P18": Trigger("planning", "Choose Record planning packet version with the Engineering and Security estimate references or gaps. Saving the packet starts the estimate check.", "planning-packet"),
+    "P19": Trigger("documents", "Reserve publication of the approved statement of work. The client feedback handoff starts when its delivery receipt is recorded.", "document-versions"),
+    "P20": Trigger("commercial", "Choose Record current document signature evidence and select the proposal revision. Saving its signature packet starts the Finance handoff.", "commercial-signatures"),
+    "P21": Trigger("planning", "Choose Record planning packet version. The saved packet starts tracking the requirements walkthrough and scope and estimate alignment sessions.", "planning-packet"),
+    "P22": Trigger("delivery", "Choose Capture owned source for UI applicability, UI design or client UI sign-off. Saving the reference starts the UI readiness check.", "delivery-source"),
+    "P23": Trigger("delivery", "Choose Capture owned source for Technical design. Saving the sign-off reference starts the technical design check.", "delivery-source"),
+    "P24": Trigger("delivery", "Choose Capture owned source for Test strategy or UAT approach. Saving either reference starts the corresponding sign-off check.", "delivery-source"),
+    "P25": Trigger("planning", "Choose Record planning packet version with the scope and estimate sources. The saved packet starts checking readiness for their baseline approval.", "planning-packet"),
+    "P27": Trigger("meetings", "Choose Kickoff as the meeting type and select Save meeting evidence. The saved meeting starts the delivery kickoff handoff.", "formal-meeting"),
+    "P29": Trigger("documents", "Under Capture owning-team gate evidence, choose QA exit and select Record source reference. The saved gate starts the quality exit check.", "gate-evidence"),
+    "P30": Trigger("documents", "Under Capture owning-team gate evidence, record a Product Manager, Product Owner or Client UAT approval reference. The saved gate starts the UAT check.", "gate-evidence"),
+    "P31": Trigger("documents", "Under Capture owning-team gate evidence, record the Engineering Go/No-Go reference. The saved gate starts the deployment prerequisite check.", "gate-evidence"),
+    "P38": Trigger("meetings", "Choose Retrospective as the meeting type and select Save meeting evidence. The saved meeting starts tracking its use in closure.", "formal-meeting"),
+    "P45": Trigger("rfp", "Choose Log received RFP with the bid and its original receipt time. Saving the intake starts the project manager assignment handoff.", "bid-intake"),
+    "P51": Trigger("issues", "Open an issue’s external references and choose Record source observation for the Security risk record. The saved observation starts the risk reference check.", "issue-register"),
+    "P52": Trigger("documents", "Choose Save draft version for a controlled PMO document. The new version starts the document review and publication handoff.", "document-draft"),
+    "P53": Trigger("documents", "Choose Save draft version with Client as the audience. The new external version starts the independent quality check.", "document-draft"),
+    "P54": Trigger("issues", "Set a Production issue to Resolved and choose Record issue state. The saved resolution starts the root-cause and closure checks.", "issue-register"),
+    "P55": Trigger("issues", "Open an issue’s external references and choose Record source observation for the Engineering incident. The saved observation starts the incident and change reference check.", "issue-register"),
+    "P56": Trigger("changes", "Choose Record change revision with Standard, Normal or Emergency as the category. Saving the request starts the classification handoff.", "change-log"),
+    "P58": Trigger("changes", "Choose Record change revision with Standard or Normal as the category. Its saved revision starts tracking the required approvals and timeline agreement.", "change-log"),
+    "P63": Trigger("delivery", "Choose Record exact Planning decision and select Approve. The saved approval starts tracking the Planning exit and kickoff.", "planning-exit"),
+    "F02": Trigger("finance_analysis", "After capturing the trial-balance file, choose Record extraction context. Saving that source starts the trial-balance review and mapping handoff.", "action-source"),
+    "F04": Trigger("finance_analysis", "Choose Capture reporting adjustment for the trial-balance source. Saving the adjustment starts its movement and total checks.", "action-adjust"),
+    "F05": Trigger("finance_analysis", "Choose Calculate configured metrics. A saved result with income, cost or expense note lines starts the note checks.", "action-calculate"),
+    "F06": Trigger("finance_analysis", "Choose Calculate configured metrics. A saved result with asset note lines starts the asset note and scale checks.", "action-calculate"),
+    "F08": Trigger("finance_analysis", "Choose Calculate configured metrics. A saved result with liability note lines starts checks of the liability notes and their signs.", "action-calculate"),
+    "F10": Trigger("finance_performance", "Choose Build explicit period comparison with income-statement actuals and a budget. The resulting comparison starts the presentation handoff.", "action-build"),
+    "F11": Trigger("finance_performance", "Choose Capture explicit budget version with the supplied budget evidence. Saving the version starts the budget comparison handoff.", "action-budget"),
+    "F14": Trigger("finance_analysis", "Choose Build BU allocation preview with revenue selected. An allocation with direct or pooled revenue rows starts the revenue classification check.", "action-allocate"),
+    "F15": Trigger("finance_analysis", "Choose Build BU allocation preview with direct costs selected. An allocation with direct cost rows starts the business-unit cost check.", "action-allocate"),
+    "F19": Trigger("finance_analysis", "Choose Build BU allocation preview for staff costs with the configured headcount basis. The resulting pooled staff allocation starts the basis check.", "action-allocate"),
+    "F20": Trigger("bu", "Choose Allocate staff costs with exact standard-pool exclusions. A saved result containing standard allocations starts the reviewed aggregate handoff.", "action-staff"),
+    "F24": Trigger("finance_performance", "Choose Build explicit period comparison with monthly actuals that include business-unit results. The saved comparison starts the year-to-date check.", "action-build"),
+    "F25": Trigger("finance_performance", "Choose Build explicit period comparison with business-unit results and an exact budget version. The saved comparison starts the budget linkage check.", "action-build"),
+    "F26": Trigger("finance_performance", "Choose Build explicit period comparison. A result containing business-unit chart rows starts the metrics and presentation check.", "action-build"),
+    "F27": Trigger("finance_performance", "Choose Request evidenced historical replacement with the original period and revised formula run. The saved request starts review of the reporting change.", "action-restate"),
+    "F28": Trigger("finance_usage_intake", "Choose Record actual delivery or reconcile retry with the client usage file and controls. The saved source starts the intake handoff.", "action-receive"),
+    "F31": Trigger("finance_contract_coverage", "Choose Request internal Finance preparation for a specific obligation in an assessed service period. Saving starts the preparation handoff.", "action-request"),
+    "F32": Trigger("finance_settlement", "Choose Record reported cash with the payment evidence. The saved receipt starts the receivables handoff for that cash record.", "action-report"),
+    "F33": Trigger("recognition", "Choose Capture versioned progress packet with the dated project evidence. The saved packet starts the Finance recognition review handoff.", "action-prepare"),
+    "F34": Trigger("case", "Supply the milestone’s completion evidence and choose Complete and hand off to Finance. The saved milestone starts tracking the notification and Finance receipt.", "milestone-completion"),
+    "F35": Trigger("hrfinance", "Choose Prepare minimal read-only disclosure for a recorded Finance reporting need. Saving the request starts the handoff and waits for HR’s authorisation.", "action-contract"),
+    "F36": Trigger("finance_forecast", "Choose Capture scenario or actual roll-forward. Saving the scenario starts the expected inflow evidence check.", "action-capture"),
+    "F37": Trigger("finance_forecast", "Choose Capture scenario or actual roll-forward. Saving the scenario starts the recurring and new outflow check.", "action-capture"),
+    "F38": Trigger("finance_forecast", "Choose Capture scenario or actual roll-forward. Saving the scenario starts the opening balance and near-term obligations check.", "action-capture"),
+    "F40": Trigger("finance_forecast", "Under Review forecast and priorities, record an Approve decision on the calculated forecast. The saved approval starts the priority and follow-up handoff.", "action-review"),
+    "F41": Trigger("finance_forecast", "Choose Match actual to expected item for a verified receipt or payment. The saved match starts the forecast update check.", "action-match"),
+    "F42": Trigger("finance_forecast", "Choose Capture scenario or actual roll-forward and select the prior approved run. The saved successor starts the carry-forward check.", "action-capture"),
+    "F43": Trigger("finance_forecast", "Choose Prepare reviewed audience report and select Internal, Management or Group. Saving the audience-bound draft starts publication checks for that version.", "action-draft"),
+    "F45": Trigger("finance_contract_coverage", "Choose Draft evidenced contract terms with the matching client register and service contract sources. Saving the terms starts billing coverage checks.", "action-draft"),
+}

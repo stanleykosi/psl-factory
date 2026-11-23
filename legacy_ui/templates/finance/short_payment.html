@@ -1,0 +1,30 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Payment review · {{ issue.invoice.reference }}{% endblock %}
+{% block content %}
+<p><a href="{% url 'finance_settlement' case.pk %}">← Invoices and receipts</a></p>
+<h1>{% if position.short_payment %}Short payment on{% else %}Payment review for{% endif %} {{ issue.invoice.reference }}</h1>
+<div class="card-grid">
+  <section class="card"><h2>Invoiced</h2><strong>{{ position.currency }} {{ position.invoiced }}</strong></section>
+  <section class="card"><h2>Received and allocated</h2><strong>{{ position.currency }} {{ position.received }}</strong></section>
+  <section class="card"><h2>Still owed</h2><strong>{{ position.currency }} {{ position.owed }}</strong></section>
+  <section class="card"><h2>Review rule</h2><strong>{{ rule }}</strong>{% if can_read_rules %}<p><a href="{% url 'policy' case.pk %}">Open business rules</a></p>{% endif %}</section>
+</div>
+<div class="card-grid">
+  <section class="card">
+    <h2>Recorded payments</h2>
+    {% for row in receipts %}<p>{{ row.reference }} · {{ position.currency }} {{ row.amount }} · {{ row.received_at|date:'d M Y, H:i T'|default:'Payment date unavailable' }}</p>
+    {% empty %}<p>No verified payment is allocated to this invoice.</p>{% endfor %}
+    {% if correction_pending %}<p>Resolve the pending correction before recording a short-payment decision.</p>{% endif %}
+  </section>
+  {% if form %}<section class="card"><h2>Your Finance decision</h2>
+    <form method="post">{% csrf_token %}{{ form.as_p }}<button>Record decision</button></form>
+  </section>{% endif %}
+</div>
+{% if history %}<section class="card"><h2>Recorded decisions</h2>
+  {% for decision in history %}<article><h3>{{ decision.label }}</h3><p>{{ decision.actor.get_full_name|default:decision.actor.username }} · {{ decision.created_at|date:'d M Y, H:i T' }}{% if not decision.current_position %} · Earlier balance{% endif %}</p><p>{{ decision.reason|linebreaksbr }}</p></article>{% endfor %}
+  {% if can_follow_up %}<p><a href="{% url 'design_payment_reminder' case.pk issue.pk %}">Prepare a payment follow-up</a></p>{% endif %}
+</section>{% endif %}
+{% if rule_form %}<details class="card" {% if rule_form.errors %}open{% endif %}><summary>Draft a short-payment rule</summary>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="draft_rule">{{ rule_form.as_p }}<button>Save draft rule</button></form>
+</details>{% endif %}
+{% endblock %}

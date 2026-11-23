@@ -1,0 +1,16 @@
+{% extends 'base.html' %}{% load static studio_ui %}{% block title %}Owner-message settings · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'issues' case.pk %}">← Issues</a><h1>Owner-message settings</h1><p class="lede">Review authority, destinations and follow-up timing.</p></div></header>
+{% if current %}<p>Active version {{ current.revision }}.</p>{% else %}<p role="status">No active version. Leave undecided choices blank and save them for review.</p>{% endif %}
+{% if finding %}<p role="status">{{ finding }}</p>{% endif %}
+<form method="post" class="card" data-message-settings>{% csrf_token %}
+{{ form.as_p }}<h2>Team destinations</h2><p>Each destination applies to one configured external team and channel.</p>
+{% if not teams_available %}<p role="status">Configure the project teams before adding delivery destinations.</p><a href="{% url 'issue_team_configuration' case.pk %}">Team response settings</a>{% endif %}
+{{ routes.management_form }}{{ routes.non_form_errors }}
+<div data-message-routes>{% for row in routes %}<fieldset><legend>Destination {{ forloop.counter }}</legend>{{ row.as_p }}</fieldset>{% endfor %}</div>
+<button type="button" class="secondary" data-add-message-route>Add another destination</button>
+<template data-message-route-template><fieldset><legend>New destination</legend>{{ routes.empty_form.as_p }}</fieldset></template>
+<p>Saving prepares a version for review. It does not activate settings or send a message.</p><button>Save message settings draft</button>
+</form><p><a href="{% url 'policy' case.pk %}">Review and activate rule versions</a></p>
+<script src="{% static 'issue-message-routes.js' %}" defer></script>
+{% endblock %}

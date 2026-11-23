@@ -1,0 +1,58 @@
+{% load tz %}
+<section class="card shared-mobile-controls" id="customer-outcome">
+  <h2>Record actual customer outcome</h2>
+  <nav class="actions" aria-label="Customer outcome">{% for option in outcome_links %}<a class="button secondary" href="{{ option.url }}"{% if option.key == outcome_variant %} aria-current="true"{% endif %}>{{ option.label }}</a>{% endfor %}</nav>
+  {% if outcome_variant == 'won' %}<p>Attach the award decision for the submitted response.</p>
+  {% elif outcome_variant == 'lost' %}<p>Attach the customer’s decision. Record any reason they gave. Loss lessons are reviewed before archiving.</p>
+  {% elif outcome_variant == 'pending' %}<p>Use the customer’s message confirming their decision is pending.</p>
+  {% else %}<p>Record what you checked. You can use the original verified submission when there is no customer reply.</p>{% endif %}
+  <p>Submitted responses {{ submission_page.start_index }}–{{ submission_page.end_index }} of {{ submission_page.paginator.count }}.
+    {% if submission_pager.previous %}<a href="{{ submission_pager.previous }}">Earlier selection page</a>{% endif %}
+    {% if submission_pager.next %}<a href="{{ submission_pager.next }}">More submitted responses</a>{% endif %}</p>
+  <form method="post">{% csrf_token %}
+    <input type="hidden" name="action" value="outcome">
+    <input type="hidden" name="revision" value="{{ row.work.revision }}">
+    <input type="hidden" name="case_revision" value="{{ case.revision }}">
+    <input type="hidden" name="verdict" value="{{ outcome_variant }}">
+    <label>Actual submitted response{{ submission_selector }}</label>
+    <label>Responsible role<select name="role">{% for role in row.rfp.outcome_roles %}<option{% if outcome_values.role == role %} selected{% endif %}>{{ role }}</option>{% endfor %}</select></label>
+    {% get_current_timezone as current_timezone %}<label>Observed at ({{ current_timezone }})<input name="observed_at" type="datetime-local" step="1" required value="{{ outcome_values.observed_at }}"></label>
+    <label>Customer outcome evidence<select name="evidence"{% if outcome_variant != 'unknown' %} required{% endif %}>
+      <option value="">{% if outcome_variant == 'unknown' %}Use original verified submission{% else %}Choose evidence{% endif %}</option>
+      {% for evidence in outcome_evidence %}<option value="{{ evidence.pk }}"{% if outcome_values.evidence == evidence.pk|stringformat:'s' %} selected{% endif %}>{{ evidence.source }} · version {{ evidence.version }}</option>{% endfor %}
+    </select></label>
+    {% if outcome_variant == 'won' %}
+      <label>Awarded amount (if stated)<input name="award_amount" inputmode="decimal" maxlength="64" value="{{ outcome_values.award_amount }}"></label>
+      <label>Award currency<input name="award_currency" maxlength="3" value="{{ outcome_values.award_currency }}"></label>
+      <p>Enter both as stated in the award evidence.</p>
+    {% endif %}
+    {% if outcome_variant == 'pending' %}
+      <label>Expected decision date stated by the customer (optional)<input name="customer_expected_on" type="date" value="{{ outcome_values.customer_expected_on }}" aria-describedby="customer-expected-date-hint"></label>
+      <p id="customer-expected-date-hint">Use the date in the selected customer evidence. Leave it blank if the customer gave no date.</p>
+    {% endif %}
+    {% if outcome_variant == 'pending' or outcome_variant == 'unknown' %}
+      {% if outcome_values.followup_on %}<label>Internal next check date (optional)<input name="followup_on" type="date" value="{{ outcome_values.followup_on }}"></label>{% endif %}
+      <label>Internal reminder time ({{ current_timezone }})<input name="remind_at" type="datetime-local" step="1" value="{{ outcome_values.remind_at }}" aria-describedby="bid-reminder-hint"></label>
+      <p id="bid-reminder-hint">Remind the currently assigned project manager in Alerts.</p>
+    {% endif %}
+    {% if outcome_variant == 'lost' %}
+      {% if loss_reasons %}
+        <input type="hidden" name="loss_catalog" value="{{ loss_catalog.pk }}">
+        <label>Main reason the customer gave (optional)<select name="loss_reason">
+          <option value="">No reason selected</option>
+          {% for reason in loss_reasons %}<option value="{{ reason.key }}"{% if outcome_values.loss_reason == reason.key %} selected{% endif %}>{{ reason.label }}</option>{% endfor %}
+        </select></label>
+      {% endif %}
+      {% if debrief_choices %}<label>Recorded debrief (optional)<select name="debrief_version">
+          <option value="">Choose a recorded debrief</option>
+          {% for debrief in debrief_choices %}<option value="{{ debrief.pk }}"{% if outcome_values.debrief_version == debrief.pk|stringformat:'s' %} selected{% endif %}>{{ debrief.meeting__reference }} · {{ debrief.occurred_at|date:'d M Y' }}</option>{% endfor %}
+        </select></label>{% endif %}
+      {% if row.can_view_outcome_settings %}<p><a href="{% url 'factory_rfp_outcome_configuration' case.pk %}#loss-reasons">Review loss reasons</a></p>{% endif %}
+    {% endif %}
+    <label>{% if outcome_variant == 'lost' %}Customer reason and notes{% else %}Explanation{% endif %}<textarea name="note" required maxlength="4000">{{ outcome_values.note }}</textarea></label>
+    {% if row.rfp.selection.required and row.rfp.selection.configuration and outcome_variant == 'won' or row.rfp.selection.required and row.rfp.selection.configuration and outcome_variant == 'lost' %}
+      <input type="hidden" name="selection_packet" value="{{ row.rfp.selection.packet }}"><label><input type="checkbox" name="selection_acknowledged"> I reviewed the submitted responses and this evidence identifies the result</label>
+    {% endif %}
+    <button>Record evidenced outcome</button>
+  </form>
+</section>

@@ -5,6 +5,7 @@ from uuid import uuid4
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.utils import timezone
+from apps.core.read_observation import observed_fact
 from apps.core.services import lock_case,bump,event
 from apps.identity.services import require
 from apps.identity.models import Grant
@@ -13,11 +14,13 @@ from apps.documents.contracts import validate,digest
 from apps.documents.validation import finite
 from apps.policy.services import active_component,reference_values,decision_authority,register_reference,save_draft
 from apps.policy.registry import components
-from apps.policy.hrfinance_validators import AUTHORITY,DISCLOSURE,REQUIRED,FIELD_LIST,IDS,MONTH,TEXT,BASIS_SCHEMAS
+from apps.policy.hrfinance_validators import AUTHORITY,DISCLOSURE,REQUIRED,FIELD_LIST,IDS,MONTH,TEXT,BASIS_SCHEMAS,EXTENDED_FIELD_LIST,money_fields,source_kind
 from adapters.forecast import obj,KEY
 from adapters.hrfinance import SuppliedHRExportAdapter,HRExportError,day,timestamp
 from .hrfinance_models import HRFinanceNeed,HRDisclosure,HRReadSnapshot,HRHandoffRecord
 NEED=obj({'purpose':KEY,'entity':KEY,'period':MONTH,'as_of':{'type':'string'},'fields':FIELD_LIST,'justification':{'type':'object','additionalProperties':TEXT},'recipient_ids':IDS})
+NEED_FORMAT_V2 = 'psl.hr-finance-need/v2'
+EXTENDED_NEED = obj({**NEED['properties'], 'format': {'const': NEED_FORMAT_V2}, 'fields': EXTENDED_FIELD_LIST})
 
 def locked(actor,case_id,action,expected=None):
  c=lock_case(actor,case_id,action,expected)
@@ -46,11 +49,18 @@ def current_contract(c):
   if active_component(key,c.need.case).pk!=pk:raise ValidationError('HR/Finance policy changed; prepare a new exact disclosure')
  if HRDisclosure.objects.filter(need=c.need,pk__gt=c.pk).exists():raise ValidationError('Disclosure replaced')
  rules=reference_values(active_component(DISCLOSURE,c.need.case))[0]
- e=subject(c.need.case,rules['source_evidence_id'],'hr_contract_source')
+ e=subject(c.need.case,rules['source_evidence_id'],source_kind(rules))
  if c.need.case.evidence.filter(kind=e.kind,version__gt=e.version).exists():raise ValidationError('HR source-view contract evidence revised')
  return c
 
 def authorized(c):
+ return checked_disclosure_approval(c.need,c.pk)
+
+@observed_fact
+def checked_disclosure_approval(need,contract_id):
+ """Reuse the exact signed disclosure, leaving each snapshot and reader check current."""
+ c=HRDisclosure.objects.select_related('need__case').filter(need=need,pk=contract_id).first()
+ if not c:raise ValidationError('Current HR disclosure approval required')
  current_contract(c);r=c.records.filter(kind__in=['approve','return','revoke']).order_by('-pk').first()
  if not r or r.kind!='approve':raise ValidationError('Current HR disclosure approval required')
  require(r.actor,c.need.case,'hrfinance.authorize')
@@ -59,30 +69,33 @@ def authorized(c):
 
 @transaction.atomic
 def need(actor,case_id,reference,payload,evidence_id,expected):
- c=locked(actor,case_id,'hrfinance.need',expected);validate(KEY,reference);finite(payload);validate(NEED,payload)
+ c=locked(actor,case_id,'hrfinance.need',expected);validate(KEY,reference);finite(payload);validate(EXTENDED_NEED if isinstance(payload,dict) and payload.get('format')==NEED_FORMAT_V2 else NEED,payload)
  if set(payload['justification'])!=set(payload['fields']) or not set(REQUIRED)<=set(payload['fields']):raise ValidationError('Every requested field needs its own purpose justification and exact identity/date fields')
  at=day(payload['as_of'])
  if at.strftime('%Y-%m')!=payload['period'] or at>timezone.localdate():raise ValidationError('As-of date must be actual and within requested period')
- if ('monthly_pay' in payload['fields'])!=('currency' in payload['fields']):raise ValidationError('Monthly pay requires currency')
+ if money_fields(payload['fields'])!=('currency' in payload['fields']):raise ValidationError('Pay fields require currency')
  e=subject(c,evidence_id,'hr_finance_need');v=(HRFinanceNeed.objects.filter(case=c,reference=reference).order_by('-version').values_list('version',flat=True).first() or 0)+1
  r=HRFinanceNeed.objects.create(case=c,reference=reference,version=v,payload=payload,evidence=e,actor=actor)
  event(actor,c,'hrfinance.need',need=r.pk,version=v);bump(c);return r
 
 @transaction.atomic
 def contract(actor,case_id,need_id,operation_key,evidence_id,expected):
- c=locked(actor,case_id,'hrfinance.contract',expected);validate(KEY,operation_key);n=exact(c,HRFinanceNeed,need_id);e=subject(c,evidence_id,'hr_contract_source')
+ c=locked(actor,case_id,'hrfinance.contract',expected);validate(KEY,operation_key);n=exact(c,HRFinanceNeed,need_id);e=subject(c,evidence_id)
  old=HRDisclosure.objects.filter(need=n,operation_key=operation_key).first()
  if old:
   if old.actor_id!=actor.pk or old.evidence_id!=e.pk:raise ValidationError('Disclosure operation intent changed')
   return old
  latest_need(n);policy=active_component(DISCLOSURE,c);rules=reference_values(policy)[0];p=n.payload
+ if e.kind!=source_kind(rules):raise ValidationError('Use the reviewed source-contract version for this disclosure')
  if not set(p['fields'])<=set(rules['allowed_fields']) or not set(p['recipient_ids'])<=set(rules['recipient_ids']) or p['purpose'] not in rules['purposes'] or not rules['from_period']<=p['period']<=rules['to_period']:raise ValidationError('Need exceeds exact configured fields, recipients, purpose or periods')
  if e.pk!=rules['source_evidence_id']:raise ValidationError('Use the exact configured source-view contract evidence')
  for uid in p['recipient_ids']:
   from django.contrib.auth import get_user_model
+  from .hrfinance_recipient import recipient_scope
   u=get_user_model().objects.get(pk=uid)
-  for k in ['case.read','hrfinance.read','hrfinance.snapshot.read','hrfinance.receive']:require(u,c,k)
-  authority(u,c,'receive')
+  with recipient_scope(u,c,p['recipient_ids']):
+   for k in ['case.read','hrfinance.read','hrfinance.snapshot.read','hrfinance.receive']:require(u,c,k)
+   authority(u,c,'receive')
  auth=active_component(AUTHORITY,c)
  payload={**p,**{k:rules[k] for k in ['source_view','employee_key_semantics','effective_until_semantics','route','max_age_seconds','retention_seconds','retention_mode','correction_route']}}
  pins={DISCLOSURE:policy.pk,AUTHORITY:auth.pk}
@@ -153,12 +166,22 @@ def capture(actor,case_id,contract_id,operation_key,body,expected):
 
 @transaction.atomic
 def receive(actor,case_id,snapshot_id,operation_key,evidence_id,expected):
- c=locked(actor,case_id,'hrfinance.receive',expected);s=exact(c,HRReadSnapshot,snapshot_id);validate(KEY,operation_key);e=subject(c,evidence_id,'hr_disclosure_decision')
+ from .hrfinance_recipient import recipient_scope
+ from apps.core.models import Case
+ c=Case.objects.select_for_update().get(pk=case_id)
+ s=exact(c,HRReadSnapshot,snapshot_id)
+ with recipient_scope(actor,c,s.contract.payload['recipient_ids']):
+  return _receive(actor,c,s,operation_key,evidence_id,expected)
+
+def _receive(actor,c,s,operation_key,evidence_id,expected):
+ locked(actor,c.pk,'hrfinance.receive',expected);validate(KEY,operation_key);e=subject(c,evidence_id,'hr_disclosure_decision')
+ snapshot_access(actor,s);a=authority(actor,c,'receive')
  old=s.contract.records.filter(operation_key=operation_key).first()
  if old:
   if old.kind!='receipt' or old.snapshot_id!=s.pk or old.actor_id!=actor.pk or old.evidence_id!=e.pk:raise ValidationError('Receipt intent changed')
   return old
- read_snapshot(actor,s);a=authority(actor,c,'receive')
+ from apps.workflows.native_stations import receive_advice
+ receive_advice('F35',s.contract,actor,case=c)
  r=HRHandoffRecord.objects.create(contract=s.contract,snapshot=s,kind='receipt',operation_key=operation_key,payload={'sha256':s.sha256,'receipt_only':True,'hr_write':False},authority=a,evidence=e,actor=actor)
  event(actor,c,'hrfinance.receipt',receipt=r.pk,snapshot=s.pk);bump(c);return r
 
@@ -183,8 +206,36 @@ def respond(actor,case_id,request_id,successor_id,operation_key,evidence_id,expe
  if old:
   if old.kind!='response' or old.snapshot_id!=successor.pk or old.payload['request_id']!=q.pk or old.actor_id!=actor.pk or old.evidence_id!=e.pk:raise ValidationError('Response intent changed')
   return old
+ if correction_disposition(q).exists():raise ValidationError('This correction has a recorded decision')
  r=HRHandoffRecord.objects.create(contract=q.contract,snapshot=successor,kind='response',operation_key=operation_key,payload={'request_id':q.pk,'source_write':False,'new_finance_receipt_required':True},authority=auth,evidence=e,actor=actor)
  event(actor,c,'hrfinance.correction_response',record=r.pk);bump(c);return r
+
+def correction_disposition(request):
+ return request.contract.records.filter(kind__in=['response','correction_return','correction_reject'],payload__request_id=request.pk)
+
+
+@transaction.atomic
+def decide_correction(actor,case_id,request_id,verdict,successor_id,operation_key,evidence_id,expected):
+ if verdict=='approve':
+  return respond(actor,case_id,request_id,successor_id,operation_key,evidence_id,expected)
+ if verdict not in {'return','reject'} or successor_id is not None:
+  raise ValidationError('Select a correction decision and provide a successor only for approval')
+ c=locked(actor,case_id,'hrfinance.respond',expected)
+ q=exact(c,HRHandoffRecord,request_id)
+ if q.kind!='correction':raise ValidationError('Choose an actual Finance correction request')
+ validate(KEY,operation_key);authorized(q.contract);auth=authority(actor,c,'respond')
+ e=subject(c,evidence_id,'hr_correction_response')
+ kind='correction_'+verdict
+ old=q.contract.records.filter(operation_key=operation_key).first()
+ if old:
+  if (old.kind,old.actor_id,old.evidence_id,old.payload.get('request_id'))!=(kind,actor.pk,e.pk,q.pk):
+   raise ValidationError('Response intent changed')
+  return old
+ if correction_disposition(q).exists():raise ValidationError('This correction has a recorded decision')
+ r=HRHandoffRecord.objects.create(contract=q.contract,snapshot=q.snapshot,kind=kind,operation_key=operation_key,
+  payload={'request_id':q.pk,'source_write':False},authority=auth,evidence=e,actor=actor)
+ event(actor,c,'hrfinance.correction_decided',request=q.pk,record=r.pk,verdict=verdict);bump(c);return r
+
 
 def basis_snapshot(case,value):
  s=exact(case,HRReadSnapshot,value['snapshot_id'])

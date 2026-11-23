@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.utils import timezone
 from apps.core.services import lock_case,event,bump
+from apps.core.read_observation import observed_fact
 from apps.identity.services import require
 from apps.pmo.services import subject
 from apps.policy.services import active_component,reference_values
@@ -150,10 +151,19 @@ def seal_period(actor,case_id,run_id,restatement_id,expected):
         request=exact(case,FinanceRestatement,restatement_id)
         if request.original_id!=previous.pk or request.proposed_id!=run.pk or not current_decision(case,'restatement',restatement=request)['valid']:raise ValidationError('Current exact restatement authority required')
     elif restatement_id is not None:raise ValidationError('A first seal cannot use a replacement request')
+    from apps.workflows.native_stations import receive_advice
+    for process in ('F05', 'F06', 'F08'):
+        receive_advice(process, run, actor, case=case)
+    if run.parent_id and run.parent.kind == 'allocation':
+        for process in ('F14', 'F15', 'F19'):
+            receive_advice(process, run.parent, actor, case=case)
+    if request:
+        receive_advice('F27', request, actor, case=case)
     result=FinancePeriod.objects.create(case=case,run=run,output_review=review,predecessor=previous,restatement=request,manifest=manifest,actor=actor)
     event(actor,case,'finance.period_sealed',period=result.pk,predecessor=previous.pk if previous else None);bump(case);return result
 
 
+@observed_fact
 def period_acceptance(period):
     """Historical arithmetic stays pinned; current human grants and explicit revocations still apply."""
     from apps.policy.models import PolicyState
@@ -223,6 +233,7 @@ def performance_inputs(actor,case,request):
         'periods':periods,'budget':budget.pk if budget else None,'budget_review':decision,'restatement_policy':restatement},value,selected,prior,budget
 
 
+@observed_fact
 def ensure_current(report):
     snapshot,*_=performance_inputs(report.actor,report.case,report.request)
     if snapshot!=report.snapshot:raise ValidationError('Performance input, current period head, method, budget or human authority changed; rebuild')
@@ -239,5 +250,8 @@ def build(actor,case_id,cutoff,period_ids,budget_id,prior_ids,expected):
     key=analysis.digest({'case':str(case.pk),'actor':actor.pk,'request':request,'snapshot':snapshot})
     old=FinancePerformance.objects.filter(operation_key=key).first()
     if old:return old
+    if budget:
+        from apps.workflows.native_stations import receive_advice
+        receive_advice('F11', budget, actor, case=case)
     report=FinancePerformance.objects.create(case=case,request=request,snapshot=snapshot,result=result,operation_key=key,actor=actor)
     event(actor,case,'finance.performance_built',performance=report.pk,status=result['status']);bump(case);return report

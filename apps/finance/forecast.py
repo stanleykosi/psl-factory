@@ -4,6 +4,7 @@ from decimal import Decimal,localcontext
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.utils import timezone
+from apps.core.read_observation import observed_fact
 from apps.core.services import lock_case,event,bump
 from apps.identity.services import require
 from apps.identity.models import Grant
@@ -215,6 +216,7 @@ def record_support(actor,case_id,scenario_id,item_key,previous_id,evidence_id,mo
         observed_on=observed_on,role=role,snapshot=snapshot,authority=auth,reason=reason,actor=actor)
     event(actor,case,'forecast.support_declared',support=record.pk,scenario=s.pk,item=item_key,mode=mode,uncertainty=uncertainty);bump(case);return record
 
+@observed_fact
 def calculate(s):
     case=s.case;v=s.payload;findings=[]
     r=resolve(METHOD,case);c=r.configuration;m=reference_values(c)[0] if r.status=='ACTIVE' else None
@@ -306,6 +308,7 @@ def prepare(actor,case_id,scenario_id,expected):
     run=ForecastRun.objects.create(case=case,scenario=s,manifest=manifest,result=result,sha256=h,actor=actor)
     event(actor,case,'forecast.prepared',run=run.pk,status=result['status']);bump(case);return run
 
+@observed_fact
 def ensure_current(run):
     require(run.actor,run.case,'finance.forecast.calculate');require(run.scenario.actor,run.case,'finance.forecast.capture')
     if ForecastScenario.objects.filter(case=run.case,reference=run.scenario.reference,number__gt=run.scenario.number).exists():raise ValidationError('A newer forecast scenario revision exists')
@@ -327,19 +330,27 @@ def review(actor,case_id,run_id,role,verdict,evidence_id,reason,expected):
     if verdict not in ['approve','return','reject']:raise ValidationError('Choose exact review verdict')
     snapshot=review_snapshot(run) if verdict=='approve' else {'run_hash':run.sha256}
     authority=review_authority(actor,case,'forecast_rollover' if run.scenario.parent_id else 'forecast',role,verdict,run.actor_id)
+    if verdict=='approve':
+        from .coordinator_operations_cash import receive_forecast_sources
+        receive_forecast_sources(run,actor)
     r=ForecastReview.objects.create(run=run,snapshot=snapshot,role=role,verdict=verdict,authority=authority,evidence=subject(case,evidence_id,'forecast_review'),reason=reason,actor=actor)
     event(actor,case,'forecast.reviewed',review=r.pk,run=run.pk,verdict=verdict);bump(case);return r
 
+def review_authority_matches(current, recorded):
+    key = 'D05.decision_action_matrix'
+    return {name: pin for name, pin in current.items() if name != key} == {
+        name: pin for name, pin in recorded.items() if name != key}
+
+
 def approved(run,current=True):
-    r=ForecastReview.objects.filter(run=run).order_by('-pk').first()
+    r=ForecastReview.objects.filter(run=run).defer('reason').order_by('-pk').first()
     if not r or r.verdict!='approve':raise ValidationError('Exact configured human forecast approval is required')
     if not current:
         if r.snapshot.get('run_hash')!=run.sha256:raise ValidationError('Historical forecast review does not identify exact run')
         return r
     require(r.actor,run.case,'finance.forecast.review')
     auth=review_authority(r.actor,run.case,'forecast_rollover' if run.scenario.parent_id else 'forecast',r.role,r.verdict,run.actor_id)
-    strip=lambda v:{k:x for k,x in v.items() if k!='D05.decision_action_matrix'}
-    if strip(auth)!=strip(r.authority):raise ValidationError('Forecast review authority changed')
+    if not review_authority_matches(auth,r.authority):raise ValidationError('Forecast review authority changed')
     if current and r.snapshot!=review_snapshot(run):raise ValidationError('Exact current forecast review is stale')
     return r
 
@@ -419,6 +430,8 @@ def prioritize(actor,case_id,run_id,role,reference,description,owner_id,due_at,e
     proof=subject(case,evidence_id,'forecast_review')
     from apps.pmo.meetings import create_action
     from .models import ForecastPriority
+    from apps.workflows.native_stations import receive_advice
+    receive_advice('F40',review,actor,case=case)
     item=create_action(actor,case.pk,reference,description,owner_id,due_at,proof.pk,reason,case.revision)
     binding=ForecastPriority.objects.create(review=review,action=item,authority=authority)
     event(actor,case,'forecast.priority_recorded',priority=binding.pk,review=review.pk,action_item=item.pk,execution_authorized=False);return binding

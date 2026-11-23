@@ -1,0 +1,24 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Delegation · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'workspace_settings' case.pk %}">← Workspace settings</a><h1>Delegation</h1><p>{{ case|workspace_name }}</p></div></header>
+<div class="factory-case-layout delegation-layout"><section class="card">
+  <h2>Recorded delegations</h2>
+  {% if saved %}<p role="status">Your submission was recorded as delegation draft version {{ saved.revision }}.</p>{% endif %}
+  {% if problem %}<p role="status">{{ problem }}</p>{% endif %}
+  <div class="table-wrap detail-table"><table><thead><tr><th scope="col">From</th><th scope="col">To</th><th scope="col">Role and scope</th><th scope="col">Dates</th><th scope="col">Period</th></tr></thead>
+    <tbody>{% for row in rows %}<tr><td data-label="From">{{ row.principal }}</td><td data-label="To">{{ row.delegate }}</td><td data-label="Role and scope">{{ row.role }} · {{ row.scope }}</td>
+      <td data-label="Dates">{{ row.starts|date:'d M Y, H:i T' }} – {{ row.ends|date:'d M Y, H:i T' }}</td>
+      <td data-label="Period">{% if as_of < row.starts %}Starts later{% elif as_of >= row.ends %}Ended{% else %}In effect by date{% endif %}</td></tr>
+      {% empty %}<tr><td colspan="5">No delegations are available from the current rules.</td></tr>{% endfor %}</tbody></table></div>
+  <p><a href="{% url 'policy' case.pk %}">Review drafts and rule history</a></p>
+  {% if drafts %}<h3>Your drafts awaiting activation</h3><ul>{% for draft in drafts %}<li>Version {{ draft.revision }} · {{ draft.lifecycle|readable }} · {{ draft.created_at|date:'d M Y, H:i T' }}</li>{% endfor %}</ul>{% endif %}
+  {% if form %}<p><a href="{% url 'factory_configuration' case.pk %}?definition=pmo-finance%2Fv1">Set invoice decision limits</a></p>{% endif %}
+</section>
+{% if can_edit %}<aside class="card"><h2>Add a delegation draft</h2>
+  {% if roles %}<form method="get"><label for="delegation-role">Decision role</label><select name="role" id="delegation-role">{% for available in roles %}<option value="{{ available }}"{% if available == role %} selected{% endif %}>{{ available|role_name }}</option>{% endfor %}</select><button>Choose role</button></form>
+  <p>Choose two people already assigned to this role. Supply the recorded decision for separate review.</p>
+  {% if form %}<form method="post">{% csrf_token %}{{ form.as_p }}<button type="submit">Save for review</button></form>{% endif %}
+  {% else %}<p>Record the workspace’s role assignments before creating a delegation draft.</p>{% endif %}
+</aside>{% endif %}</div>
+{% endblock %}

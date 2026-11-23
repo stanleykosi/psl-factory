@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProjectJourneyPage } from '@/features/projects/ProjectJourney';
 import { AppShell } from '@/shell/AppShell';
 
-import { bellFeed, isBellFeed } from './bell-feed';
+import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/projects/P-0101/delivery',
@@ -36,6 +36,7 @@ beforeEach(() => {
     'fetch',
     vi.fn(async (request: Request) => {
       if (isBellFeed(request)) return bellFeed();
+      if (isRoleDashboard(request)) return roleDashboard();
       if (new URL(request.url).pathname === '/api/v1/me') return json(200, me(persona));
       calls.push(request);
       return respond();

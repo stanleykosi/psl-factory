@@ -10,12 +10,12 @@ class CommandForm(forms.Form):
     action=forms.CharField(widget=forms.HiddenInput)
     revision=forms.IntegerField(widget=forms.HiddenInput)
 
-def commands(case,data=None):
+def commands(case,data=None,*,held_runs=()):
     def evidence(kinds):return forms.ModelChoiceField(case.evidence.filter(kind__in=kinds))
     def choice(values):return forms.ChoiceField(choices=[(x,x) for x in values])
     def js(help_text=''):return forms.JSONField(widget=forms.Textarea(attrs={'rows':5}),help_text=help_text)
     def src():return forms.ModelChoiceField(FinanceSource.objects.filter(case=case))
-    def run():return forms.ModelChoiceField(FinanceRun.objects.filter(case=case))
+    def run():return forms.ModelChoiceField(FinanceRun.objects.filter(case=case).exclude(pk__in=held_runs).only('kind','source_id'))
     definitions={
         'capture':('Capture supplied CSV',{'evidence':evidence(['financial_input'])}),
         'validate':('Validate source conventions',{'batch':forms.ModelChoiceField(FinancialImport.objects.filter(case=case))}),
@@ -38,7 +38,7 @@ def commands(case,data=None):
             'metrics':forms.MultipleChoiceField(choices=[(v,v) for v in ['revenue','direct_cost','staff_cost','opex','other']])}),
         'calculate':('Calculate configured metrics',{'parent':forms.ModelChoiceField(FinanceRun.objects.filter(case=case,kind__in=['mapping','allocation']))}),
         'statement':('Bind reviewed statement inputs',{'parent':forms.ModelChoiceField(FinanceRun.objects.filter(case=case,kind='formula')),'contract':forms.ModelChoiceField(Configuration.objects.filter(case=case,component='D06.statement_contract'))}),
-        'report':('Prepare reviewed aggregate report',{'run':forms.ModelChoiceField(FinanceRun.objects.filter(case=case,kind__in=['formula','statement'])),
+        'report':('Prepare reviewed aggregate report',{'run':forms.ModelChoiceField(FinanceRun.objects.filter(case=case,kind__in=['formula','statement']).exclude(pk__in=held_runs).only('kind','source_id')),
             'template':forms.ModelChoiceField(Template.objects.filter(case=case,definition__document_type='finance_report')),'audience':choice(['internal','management'])}),
         'investigate':('Investigate lineage and differences',{'run':run()})}
     result=[]

@@ -5,6 +5,43 @@ from apps.finance.payroll_models import PayrollRequest,PayrollInput,PayrollRun
 from apps.policy.payroll_validators import SCHEMAS
 from apps.policy.services import resolve
 from .models import AgentRun
+
+
+def prepare_report_question(actor,publication,topic):
+ """A04's closed metadata tool; no HR/payroll payload or model egress."""
+ from adapters.payroll_questions import command,PACKET
+ from apps.documents.contracts import validate
+ from apps.finance.payroll import admit_publication
+ command('record',{'topic':topic})
+ # Native current recipient/source checks precede even the metadata projection.
+ admit_publication(actor,publication.pk)
+ run=PayrollRun.objects.only('sha256').get(pk=publication.run_id)
+ packet={'format':'psl.payroll-report-question/v1','publication_id':publication.pk,
+         'report_version':publication.version,'source_run_id':publication.run_id,'source_sha256':run.sha256,
+         'period':publication.request.metadata['period'],'topic':topic,'private_payloads_read':False}
+ validate(PACKET,packet)
+ return packet
+
+
+def received_report_context(actor, case, publication_id=None):
+    """Admit one current, acknowledged report through the existing closed metadata tool."""
+    from django.core.exceptions import PermissionDenied, ValidationError
+    from apps.finance.payroll_models import PayrollReportReceipt
+
+    receipts = PayrollReportReceipt.objects.filter(actor=actor, publication__request__case=case)
+    if publication_id is not None:
+        receipts = receipts.filter(publication_id=publication_id)
+    receipts = receipts.select_related(
+        'publication__request').only('publication__run_id', 'publication__version',
+                                      'publication__request__metadata').order_by('-publication_id')
+    for receipt in receipts.iterator():
+        try:
+            return prepare_report_question(actor, receipt.publication, 'report_coverage')
+        except (PermissionDenied, ValidationError):
+            continue
+    return None
+
+
 @transaction.atomic
 def investigate(actor,case_id,expected):
  c=locked(actor,case_id,'agent.payroll',expected);findings=[]
@@ -14,6 +51,9 @@ def investigate(actor,case_id,expected):
   if providers!=set(q.metadata['providers']):questions.append('Ask the nominated payroll owners for the missing expected provider/version; never substitute a different period.')
   codes=sorted({code for r in inputs+runs for code in r.metadata.get('codes',[])})
   if any('overlap' in code for code in codes):questions.append('Ask source owners and Finance to agree precedence or intentional summation at employee/component granularity; no name-based deduplication.')
+  if any('duplicate_source' in code for code in codes):questions.append('Ask the source owner to resolve conflicting staff or pay-item rows. Held rows must not be selected or added by an agent.')
+  if any('row_currency' in code for code in codes):questions.append('Ask the source owner to confirm each held row’s currency against the agreed payroll currency. Do not infer currency or convert amounts.')
+  if any('rule_unconfigured' in code for code in codes):questions.append('The affected row controls need an owner decision. Keep those rows held while permitted draft work continues.')
   if any('hr_' in code or 'membership' in code or 'transfer' in code for code in codes):questions.append('Route membership/source ambiguity back to HR; Finance must not edit staff facts or invent a transfer split.')
   if 'small_group_disclosure_hold' in codes:questions.append('Configured small-group protection holds all report publication, including totals that could reveal a suppressed group.')
   if any('control' in code or 'tieout' in code for code in codes):questions.append('Investigate source-to-combined and eligible-to-group reconciliation before review.')

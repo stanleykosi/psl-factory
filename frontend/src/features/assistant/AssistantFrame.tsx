@@ -9,7 +9,7 @@ import { useCallback, useMemo, useState, type ReactNode } from 'react';
 
 import { BottomSheet, buttonClass, useIsPhone } from '@/components';
 import { useMe } from '@/shell/AppShell';
-import { visibleDestinations } from '@/shell/destinations';
+import { hasDestination, visibleDestinations } from '@/shell/destinations';
 import { NotOpenState } from '@/shell/FrameStates';
 
 import { AssistantContext } from './AssistantContext';
@@ -30,7 +30,7 @@ export function AssistantFrame({ children }: { children: ReactNode }) {
   const agents = me.assistant_agents;
   const value = useMemo(() => ({ me, agents: agents ?? [], list, pending, setPending, showList }), [me, agents, list, pending, showList]);
 
-  if (!me.destinations.includes('assistant')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
+  if (!hasDestination(me, 'assistant')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   const current = /^\/assistant\/([^/]+)/.exec(pathname)?.[1];
   const currentId = current ? decodeURIComponent(current) : undefined;
   const rows = (

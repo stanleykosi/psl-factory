@@ -561,6 +561,14 @@ describe('server answers', () => {
     expect(posts).toHaveLength(1);
   });
 
+  it('opens a created work record when Django returns 200 and a numeric ID', async () => {
+    override = (request) => request.method === 'POST' ? Promise.resolve(json(200, {work_id: 18})) : undefined;
+    await invoiceWith('Milestone 3');
+    press('Start the invoice');
+    await waitFor(() => expect(nav.push).toHaveBeenCalledWith('/work/18'));
+    expect(posts).toHaveLength(1);
+  });
+
   it('a network failure locks the form; only "Check again" resends, with the same key and body', async () => {
     override = (request) => (request.method === 'POST' && posts.length === 1 ? Promise.reject(new TypeError('Failed to fetch')) : undefined);
     await invoiceWith('Milestone 3');
@@ -626,6 +634,19 @@ describe('server answers', () => {
     await waitFor(() => expect(posts).toHaveLength(2));
     expect(posts[1].body.case_revision).toBe(7);
     expect(posts[1].body.idempotency_key).not.toBe(posts[0].body.idempotency_key);
+  });
+
+  it('409 idempotency_conflict shows the problem message and does not re-read the project', async () => {
+    override = (request) => {
+      if (request.method === 'POST' && posts.length === 1) return json(409, { code: 'idempotency_conflict', message: 'This start was already sent with different details. Close the form and start again.' });
+      return undefined;
+    };
+    await invoiceWith('Milestone 3');
+    press('Start the invoice');
+    expect(await within(dialog()).findByText('This start was already sent with different details. Close the form and start again.')).toBeTruthy();
+    expect(within(dialog()).queryByText(/This project changed since you opened the form/)).toBeNull();
+    await new Promise((r) => setTimeout(r, 50));
+    expect(posts).toHaveLength(1);
   });
 
   it('409: when the project is no longer returned, it and its milestone are cleared and say so', async () => {

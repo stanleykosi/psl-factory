@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% load static %}
+{% block title %}My work · PSL Factory{% endblock %}
+{% block content %}
+<psl-work-client><p>Loading your work…</p></psl-work-client>
+<noscript><a href="{% url 'home' %}">Open the factory desk</a></noscript>
+<script type="module" src="{% static 'factory-work-client.js' %}"></script>
+{% endblock %}

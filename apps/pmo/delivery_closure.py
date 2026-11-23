@@ -1,6 +1,10 @@
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.utils import timezone
+from apps.core.evidence_access import public_evidence
+from apps.core.models import Evidence
+from apps.core.read_observation import observed_fact, read_observation
 from apps.core.services import lock_case,bump,event
 from apps.identity.services import require
 from apps.policy.services import active_component,reference_values,decision_authority
@@ -10,7 +14,9 @@ from .models import DeliveryRecord,DeliveryDocumentBinding,MeetingVersion,Milest
 from .services import subject
 from .commercial import note_required
 from .clocks import aware
-from apps.core.read_observation import observed_fact
+
+
+FINANCE_CONFIRMATION_MISSING = 'finance_confirmation_missing'
 
 
 @observed_fact
@@ -18,8 +24,12 @@ def go_live_inputs(d,data):
     outcome=valid_release(d)
     kinds={'checklist':'deployment_checklist','incident_reporting':'incident_reporting','rollback':'rollback_plan'}
     if set(data)!=set(kinds):raise ValidationError('Exact deployment checklist, incident reporting and rollback source evidence required')
-    return {'outcome_id':outcome.pk,'readiness_id':outcome.parent_id,
+    result={'outcome_id':outcome.pk,'readiness_id':outcome.parent_id,
         'evidence':{k:subject(d.case,data[k],kind).pk for k,kind in kinds.items()}}
+    from .go_live_replies import effect
+    replies=effect(d,data)
+    if replies is not None:result['client_responses']=replies
+    return result
 
 def go_live_requirements(d,data=None,template_id=None):
     """Independent native facts for useful preparation; no signature or acceptance inference."""
@@ -34,7 +44,11 @@ def go_live_requirements(d,data=None,template_id=None):
     def check(key,title,fn,next_action,unknown=False):
         if unknown:checks.append({'key':key,'title':title,'status':'unknown','summary':next_action,'references':[]});return
         try:row=fn();checks.append({'key':key,'title':title,'status':'current','summary':'Current recorded evidence is available','references':[row.pk]})
-        except (ValidationError,PermissionDenied) as exc:checks.append({'key':key,'title':title,'status':'held','summary':next_action,'references':[],'finding':str(exc)})
+        except (ValidationError,PermissionDenied) as exc:
+            finding=str(exc)
+            if key=='client_response' and 'D11.adapter_configuration_refs' in finding:
+                finding='Review the client response handling rules before continuing.'
+            checks.append({'key':key,'title':title,'status':'held','summary':next_action,'references':[],'finding':finding})
     def context():dossier_for(d.case,d.pk);return d
     check('context','Project scope',context,'Review the current project scope and any recorded closure')
     closed=latest(d,'closure',False)
@@ -48,6 +62,12 @@ def go_live_requirements(d,data=None,template_id=None):
     check('template','Client report template',template,'Choose the controlled client report template',template_id is None)
     for key,title in [('checklist','Deployment checklist'),('incident_reporting','Incident reporting'),('rollback','Rollback plan')]:
         check(key,title,lambda key=key:subject(d.case,data[key],kinds[key]),'Provide the actual '+title.lower()+' evidence',data[key] is None)
+    if d.client_replies.exists():
+        from .go_live_replies import effect
+        def replies():
+            effect(d,data)
+            return d
+        check('client_response','Client response and revised sources',replies,'Review client changes, declines or recorded corrections')
     return {'as_of':timezone.now().isoformat(),'checks':checks,'ready_to_prepare':all(c['status']=='current' for c in checks),
         'selected':data,'template_id':template_id,'sign_off_inferred':False,'deployment_authorized':False,'financial_release_granted':False}
 
@@ -137,8 +157,19 @@ def hypercare_inputs(d):
             x,y=actual['value'],metric['threshold']
             ok={'lte':lambda:x<=y,'gte':lambda:x>=y,'eq':lambda:x==y}[metric['operator']]()
             if not ok:findings.append(owner+'/'+metric['key']+' fails the configured criterion')
-    return {'outcome_id':outcome.pk,'acceptance_id':accepted.pk,'policy_id':config.pk,'sources':sources,
-        'due_at':due.isoformat(),'qualified':None if unknown else not findings,'findings':findings}
+    result = {'outcome_id':outcome.pk,'acceptance_id':accepted.pk,'policy_id':config.pk,'sources':sources,
+              'due_at':due.isoformat(),'findings':findings}
+    if 'issue_clearance' in criteria:
+        from .hypercare_issues import issue_clearance
+        register, _ = issue_clearance(d, criteria['issue_clearance'])
+        result['issue_clearance'] = register
+        if register['status'] == 'unknown':
+            findings.append('Current project issue evidence needs review before checking stability.')
+            unknown = True
+        elif register['status'] == 'not_met':
+            findings.append('Current project issues fail the configured stability criterion.')
+    result['qualified'] = None if unknown else not findings
+    return result
 
 
 def guard_evaluate_hypercare(actor,case,dossier_id):
@@ -177,9 +208,20 @@ def archive_artifacts(actor,case_id,dossier_id,inventory,evidence_id,note,expect
 
 
 @observed_fact
-def current_archive(d):
+def archive_index(d):
     r=latest(d,'archive');require(r.actor,d.case,'delivery.manage')
     if r.snapshot!=archive_inputs(d,r.data['inventory']):raise ValidationError('Archive source/policy changed; append a fresh inventory')
+    return r
+
+
+def current_archive(d):
+    r = archive_index(d)
+    from .models import ArchiveCopyPlan
+    plan = ArchiveCopyPlan.objects.filter(archive__dossier=d).select_related('work__case', 'actor').order_by('-pk').first()
+    if plan:
+        from .archive_transfer import projection
+        if plan.archive_id != r.pk or not projection(plan.actor, plan.work)['verified']:
+            raise ValidationError('Confirm every reserved archive file before Support handover or closure.')
     return r
 
 
@@ -187,9 +229,14 @@ def current_archive(d):
 def handover_inputs(d,data):
     archive=current_archive(d)
     if set(data)!={'support_document','escalation_document'}:raise ValidationError('Support and escalation source documents required')
-    return {'archive_id':archive.pk,'acceptance_id':accepted_go_live(d).pk,
+    result = {'archive_id':archive.pk,'acceptance_id':accepted_go_live(d).pk,
         'support_document':subject(d.case,data['support_document'],'support_document').pk,
         'escalation_document':subject(d.case,data['escalation_document'],'escalation_document').pk}
+    from .models import ArchiveCopyPlan
+    plan = ArchiveCopyPlan.objects.filter(archive=archive).order_by('-pk').first()
+    if plan:
+        result['file_archive'] = {'plan_id': plan.pk, 'sha256': plan.sha256}
+    return result
 
 
 @transaction.atomic
@@ -253,7 +300,12 @@ def received_handover(d):
         receipt=PublicationReceipt.objects.filter(publication=publication,recipient_id=recipient).first()
         ack=d.records.filter(kind='handover',data__receipt_id=receipt.pk if receipt else -1).order_by('-pk').first()
         if not ack or ack.data['status']!='received' or ack.snapshot!=binding.snapshot:raise ValidationError('Support/Operations receipt or gap resolution missing')
-        require(ack.actor,d.case,'delivery.support_receive');require(ack.actor,d.case,'document.receive:internal');acknowledgements.append(ack.pk)
+        if 'attestation' in ack.data:
+            from .handover_replies import validate_record
+            validate_record(ack, receipt)
+        else:
+            require(ack.actor,d.case,'delivery.support_receive');require(ack.actor,d.case,'document.receive:internal')
+        acknowledgements.append(ack.pk)
     if not acknowledgements:raise ValidationError('No Support/Operations destination received the handover')
     return acknowledgements
 
@@ -272,7 +324,10 @@ def current_retrospective(d,version_id):
 
 @observed_fact
 def current_finance_confirmation(d):
-    finance=latest(d,'finance_confirmation');require(finance.actor,d.case,'delivery.finance_confirm')
+    finance=latest(d,'finance_confirmation',False)
+    if finance is None:
+        raise ValidationError('Finance confirmation has not been recorded.', code=FINANCE_CONFIRMATION_MISSING)
+    require(finance.actor,d.case,'delivery.finance_confirm')
     if finance.snapshot!=finance_inputs(d):raise ValidationError('Finance notification inventory changed; obtain current coverage confirmation')
     return finance
 
@@ -298,7 +353,8 @@ def closure_requirements(d,data=None):
             result=fn();refs=result if isinstance(result,list) else [result.pk]
             checks.append({'key':key,'title':title,'status':'current','summary':'Current recorded evidence is available','references':refs})
         except (ValidationError,PermissionDenied) as exc:
-            checks.append({'key':key,'title':title,'status':'held','summary':next_action,'references':[],
+            status = 'unknown' if getattr(exc, 'code', None) == FINANCE_CONFIRMATION_MISSING else 'held'
+            checks.append({'key':key,'title':title,'status':status,'summary':next_action,'references':[],
                 'finding':'; '.join(exc.messages) if isinstance(exc,ValidationError) else str(exc)})
     closed=latest(d,'closure',False)
     def context():
@@ -316,6 +372,90 @@ def closure_requirements(d,data=None):
     return {'as_of':timezone.now().isoformat(),'checks':checks,'ready_to_prepare':all(c['status']=='current' for c in checks),
         'selected':data,'recorded_closure_id':closed.pk if closed else None,
         'closure_approved':False,'debt_waived':False,'deployment_authorized':False}
+
+
+def _recorded_closure_binding(dossier, closed):
+    """Resolve the report consumed by this recorded closure, including pre-factory dossiers."""
+    decision_id = closed.data.get('decision_id')
+    version_id = closed.data.get('version_id')
+    if any(type(pk) is not int or not 1 <= pk < 2**63 for pk in (decision_id, version_id)):
+        raise ValidationError('The recorded closure report is unavailable.')
+    decision_snapshot = dossier.records.filter(pk=decision_id, kind='closure_decision', evidence_id=closed.evidence_id,
+        data__verdict='approve', data__version_id=version_id, created_at__lte=closed.created_at).values_list('snapshot', flat=True).first()
+    binding = DeliveryDocumentBinding.objects.filter(
+        dossier=dossier, purpose='closure', version_id=version_id, version__document__case_id=dossier.case_id,
+        version__audience='internal',
+    ).only('data', 'snapshot').first()
+    if not isinstance(closed.snapshot, dict) or not binding or closed.snapshot != decision_snapshot or closed.snapshot != binding.snapshot:
+        raise ValidationError('The recorded closure report is unavailable.')
+    if closure_selection(binding.data) != {key: closed.snapshot.get(key) for key in binding.data}:
+        raise ValidationError('The recorded closure report sources are unavailable.')
+    return binding
+
+
+@read_observation
+def recorded_closure_requirements(actor, dossier, closed):
+    """Read the recorded closure's public source references without preparing new work."""
+    from django.core.exceptions import PermissionDenied
+
+    case = dossier.case
+    require(actor, case, 'case.read')
+    require(actor, case, 'delivery.read')
+    if closed.dossier_id != dossier.pk or closed.kind != 'closure':
+        raise ValidationError('The closure record is outside this delivery.')
+    checks = [{'key': 'context', 'title': 'Project closure', 'status': 'closed',
+               'summary': 'The final closure record is retained.', 'references': [closed.pk]}]
+
+    def add(key, title, refs=()):
+        checks.append({'key': key, 'title': title, 'status': 'recorded' if refs else 'unavailable',
+                       'summary': ('Evidence used for the recorded closure.' if refs else
+                                   'The original evidence reference is unavailable with current access.'),
+                       'references': list(refs)})
+
+    stations = (
+        ('go_live', 'Go-live acceptance', 'acceptance_id', ('go_live', 'go_live_reaffirmation')),
+        ('hypercare', 'Release stability', 'hypercare_id', ('hypercare',)),
+        ('archive', 'Project archive', 'archive_id', ('archive',)),
+        ('handover', 'Support handover', 'handover_ids', ('handover',)),
+        ('finance', 'Finance notification coverage', 'finance_confirmation_id', ('finance_confirmation',)),
+    )
+    references = {}
+    retrospective_refs = report_refs = ()
+    try:
+        binding = _recorded_closure_binding(dossier, closed)
+    except ValidationError:
+        pass
+    else:
+        snapshot = binding.snapshot
+        selected = public_evidence(Evidence.objects.filter(case=case))
+        retrospective = MeetingVersion.objects.select_related('created_by').filter(
+            pk=binding.data['retrospective_id'], meeting__case=case, kind='retrospective', evidence__in=selected,
+        ).only('pk', 'created_by', 'created_by__is_active').first()
+        if retrospective:
+            try:
+                require(retrospective.created_by, case, 'meeting.record')
+            except PermissionDenied:
+                pass
+            else:
+                retrospective_refs = (retrospective.pk,)
+        if selected.filter(pk=binding.data['report_evidence_id'], kind='closure_report').exists():
+            report_refs = (binding.data['report_evidence_id'],)
+        for key, _, pin, _ in stations:
+            value = snapshot.get(pin)
+            ids = value if key == 'handover' and isinstance(value, list) else [value]
+            if 0 < len(ids) <= 100 and all(type(pk) is int and 1 <= pk < 2**63 for pk in ids):
+                references[key] = ids
+        recorded = dict(dossier.records.filter(pk__in={pk for ids in references.values() for pk in ids},
+                                              created_at__lte=closed.created_at).values_list('pk', 'kind'))
+        for key, _, _, kinds in stations:
+            if any(recorded.get(pk) not in kinds for pk in references.get(key, ())):
+                references.pop(key)
+    for key, title, _, _ in stations:
+        add(key, title, references.get(key, ()))
+    add('retrospective', 'Retrospective', retrospective_refs)
+    add('report', 'PM closure report', report_refs)
+    return {'as_of': timezone.now().isoformat(), 'recorded_closure_id': closed.pk, 'checks': checks,
+            'ready_to_prepare': False}
 
 
 @observed_fact
@@ -337,20 +477,26 @@ def decide_closure(actor,case_id,version_id,verdict,evidence_id,note,expected):
     d=dossier_for(case,binding.dossier_id);ensure_open(d)
     if verdict not in ['approve','return','reject']:raise ValidationError('Choose explicit closure verdict')
     authority=decision_authority(actor,case,'Head of PMO',verdict)
-    from apps.documents.controlled import current_version
-    current_version(case,version_id)
+    from apps.documents.controlled import current_version, validate_review
+    validate_review(case, current_version(case, version_id))
+    prior = latest(d, 'closure_decision', False)
+    if (verdict == 'approve' and prior and prior.data['version_id'] == version_id
+            and prior.data['verdict'] in ('return', 'reject')):
+        raise ValidationError('Record corrected source and review the new closure report before approval.')
     return record(actor,case,d,'closure_decision',subject(case,evidence_id),{'verdict':verdict,'authority':authority,'note':note,'version_id':version_id},binding.snapshot)
 
 
 def current_closure_approval(d,version_id=None):
-    decision=latest(d,'closure_decision');require(decision.actor,d.case,'delivery.closure_decide')
+    from apps.identity.role_factory_decisions import recorded_access
+
+    decision=latest(d,'closure_decision');recorded_access(d.case,decision.actor,'closure',decision.pk,'delivery.closure_decide')
     binding=DeliveryDocumentBinding.objects.filter(version_id=decision.data['version_id'],dossier=d,purpose='closure').first()
     if not binding or version_id is not None and binding.version_id!=version_id:
         raise ValidationError('Exact current closure report and prescribed decision required')
     if decision.data['verdict']!='approve' or decision.data['authority']!=decision_authority(decision.actor,d.case,'Head of PMO') or decision.snapshot!=closure_inputs(d,binding.data):
         raise ValidationError('Current Head of PMO approval of exact closure sources required')
-    from apps.documents.controlled import current_version
-    current_version(d.case,binding.version_id)
+    from apps.documents.controlled import current_version, validate_review
+    validate_review(d.case, current_version(d.case, binding.version_id))
     return decision,binding
 
 

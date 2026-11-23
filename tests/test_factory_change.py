@@ -1,6 +1,7 @@
 """Independent native controlled-change connection, external delivery mock only."""
 import json
 from pathlib import Path
+from unittest.mock import patch
 from django.test import TestCase
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import DatabaseError,transaction,connection
@@ -49,7 +50,11 @@ class FactoryChangeTests(TestCase):
         client=add_evidence(self.actor,self.case.pk,'signature','Synthetic Client signature of exact report','synthetic:Client')
         receipt=PublicationReceipt.objects.get(publication__version=change.document(self.work,'go_live'))
         self.client.force_login(self.actor);url=reverse('factory_detail',args=[self.work.pk])
-        before=self.work.revision;self.assertContains(self.client.get(url),'Record actual signed closure');self.work.refresh_from_db();self.assertEqual(self.work.revision,before)
+        before=self.work.revision
+        with patch.object(change, 'published', wraps=change.published) as published:
+            self.assertContains(self.client.get(url), 'Record actual signed closure')
+        self.assertEqual([call.args[1] for call in published.call_args_list], ['notice', 'go_live'])
+        self.work.refresh_from_db();self.assertEqual(self.work.revision,before)
         from .change_signature_helpers import declaration_for
         import json
         response=self.client.post(url,{'attestation':json.dumps(declaration_for(self.actor,auth,receipt,pm,client)),'action':'close','revision':self.work.revision,'case_revision':rev(self.case),'receipt':receipt.pk,'pm_signature':pm.pk,'client_signature':client.pk,'note':'Actual PM attests supplied signatures on this exact delivered version'})
@@ -57,12 +62,154 @@ class FactoryChangeTests(TestCase):
         self.assertEqual(len(change.verify(self.work)['receipt_ids']),2);self.assertFalse(change.verify(self.work)['deployment_authorized'])
         page=self.client.get(url);self.assertContains(page,'Inspect the recorded signed closure');self.assertNotContains(page,'<h2>Review source-owned changes</h2>',html=True);self.assertContains(page,'Executive summary');self.assertContains(page,'within this document')
         self.assertEqual(connection.vendor,'postgresql')
+
+    def test_api_normal_change_review_execution_and_signed_receipts(self):
+        from .change_signature_helpers import declaration_for
+
+        self.start()
+        self.client.force_login(self.actor)
+        url = f'/api/v1/work/{self.work.pk}/change'
+
+        def read():
+            page = self.client.get(url)
+            self.assertEqual(page.status_code, 200, page.content)
+            return page.json()
+
+        def revisions(page):
+            return {key: page[key] for key in ('expected_revision', 'case_revision')}
+
+        def send(action, **fields):
+            page = read()
+            values = {**revisions(page), 'action': action, 'change_version_id': page['change_version_id'], **fields}
+            response = self.client.post(url, values, content_type='application/json')
+            self.assertEqual(response.status_code, 201, response.content)
+            return response.json()['record_id']
+
+        self.assertEqual(read()['stage'], 'impact')
+        self.assertFalse(read()['deployment_authorized'])
+        for team in ('Engineering', 'QA', 'Infra', 'Security'):
+            send('assess', contributor=team, cost_impact=False, timeline_impact=False, client_facing=False,
+                 evidence=self.source.pk, note='Recorded synthetic owner impact.', proof_upload=None,
+                 effort_person_days=None, **native_tests.impact_fixture(team))
+        self.assertEqual({item['role'] for item in read()['decisions']}, {'Product', 'Engineering'})
+        self.assertEqual(len([item for item in read()['impact'] if item['assessment_id']]), 4)
+        for role in ('Product', 'Engineering'):
+            send('decide', role=role, verdict='approve', evidence=self.source.pk, note='Reviewed the actual exact impact.')
+        auth_id = send('authorize', commercial=None)
+        current = read()
+        self.assertIn(auth_id, current['authorization_choices'])
+        changed = self.client.post(f'/api/v1/work/{self.work.pk}/corrections',
+            {**revisions(current), 'line': change.DEFINITION, 'reason': 'Select the exact recorded authorization.',
+             'source': {'version_id': self.cv.pk, 'inputs': {**self.inputs, 'authorization_id': auth_id}}},
+            content_type='application/json')
+        self.assertEqual(changed.status_code, 200, changed.content)
+        self.advance()
+        notice, = read()['documents']
+        send('document_review', version_id=notice['id'], verdict='approve', note='Exact notice reviewed.')
+        self.advance()
+        self.assertEqual(read()['stage'], 'execution')
+        self.assertTrue(next(item for item in read()['documents'] if item['purpose'] == 'notice')['receipt_ids'])
+        for kind, source_kind in [('plan_updated', 'plan'), ('implemented', 'change_implementation'),
+                                  ('testing_validated', 'change_validation'), ('documentation_updated', 'document')]:
+            proof = add_evidence(self.actor, self.case.pk, source_kind, 'Synthetic ' + kind, 'synthetic:change-api')
+            send('execution', kind=kind, evidence=proof.pk, note='Recorded exact execution proof.',
+                 scope_items=['CR-001/item-1'] if kind == 'implemented' else None, dossier_id=None, candidate_id=None)
+        self.advance()
+        go_live = next(item for item in read()['documents'] if item['purpose'] == 'go_live')
+        self.assertFalse(read()['deployment_authorized'])
+        send('document_review', version_id=go_live['id'], verdict='approve', note='Exact go-live notice reviewed.')
+        self.advance()
+        self.assertEqual(len(next(item for item in read()['documents'] if item['purpose'] == 'go_live')['receipt_ids']), 1)
+        pm = add_evidence(self.actor, self.case.pk, 'signature', 'Synthetic PM proof', 'synthetic:PM')
+        client = add_evidence(self.actor, self.case.pk, 'signature', 'Synthetic client proof', 'synthetic:client')
+        receipt = PublicationReceipt.objects.get(publication__version_id=go_live['id'])
+        declaration = declaration_for(self.actor, ChangeAuthorization.objects.get(pk=auth_id), receipt, pm, client)
+        signatures = {key: {field: item for field, item in value.items() if field not in ('evidence', 'purpose')}
+                      for key, value in declaration['signatures'].items()}
+        closure = send('close', receipt_id=receipt.pk, pm_signature_id=pm.pk, client_signature_id=client.pk,
+                       pm_signature=signatures['PM'], client_signature=signatures['Client'],
+                       mode='signed', operation_key=None, note='Actual source evidence for both signatures reviewed.')
+        self.advance()
+        complete = read()
+        self.assertEqual(complete['closure_id'], closure)
+        self.assertEqual(complete['stage'], 'complete')
+        self.assertEqual(len([receipt for item in complete['documents'] for receipt in item['receipt_ids']]), 2)
+
+    def test_api_standard_intake_only_catalogue_binding_waits_for_owner_configuration(self):
+        self.client.force_login(self.actor)
+        url = f'/api/v1/projects/{self.case.pk}/ordinary-changes'
+        options = self.client.get(url)
+        self.assertEqual(options.status_code, 200, options.content)
+        self.assertTrue(options.json()['catalogue_finding'])
+        record = {'action': 'capture', 'case_revision': options.json()['case_revision'], 'category': 'Standard',
+                  'reference': 'API-STANDARD', 'module': 'Synthetic project module', 'description': 'Routine test change.',
+                  'reason': 'Establish exact project intake.', 'evidence_id': self.source.pk}
+        created = self.client.post(url, record, content_type='application/json')
+        self.assertEqual(created.status_code, 201, created.content)
+        page = self.client.get(url).json()
+        self.assertIn(created.json()['id'], [row['version_id'] for row in page['records']])
+        self.assertFalse(page['catalogue'])
+        missing = self.client.post(url, {'action': 'bind_standard', 'case_revision': page['case_revision'],
+            'version_id': created.json()['id'], 'key': 'CONFIGURATION-PENDING', 'evidence_id': self.source.pk,
+            'note': 'Only the documented current procedure may be bound.'}, content_type='application/json')
+        self.assertNotEqual(missing.status_code, 201)
     def test_idempotent_intake_and_cross_case_or_revision_references_rejected(self):
         self.start();old=self.work.pk
         self.assertEqual(change.start(self.actor,self.case.pk,'OTHER',self.cv.pk,self.inputs,'Same native business intent').pk,old)
         self.assertEqual(FactoryWork.objects.filter(case=self.case).count(),1)
         with self.assertRaises(ValidationError):change.start(self.actor,self.case.pk,'CHANGE-1',self.cv.pk,dict(self.inputs,authorization_id=999),'Controlled change')
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=old).update(status='verified')
+    def test_normal_change_displays_current_required_roles_and_hides_unconfigured_refusal(self):
+        from apps.pmo.changes import decide_change
+        from tests.document_helpers import artifact
+
+        self.start()
+        self.assessments(cost=False, timeline=True, client=True)
+        for role in ['Product', 'Engineering', 'Client']:
+            decide_change(self.actor, self.case.pk, self.cv.pk, role, 'approve', self.source.pk,
+                          'Synthetic decision for the exact current assessments', rev(self.case))
+        self.client.force_login(self.actor)
+        url = reverse('factory_detail', args=[self.work.pk])
+        page = self.client.get(url)
+        self.assertContains(page, 'Product · Approved')
+        self.assertContains(page, 'Engineering · Approved')
+        self.assertContains(page, 'Client · Approved')
+        self.assertContains(page, 'Engineering Lead · Waiting')
+        self.assertContains(page, 'Security Manager · Waiting')
+        self.assertNotContains(page, 'Client · Reject')
+        api = f'/api/v1/work/{self.work.pk}/change'
+        projected = self.client.get(api).json()
+        decisions = {item['role']: item for item in projected['decisions']}
+        self.assertEqual(decisions['Client']['status'], 'Approved')
+        self.assertNotIn('reject', decisions['Client']['verdicts'])
+        for role in ('Engineering Lead', 'Security Manager'):
+            self.assertEqual(decisions[role]['status'], 'Waiting')
+
+        artifact(self.actor, self.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+                 {'rules': [{'role': 'Client', 'actions': ['reject']}]}, self.e['policy_decision'])
+        page = self.client.get(url)
+        self.assertContains(page, 'Client · Reject')
+        posted = self.client.post(api, {'action': 'decide', 'role': 'Client', 'verdict': 'reject',
+            'expected_revision': self.work.revision, 'case_revision': rev(self.case), 'change_version_id': self.cv.pk,
+            'evidence': self.source.pk, 'note': 'The fictional client declined this exact revision.'},
+            content_type='application/json')
+        self.assertEqual(posted.status_code, 201, posted.content)
+        refused = self.client.get(api).json()
+        self.assertEqual(next(item for item in refused['decisions'] if item['role'] == 'Client')['status'], 'Rejected')
+        self.assertFalse(refused['can_authorize'])
+        page = self.client.get(url)
+        self.assertContains(page, 'Client · Rejected')
+        self.assertContains(page, 'Change rejected')
+        self.assertNotContains(page, 'Check and record native authorization')
+        self.assertFalse(ChangeAuthorization.objects.filter(version=self.cv).exists())
+        self.assertFalse(Publication.objects.filter(factory_work=self.work).exists())
+        self.assertEqual(list(self.cv.decisions.filter(role='Client').order_by('pk').values_list('verdict', flat=True)),
+                         ['approve', 'reject'])
+
+        self.assessments(cost=False, timeline=True, client=True)
+        page = self.client.get(url)
+        self.assertContains(page, 'Client · Needs review')
+        self.assertNotContains(page, 'Client · Rejected')
     def test_emergency_holds_on_separate_native_route_without_ordinary_authorization(self):
         incident=add_evidence(self.actor,self.case.pk,'incident','Synthetic critical incident','synthetic:incident')
         v=log_change(self.actor,self.case.pk,'CR-001','Emergency','Production','Actual incident','Incident evidence',self.source.pk,rev(self.case),incident.pk)
@@ -117,7 +264,9 @@ class FactoryChangeTests(TestCase):
 
     def test_exact_work_human_commands_and_configuration_console(self):
         self.start();self.client.force_login(self.actor);url=reverse('factory_detail',args=[self.work.pk])
-        self.assertContains(self.client.get(url),'Record your owner impact assessment')
+        page = self.client.get(url)
+        self.assertContains(page, 'Record an impact assessment')
+        self.assertContains(page, '<input type="hidden" name="action" value="assess">', html=True)
         response=self.client.post(url,{'action':'assess','revision':self.work.revision,'case_revision':rev(self.case),'change_version':self.cv.pk,'contributor':'QA','cost_impact':'unknown','timeline_impact':'false','client_facing':'false','evidence':self.source.pk,'note':'QA owner declares cost unknown'})
         self.assertEqual(response.status_code,302);self.assertIsNone(self.cv.assessments.get().cost_impact)
         with self.assertRaises(ValidationError):change.human_action(self.actor,self.work.pk,self.work.revision,rev(self.case),self.cv.pk+999,'authorize',{})

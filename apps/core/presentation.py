@@ -1,4 +1,12 @@
 """Display aliases for generated examples; no mutation of source records."""
+HR_FIELD_LABELS = {
+    'employee_id': 'Staff reference', 'bu': 'Business unit',
+    'effective_from': 'Membership start date', 'effective_until': 'Membership end date',
+    'role': 'Job role', 'monthly_pay': 'Monthly pay', 'currency': 'Pay currency',
+    'gross_pay': 'Gross pay', 'deductions': 'Deductions', 'bank_account': 'Bank account',
+    'home_address': 'Home address', 'date_of_birth': 'Date of birth',
+}
+
 SAMPLE_LABELS=[(('af13',),'Operational readiness'),(('d13',),'Payment review'),(('finance normal',),'Finance document intake'),(('private finance',),'Finance evidence review'),(('f01 missing',),'Transaction verification'),(('f01 duplicate',),'Transaction corrections'),(('f01','ledger'),'Finance transaction review'),(('b14','support','complaint'),'Customer support'),
         (('readiness','provider','adapter'),'Connections and services'),(('operations','recovery','protection','backup'),'Business continuity'),
         (('p14','costing','oracle'),'Project costing'),(('d03','billing'),'Billing review'),(('d11','migration'),'Migration planning'),

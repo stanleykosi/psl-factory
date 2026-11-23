@@ -85,5 +85,7 @@ def snapshot(actor,case_id,as_of,expected):
     require(actor,case,'finance.read')
     if as_of!=timezone.localdate():raise ValidationError('This snapshot implementation supports actual current-day evidence only; historical reconstruction is a separate method')
     manifest,result=calculate(case,as_of)
+    from .coordinator_operations import receive_position_sources
+    receive_position_sources(actor, case, manifest['reported_receipts'])
     record=ReceivableSnapshot.objects.create(case=case,as_of=as_of,manifest=manifest,result=result,sha256=digest({'manifest':manifest,'result':result}),actor=actor)
     event(actor,case,'finance.receivables_snapshot',snapshot=record.pk);bump(case);return record

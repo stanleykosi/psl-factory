@@ -1,0 +1,37 @@
+{% if row.can_reconcile or last_observation %}
+<section class="card">
+  <h2>Original forecast delivery</h2>
+  {% if last_observation %}
+  <p>Last recorded observation: {{ last_observation.label }} · <time datetime="{{ last_observation.at|date:'c' }}">{{ last_observation.at|date:'d M Y, H:i T' }}</time>.</p>
+  {% if last_observation.proof_id %}<p><a href="{% url 'factory_invoice_recovery' row.work.pk %}?observation_proof={{ last_observation.proof_id }}">Download the attached proof</a></p>{% endif %}
+  {% endif %}
+  {% if row.forecast_can_observe %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="reconcile">
+    <input type="hidden" name="record_observation" value="1">
+    <input type="hidden" name="revision" value="{{ row.work.revision }}">
+    <input type="hidden" name="case_revision" value="{{ case.revision }}">
+    <input type="hidden" name="job" value="{{ row.forecast_original_job.pk }}">
+    <fieldset>
+      <legend>Record what happened</legend>
+      {% for value, label in delivery_outcomes.items %}
+      {% if value != 'delivered' or can_attach_proof %}<label><input type="radio" name="outcome" value="{{ value }}" required> {{ label }}</label>{% endif %}
+      {% endfor %}
+    </fieldset>
+    {% if can_attach_proof %}<label>Proof if it arrived <input type="file" name="proof" aria-describedby="forecast-proof-help"></label><small id="forecast-proof-help">One file up to 5 MiB.</small>{% endif %}
+    <button>Record observation</button>
+  </form>
+  {% endif %}
+  {% if row.can_reconcile %}
+  <p>A delivery check looks for the original recipient receipt.</p>
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="reconcile">
+    <input type="hidden" name="revision" value="{{ row.work.revision }}">
+    <input type="hidden" name="job" value="{{ row.forecast_original_job.pk }}">
+    <button>{% if row.forecast_receipt_recorded %}Check recorded forecast receipt{% else %}Reconcile original delivery{% endif %}</button>
+  </form>
+  {% endif %}
+</section>
+{% endif %}

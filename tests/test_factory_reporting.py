@@ -19,9 +19,9 @@ from apps.core.services import add_evidence
 from apps.documents.controlled import register_template, publication_requirements
 from apps.documents.models import Publication, PublicationJob, PublicationReceipt, ControlledReview
 from apps.identity.models import Grant
-from apps.pmo.meetings import create_action, change_action
+from apps.pmo.meetings import create_action, change_action, record_meeting
 from apps.pmo.models import MinutesReportBinding
-from apps.pmo.reporting import draft_period_report
+from apps.pmo.reporting import client_citation_ids, draft_period_report
 from apps.workflows.factory_reporting_views import InputsForm
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import active_component, register_reference, transition
@@ -152,6 +152,97 @@ class FactoryReportingTests(TestCase):
         self.assertEqual(job.status, 'unknown', self.work.finding)
         return job, PublicationReceipt.objects.get(publication=job.publication)
 
+    def test_api_weekly_save_start_return_correct_and_confirm_original_receipt(self):
+        artifact(self.actor, self.case, 'D05.decision_action_matrix', 'schema:psl/decision-actions/v1',
+                 {'rules': [{'role': 'PMO Lead', 'actions': ['return']}]}, self.owner)
+        self.client.force_login(self.actor)
+        intake = f'/api/v1/projects/{self.case.pk}/weekly-report-intake'
+        selection = dict(self.inputs, content_id=None)
+        window = {key: selection[key] for key in ('start_at', 'end_at')}
+        options = self.client.get(intake, window).json()
+        self.assertIn(self.template.pk, [row['id'] for row in options['templates']])
+        self.assertIn(self.notes.pk, [row['id'] for row in options['evidence']])
+
+        def post(url, **payload):
+            response = self.client.post(url, payload, content_type='application/json')
+            self.assertLess(response.status_code, 300, response.content)
+            return response.json()
+
+        parts = self.content_body['sections']
+        initial = {'case_revision': options['case_revision'], 'draft_id': None, 'selection': selection,
+                   'parts': parts, 'key': 'WEEKLY-API', 'reference': 'Weekly API test report', 'background': False}
+        reversed_window = {**selection, 'start_at': selection['end_at'], 'end_at': selection['start_at']}
+        invalid = self.client.post(intake, {'action': 'start', **initial, 'selection': reversed_window},
+                                   content_type='application/json')
+        self.assertEqual(invalid.status_code, 422, invalid.content)
+        self.assertFalse(FactoryWork.objects.filter(case=self.case, key='WEEKLY-API').exists())
+        draft = post(intake, action='save_draft', **initial)['draft_id']
+        self.assertEqual(self.client.get(intake).json()['draft']['id'], draft)
+        started = post(intake, action='start', **dict(initial, draft_id=draft))
+        self.work = FactoryWork.objects.get(pk=started['work_id'])
+        detail = f'/api/v1/work/{self.work.pk}/weekly-report'
+        self.advance()
+        old_version = reporting.document(self.work)
+        reviews = f'/api/v1/work/{self.work.pk}/reviews'
+        returned = post(reviews, kind='document', version_id=old_version.pk, verdict='return',
+                        note='Return exact report for a clearer risk statement',
+                        expected_revision=self.work.revision, case_revision=rev(self.case))
+        self.assertIsNotNone(returned['review_id'])
+        self.work.refresh_from_db()
+        packet = self.client.get(detail).json()
+        self.assertEqual(packet['document_version_id'], old_version.pk)
+        self.assertEqual(packet['editable_parts'], parts)
+        corrected_parts = {**parts, 'risks': {**parts['risks'], 'text': 'The client will review acceptance evidence separately'}}
+        fields = {'expected_revision': self.work.revision, 'case_revision': rev(self.case), 'draft_id': None,
+                  'selection': selection, 'parts': corrected_parts, 'reason': 'Review requested a clearer risk statement'}
+        replacement = post(detail, action='save_draft', **fields)['draft_id']
+        self.assertEqual(self.client.get(detail).json()['draft']['id'], replacement)
+        post(detail, action='correct', **dict(fields, draft_id=replacement))
+        self.advance()
+        reviewed = reporting.document(self.work)
+        approved = post(reviews, kind='document', version_id=reviewed.pk, verdict='approve',
+                        note='Independent review of the corrected exact report',
+                        expected_revision=self.work.revision, case_revision=rev(self.case))
+        self.assertIsNotNone(approved['review_id'])
+        self.advance()
+        proof = reporting.verify(self.work)
+        delivered = self.client.get(detail).json()
+        self.assertNotEqual(delivered['document_version_id'], old_version.pk)
+        self.assertEqual([row['receipt_id'] for row in delivered['recipients']], proof['receipt_ids'])
+
+    def test_live_weekly_assembly_shows_only_the_current_claim_before_review(self):
+        from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
+
+        self.assertEqual(connection.vendor, 'postgresql')
+        self.start_work()
+        self.assertTrue(factory.run_once(self.work.pk))
+        self.client.force_login(self.actor)
+        detail = reverse('factory_detail', args=[self.work.pk])
+        recovery = reverse('factory_invoice_recovery', args=[self.work.pk])
+        label = 'Assembling the weekly report'
+        test = self
+
+        class ObserveAssembly(SyntheticFactoryCoordinator):
+            def choose(self, context):
+                test.assertEqual(context['eligible'], ['ACT09'])
+                test.assertContains(test.client.get(detail), label)
+                test.assertNotContains(test.client.get(recovery), label)
+                test.assertIsNone(reporting.document(test.work))
+                api = test.client.get(f'/api/v1/work/{test.work.pk}')
+                test.assertEqual(api.json()['state'], 'processing')
+                test.assertIsNone(api.json()['output_url'])
+                return super().choose(context)
+
+        self.assertNotContains(self.client.get(detail), label)
+        self.assertTrue(factory.run_once(self.work.pk, provider=ObserveAssembly()))
+        self.assertNotContains(self.client.get(detail), label)
+        version = reporting.document(self.work)
+        self.assertIsNotNone(version)
+        self.assertTrue(HumanTask.objects.filter(version=version, status='open').exists())
+        self.assertFalse(Publication.objects.filter(factory_work=self.work).exists())
+        review = self.client.get(f'/api/v1/work/{self.work.pk}/weekly-report').json()
+        self.assertEqual(review['document_version_id'], version.pk)
+
     def test_full_chain_has_useful_investigation_exact_human_review_and_receipt(self):
         self.start_work()
         self.advance()
@@ -172,7 +263,14 @@ class FactoryReportingTests(TestCase):
         self.assertEqual(set(binding.manifest), {'source_mode', 'meetings', 'actions', 'milestones', 'issues', 'changes', 'client_content'})
         self.assertEqual(binding.report.kind, 'weekly_client')
         self.assertEqual(binding.report.start_at.isoformat(), self.inputs['start_at'])
-        self.review()
+        self.client.force_login(self.actor)
+        approval = reverse('factory_invoice_decision', args=[self.work.pk])
+        recovery = reverse('factory_invoice_recovery', args=[self.work.pk])
+        self.assertContains(self.client.get(approval), 'Approve exact report')
+        self.assertNotContains(self.client.get(recovery), 'Approve exact report')
+        self.assertRedirects(self.client.post(approval, {'action': 'review', 'version': version.pk, 'verdict': 'approve',
+                             'note': 'Exact synthetic weekly report verified', 'revision': self.work.revision,
+                             'case_revision': rev(self.case)}), approval, fetch_redirect_response=False)
         self.advance()
         self.assertEqual(self.work.status, 'verified', self.work.finding)
         proof = reporting.verify(self.work)
@@ -181,6 +279,7 @@ class FactoryReportingTests(TestCase):
         self.assertEqual(receipt.payload, version.payload)
         self.assertEqual(receipt.payload_sha256, version.payload_sha256)
         self.assertEqual(receipt.publication.factory_source_id, self.work.source_head_id)
+        self.assertContains(self.client.get(recovery), 'Recorded delivery')
         self.assertEqual(connection.vendor, 'postgresql')
 
     def test_client_payload_is_four_topic_aggregate_without_internal_source_text(self):
@@ -206,10 +305,44 @@ class FactoryReportingTests(TestCase):
         self.start_work(inputs=dict(self.inputs, template_id=None))
         self.advance()
         self.assertIsNone(reporting.document(self.work))
-        self.assertNotEqual(self.work.status, 'verified')
+        self.assertEqual((self.work.status, self.work.finding), ('waiting', reporting.TEMPLATE_REQUIRED))
         self.assertTrue(self.work.activities.filter(kind='ACT04', status='succeeded').exists())
+        self.assertFalse(self.work.activities.filter(kind='ACT09').exists())
+        self.assertFalse(self.work.activities.filter(kind='ACT03', attempts__phase='failed').exists())
+        self.assertFalse(HumanTask.objects.exists())
         self.assertFalse(Publication.objects.exists())
-        self.correct()
+
+        self.client.force_login(self.actor)
+        detail = reverse('factory_detail', args=[self.work.pk])
+        held = self.client.get(detail)
+        self.assertContains(held, '<h2>Report template needed</h2>', html=True)
+        self.assertContains(held, f'<p role="status">{reporting.TEMPLATE_REQUIRED}</p>', html=True)
+        self.assertContains(held, 'href="#report-correction"')
+        self.assertContains(held, 'Source investigation')
+        self.assertNotContains(held, 'Prepare the native client-safe weekly report')
+        self.assertNotContains(held, 'Continue eligible work')
+        self.assertNotContains(held, 'Approve exact report')
+        self.assertTrue(held.context['row']['correction_required'])
+        self.assertTrue(held.context['row']['needs_me'])
+        self.assertContains(self.client.get(reverse('home'), {'queue': 'exceptions'}), 'Report template needed')
+
+        limited = Grant.objects.filter(case=self.case, user=self.actor, action='factory.manage')
+        limited.update(active=False)
+        read_only = self.client.get(detail)
+        self.assertContains(read_only, reporting.TEMPLATE_REQUIRED)
+        self.assertNotContains(read_only, 'href="#report-correction"')
+        self.assertFalse(read_only.context['row']['needs_me'])
+        limited.update(active=True)
+
+        original = self.work.source_head_id
+        spent = self.work.budget_used
+        corrected = self.client.post(detail, dict(self.inputs, action='correct', revision=self.work.revision,
+            case_revision=rev(self.case), reason='Select the existing controlled template for this report.'))
+        self.assertRedirects(corrected, detail, fetch_redirect_response=False)
+        self.work.refresh_from_db()
+        self.assertNotEqual(self.work.source_head_id, original)
+        self.assertEqual(self.work.budget_used, spent)
+        self.assertNotContains(self.client.get(detail), 'Report template needed')
         self.finish()
 
     def test_missing_preparer_holds_only_dependent_action(self):
@@ -306,6 +439,11 @@ class FactoryReportingTests(TestCase):
         old = self.review('return')
         self.advance()
         self.assertFalse(Publication.objects.exists())
+        self.client.force_login(self.actor)
+        page = self.client.get(reverse('factory_detail', args=[self.work.pk]), {'edit': '1'})
+        self.assertContains(page, 'Returned for changes')
+        self.assertTrue(page.context['inputs_form'].initial['status'])
+        self.assertEqual(page.context['inputs_form'].initial['status_citations'], [self.notes.pk])
         spent = self.work.budget_used
         self.correct()
         self.assertEqual(self.work.budget_used, spent)
@@ -474,11 +612,75 @@ class FactoryReportingTests(TestCase):
 
     def test_citation_choices_exclude_ungranted_native_sources(self):
         form = InputsForm(self.case, actor=self.actor)
-        self.assertIn(self.notes.pk, form.fields['citation_ids'].queryset.values_list('pk', flat=True))
+        self.assertIn(self.notes.pk, form.fields['status_citations'].queryset.values_list('pk', flat=True))
         Grant.objects.filter(case=self.case, user=self.actor, action='meeting.read').update(active=False)
         form = InputsForm(self.case, actor=self.actor)
-        self.assertNotIn(self.notes.pk, form.fields['citation_ids'].queryset.values_list('pk', flat=True))
-        self.assertNotIn(self.owner.pk, form.fields['citation_ids'].queryset.values_list('pk', flat=True))
+        self.assertNotIn(self.notes.pk, form.fields['risks_citations'].queryset.values_list('pk', flat=True))
+        self.assertNotIn(self.owner.pk, form.fields['next_steps_citations'].queryset.values_list('pk', flat=True))
+
+    def test_weekly_intake_checks_each_theme_and_preserves_its_exact_private_citations(self):
+        def support(reference, days_ago):
+            proof = add_evidence(self.actor, self.case.pk, 'meeting_notes',
+                                 'Synthetic report support ' + reference, 'synthetic:' + reference)
+            record_meeting(self.actor, self.case.pk, reference, 'status',
+                           timezone.now() - timedelta(days=days_ago), 'Review sample delivery',
+                           'Recorded sample milestone evidence', [], [], proof.pk, rev(self.case))
+            return proof.pk
+
+        recent = support('CURRENT-WEEK', 2)
+        old = support('EARLIER-WEEK', 9)
+        snapshot = reporting.inventory(self.actor, self.case, self.inputs)
+        with self.assertNumQueries(1):
+            self.assertEqual(client_citation_ids(self.case, snapshot), {self.notes.pk, recent})
+        self.client.force_login(self.actor)
+        url = reverse('factory_create')
+        response = self.client.get(url, {'definition': reporting.DEFINITION, 'case': self.case.pk})
+        self.assertContains(response, 'Records for risks and issue impact')
+        self.assertNotContains(response, 'name="citation_ids"')
+        data = dict(
+            {**self.inputs, **self.narrative}, content_id='', definition=reporting.DEFINITION,
+            case=self.case.pk, revision=rev(self.case), key='WEEKLY-THEME-SOURCES',
+            reference='Weekly client report with distinct sources',
+            status_citations=[self.notes.pk], risks='TBD', risks_citations=[old],
+            timeline_citations=[recent],
+        )
+        evidence_count = Evidence.objects.count()
+        invalid = self.client.post(url, data)
+        self.assertEqual(invalid.status_code, 200)
+        errors = invalid.context['inputs_form'].errors
+        self.assertIn('Write this part or explain what information is missing.', errors['risks'])
+        self.assertIn('Choose at least one record for this part.', errors['next_steps_citations'])
+        data.update(risks=self.narrative['risks'], next_steps_citations=[self.notes.pk, recent])
+        invalid = self.client.post(url, data)
+        self.assertEqual(invalid.status_code, 200)
+        self.assertIn('Choose records from the selected reporting period and project inventory.',
+                      invalid.context['inputs_form'].errors['risks_citations'])
+        self.assertEqual(Evidence.objects.count(), evidence_count)
+        self.assertFalse(FactoryWork.objects.filter(case=self.case, key=data['key']).exists())
+
+        data['risks_citations'] = [recent]
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)
+        self.work = FactoryWork.objects.get(case=self.case, key=data['key'])
+        work_inputs = reporting.source(self.work, self.actor)['inputs']
+        narrative = Evidence.objects.get(pk=work_inputs['content_id'])
+        sections = json.loads(narrative.body)['sections']
+        self.assertEqual({key: section['evidence_ids'] for key, section in sections.items()}, {
+            'status': [self.notes.pk], 'risks': [recent], 'timeline': [recent],
+            'next_steps': [self.notes.pk, recent],
+        })
+        self.advance()
+        result = reporting.document(self.work)
+        self.assertIsNotNone(result, self.work.finding)
+        self.assertFalse(Publication.objects.filter(factory_work=self.work).exists())
+        self.assertNotIn(recent, [entry['id'] for entry in result.source_manifest])
+
+        legacy = dict(self.inputs, **self.narrative, content_id='', citation_ids=[self.notes.pk, recent])
+        form = InputsForm(self.case, legacy, actor=self.actor, initial=work_inputs, saved_sections=sections)
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.inputs(self.actor, self.case)['content_id'], narrative.pk)
+        modern = dict(legacy, status_citations=[self.notes.pk])
+        self.assertFalse(InputsForm(self.case, modern, actor=self.actor).is_valid())
 
     def test_native_safe_draft_requires_native_source_read_grants(self):
         Grant.objects.filter(case=self.case, user=self.preparer, action='meeting.read').update(active=False)
@@ -745,6 +947,8 @@ class FactoryReportingTests(TestCase):
                                    'PM confirmed the exact request fields', rev(self.case))
         evidence = confirmed.version.evidence
         self.assertFalse(public_evidence(Evidence.objects.filter(pk=evidence.pk)).exists())
+        cited_options = dict(InputsForm(self.case, actor=self.actor).fields['status_citations'].choices)
+        self.assertEqual(cited_options[evidence.pk], f'Confirmed change record #{evidence.pk}')
         for section in self.content_body['sections'].values():
             section['evidence_ids'] = [evidence.pk]
         content = add_evidence(self.actor, self.case.pk, 'agent_private_report_content',
@@ -763,6 +967,8 @@ class FactoryReportingTests(TestCase):
         create_action(self.actor, self.case.pk, 'RESTRICTED-SOURCE-ACTION',
                       'Source body is not granted by meeting access', self.actor.pk,
                       timezone.now() + timedelta(days=1), private.pk, 'Recorded source reference', rev(self.case))
+        form = InputsForm(self.case, actor=self.actor)
+        self.assertNotIn(private.pk, dict(form.fields['status_citations'].choices))
         for section in self.content_body['sections'].values():
             section['evidence_ids'] = [private.pk]
         content = add_evidence(self.actor, self.case.pk, 'agent_private_report_content',

@@ -1,0 +1,10 @@
+<p>Normal changes require owner-authored outputs. Blank means unknown and holds dependent decisions. Discipline: Engineering technical effort, QA testing, Infra deployment, Security compliance.</p><label>Discipline impact<textarea name="impact_discipline" maxlength="4000" rows="2"></textarea></label><label>Timeline impact statement<textarea name="impact_timeline" maxlength="4000" rows="2"></textarea></label><label>Cost and resource impact statement<textarea name="impact_cost_resource" maxlength="4000" rows="2"></textarea></label><label>Risk impact statement<textarea name="impact_risk" maxlength="4000" rows="2"></textarea></label><label>Dependency impact statement<textarea name="impact_dependency" maxlength="4000" rows="2"></textarea></label><label>Infra only: production deployment applies<select name="production_impact"><option value="unknown">Unknown</option><option value="true">Yes</option><option value="false">No</option></select></label><label>Engineering only: proposed scope identifiers for approval (one per line)<textarea name="scope_items" rows="3"></textarea></label>
+{% if assessment_category == 'Normal' %}
+<label>Effort in person-days <input name="effort_person_days" inputmode="decimal" maxlength="32" placeholder="Unknown"></label>
+{% if can_upload_impact_proof %}
+<label>Private assessment proof
+  <select name="proof_upload"><option value="">No private file selected</option>{% for file in impact_pdfs %}<option value="{{ file.pk }}">{{ file.name }} · {{ file.size|filesizeformat }}</option>{% endfor %}</select>
+</label>
+<p><a href="{% url 'case_uploads' case.pk %}">Upload a private assessment PDF</a>, then select it here.</p>
+{% endif %}
+{% endif %}

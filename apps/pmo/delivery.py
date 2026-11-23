@@ -1,8 +1,10 @@
 """Planning/delivery and release evidence. No deployment command exists here."""
 import math
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied,ValidationError
 from django.db import transaction,DatabaseError
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
+from apps.core.evidence_access import public_evidence
 from apps.core.services import lock_case,event,bump
 from apps.identity.services import require
 from apps.policy.services import decision_authority
@@ -10,6 +12,7 @@ from apps.documents.controlled import baseline_manifest
 from apps.documents.contracts import validate,digest
 from .services import subject
 from .commercial import note_required
+from . import delivery_workarounds
 from .clocks import aware
 from .models import DeliveryDossier,DeliverySource,DeliverySourceVerification,DeliveryRecord,DeliveryCandidate,MeetingVersion
 from apps.core.read_observation import observed_fact
@@ -17,6 +20,8 @@ from apps.core.read_observation import observed_fact
 SOURCE_OWNERS={'registration':'PMO','scope_baseline':'PMO','ui_applicability':'Product/Design','ui_target':'Product/Design','ui_design':'Design Lead',
     'ui_client':'Client','technical_design':'Engineering Lead','test_strategy':'QA Lead','uat_approach':'Product Owner',
     'hypercare_engineering':'Engineering','hypercare_infrastructure':'Infrastructure','technical_finalization':'Engineering'}
+SOURCE_OWNERS.update(uat_client_target='PMO',uat_client_response='Client')
+SOURCE_OWNERS[delivery_workarounds.KIND] = 'PMO'
 PLANNING=['registration','scope_baseline','technical_design','test_strategy','uat_approach','ui_applicability']
 UPSTREAM_GATES=['qa_exit','uat_product_manager','uat_product_owner','uat_client','engineering_go']
 GLPI_GATES=['glpi_security','glpi_cto','glpi_ceo']
@@ -46,17 +51,35 @@ def record(actor,case,d,kind,evidence,data,snapshot,parent=None):
 
 
 @transaction.atomic
-def open_dossier(actor,case_id,candidate_id,evidence_id,note,expected):
+def open_dossier(actor,case_id,candidate_id,evidence_id,note,expected,*,declined_reply_id=None):
     case=lock_case(actor,case_id,'delivery.manage',expected);decision_authority(actor,case,'PM');note_required(note)
     candidate=DeliveryCandidate.objects.filter(case=case,pk=candidate_id).first();base=baseline_manifest(case)
     if case.kind!='project' or not candidate or not base:raise ValidationError('Project candidate and prepared plan/cost/SOW baseline required; signature is not a planning prerequisite')
     if DeliveryDossier.objects.filter(candidate=candidate).exists():raise ValidationError('Candidate dossier already exists')
+    origin=None
+    if declined_reply_id is not None:
+        from .models import GoLiveClientReply
+        origin=GoLiveClientReply.objects.filter(pk=declined_reply_id,dossier__case=case,outcome='declined').exclude(dossier__candidate=candidate).first()
+        if not origin:raise ValidationError('Select the source decline for this distinct candidate.')
+        from .go_live_replies import rules,current_authority,head
+        _,handling=rules(case)
+        if handling['decline_handling']!='new_release_candidate' or head(origin).pk!=origin.pk:
+            raise ValidationError('Review current decline handling before opening this candidate.')
+        current_authority(origin,handling)
     d=DeliveryDossier.objects.create(case=case,candidate=candidate,baseline={k:v for k,v in base.items() if k!='signed_id'},
-        evidence=subject(case,evidence_id),actor=actor)
-    event(actor,case,'delivery.opened',dossier=d.pk,note=note);bump(case);return d
+        evidence=subject(case,evidence_id),actor=actor,declined_reply=origin)
+    event(actor,case,'delivery.opened',dossier=d.pk,note=note)
+    if origin:
+        event(actor,case,'delivery.client_decline_candidate',reply_id=origin.pk,candidate_id=candidate.pk,
+              dossier_id=d.pk,deployment_authorized=False)
+    bump(case)
+    return d
 
 
 def validate_source_payload(kind,payload):
+    from adapters.client_uat import KINDS as CLIENT_KINDS,validate_payload as validate_client
+    if kind in CLIENT_KINDS:
+        validate_client(kind,payload);return
     from .delivery_ui import KINDS,validate_payload
     if kind in KINDS:
         validate_payload(kind,payload);return
@@ -78,6 +101,9 @@ def validate_source_payload(kind,payload):
 
 @transaction.atomic
 def capture_source(actor,case_id,dossier_id,kind,external_ref,evidence_id,payload,expected):
+    from adapters.client_uat import KINDS as CLIENT_KINDS
+    if kind in CLIENT_KINDS:raise ValidationError('Use the human client-response workflow for these records')
+    if kind == delivery_workarounds.KIND:raise ValidationError('Use the exact returned Planning workaround action')
     case=lock_case(actor,case_id,'delivery.source',expected);d=dossier_for(case,dossier_id);ensure_open(d)
     if kind not in SOURCE_OWNERS or not isinstance(external_ref,str) or not external_ref.strip() or len(external_ref)>240:
         raise ValidationError('Choose an owned source kind and bounded external reference')
@@ -115,6 +141,9 @@ def verify_source(actor,case_id,source_id,expected,adapter=None):
     case=Case.objects.get(pk=case_id);require(actor,case,'delivery.verify')
     s=DeliverySource.objects.select_related('dossier__candidate','evidence').filter(pk=source_id,dossier__case=case).first()
     if not s:raise ValidationError('Source is outside this case')
+    from adapters.client_uat import KINDS as CLIENT_KINDS
+    if s.kind in CLIENT_KINDS:raise ValidationError('Agent or synthetic source checks cannot confirm a human client response')
+    if s.kind == delivery_workarounds.KIND:raise ValidationError('Use the current human-reviewed client workaround')
     if not case.synthetic:raise ValidationError('Operational source capture is available; authoritative verification needs an accepted remote adapter contract')
     adapter=adapter or SyntheticDeliverySourceAdapter();result=adapter.read(s)
     validate(source_result_schema(s),result)
@@ -157,17 +186,104 @@ def planning_inputs(d):
 
 
 @transaction.atomic
-def decide_planning(actor,case_id,dossier_id,verdict,evidence_id,note,expected):
+def decide_planning(actor,case_id,dossier_id,verdict,evidence_id,note,expected,*,issue_id=None):
     case=lock_case(actor,case_id,'delivery.planning_decide',expected);d=dossier_for(case,dossier_id);ensure_open(d);note_required(note)
     if verdict not in ['approve','return','reject']:raise ValidationError('Choose an explicit planning verdict')
     authority=decision_authority(actor,case,'PMO Lead',verdict)
-    return record(actor,case,d,'planning_decision',subject(case,evidence_id),{'verdict':verdict,'authority':authority,'note':note},planning_inputs(d))
+    inputs = planning_inputs(d)
+    if verdict == 'approve':
+        from .coordinator_intake import planning_exit
+        planning_exit(actor,d,inputs)
+    prior = latest(d, 'planning_decision', False)
+    remedy = planning_remedy(d, prior, inputs, actor=actor) if verdict == 'approve' or (
+        prior and prior.data['verdict'] in ('return', 'reject')) else None
+    data = {'verdict': verdict, 'authority': authority, 'note': note}
+    returned = delivery_workarounds.origin(d, prior)
+    if verdict != 'approve' and returned and (prior.data.get('issue_remedy') or delivery_workarounds.head(d, returned)):
+        ongoing = planning_issue(d, returned.data['blocking_issue']['issue'])
+        if ongoing.current.status not in ('Resolved', 'Closed'):
+            if issue_id is not None and issue_id != ongoing.pk:
+                raise ValidationError('Keep the original linked issue on a new return while it still needs work.')
+            issue_id = ongoing.pk
+    if issue_id is not None:
+        if verdict not in ('return', 'reject'):
+            raise ValidationError('Link a blocking issue when returning or rejecting delivery.')
+        require(actor, case, 'issue.read')
+        issue = planning_issue(d, issue_id)
+        if issue.current.status in ('Resolved', 'Closed'):
+            raise ValidationError('Choose an issue that still needs work.')
+        data['blocking_issue'] = {'issue': issue.pk, 'state': issue.current_id}
+    if remedy and verdict == 'approve':
+        if remedy.get('kind') == delivery_workarounds.KIND:
+            if remedy['recorder_id'] == actor.pk:
+                raise PermissionDenied('A different assigned PMO Lead must approve the linked client workaround.')
+            delivery_workarounds.approval_statement(actor, d, remedy)
+        data['issue_remedy'] = remedy
+        data['blocking_decision_id'] = returned.pk
+    return record(actor,case,d,'planning_decision',subject(case,evidence_id),data,inputs,parent=prior)
+
+
+def planning_issue(d, issue_id):
+    from .issue_access import state_public
+    from .models import Issue
+
+    if type(issue_id) is not int or issue_id < 1:
+        raise ValidationError('Choose a current issue from this project.')
+    issue = Issue.objects.filter(case=d.case, pk=issue_id).select_related('case', 'current').first()
+    if not issue or not issue.current or not state_public(issue.current):
+        raise ValidationError('Choose a current issue from this project.')
+    return issue
+
+
+def planning_remedy(d, prior, inputs, *, actor=None):
+    """An unchanged packet cannot replace a negative decision by replay."""
+    returned = delivery_workarounds.origin(d, prior)
+    if not prior or (not returned and prior.data.get('verdict') not in ('return', 'reject')):
+        return None
+    blocking = (returned or prior).data.get('blocking_issue')
+    if blocking:
+        if actor is not None:
+            require(actor, d.case, 'issue.read')
+        issue = planning_issue(d, blocking['issue'])
+        current = issue.current
+        if current.pk != blocking['state'] and current.status in ('Resolved', 'Closed') and current.fix_id:
+            return {'issue': issue.pk, 'state': current.pk, 'fix': current.fix_id}
+        if returned and returned.data.get('verdict') == 'return':
+            workaround = delivery_workarounds.current(d, returned, issue)
+            if workaround:
+                return workaround
+            raise ValidationError('Record the fix for the linked issue or link its reviewed client-approved workaround before requesting another decision.')
+        raise ValidationError('Record the fix for the linked issue before requesting another decision.')
+    previous = prior.snapshot
+    old_sources = previous.get('sources', {})
+    pairs = [(old_sources.get(kind, [None])[0], pin[0]) for kind, pin in inputs['sources'].items()]
+    source_ids = {pk for pair in pairs for pk in pair if pk is not None}
+    source_facts = {pk: (sha, payload) for pk, sha, payload in d.sources.filter(pk__in=source_ids)
+                    .values_list('pk', 'evidence__sha256', 'payload')}
+    if any(old in source_facts and new in source_facts and source_facts[old] != source_facts[new]
+           for old, new in pairs):
+        return None
+    raise ValidationError('Record and verify corrected Planning evidence before requesting another decision.')
 
 
 def approved_plan(d):
-    r=latest(d,'planning_decision');require(r.actor,d.case,'delivery.planning_decide')
+    from apps.identity.role_factory_decisions import recorded_access
+
+    r=latest(d,'planning_decision');recorded_access(d.case,r.actor,'planning',r.pk,'delivery.planning_decide')
     if r.data['verdict']!='approve' or r.data['authority']!=decision_authority(r.actor,d.case,'PMO Lead') or r.snapshot!=planning_inputs(d):
         raise ValidationError('Current exact Planning exit approval required')
+    remedy = r.data.get('issue_remedy')
+    if remedy:
+        require(r.actor, d.case, 'issue.read')
+        returned = delivery_workarounds.origin(d, r)
+        issue = planning_issue(d, remedy['issue'])
+        if remedy.get('kind') == delivery_workarounds.KIND:
+            if (r.actor_id == remedy['recorder_id'] or not returned or returned.data.get('verdict') != 'return' or
+                    delivery_workarounds.current(d, returned, issue) != remedy):
+                raise ValidationError('The client workaround used for Planning approval needs review.')
+            delivery_workarounds.approval_statement(r.actor, d, remedy)
+        elif issue.current.status not in ('Resolved', 'Closed') or issue.current.fix_id != remedy['fix']:
+            raise ValidationError('The issue fix used for the Planning approval needs review.')
     return r
 
 
@@ -180,6 +296,9 @@ def record_progress(actor,case_id,dossier_id,kind,evidence_id,note,expected,meet
         meeting=MeetingVersion.objects.filter(pk=meeting_id,meeting__case=case,kind='kickoff').first()
         if not meeting or meeting.meeting.current_id!=meeting.pk or meeting.occurred_at<plan.created_at or meeting.occurred_at>timezone.now():
             raise ValidationError('Link the current actual kickoff meeting after Planning approval')
+        from .coordinator_intake import accept
+        accept(actor,case,plan,"P63")
+        accept(actor,case,meeting,"P27")
     return record(actor,case,d,kind,subject(case,evidence_id),{'note':note,'meeting_id':meeting.pk if meeting else None},{'planning_id':plan.pk})
 
 
@@ -213,6 +332,8 @@ def record_release_request(actor,case_id,dossier_id,external_ref,evidence_id,not
 
 @observed_fact
 def readiness_inputs(d):
+    from .go_live_replies import release_handoff
+    handoff=release_handoff(d)
     from .signature_exemptions import assert_current_baseline_assurance
     assurance = assert_current_baseline_assurance(d.case)
     request=latest(d,'glpi_request');require(request.actor,d.case,'delivery.release_request');decision_authority(request.actor,d.case,'PM')
@@ -220,6 +341,7 @@ def readiness_inputs(d):
     if request.snapshot!=source:raise ValidationError('Deployment request prerequisites changed; reconcile the exact source request')
     result = {'upstream':source,'request_id':request.pk,'signed_id':baseline_manifest(d.case)['signed_id'],
         'glpi':verified_gates(d,GLPI_GATES,request.data['external_ref']), 'deployment_authorized':False,'financial_controls':'independent'}
+    if handoff is not None:result['client_decline_handoff']=handoff
     if assurance['kind'] == 'internal_signature_exemption':
         result.update(signature_requirement='not_applicable', signature_exemption_id=assurance['id'])
     return result
@@ -230,19 +352,57 @@ def prepare_readiness(actor,case_id,dossier_id,expected):
     case=lock_case(actor,case_id,'delivery.manage',expected);d=dossier_for(case,dossier_id);ensure_open(d)
     if latest(d,'release_outcome',False):raise ValidationError('Actual release already recorded; a later readiness check cannot authorize earlier work')
     inputs=readiness_inputs(d)
+    from .coordinator_intake import release_readiness
+    release_readiness(actor,d,inputs['upstream'])
     return record(actor,case,d,'release_ready',latest(d,'glpi_request').evidence,{},inputs)
 
 
+def release_environment(value):
+    if value is None or value == '':
+        return None
+    if not isinstance(value, str) or not value.isprintable() or len(value) > 160:
+        raise ValidationError('Enter a release environment in plain text, up to 160 characters.')
+    return value.strip() or None
+
+
 @transaction.atomic
-def capture_release(actor,case_id,dossier_id,readiness_id,released_at,external_ref,evidence_id,note,expected):
+def capture_release(actor,case_id,dossier_id,readiness_id,released_at,external_ref,evidence_id,note,expected,*,
+                    deployment_environment=None,private_log_id=None):
     case=lock_case(actor,case_id,'delivery.release_record',expected);d=dossier_for(case,dossier_id,current=False);note_required(note)
     instant=aware(released_at)
     if instant>timezone.now() or not external_ref.strip() or len(external_ref)>240:raise ValidationError('Actual past release instant and source reference required')
     parent=d.records.filter(pk=readiness_id,kind='release_ready').first() if readiness_id else None
     if readiness_id and not parent:raise ValidationError('Readiness must belong to this exact dossier')
     if latest(d,'release_outcome',False):raise ValidationError('Release outcome already recorded; preserve original event history')
-    return record(actor,case,d,'release_outcome',subject(case,evidence_id),{'released_at':instant.isoformat(),'external_ref':external_ref,'note':note},
+    environment = release_environment(deployment_environment)
+    data = {'released_at': instant.isoformat(), 'external_ref': external_ref, 'note': note}
+    if environment is not None:
+        data['deployment_environment'] = environment
+    if private_log_id is not None:
+        from .release_proofs import capture
+        data['private_log'] = capture(actor, case, private_log_id)
+    return record(actor,case,d,'release_outcome',subject(case,evidence_id),data,
         {'readiness_preceded':bool(parent and parent.created_at<=instant),'deployment_dispatched':False},parent)
+
+
+def release_observations(case, dossier_ids, actor=None):
+    """Read only the named release facts whose exact proof is available in a delivery view."""
+    proof = public_evidence(case.evidence.all()).values('pk')
+    rows = list(DeliveryRecord.objects.filter(dossier__case=case, dossier_id__in=dossier_ids,
+        kind='release_outcome', evidence_id__in=proof).values('dossier_id', 'dossier__candidate__reference',
+        'evidence_id', 'evidence__version', 'data__released_at', 'data__external_ref', 'data__deployment_environment',
+        'data__private_log'))
+    from .release_proofs import accessible_logs
+    files = accessible_logs(case, rows, actor) if actor is not None else {}
+    return {row['dossier_id']: {
+        'candidate': row['dossier__candidate__reference'],
+        'released_at': parse_datetime(row['data__released_at']),
+        'reference': row['data__external_ref'],
+        'environment': row['data__deployment_environment'],
+        'evidence_id': row['evidence_id'],
+        'evidence_version': row['evidence__version'],
+        'private_log': files.get(row['dossier_id']),
+    } for row in rows}
 
 
 @observed_fact

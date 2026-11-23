@@ -710,11 +710,11 @@ describe('access and safety', () => {
     expect(within(dialog()).queryByRole('group', { name: 'Proof' })).toBeNull();
   });
 
-  it('an upload without the right CSRF answers 403: the refusal shows and nothing reads "Uploaded"', async () => {
+  it('an upload without the right CSRF answers 403 csrf_failed: the generic try-again notice shows (csrf is its own kind, not no-permission) and nothing reads "Uploaded"', async () => {
     await ledgerReady();
     setCsrfToken('wrong');
     choose(file('qb.pdf', 1024));
-    expect(await within(dialog()).findByText('You can’t add proof to this item.')).toBeTruthy();
+    expect(await within(dialog()).findByText('Couldn’t upload. Try again.')).toBeTruthy();
     expect(within(dialog()).queryByText(/Uploaded/)).toBeNull();
   });
 

@@ -6,7 +6,7 @@ from apps.identity.models import Grant
 from .models import Template, Version, TemplateClaim, TemplateScope
 
 
-def visible_templates(actor, case, *, candidate_ids=None, budget=None):
+def visible_templates(actor, case, *, candidate_ids=None, budget=None, held_finance_runs=()):
     require(actor, case, 'document.read')
     templates = Template.objects.filter(case=case).exclude(definition__document_type='accepted_finance_metadata')
     if candidate_ids is not None:
@@ -19,7 +19,9 @@ def visible_templates(actor, case, *, candidate_ids=None, budget=None):
     from apps.finance.models import FinanceDocumentBinding
     from apps.finance.statement_ppe import recipient_access
     hidden = []
-    bindings = FinanceDocumentBinding.objects.filter(version__template__in=templates).select_related('run', 'version')
+    bindings = FinanceDocumentBinding.objects.filter(version__template__in=templates).exclude(
+        run_id__in=held_finance_runs,
+    ).select_related('run', 'version').only('run__kind', 'run__case_id', 'run__snapshot', 'version__template_id')
     for binding in bindings:
         try:
             recipient_access(binding.run, [actor.pk])
@@ -53,16 +55,16 @@ def _bounded_bindings(actor, templates, budget):
     ).exclude(pk__in=hidden)
 
 
-def visible_scopes(actor, case, *, scopes=None, budget=None):
+def visible_scopes(actor, case, *, scopes=None, budget=None, held_finance_runs=()):
     if scopes is None:
         scopes = TemplateScope.objects.filter(case=case)
-        templates = visible_templates(actor, case, budget=budget)
+        templates = visible_templates(actor, case, budget=budget, held_finance_runs=held_finance_runs)
     else:
         # Check every historical claim, including retracted claims, but only
         # evaluate domain bindings for templates that can hide a selected scope.
         scopes = scopes.filter(case=case)
         candidates = TemplateClaim.objects.filter(scope__in=scopes).values('template_id')
-        templates = visible_templates(actor, case, candidate_ids=candidates, budget=budget)
+        templates = visible_templates(actor, case, candidate_ids=candidates, budget=budget, held_finance_runs=held_finance_runs)
     if not Grant.objects.filter(case=case, user=actor, action='finance.read', active=True).exists():
         scopes = scopes.exclude(document_type__in=['finance_report', 'finance_group_report'])
     return scopes.exclude(claims__template__in=Template.objects.filter(case=case).exclude(pk__in=templates)).distinct()

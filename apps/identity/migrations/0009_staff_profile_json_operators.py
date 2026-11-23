@@ -1,0 +1,79 @@
+"""Keep applied0008 intact; parenthesise JSON operands before containment."""
+from django.db import migrations
+
+
+SQL=r"""
+CREATE OR REPLACE FUNCTION psl_staff_profile_controls() RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE controls jsonb; p jsonb; field text;
+BEGIN
+ controls=NEW.value->'staff_lifecycle';
+ FOREACH field IN ARRAY ARRAY['allow_profile_edit','allow_reactivation'] LOOP
+  IF controls ? field AND (NEW.value->>'format'<>'psl.tenant-access/v3'
+     OR jsonb_typeof(controls->field) NOT IN ('boolean','null')) THEN
+   RAISE EXCEPTION 'Typed version3 staff access controls required'; END IF;
+  IF controls->field='true'::jsonb AND controls->'allow_roster' IS DISTINCT FROM 'true'::jsonb THEN
+   RAISE EXCEPTION 'Staff access changes require explicit roster review'; END IF;
+ END LOOP;
+ IF controls ? 'profiles' THEN
+  IF NEW.value->>'format'<>'psl.tenant-access/v3' OR jsonb_typeof(controls->'profiles') NOT IN ('array','null') THEN
+   RAISE EXCEPTION 'Typed version3 access profiles required'; END IF;
+  IF jsonb_typeof(controls->'profiles')='array' THEN
+   IF jsonb_array_length(controls->'profiles')>30 OR
+      (SELECT count(*)<>count(DISTINCT x->>'key') FROM jsonb_array_elements(controls->'profiles') x) THEN
+    RAISE EXCEPTION 'Bounded unique profile references required'; END IF;
+   FOR p IN SELECT * FROM jsonb_array_elements(controls->'profiles') LOOP
+    IF jsonb_typeof(p)<>'object' OR NOT(p ?& ARRAY['key','label','actions'])
+       OR p-ARRAY['key','label','actions']<>'{}'::jsonb
+       OR jsonb_typeof(p->'key')<>'string' OR (p->>'key')!~'^[a-z][a-z0-9_-]{0,49}$'
+       OR jsonb_typeof(p->'label')<>'string' OR length(p->>'label') NOT BETWEEN 1 AND 80
+       OR btrim(p->>'label')<>p->>'label' OR jsonb_typeof(p->'actions')<>'array' THEN
+     RAISE EXCEPTION 'Closed named profile definition required'; END IF;
+    IF jsonb_array_length(p->'actions') NOT BETWEEN 1 AND 1000 OR NOT((p->'actions') ? 'case.read')
+       OR NOT((NEW.value->'allowed_actions') @> (p->'actions'))
+       OR EXISTS(SELECT 1 FROM jsonb_array_elements(p->'actions') a WHERE jsonb_typeof(a)<>'string' OR length(a#>>'{}') NOT BETWEEN 1 AND 100)
+       OR (SELECT count(*)<>count(DISTINCT a) FROM jsonb_array_elements(p->'actions') a) THEN
+     RAISE EXCEPTION 'Exact delegated profile functions required'; END IF;
+   END LOOP;
+  END IF;
+ END IF;
+ RETURN NEW;
+END $$;
+
+CREATE OR REPLACE FUNCTION psl_staff_profile_guard() RETURNS trigger LANGUAGE plpgsql AS $$
+DECLARE a identity_tenantauthority; c core_case; p jsonb; actual jsonb; head bigint;
+BEGIN
+ SELECT * INTO a FROM identity_tenantauthority WHERE id=NEW.authority_id;
+ SELECT * INTO c FROM core_case WHERE id=NEW.case_id;
+ SELECT x INTO p FROM jsonb_array_elements(a.value->'staff_lifecycle'->'profiles') x WHERE x->>'key'=NEW.profile_key;
+ SELECT COALESCE(jsonb_agg(action ORDER BY action),'[]'::jsonb) INTO actual FROM identity_grant
+  WHERE case_id=c.id AND user_id=NEW.user_id AND active;
+ SELECT COALESCE(max(id),0) INTO head FROM identity_accesschange WHERE case_id=c.id AND subject_id=NEW.user_id;
+ IF a.user_id IS DISTINCT FROM NEW.actor_id OR a.tenant IS DISTINCT FROM c.tenant OR NOT a.enabled
+    OR a.expires_at<=NEW.created_at OR EXISTS(SELECT 1 FROM identity_tenantauthority WHERE tenant=a.tenant AND user_id=a.user_id AND version>a.version)
+    OR c.synthetic IS DISTINCT FROM (a.value->>'classification'='synthetic') OR NOT((a.value->'kinds') ? c.kind)
+    OR NOT EXISTS(SELECT 1 FROM auth_user WHERE id=NEW.actor_id AND is_active)
+    OR NOT EXISTS(SELECT 1 FROM auth_user WHERE id=NEW.user_id AND is_active)
+    OR NOT EXISTS(SELECT 1 FROM identity_grant WHERE case_id=c.id AND user_id=NEW.actor_id AND action='case.read' AND active)
+    OR p IS NULL OR p->>'label' IS DISTINCT FROM NEW.profile_label
+    OR NOT((p->'actions') @> actual AND actual @> (p->'actions'))
+    OR NEW.after_actions IS DISTINCT FROM actual OR NEW.grant_audit_head<>head THEN
+  RAISE EXCEPTION 'Current exact staff access profile provenance required'; END IF;
+ IF NEW.invitation_id IS NULL THEN
+  IF a.value->'staff_lifecycle'->'allow_profile_edit' IS DISTINCT FROM 'true'::jsonb THEN
+   RAISE EXCEPTION 'Explicit profile edit delegation required'; END IF;
+ ELSE
+  IF a.value->'staff_lifecycle'->'allow_invite' IS DISTINCT FROM 'true'::jsonb OR NOT EXISTS(
+    SELECT 1 FROM identity_staffinvitation i JOIN identity_staffadmission s ON s.invitation_id=i.id
+    WHERE i.id=NEW.invitation_id AND i.case_id=c.id AND i.actor_id=NEW.actor_id AND i.authority_id=a.id
+     AND s.user_id=NEW.user_id AND i.profile_key=NEW.profile_key AND i.profile_label=NEW.profile_label
+     AND i.profile_sha256=NEW.profile_sha256 AND i.actions=NEW.after_actions) THEN
+   RAISE EXCEPTION 'Exact accepted named invitation required'; END IF;
+ END IF;
+ RETURN NEW;
+END $$;
+"""
+
+
+class Migration(migrations.Migration):
+    dependencies=[('identity','0008_staff_profiles')]
+    operations=[migrations.RunSQL(SQL)]

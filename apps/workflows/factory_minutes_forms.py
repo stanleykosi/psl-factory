@@ -105,11 +105,41 @@ def capture_forms(work,selection,extraction,data=None,predecessor=None):
         CommitmentSet(data,prefix='commitments',form_kwargs={'case':work.case}))
 
 def command_keys(form,decisions,commitments):
-    keys=set(form.fields)
+    keys=set(form.fields)|{'selected_suggestions'}
     for group in [decisions,commitments]:
         keys.update(group.management_form.add_prefix(k) for k in group.management_form.fields)
         for row in group:keys.update(row.add_prefix(k) for k in row.fields)
     return keys
+
+
+def suggestion_rows(extraction, note_id):
+    proposals = extraction.result['proposals'] if extraction else {}
+    return [{'key':f'{prefix}-{index}', 'prefix':prefix, 'field':field, 'quote':item['quote'], 'label':label}
+            for kind,prefix,field,label in [('decisions','decisions','text','Decision'),
+                                           ('actions','commitments','description','Action')]
+            for index,item in enumerate(proposals.get(kind, [])) if item['evidence_id']==note_id]
+
+
+def apply_suggestions(data, rows):
+    by_key = {row['key']:row for row in rows}
+    selected = data.getlist('selected_suggestions')
+    if not selected or len(selected)!=len(set(selected)) or any(key not in by_key for key in selected):
+        raise forms.ValidationError('Choose distinct suggestions from the current meeting notes.')
+    edited = data.copy()
+    for key in selected:
+        row = by_key[key]
+        prefix, field = row['prefix'], row['field']
+        count_key = f'{prefix}-TOTAL_FORMS'
+        count = int(edited.get(count_key, '-1'))
+        if not 0<=count<=50:
+            raise forms.ValidationError('Check the current confirmation rows.')
+        if any(edited.get(f'{prefix}-{index}-{field}')==row['quote'] and not edited.get(f'{prefix}-{index}-DELETE') for index in range(count)):
+            continue
+        if count==50:
+            raise forms.ValidationError('Up to 50 rows are available. Remove or edit an existing row.')
+        edited[f'{prefix}-{count}-{field}'] = row['quote']
+        edited[count_key] = str(count+1)
+    return edited
 
 def payload(form,decisions,commitments,note):
     d=form.cleaned_data

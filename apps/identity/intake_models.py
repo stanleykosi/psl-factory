@@ -40,3 +40,13 @@ class AccessChange(AppendOnly):
     actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT,related_name='+')
     reason=models.CharField(max_length=1000)
     created_at=models.DateTimeField(auto_now_add=True)
+
+
+class WorkAccessRequest(AppendOnly):
+    requester = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    # The requester already has a link and learns nothing about the target from this record.
+    work_reference = models.PositiveBigIntegerField(db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['requester', 'work_reference'], name='identity_work_access_reference')]

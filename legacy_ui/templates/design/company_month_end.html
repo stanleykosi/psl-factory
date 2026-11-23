@@ -1,0 +1,29 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Month-end · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Month-end{% if overview %} · {{ overview.month_start|date:'F Y' }}{% endif %}</h1><p class="lede">Finance close across your workspaces</p></div><a href="{% url 'workspace_overview' %}?area=finance">Finance workspaces</a></header>
+<form class="card" method="get">{{ form.as_p }}<button>Show month</button></form>
+{% if month %}
+{% if overview %}{% include 'design/month_end_overview.html' %}{% endif %}
+{% if coverage.workspaces %}<section class="card" aria-labelledby="close-coverage"><h2 id="close-coverage">Close coverage on this page</h2>
+<dl class="grid"><div><dt>Reviewed monthly figures</dt><dd>{{ coverage.reviewed }} of {{ coverage.workspaces }} workspaces</dd></div>
+<div><dt>Receivables on the close date</dt><dd>{{ coverage.captured }} of {{ coverage.workspaces }} workspaces</dd></div>
+<div><dt>Verified cash recorded</dt><dd>{{ coverage.cash }} of {{ coverage.workspaces }} workspaces</dd></div></dl></section>{% endif %}
+{% for entry in report %}<section class="card"><h2>{{ entry.case|workspace_name }}</h2>
+<div class="grid"><div><h3>Reviewed monthly figures</h3>
+{% for period in entry.periods %}<p>{{ period.entity }} · {{ period.currency }} · {{ period.status }}</p>
+{% for value in period.values %}<p>{{ value.label }} · {{ value.value|default_if_none:'Unknown' }} {{ value.unit }}</p>{% endfor %}
+{% empty %}<p>No reviewed record is available for this month.</p>{% endfor %}
+<a href="{% url 'finance_performance' entry.case.pk %}">Review monthly figures and restatements</a></div>
+<div><h3>Verified cash received</h3><p>Current receipt records with a received date in this month.</p>
+{% for currency, basis, amount in entry.cash %}<p>{{ currency }} {{ amount }} · {{ basis|readable }}</p>{% empty %}
+<p>{% if entry.cash_unavailable %}Open the Finance record for permitted cash coverage.{% else %}Unknown for this month.{% endif %}</p>{% endfor %}
+</div></div>
+{% include 'design/month_end_receivables.html' %}
+{% include 'design/month_end_stations.html' %}
+</section>
+{% empty %}<section class="card"><p>No Finance workspaces are available to you.</p></section>{% endfor %}
+{% if page.has_previous %}<a href="?month={{ month|urlencode }}&amp;page={{ page.previous_page_number }}">Previous workspaces</a>{% endif %}
+{% if page.has_next %}<a href="?month={{ month|urlencode }}&amp;page={{ page.next_page_number }}">Show more workspaces</a>{% endif %}
+{% endif %}
+{% endblock %}

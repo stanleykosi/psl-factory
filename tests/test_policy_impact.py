@@ -33,6 +33,27 @@ class PolicyImpactTests(TestCase):
     def capture(self,keys=None):
         return impact.capture(self.a,self.c.pk,self.old.pk,self.new.pk,keys or ['pmo.decisions'],self.e['policy_decision'].pk,'Review exact pending decisions against the new local policy')
 
+    def test_api_observes_affected_records_and_requires_second_current_reviewer(self):
+        self.client.force_login(self.a)
+        url = f'/api/v1/setup/{self.c.pk}/policy-impact'
+        self.assertIn('pmo.decisions', self.client.get(url).json()['available_adapters'])
+        response = self.client.post(url, {'previous_id': self.old.pk, 'successor_id': self.new.pk,
+            'adapters': ['pmo.decisions'], 'evidence_id': self.e['policy_decision'].pk, 'reason': 'Review original decision heads'},
+            content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        exact = f"{url}/{response.json()['assessment_id']}"
+        self.assertEqual(len(self.client.get(f'{url}/records/{self.old.pk}/pmo.decisions').json()['records']), 4)
+        self.assertEqual(self.client.get(exact).json()['verdict'], 'unreviewed')
+        command = {'verdict': 'accept', 'evidence_id': self.e['policy_decision'].pk, 'reason': 'Independent engineering review'}
+        self.assertEqual(self.client.post(exact, command, content_type='application/json').status_code, 403)
+        self.client.force_login(self.b)
+        response = self.client.post(exact, command, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        observed = self.client.get(exact).json()
+        self.assertEqual(observed['review_id'], response.json()['review_id'])
+        self.assertTrue(observed['current'])
+        self.assertEqual(len(observed['records']), 4)
+
     def test_actual_pmo_decisions_are_observed_and_acceptance_cannot_copy_approval(self):
         from apps.pmo.services import sign_baseline,decide
         from apps.pmo.models import Decision,Baseline

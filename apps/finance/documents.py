@@ -76,6 +76,12 @@ def draft_report(actor,case_id,run_id,template_id,audience,expected,performance=
     fields_needed={'executive_summary','financial_metrics','bu_totals'}
     if not template or template.definition.get('internal_review_required') is not False or not fields_needed.issubset(template.definition['audience_fields'].get(audience,[])):
         raise ValidationError('Finance report template needs aggregate sections and explicit internal_review_required:false; configured Finance output review supplies the domain decision')
+    if performance:
+        from apps.workflows.native_stations import receive_advice
+        from .coordinator_accounts_performance import projection_covers
+        for process in ('F10', 'F24', 'F25', 'F26'):
+            if projection_covers(run, process, snapshot['projection']):
+                receive_advice(process, run, actor, case=case)
     projected=projection_rows(run,snapshot['projection'])
     evidence=add_evidence(actor,case.pk,'finance_report_snapshot',json.dumps(projected,sort_keys=True),('derived:ppe-statement:' if ppe_output else 'derived:finance-performance:' if performance else 'derived:finance-output:')+str(run.pk),case.revision)
     case.refresh_from_db()

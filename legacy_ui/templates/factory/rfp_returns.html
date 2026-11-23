@@ -1,0 +1,21 @@
+{% load studio_ui %}
+{% if returned.current %}
+  <section class="card" aria-labelledby="rfp-return-heading">
+    <h2 id="rfp-return-heading">{% if returned.current.kind == 'costing' %}Costing returned for changes{% else %}Response returned for changes{% endif %}</h2>
+    <p>{% if returned.current.kind == 'costing' %}Costing version {{ returned.current.costing_number }} · {% endif %}Response version {{ returned.current.response_number }} · {{ returned.current.role|role_name }} · {{ returned.current.created_at|date:'d M Y H:i T' }}</p>
+    <p>{{ returned.current.note|linebreaksbr }}</p>
+    {% if can_correct %}<a class="button secondary" href="{% url 'factory_detail' work.pk %}{% work_queue_query work %}#correct-response">Correct response inputs</a>{% endif %}
+  </section>
+{% endif %}
+{% if returned.history %}
+  <section class="card" aria-labelledby="rfp-return-history-heading">
+    <h2 id="rfp-return-history-heading">Earlier returns</h2>
+    {% if returned.earlier %}<p>Showing the {{ returned.history|length }} most recent earlier returns.</p>{% endif %}
+    {% for item in returned.history %}
+      <details>
+        <summary>{% if item.kind == 'costing' %}Costing version {{ item.costing_number }} · {% endif %}Response version {{ item.response_number }} · {{ item.role|role_name }} · {{ item.created_at|date:'d M Y H:i T' }}</summary>
+        <p>{{ item.note|linebreaksbr }}</p>
+      </details>
+    {% endfor %}
+  </section>
+{% endif %}

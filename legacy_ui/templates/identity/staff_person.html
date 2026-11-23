@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Staff access · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>{{ person.get_full_name|default:person.username }}</h1><p>{{ person.email }} · {% if person.is_active %}Active{% else %}Inactive{% endif %}</p></div><a class="button secondary" href="{% url 'staff_roster' %}">Back to staff</a></header>
+<section class="card"><h2>Workspace access</h2><p>Account access lets a person use workspace functions. Project responsibilities and approval authority have their own reviewed assignments.</p>
+<div class="table-wrap detail-table"><table><thead><tr><th>Workspace</th><th>Primary role</th><th>Applied access</th><th>Action</th></tr></thead><tbody>
+{% for case in workspaces %}<tr><th scope="row">{{ case.title }}</th>
+  <td data-label="Primary role">{{ case.primary_role|default:"Unassigned" }}</td>
+  <td data-label="Applied access">{{ case.account_access_label }}</td>
+  <td data-label="Action">
+    {% if case.can_assign_primary_role %}<a href="{% url 'staff_primary_role' case.pk person.pk %}">Review primary role</a> · <a href="{% url 'staff_scope_move' case.pk person.pk %}">Move to a team scope</a> · {% endif %}
+    {% if case.can_edit_profile %}<a href="{% url 'staff_profile_access' case.pk person.pk %}">Review access</a> · {% endif %}
+    <a href="{% url 'workspace_settings' case.pk %}">Project decision rules</a>
+  </td></tr>{% empty %}<tr><td colspan="4">No workspaces available within your current access.</td></tr>{% endfor %}</tbody></table></div>
+<nav aria-label="Staff workspace pages">{% if workspaces.has_previous %}<a class="button secondary" href="?page={{ workspaces.previous_page_number }}">Previous</a>{% endif %}{% if workspaces.has_next %}<a class="button secondary" href="?page={{ workspaces.next_page_number }}">Next</a>{% endif %}</nav>
+<p class="coverage-note">{{ workspaces.paginator.count }} managed workspaces, {{ workspaces|length }} on this page. Profile labels are checked against current access and its last recorded change.</p></section>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Overview · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Factory overview</h1><p class="lede">Open work you can see, grouped by workflow.</p></div></header>
+<section class="card factory-floor" aria-labelledby="floor-heading">
+  <header><h2 id="floor-heading">Work in progress</h2><strong>{{ total }} open</strong></header>
+  {% for line in lines %}
+  <a href="{% url 'home' %}?queue=active&amp;line={{ line.key|urlencode }}" class="floor-line">
+    <span>{{ line.title }}</span><strong>{{ line.total }} open</strong>
+  </a>
+  {% empty %}<p class="empty-state">There is no open factory work you can see.</p>{% endfor %}
+</section>
+<p class="coverage-note">Checked {{ as_of|date:'d M Y, H:i T' }}. Counts cover registered open work visible in this view. Check payroll and business-unit work in their own workspaces.</p>
+{% endblock %}

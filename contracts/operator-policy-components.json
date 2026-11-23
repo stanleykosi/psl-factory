@@ -2,6 +2,186 @@
   "classification": "Supplemental engineering operator/protection interfaces; no new process or consolidated D group, no default RPO/RTO or real appointments",
   "components": [
     {
+      "id":"OPS.factory_native_station_execution", "parent_decision_id":"OPS",
+      "schema_ref":"schema:psl/policy-component/OPS.factory_native_station_execution/v1",
+      "subject_scope":"Execution limits and the information reviewer for the project's native department handoffs.",
+      "current_value":null, "status":"UNCONFIGURED",
+      "value_schema":{"type":"object","additionalProperties":false,"required":["artifact_ref","artifact_version","sha256","schema_ref"],
+        "properties":{"artifact_ref":{"type":"string","minLength":1},"artifact_version":{"type":"integer","minimum":1},
+        "sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},"schema_ref":{"type":"string","pattern":"^schema:"}}}
+    },
+    {
+      "id":"OPS.issue_message_controls",
+      "parent_decision_id":"OPS",
+      "schema_ref":"schema:psl/policy-component/OPS.issue_message_controls/v1",
+      "subject_scope":"Exact project owner-message reviewers, release authority, team destinations and optional timing",
+      "current_value":null,
+      "status":"UNCONFIGURED",
+      "value_schema":{
+        "type":"object",
+        "properties":{
+          "artifact_ref":{"type":"string","minLength":1},
+          "artifact_version":{"type":"integer","minimum":1},
+          "sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},
+          "schema_ref":{"const":"schema:psl/issue-message-controls/v1"}
+        },
+        "required":["artifact_ref","artifact_version","sha256","schema_ref"],
+        "additionalProperties":false
+      }
+    },
+    {
+      "id": "OPS.issue_team_controls",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.issue_team_controls/v1",
+      "subject_scope": "Exact project external issue teams, human recorder roles and evidenced source clocks",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"enum": ["schema:psl/issue-team-controls/v1", "schema:psl/issue-team-controls/v2"]}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.costing_version_review",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.costing_version_review/v1",
+      "subject_scope": "Independent human review of an exact proposed calculator source before native owner confirmation and activation",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"const": "schema:psl/costing-version-review/v1"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.handover_reply_capture",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.handover_reply_capture/v1",
+      "subject_scope": "Configured roles recording an exact delivered Support reply with source proof, party, time and current authority",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"const": "schema:psl/handover-reply-capture/v1"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.archive_file_transfer",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.archive_file_transfer/v1",
+      "subject_scope": "Exact public project evidence and its bound attachments, reviewed private archive store, scoped operator and per-file receipt recovery",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"const": "schema:psl/archive-file-transfer/v1"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.payment_reminder_delivery",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.payment_reminder_delivery/v1",
+      "subject_scope": "Exact case billing contact versions, delivery and receipt authority, channel and timing",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"const": "schema:psl/payment-reminder-delivery/v1"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.invoice_short_payment_review",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.invoice_short_payment_review/v1",
+      "subject_scope": "Exact Finance reviewer and permitted human treatments for verified invoice shortfalls. No authority to waive debt, move cash or release a deployment.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"const": "schema:psl/invoice-short-payment-review/v1"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.bid_cost_adjustments",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.bid_cost_adjustments/v1",
+      "subject_scope": "Reviewed monetary input mappings and cumulative limits for an assigned project manager editing the exact native bid calculation.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"const": "schema:psl/bid-cost-adjustments/v1"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.rfp_security_estimate_routes",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.rfp_security_estimate_routes/v1",
+      "subject_scope": "Reviewed destinations and attachment permissions for Security estimate requests from the assigned bid project manager.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"const": "schema:psl/rfp-security-estimate-routes/v1"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
       "id": "OPS.factory_forecast_execution",
       "parent_decision_id": "OPS",
       "schema_ref": "schema:psl/policy-component/OPS.factory_forecast_execution/v1",
@@ -142,6 +322,25 @@
           "sha256",
           "schema_ref"
         ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.rfp_loss_catalog",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.rfp_loss_catalog/v1",
+      "subject_scope": "Optional approved loss reasons. No initial values, business appointment, debrief scheduling or archive approval.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"const": "schema:psl/rfp-loss-catalog/v1"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
         "additionalProperties": false
       }
     },
@@ -293,7 +492,7 @@
       "id": "OPS.factory_coordinator",
       "parent_decision_id": "OPS",
       "schema_ref": "schema:psl/policy-component/OPS.factory_coordinator/v1",
-      "subject_scope": "Supplemental engineering planning mode, nominated principal and explicit opaque-metadata provider contract. No private evidence body, financial value, business approval, credential or real appointment is supplied.",
+      "subject_scope": "Accountable project principal for new OpenRouter coordination. Source disclosure is set in the project’s specialist source settings. Historical planning requests retain their original recorded binding for receipt lookup.",
       "current_value": null,
       "status": "UNCONFIGURED",
       "value_schema": {
@@ -1798,6 +1997,44 @@
           "sha256",
           "schema_ref"
         ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.leadership_project_scope",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.leadership_project_scope/v1",
+      "subject_scope": "Owner enablement of P40/P42 coverage across separately authorised projects in the same organisation. Does not grant access, recipient membership, calculated performance or completeness.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "OPS.go_live_milestone_mapping",
+      "parent_decision_id": "OPS",
+      "schema_ref": "schema:psl/policy-component/OPS.go_live_milestone_mapping/v1",
+      "subject_scope": "Optional P34 milestone name approved for one exact project delivery dossier and signed baseline. Requires a separate human PM completion with independent evidence. Billing authority is configured separately.",
+      "current_value": null,
+      "status": "UNCONFIGURED",
+      "value_schema": {
+        "type": "object",
+        "properties": {
+          "artifact_ref": {"type": "string", "minLength": 1},
+          "artifact_version": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "schema_ref": {"type": "string", "pattern": "^schema:"}
+        },
+        "required": ["artifact_ref", "artifact_version", "sha256", "schema_ref"],
         "additionalProperties": false
       }
     },

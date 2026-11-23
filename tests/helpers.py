@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 from datetime import timedelta
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -15,9 +16,41 @@ from apps.core.management.commands.seed_demo import ACTIONS
 def setup_case(kind='project', synthetic=True, username='human',case_id=None):
     actor = get_user_model().objects.create_user(username=username, password='test-only-password')
     case = Case.objects.create(**({'id':case_id} if case_id else {}),tenant='test-tenant',title='Test engagement',kind=kind,synthetic=synthetic)
-    for action in ACTIONS:
-        Grant.objects.create(user=actor,case=case,action=action)
+    Grant.objects.bulk_create([Grant(user=actor, case=case, action=action) for action in ACTIONS])
     return actor,case
+
+
+def worker_test_environment(connection):
+    database = connection.settings_dict['NAME']
+    if connection.vendor != 'postgresql' or not database.startswith('test_'):
+        raise RuntimeError('A subprocess test requires an isolated PostgreSQL test database.')
+    # A worker connects to the database that its parent already prepared.
+    return {**os.environ, 'PGDATABASE': database, 'DJANGO_SETTINGS_MODULE': 'config.settings'}
+
+
+def check_investigation_progress(test, actor, work, label):
+    from django.urls import reverse
+    from apps.agents.factory_catalogue import SyntheticFactoryCoordinator
+    from apps.workflows import factory
+
+    client = test.client
+    client.force_login(actor)
+    url = reverse('factory_detail', args=[work.pk])
+    api = f'/api/v1/work/{work.pk}'
+
+    class ObserveInvestigation(SyntheticFactoryCoordinator):
+        def choose(self, context):
+            test.assertEqual(context['eligible'], ['ACT04'])
+            test.assertContains(client.get(url), label)
+            active = client.get(api).json()
+            test.assertEqual(active['state'], 'processing')
+            test.assertEqual(active['current_activity'], {'label': label, 'watching': True})
+            return super().choose(context)
+
+    test.assertNotContains(client.get(url), label)
+    test.assertTrue(factory.run_once(work.pk, provider=ObserveInvestigation()))
+    test.assertNotContains(client.get(url), label)
+    test.assertNotIn('current_activity', client.get(api).json())
 
 
 def envelope(case, component, value, evidence):

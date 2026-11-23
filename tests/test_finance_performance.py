@@ -26,6 +26,22 @@ class FinancePerformanceTests(TestCase):
     @classmethod
     def setUpTestData(cls):cls.data=fixture_performance()
 
+    def test_factory_month_end_shows_only_current_reviewed_figures(self):
+        from django.urls import reverse
+
+        actor, case = self.data[:2]
+        self.client.force_login(actor)
+        url = reverse('design_project_tab', args=[case.pk, 'month-end'])
+        self.assertContains(self.client.get(url, {'month': '2026-10'}), '609.99')
+        self.assertContains(self.client.get(url, {'month': '2026-09'}), 'No reviewed figures')
+        self.assertNotContains(self.client.get(url, {'month': '2026-13'}), '609.99')
+        Grant.objects.filter(user=actor, case=case, action='finance.seal').update(active=False)
+        response = self.client.get(url, {'month': '2026-10'})
+        self.assertContains(response, 'Needs a fresh review')
+        self.assertNotContains(response, '609.99')
+        Grant.objects.filter(user=actor, case=case, action='finance.read').update(active=False)
+        self.assertEqual(self.client.get(url, {'month': '2026-10'}).status_code, 403)
+
     def test_explicit_budget_ytd_comparison_and_undefined_ratio(self):
         report=build(self.data)
         self.assertEqual(connection.vendor,'postgresql');self.assertEqual(report.result['status'],'complete')

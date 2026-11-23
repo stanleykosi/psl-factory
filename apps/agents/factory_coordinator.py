@@ -2,12 +2,14 @@
 from django.core.exceptions import PermissionDenied,ValidationError
 from apps.policy.services import active_component,reference_values
 from apps.policy.factory_coordinator_validators import COMPONENT
-from apps.policy.factory_coordinator_validators import PROTOCOL,SCOPE
+from apps.policy.factory_coordinator_validators import PROTOCOL
 from django.db import transaction
 from django.db.models import Exists,OuterRef
 from django.utils import timezone
 from datetime import timedelta
 from apps.documents.contracts import digest,validate
+
+RECEIPT_LOOKUP_LEASE = timedelta(seconds=30)
 
 class PlanningUnknown(ConnectionError):
     pass
@@ -42,21 +44,9 @@ def provider_binding(work,value):
     public,private=binding(contract)
     return contract,public,private,pins
 
-def intent(work,context,activity,number):
-    policy,value=configured(work)
-    result={'schema':'factory-coordinator-plan/v1','coordinator_policy':policy.pk,'mode':value['mode']}
-    if value['mode']=='internal_permitted_step_v1':return result
-    contract,public,_,pins=provider_binding(work,value)
-    if len(context['evidence_ids'])>16:raise ValidationError('Coordinator citation ceiling exceeded')
-    handles={f'c{i}':pk for i,pk in enumerate(context['evidence_ids'])}
-    execution=reference_values(work.policy)[0]
-    payload={'protocol':PROTOCOL,'model_id':contract.payload['model_id'],'data_scope':SCOPE,
-        'eligible':context['eligible'],'citation_handles':list(handles),'tools':[],
-        'token_limit':execution['tokens_per_call'],'max_output_chars':value['max_output_chars']}
-    result.update(schema='factory-provider-request/v1',contract=contract.pk,binding=public,readiness=pins,
-        payload=payload,citation_map=handles,native_context=context,max_output_chars=value['max_output_chars'])
-    result['operation_key']=digest({'work':work.pk,'activity':activity.pk,'number':number,'intent':result})
-    return result
+def intent(work):
+    policy, _ = configured(work)
+    return {'schema': 'factory-coordinator-plan/v1', 'coordinator_policy': policy.pk, 'mode': 'internal_permitted_step_v1'}
 
 def pending(work):
     from apps.workflows.models import FactoryAttempt
@@ -70,14 +60,16 @@ def has_receipt(attempt):
 
 def assert_current(work,request):
     policy,value=configured(work)
-    if request.get('coordinator_policy')!=policy.pk or request.get('mode')!=value['mode']:
+    if request.get('coordinator_policy')!=policy.pk:
         raise ValidationError('STALE_VERSION: coordinator settings changed while planning')
-    if value['mode']=='authenticated_planner_v1':
+    if request.get('schema') == 'factory-provider-request/v1':
+        if value['mode'] != 'authenticated_planner_v1':
+            raise ValidationError('STALE_VERSION: historical planner settings changed')
         contract,public,_,pins=provider_binding(work,value)
         if request['contract']!=contract.pk or request['binding']!=public or request['readiness']!=pins:
             raise ValidationError('STALE_VERSION: provider readiness or binding changed while planning')
 
-def fetch(attempt,actor,send_allowed=False):
+def fetch(attempt,actor):
     from apps.workflows.models import FactoryPlanningReceipt
     from apps.workflows import readiness
     from adapters.readiness import binding
@@ -98,14 +90,9 @@ def fetch(attempt,actor,send_allowed=False):
         recovery,private=transport(attempt,actor)
         # The returned receipt continues to identify the original immutable operation.
         public=request['binding']
-        send_allowed=False
     adapter=FactoryPlannerAdapter()
     try:
         answer=adapter.lookup(request,private)
-        if answer is None and send_allowed:
-            current=type(work).objects.select_related('case','actor').get(pk=work.pk)
-            assert_current(current,request)
-            answer=adapter.plan(request,private)
         if answer is None:raise PlanningUnknown('Original planning result remains uncertain; no new request sent')
     except (TimeoutError,ConnectionError) as exc:raise PlanningUnknown('Original planning result remains uncertain; check its receipt before further work') from None
     try:output_sha256=digest(answer)
@@ -126,15 +113,14 @@ def fetch(attempt,actor,send_allowed=False):
             attach(receipt,recovery)
         return receipt
 
-def choose(work,context,attempt=None,resuming=False):
-    _,value=configured(work)
-    if value['mode']=='internal_permitted_step_v1':
-        return {'activity':context['eligible'][0],'citations':context['evidence_ids'][:1]},value['mode']
-    if attempt is None:raise ValidationError('Native started planning request required')
-    receipt=fetch(attempt,work.execution_actor,send_allowed=not resuming)
+def choose(work,context,attempt):
+    assert_current(work, attempt.result)
+    if attempt.result['schema'] != 'factory-provider-request/v1':
+        return {'activity':context['eligible'][0],'citations':context['evidence_ids'][:1]}, 'internal_permitted_step_v1'
+    receipt=fetch(attempt,work.execution_actor)
     if not receipt.valid:raise ValidationError('Planning provider result rejected; no native command authorised')
     assert_current(work,attempt.result)
-    return receipt.result,value['mode']
+    return receipt.result, 'authenticated_planner_v1'
 
 def reconcile(actor,work_id,expected):
     from apps.workflows.factory import access,fence,cancellation_status
@@ -150,7 +136,7 @@ def reconcile(actor,work_id,expected):
         if work.lease_until and work.lease_until>timezone.now():raise ValidationError('CONFLICT: worker owns this work')
         attempt=pending(work)
         if attempt is None:raise ValidationError('No original planning response to reconcile')
-        work.fence+=1;token=work.fence;work.lease_until=timezone.now()+timedelta(seconds=30);work.revision+=1;work.save()
+        work.fence+=1;token=work.fence;work.lease_until=timezone.now()+RECEIPT_LOOKUP_LEASE;work.revision+=1;work.save()
         event(actor,work.case,'factory.planning_lookup_requested',work=work.pk,attempt=attempt.pk,lookup_only=True)
     receipt=None;finding=''
     try:receipt=fetch(attempt,actor)

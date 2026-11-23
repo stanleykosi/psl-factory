@@ -12,13 +12,13 @@ from apps.agents.models import AgentRun
 from .models import CommercialCase, CommercialRevision, ChangeRequest, ChangeVersion, ChangeAuthorization, ChangeDocumentBinding
 from .change_execution import record_execution, draft_change_document, close_change
 from .commercial_forms import ProposalForm, CommercialDecisionForm, SignaturePacketForm, SignatureContractForm, InternalSignatureExemptionForm
-from .commercial import SOURCE_KINDS, propose, decide_proposal, draft_submission, capture_response, adopt_signed
+from .commercial import SOURCE_KINDS, propose, decide_proposal, draft_submission, capture_response, adopt_signed, sow_bindings
 from .changes import log_change, assess_change, decide_change, authorize_change, CONTRIBUTORS, DECISION_ROLES
 
 
 @login_required
 def workbench(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'commercial.read')
+    case=accessible_case(request.user,case_id,source_action='commercial.read');require(request.user,case,'commercial.read')
     form=ProposalForm(case=case,auto_id='proposal_%s')
     from .signatures import capture_packet, latest, packet_status
     from .models import CommercialSignaturePacket
@@ -69,16 +69,35 @@ def workbench(request,case_id):
         except (ValidationError,ValueError,KeyError) as exc:
             messages.error(request,str(exc));case.refresh_from_db()
     dossier=CommercialCase.objects.filter(case=case).select_related('current').first()
+    from .commercial_client_response import source_note_visible
+    from .commercial_models import ClientResponse
+    from apps.core.models import Evidence
+    client_responses = []
+    if dossier and dossier.current_id:
+        rows = ClientResponse.objects.filter(revision_id=dossier.current_id).select_related('evidence').defer('note', 'evidence__body').order_by('-pk')[:50]
+        for row in rows:
+            visible = source_note_visible(request.user, case, row.evidence.source)
+            client_responses.append({'record': row, 'note': row.note if visible else None})
+    packets = list(CommercialSignaturePacket.objects.filter(case=case).defer('note').order_by('-pk')[:50])
+    signature_ids = [packet.signatures.get('sow', {}).get('evidence_id') for packet in packets]
+    signature_sources = dict(Evidence.objects.filter(case=case, pk__in=signature_ids).values_list('pk', 'source'))
+    signature_packets = []
+    for packet in packets:
+        source = signature_sources.get(packet.signatures.get('sow', {}).get('evidence_id'), '')
+        visible = source_note_visible(request.user, case, source)
+        signature_packets.append((packet, packet_status(packet), packet.note if visible else None))
     from .models import RFPCase,RFPDisposition,RFPResponse
     rfp_workspace=RFPCase.objects.filter(case=case).first()
     converted=bool(rfp_workspace and RFPDisposition.objects.filter(rfp=rfp_workspace,kind='route_a').exists())
+    can_open_sow = request.user.grant_set.filter(case=case, action='document.read', active=True).exists()
+    sow_versions = sow_bindings(case).values_list('version_id', 'version__number', 'revision__number').order_by('-pk')[:15] if can_open_sow else []
     return render(request,'pmo/commercial.html',{'case':case,'form':form,'dossier':dossier,'rfp_workspace':rfp_workspace,'rfp_converted':converted,
         'is_rfp_proposal':bool(dossier and RFPResponse.objects.filter(commercial_id=dossier.current_id).exists()),
         'revisions':CommercialRevision.objects.filter(dossier__case=case).order_by('-number'),
         'signature_form': signature_form, 'signature_contract_form': contract_form,
         'exemption_form': exemption_form, 'signature_exemptions': BaselineSignatureExemption.objects.filter(case=case).order_by('-pk'),
-        'signature_packets': [(packet, packet_status(packet)) for packet in CommercialSignaturePacket.objects.filter(case=case).order_by('-pk')],
-        'decision_form':CommercialDecisionForm(auto_id='decision_%s'),
+        'signature_packets': signature_packets, 'client_responses': client_responses,
+        'decision_form':CommercialDecisionForm(auto_id='decision_%s'), 'sow_versions':sow_versions,
         'templates':Template.objects.filter(case=case,definition__document_type='sow'),
         'template_scopes':TemplateScope.objects.filter(case=case,document_type='sow',audience='client') if request.user.grant_set.filter(case=case,action='document.read',active=True).exists() else TemplateScope.objects.none(),
         'receipts':PublicationReceipt.objects.filter(publication__version__commercialdocumentbinding__revision__dossier__case=case),
@@ -88,7 +107,7 @@ def workbench(request,case_id):
 
 @login_required
 def changes(request,case_id):
-    case=accessible_case(request.user,case_id);require(request.user,case,'change.read')
+    case=accessible_case(request.user,case_id,source_action='change.read');require(request.user,case,'change.read')
     from .standard_changes import preapprove, bind_standard, catalogue
     from .standard_forms import StandardPolicyForm
     from apps.policy.change_drafts import draft_standard_policy
@@ -142,6 +161,9 @@ def changes(request,case_id):
     for auth in authorizations:
         receipt=next((r for r in change_receipts if r.publication.version.changedocumentbinding.authorization_id==auth.pk and r.publication.version.changedocumentbinding.purpose=='go_live'),None)
         auth.applicability=applicability_presentation(auth,receipt,request.user)
+    from .release_proofs import own_pdfs
+    can_upload_impact_proof = request.user.grant_set.filter(case=case, action='evidence.add', active=True).exists()
+    impact_pdfs = own_pdfs(request.user, case).order_by('-pk')[:30] if can_upload_impact_proof else ()
     return render(request,'pmo/changes.html',{'case':case,'versions':versions,'evidence':case.evidence.exclude(kind__startswith='agent_private_').order_by('-pk'),
         'standard_entries':entries,'standard_gates':gates,'standard_policies':policies,'standard_error':catalogue_error,
         'standard_policy_form':policy_form,'preapprovals':StandardPreapproval.objects.filter(case=case).order_by('-pk')[:100],
@@ -150,4 +172,4 @@ def changes(request,case_id):
         'contributors':CONTRIBUTORS,'roles':DECISION_ROLES,'commercial':CommercialRevision.objects.filter(dossier__case=case),
         'authorizations':authorizations,'applicability_question':OWNER_QUESTION,'applicability_draft':json.dumps(unresolved_draft(case),indent=2),
         'templates':Template.objects.filter(case=case,definition__document_type__in=['status_report','project_artifact']),
-        'change_receipts':change_receipts})
+        'change_receipts':change_receipts, 'impact_pdfs':impact_pdfs, 'can_upload_impact_proof':can_upload_impact_proof})

@@ -20,8 +20,9 @@ class StudioLayoutTests(TestCase):
         client=Client(enforce_csrf_checks=csrf);client.force_login(self.a);return client
 
     def test_every_template_compiles_after_shared_shell_and_copy_changes(self):
-        for path in sorted((settings.BASE_DIR/'templates').rglob('*.html')):
-            with self.subTest(template=path.name):get_template(path.relative_to(settings.BASE_DIR/'templates').as_posix())
+        templates = settings.LEGACY_UI_DIR / 'templates'
+        for path in sorted(templates.rglob('*.html')):
+            with self.subTest(template=path.name):get_template(path.relative_to(templates).as_posix())
 
     def test_overview_preserves_actual_names_escaping_search_and_no_development_badges(self):
         self.c.title='Client <script>alert(1)</script>';self.c.save(update_fields=['title'])
@@ -57,6 +58,7 @@ class StudioLayoutTests(TestCase):
 
     def test_restyled_document_capture_keeps_csrf_native_revision_and_exact_source(self):
         client=self.client_for(True);url=reverse('case',args=[self.c.pk]);client.get(url)
+        self.assertContains(client.get(url), 'case-document.js')
         value={'action':'evidence','revision':rev(self.c),'kind':'document','body':'Exact client brief <script>private()</script>','source':'internal:layout-review'}
         self.assertEqual(client.post(url,value).status_code,403)
         response=client.post(url,dict(value,csrfmiddlewaretoken=client.cookies['csrftoken'].value))

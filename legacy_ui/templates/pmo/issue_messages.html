@@ -1,0 +1,22 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block title %}Owner messages · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><a class="back-link" href="{% url 'issues' case.pk %}">← Issues</a><h1>Owner messages</h1><p class="lede">{{ issue.current.title }}</p></div></header>
+<p>A delivered request is separate from the owner's acknowledgement, progress or resolution.</p>
+{% if finding %}<p role="status">{{ finding }}</p>{% endif %}
+{% if timeline.last_delivery %}<section class="card"><h2>Follow-up timing</h2><dl class="workspace-summary">
+<div><dt>Last confirmed delivery</dt><dd>{{ timeline.last_delivery.delivered_at|date:'d M Y, H:i:s T'|default:'Actual time unknown' }}</dd></div>
+<div><dt>Next reminder permitted</dt><dd>{{ timeline.reminder_due_at|date:'d M Y, H:i:s T'|default:timeline.reminder_hold }}</dd></div>
+<div><dt>Escalation due</dt><dd>{{ timeline.escalation_due_at|date:'d M Y, H:i:s T'|default:timeline.escalation_hold }}</dd></div>
+<div><dt>Escalation destination</dt><dd>{% if timeline.escalation_target %}{{ timeline.escalation_target|role_name }}{% else %}Awaiting owner decision{% endif %}</dd></div></dl>
+{% if timeline.finding %}<p role="status">{{ timeline.finding }}</p>{% endif %}
+<p><a href="{% url 'escalations' case.pk %}">Review escalation decisions</a></p></section>{% elif timeline.finding %}<p role="status">{{ timeline.finding }}</p>{% endif %}
+{% if can_prepare %}<section class="card"><h2>Prepare a message</h2><p>The suggestion uses this issue's current owner and next action. You can edit it before review.</p>
+<form method="post" data-message-action="prepare">{% csrf_token %}{{ form.as_p }}<button>Prepare suggested wording</button></form></section>{% endif %}
+<section><h2>Requests and reminders</h2>{% for row in rows %}<article class="card">
+<h3><a href="{% url 'issue_message_detail' case.pk issue.pk row.draft.pk %}">{{ row.draft.kind|readable }} · version {{ row.draft.number }}</a></h3>
+<p>{{ row.status }} · prepared {{ row.draft.created_at|date:'d M Y, H:i T' }}</p>
+{% if row.dispatch %}<p>Scheduled {{ row.dispatch.not_before|date:'d M Y, H:i:s T' }}</p>{% endif %}
+{% if row.receipt %}<p>{{ row.receipt.clock_source|readable }} · receipt recorded {{ row.receipt.created_at|date:'d M Y, H:i:s T' }}</p>{% endif %}
+{% if row.finding %}<p role="status">{{ row.finding }}</p>{% endif %}</article>{% empty %}<p>No owner messages have been prepared in this view.</p>{% endfor %}</section>
+{% if 'policy.configure' in permissions and 'policy.read' in permissions %}<p><a href="{% url 'issue_message_configuration' case.pk %}">Owner-message settings</a></p>{% endif %}
+{% endblock %}

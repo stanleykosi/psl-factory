@@ -10,6 +10,7 @@ from apps.core.presentation import workspace_name
 from apps.core.workbench import granted
 from apps.pmo.models import DeliveryDossier
 from . import factory,factory_archive as archive
+from .factory_progress_views import StartWithBackground, start_work
 
 
 def evidence_label(e):return f'{e.body[:70]} · version {e.version} · evidence {e.pk}'
@@ -28,7 +29,7 @@ class InventoryForm(forms.Form):
     def inventory(self):return {kind:self.cleaned_data['inventory_'+kind].pk if self.cleaned_data['inventory_'+kind] else None for kind in self.kinds}
 
 
-class StartForm(forms.Form):
+class StartForm(StartWithBackground):
     definition=forms.CharField(initial=archive.DEFINITION,widget=forms.HiddenInput)
     key=forms.CharField(widget=forms.HiddenInput,max_length=100)
     case=forms.ModelChoiceField(queryset=Case.objects.none(),label='Project')
@@ -59,8 +60,8 @@ def create(request):
             try:
                 v=form.cleaned_data
                 if v['definition']!=archive.DEFINITION:raise ValidationError('Choose registered archive work')
-                work=archive.start(request.user,v['case'].pk,v['key'],v['dossier'].pk,inventory.inventory(),v['reference'],v['revision'])
-                return redirect('factory_detail',work.pk)
+                return start_work(request, lambda: archive.start(request.user, v['case'].pk, v['key'], v['dossier'].pk,
+                                  inventory.inventory(), v['reference'], v['revision']), v['background'])
             except ValidationError as exc:form.add_error(None,str(exc))
     return render(request,'factory/archive_start.html',{'form':form,'inventory_form':inventory,'case':form.selected})
 
@@ -72,10 +73,43 @@ def detail(request,work):
     panel=archive.projection(request.user,work)
     form=InventoryForm(work.case,request.POST if request.method=='POST' and request.POST.get('action')=='correct_inventory' else None,
         inventory=panel['data']['inventory'])
+    from apps.pmo import archive_transfer
+    from apps.pmo.archive_transfer_forms import panels as file_panels
+    selection_form, file_rules_form = file_panels(request.user, work, panel,
+        request.POST if request.method == 'POST' else None, request.POST.get('action'))
     if request.method=='POST':
         try:
             action=request.POST.get('action');revision=int(request.POST.get('revision','0'))
-            if action=='correct_inventory':
+            if action == 'archive_files':
+                if selection_form is None:
+                    from django.core.exceptions import PermissionDenied
+                    raise PermissionDenied('Current file archive authority is required.')
+                if not selection_form.is_valid():
+                    raise ValidationError('Review the selected archive documents.')
+                archive_transfer.reserve(request.user, work.pk, revision, int(request.POST.get('case_revision', '0')),
+                    [int(pk) for pk in selection_form.cleaned_data['sources']])
+            elif action == 'archive_file_rules':
+                from apps.core.services import lock_case
+                from django.db import transaction
+                if file_rules_form is None or not file_rules_form.is_valid():
+                    raise ValidationError('Complete the reviewed archive store and operator choices.')
+                with transaction.atomic():
+                    current_case = lock_case(request.user, work.case_id, 'policy.configure', int(request.POST.get('case_revision', '0')))
+                    file_rules_form.save(request.user, current_case)
+            elif action in ['archive_file_lookup', 'archive_file_retry']:
+                from apps.identity.services import require
+                from apps.pmo.models import ArchiveCopyJob
+                require(request.user, work.case, 'factory.read')
+                job = ArchiveCopyJob.objects.filter(pk=int(request.POST.get('job', '0')), file__plan__work=work).first()
+                if not job:
+                    raise ValidationError('Choose this work item original file attempt.')
+                expected = int(request.POST.get('job_revision', '0'))
+                if action == 'archive_file_lookup':
+                    archive_transfer.access(request.user, work.case)
+                    archive_transfer.run_once(job.pk, actor=request.user, lookup_only=True, expected=expected)
+                else:
+                    archive_transfer.retry_missing(request.user, job.pk, expected)
+            elif action=='correct_inventory':
                 if not form.is_valid():raise ValidationError('Review the declared inventory choices')
                 archive.correct(request.user,work.pk,revision,int(request.POST.get('case_revision','0')),form.inventory(),request.POST.get('reason',''))
             elif action=='advance':factory.advance(request.user,work.pk,revision)
@@ -86,12 +120,36 @@ def detail(request,work):
             elif action=='adopt_profile':factory.adopt_profile(request.user,work.pk,revision,int(request.POST.get('configuration','0')),request.POST.get('reason',''))
             else:raise ValidationError('Choose a currently available archive action')
             messages.success(request,'Archive action recorded. Review the current evidence and outcome.');return redirect(request.get_full_path())
-        except (ValidationError,ValueError) as exc:messages.error(request,str(exc))
+        except ValidationError as exc:
+            messages.error(request,' '.join(exc.messages))
+        except ValueError:
+            messages.error(request,'Refresh this work and choose current record references.')
         work.refresh_from_db()
     row=presentation(request.user,work);activities=list(work.activities.prefetch_related('attempts').order_by('pk'))
+    files = archive_transfer.projection(request.user, work)
+    if files['plan'] and not files['finding'] and not work.cancel_requested:
+        recovering = any(file.display_status in ('Original copy needs checking', 'Confirmation missing',
+                                                  'File not found', 'Needs review') for file in files['files'])
+        if not recovering and files['watching']:
+            row.update(state='Copying selected files' if files['copying'] else 'Archive work in progress',
+                       next_action='Wait for the selected file receipts', blocker='', can_advance=False)
+        elif files['verified'] and work.status not in ('verified', 'cancelled', 'followup_needed'):
+            row.update(next_action='Verify the archive and the original file receipts', blocker='')
+    from django.urls import reverse
+    from urllib.parse import urlencode
+    from .models import FactoryWork
+    handover_work = FactoryWork.objects.filter(case=work.case, definition='delivery-handover/v1',
+        request__dossier=row['archive']['dossier'].pk).first()
+    handover_url = reverse('factory_detail', args=[handover_work.pk]) if handover_work else (
+        reverse('factory_create') + '?' + urlencode({'definition':'delivery-handover/v1',
+            'case':str(work.case_id), 'dossier':row['archive']['dossier'].pk}))
     for activity in activities:
         activity.title={'ACT03':'Plan next permitted work','ACT04':'Investigate final evidence','ACT08':'Prepare the archive index','ACT10':'Resolve rules and operator','ACT13':'Verify the archive index'}.get(activity.kind,'Review permitted work')
         for attempt in activity.attempts.all():attempt.display_result=archive.attempt_projection(attempt)
     response=render(request,'factory/archive_detail.html',{'case':work.case,'row':row,'queue':queue,'q':q,'activities':activities,
-        'inventory_form':form,'can_configure':permitted(request.user,work,'policy.configure')})
+        'handover_url': handover_url,
+        'can_start_handover': work.status=='verified' and not row.get('readiness_changed') and
+            permitted(request.user,work,'factory.start') and permitted(request.user,work,'evidence.add'),
+        'inventory_form':form,'file_archive': files, 'archive_selection_form': selection_form,
+        'archive_file_rules_form': file_rules_form, 'can_configure':permitted(request.user,work,'policy.configure')})
     response['Cache-Control']='no-store';return response

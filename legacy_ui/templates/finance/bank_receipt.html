@@ -1,0 +1,66 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Payment received · {{ issue.invoice.reference }}{% endblock %}
+{% block content %}
+<a class="back-link" href="{% url 'design_payments' %}">← Payments</a>
+<header class="page-heading"><div><h1>{% if receipt %}Recorded bank payment{% else %}Record a payment received{% endif %}</h1>
+  <p>{{ issue.invoice.reference }} · {{ issue.invoice.preparation.coverage.customer }}</p></div></header>
+<div class="factory-case-layout"><div>
+{% if report %}
+  <section class="card"><h2>Money received</h2><p>Use the actual bank date and time in {{ timezone_name }}. Blank amount means Unknown.</p>
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="report">
+      {{ report.as_p }}<button>Record reported payment</button>
+    </form>
+  </section>
+{% elif receipt %}
+  <section class="card"><h2>Reported receipt</h2>
+    <dl class="decision-facts">
+      <dt>Received from</dt><dd>{{ receipt.payload.customer }}</dd>
+      <dt>Reported amount</dt><dd>{% if receipt.payload.amount is None %}Unknown{% else %}{{ receipt.payload.currency }} {{ receipt.payload.amount|decimal_display }}{% endif %}</dd>
+      {% if supplement %}<dt>Amount supplied from bank proof</dt><dd>{{ supplement.payload.currency }} {{ supplement.payload.amount|decimal_display }}</dd>{% endif %}
+      <dt>Bank date and time</dt><dd>{{ received_at|recorded_time }}</dd>
+      <dt>Bank reference</dt><dd>{{ receipt.transaction_ref }}</dd>
+    </dl>
+    {% if report_proof %}<p><a href="{% url 'finance_bank_proof' case.pk issue.pk receipt.pk 'report' %}">{{ report_proof.name }}</a></p>{% endif %}
+    {% if supplied_proof %}<p><a href="{% url 'finance_bank_proof' case.pk issue.pk receipt.pk 'reported-amount' %}">Open new bank proof · {{ supplied_proof.name }}</a></p>{% endif %}
+  </section>
+  {% if supplied_form %}<section class="card"><h2>Supply the confirmed bank amount</h2>
+    <p>The original report stays on record. Finance must verify the new statement before any payment can be applied.</p>
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="supply_amount">
+      {{ supplied_form.as_p }}<button>Record confirmed amount</button>
+    </form>
+  </section>{% endif %}
+  <section class="card"><h2>Verify the payment</h2>
+    {% if lot %}<p>{% if reversed_lot %}Earlier verification · cash reversed{% else %}Verified{% endif %} · {{ lot.amount|decimal_display }} {{ receipt.payload.currency }}</p>
+      {% if verification_proof %}<p><a href="{% url 'finance_bank_proof' case.pk issue.pk receipt.pk 'verification' %}">Open verification proof · {{ verification_proof.name }}</a></p>{% endif %}
+    {% elif verification %}<form method="post" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="verify">
+      <p>Check the exact reported facts. Supply a separate bank statement if the rule requires it.</p>
+      {{ verification.as_p }}<button>Verify reported payment</button>
+    </form>
+    {% else %}<p>{{ verification_hold }}</p>{% endif %}
+  </section>
+{% else %}
+  <section class="card"><p>A current Finance recorder with evidence access can record this payment.</p></section>
+{% endif %}
+{% if recent_receipts %}<section class="card"><h2>Recent reported payments from this customer</h2>
+  <ul>{% for recorded in recent_receipts %}<li><a href="{% url 'finance_bank_receipt' case.pk issue.pk recorded.pk %}">{{ recorded.transaction_ref }}</a></li>{% endfor %}</ul>
+</section>{% endif %}
+</div><aside>
+  <section class="card"><h2>Invoice balance</h2><dl class="decision-facts">
+    <dt>Invoiced</dt><dd>{{ position.currency }} {{ position.invoiced|decimal_display }}</dd>
+    <dt>Applied receipts</dt><dd>{{ position.currency }} {{ position.received|decimal_display }}</dd>
+    <dt>Still owed</dt><dd>{{ position.currency }} {{ position.owed|decimal_display }}</dd>
+    {% if lot %}<dt>Verified money available to apply</dt><dd>{{ receipt.payload.currency }} {{ remaining|decimal_display }}</dd>{% endif %}
+  </dl>
+  {% if allocation %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="allocate">
+    {{ allocation.as_p }}<button>Apply verified payment</button>
+  </form>
+  {% elif allocation_hold %}<p>{{ allocation_hold }}</p>
+  {% elif not lot %}<p>A verified receipt is needed before any money is applied to this invoice.</p>{% endif %}
+  <p>The receipt and any allocation stay in separate records. The balance stays owed until the recorded amount changes.</p>
+  {% if position.short_payment and can_review_shortfall %}<p><a href="{% url 'invoice_short_payment' case.pk issue.pk %}">Review the remaining balance</a></p>{% endif %}
+  <p><a href="{% url 'finance_settlement' case.pk %}#record-payment">Review receipt and allocation records</a></p>
+  <p><a href="{% url 'finance_corrections' case.pk %}">Open invoice and payment corrections</a></p>
+  {% if can_read_rules %}<p><a href="{% url 'workspace_settings' case.pk %}?area=finance">Open Finance rules</a></p>{% endif %}
+  </section>
+</aside></div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Payment reminder · PSL Factory{% endblock %}
+{% block content %}
+<header class="page-heading"><div><h1>Payment reminder</h1><p>{{ issue.invoice.reference }}</p></div>
+<a class="button secondary" href="{% url 'finance_settlement' case.pk %}">Invoices and receipts</a></header>
+<section class="card">
+  <h2>Issued invoice</h2>
+  <p>Outstanding in PSL's records <strong>{{ balance.currency }} {{ balance.owed }}</strong></p>
+  <p>Due {{ balance.due_date|default:'date unknown' }} · {% if destination %}{{ destination.name }} · {{ destination.email }}{% else %}Billing contact needed{% endif %}</p>
+</section>
+{% if can_prepare and destination %}<section class="card onboarding-card"><h2>Edit reminder</h2>
+  <p><a href="{% url 'case_uploads' case.pk %}">Upload an invoice PDF to this workspace</a></p>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="draft"><input type="hidden" name="revision" value="{{ case.revision }}">
+  {{ editable.as_p }}<button class="button primary">Save draft version</button></form>
+</section>{% endif %}
+{% if current and not current.dispatch and not current.set_aside %}<section class="card"><h2>Saved draft {{ current.number }}</h2>
+  <p>{{ current.subject }} · {{ current.contact.email }}</p>{{ current.body|linebreaks }}
+  {% if current.attachment_id %}<p><a href="{% url 'design_reminder_download' case.pk issue.pk current.pk 'pdf' %}">Download attached invoice PDF</a> · {{ current.attachment.name }}</p>{% endif %}
+  {% if send_mode %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="send"><input type="hidden" name="draft" value="{{ current.pk }}"><input type="hidden" name="revision" value="{{ case.revision }}">
+  <button class="button primary">{% if send_mode == 'manual_evidence' %}Release for approved delivery{% else %}Send to test inbox{% endif %}</button></form>
+  {% else %}<p>{{ hold }}</p>{% endif %}
+  {% if can_schedule %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="schedule"><input type="hidden" name="draft" value="{{ current.pk }}"><input type="hidden" name="revision" value="{{ case.revision }}">
+    {{ schedule.as_p }}<button class="button secondary">Schedule approved reminder</button></form>{% endif %}
+  {% if can_prepare %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="set_aside"><input type="hidden" name="draft" value="{{ current.pk }}"><input type="hidden" name="revision" value="{{ case.revision }}">
+  <label for="reminder-reason">Reason to set aside</label><input id="reminder-reason" name="reason" maxlength="1000" required><button class="button secondary">Set aside</button></form>{% endif %}
+</section>{% endif %}
+<section class="card"><h2>Reminder history</h2>
+{% for item in activity %}<article><h3>Version {{ item.number }} · {{ item.subject }}</h3>
+  {% if item.dispatch.scheduled_for %}<p>Scheduled for {{ item.dispatch.scheduled_for|date:'d M Y, H:i T' }}</p>{% endif %}
+  {% if item.dispatch.receipt %}<p>{% if item.dispatch.receipt.delivered %}Delivery confirmed{% else %}Confirmed undelivered{% endif %} · {{ item.dispatch.receipt.reference }}</p>
+    {% if item.dispatch.receipt.delivered and item.dispatch.mode == 'synthetic_mailbox' %}
+    <p><a href="{% url 'design_reminder_download' case.pk issue.pk item.pk 'email' %}">Download verified test message</a></p>{% endif %}
+  {% elif item.dispatch %}<p>Awaiting delivery confirmation · {{ item.contact.email }} · {{ item.dispatch.operation_key }}</p>
+    {% if can_confirm and item.dispatch.mode == 'synthetic_mailbox' %}<form method="post">{% csrf_token %}
+      <input type="hidden" name="action" value="check_mailbox"><input type="hidden" name="dispatch" value="{{ item.dispatch.pk }}"><input type="hidden" name="revision" value="{{ case.revision }}">
+      <button class="button secondary">Check original test message</button></form>{% endif %}
+    {% if can_send and item.dispatch.scheduled_for %}<form method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel_schedule"><input type="hidden" name="dispatch" value="{{ item.dispatch.pk }}"><input type="hidden" name="revision" value="{{ case.revision }}"><button class="button secondary">Cancel scheduled release</button></form>{% endif %}
+    {% if can_confirm and item.dispatch.mode == 'manual_evidence' %}
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="confirm"><input type="hidden" name="dispatch" value="{{ item.dispatch.pk }}"><input type="hidden" name="revision" value="{{ case.revision }}">
+    <p>Evidence must match the original delivery reference, address and draft fingerprint <code>{{ item.sha256 }}</code>.</p>
+    {{ outcome.as_p }}<button class="button secondary">Record delivery outcome</button></form>{% endif %}
+  {% elif item.set_aside %}<p>Set aside · {{ item.set_aside.reason }}</p>{% else %}<p>Draft saved.</p>{% endif %}
+</article>{% empty %}<p>No reminder recorded for this invoice.</p>{% endfor %}
+</section>
+{% if can_configure %}<section class="card onboarding-card"><details><summary>Set reminder delivery rules</summary>
+  <form method="post">{% csrf_token %}<input type="hidden" name="action" value="policy"><input type="hidden" name="revision" value="{{ case.revision }}">{{ rule.as_p }}
+  <button class="button secondary">Save proposed rule</button></form><a href="{% url 'policy' case.pk %}">Review rules</a>
+</details></section>{% endif %}
+{% endblock %}

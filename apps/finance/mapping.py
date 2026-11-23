@@ -9,7 +9,7 @@ def effective(values,entity,period):return [v for v in values if v['entity']==en
 
 def map_rows(source,data,configs,adjustments):
     from .source_units import require_mapping
-    require_mapping(source)
+    units = require_mapping(source)
     convention=reference_values(configs['D06.unit_sign_currency_period'])[0];period=convention['period'];currency=convention['currency']
     maps=effective(reference_values(configs['D06.account_bu_maps']),source.entity,period)
     rows=[];findings=[];counts=Counter(x['account'] for x in data['rows']);seen=set()
@@ -22,6 +22,11 @@ def map_rows(source,data,configs,adjustments):
     for row in inputs:
         matches=[m for m in maps if m['account']==row['account']];reason=[]
         value=row['amount'] if row['amount'] is not None and _valid(row['amount']) else None
+        if value is not None and row['origin'] == 'import' and 'factor' in units:
+            with localcontext() as context:
+                context.prec = 64
+                value = number(decimal(value) * units['factor'])
+            decimal(value)
         if value is None:reason.append('Unknown or invalid exact source amount; not zero')
         if row['currency']!=currency or row['period']!=period:value=None;reason.append('Currency/period does not match the selected source convention; no conversion')
         mapping=matches[0] if len(matches)==1 else None
@@ -42,7 +47,8 @@ def map_rows(source,data,configs,adjustments):
         context.prec=512
         difference=None if source.control_total is None or raw_total is None else number(raw_total-decimal(source.control_total))
     return {'status':'needs_attention' if findings else 'complete','rows':rows,'findings':findings,'entity':source.entity,'period':period,'currency':currency,'unit':'major_currency',
-        'sign_convention':convention['sign_convention'],'source_control':{'actual':number(raw_total),'supplied':source.control_total,'difference':difference},
+        'sign_convention':convention['sign_convention'],'source_control':{'actual':number(raw_total),'supplied':source.control_total,'difference':difference,
+            **({'basis':'as_declared_in_file','factor_to_major_currency':units['factor'],'policy':units['policy']} if 'factor' in units else {})},
         'reporting_adjustment_ids':adjustments,'ledger_posted':False,'source_evidence_ids':sorted({source.evidence_id,source.batch.evidence_id}|{r['source_evidence'] for r in rows})}
 
 def _valid(value):

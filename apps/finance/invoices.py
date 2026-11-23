@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import transaction
 from django.db.models import Q
+from apps.core.models import Audit
 from apps.core.services import lock_case,event,bump
 from apps.identity.services import require
 from apps.policy.services import active_component,reference_values,decision_authority,resolve
@@ -10,6 +11,16 @@ from apps.pmo.services import subject
 from .analysis import note,review_authority
 from .billing import exact,digest,ensure_current
 from .models import BillingPreparation,Invoice,InvoiceReview,InvoiceJob,InvoiceIssue
+
+
+DRAFT_STOP_SCHEMA = 'invoice-draft-stop/v1'
+
+
+def draft_stop_history(invoice):
+    return Audit.objects.filter(
+        case_id=invoice.case_id, action='factory.cancel', data__schema=DRAFT_STOP_SCHEMA,
+        data__invoice=invoice.pk, data__invoice_sha256=invoice.sha256,
+    )
 
 
 def obligation(prep):
@@ -24,9 +35,14 @@ def obligation(prep):
     identity['usage']=prep.usage_id if prep.kind=='usage' else None
     return digest(identity)
 
+def successor_drafts(invoice):
+    return Invoice.objects.filter(case_id=invoice.case_id, obligation_key=invoice.obligation_key, pk__gt=invoice.pk)
+
 def current(invoice):
-    require(invoice.actor,invoice.case,'finance.invoice.draft');ensure_current(invoice.preparation)
-    if Invoice.objects.filter(case=invoice.case,obligation_key=invoice.obligation_key,pk__gt=invoice.pk).exists():raise ValidationError('A newer invoice draft exists for this obligation')
+    require(invoice.actor,invoice.case,'finance.invoice.draft')
+    if draft_stop_history(invoice).exists():raise ValidationError('This exact invoice draft was cancelled before issuance')
+    ensure_current(invoice.preparation)
+    if successor_drafts(invoice).exists():raise ValidationError('A newer invoice draft exists for this obligation')
     if invoice.sha256!=digest(invoice.payload):raise ValidationError('Invoice artifact hash mismatch')
 
 def adapter_config(case):
@@ -85,9 +101,11 @@ def reviewed(invoice):
     for_invoice(invoice,r.actor,delegated=delegated)
     if r.publication_packet!=review_packet(invoice):raise ValidationError('Publication target, destination, policy or evidence changed; fresh exact-packet review required')
     from .fixed_charge import preparation_access
-    preparation_access(r.actor,invoice.preparation)
-    require(r.actor,invoice.case,'finance.invoice.review')
-    authority=review_authority(r.actor,invoice.case,'invoice',r.role,r.verdict,invoice.actor_id,delegated=delegated,invoice=invoice)
+    from apps.identity.role_factory_decisions import invoice_scope
+    with invoice_scope(invoice,r.actor):
+        preparation_access(r.actor,invoice.preparation)
+        require(r.actor,invoice.case,'finance.invoice.review')
+        authority=review_authority(r.actor,invoice.case,'invoice',r.role,r.verdict,invoice.actor_id,delegated=delegated,invoice=invoice)
     strip=lambda v:{k:x for k,x in v.items() if k!='D05.decision_action_matrix'}
     if strip(authority)!=strip(r.authority):raise ValidationError('Invoice review authority changed')
     return r
@@ -109,11 +127,16 @@ def review_packet(invoice):
     # publication packet. Factory send guards still check their own current sources.
     preserve_native = work and work.request.get('mode') == 'existing-preparation/v1' and work.request.get('existing_invoice') == invoice.pk
     if work and work.policy_id and not preserve_native:
-        from apps.core.evidence_access import public_evidence
+        from apps.core.evidence_access import INVOICE_MILESTONE_PROOF, public_evidence
         from apps.core.models import Evidence
-        required=reference_values(work.policy)[0]['required_evidence_kinds'];latest={}
+        value=reference_values(work.policy)[0];required=value['required_evidence_kinds'];latest={}
         for e in public_evidence(Evidence.objects.filter(case=invoice.case,kind__in=required)).order_by('kind','-version'):
             latest.setdefault(e.kind,{'id':e.pk,'version':e.version,'sha256':e.sha256})
+        if INVOICE_MILESTONE_PROOF in required:
+            from apps.workflows.factory_invoice_information import current
+            proof=current(work,value)
+            if proof is not None:
+                latest[INVOICE_MILESTONE_PROOF]={'id':proof.evidence_id,'version':proof.evidence.version,'sha256':proof.evidence.sha256}
         if set(latest)!=set(required):raise ValidationError('Required factory source evidence is missing from publication packet')
         packet['factory_sources']={'work':work.pk,'profile':work.policy_id,'evidence':latest}
         from apps.workflows.factory_routing import binding

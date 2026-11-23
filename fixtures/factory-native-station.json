@@ -1,0 +1,17 @@
+{
+  "classification": "Synthetic acceptance fixture. Operational configuration requires a recorded project decision.",
+  "definition": "process-handoff/v1",
+  "max_steps": 12,
+  "max_tokens": 16000,
+  "tokens_per_call": 650,
+  "max_children": 35,
+  "max_depth": 1,
+  "lease_seconds": 120,
+  "max_age_seconds": 86400,
+  "required_evidence_kinds": ["native_station_projection"],
+  "information_resolver_id": null,
+  "executor_id": null,
+  "review_role": null,
+  "provider": "synthetic_factory_v1",
+  "enabled": true
+}

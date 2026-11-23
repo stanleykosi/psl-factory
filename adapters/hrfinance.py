@@ -36,6 +36,8 @@ class SuppliedHRExportAdapter:
   if v['completeness'] not in ['complete','partial','unknown']:raise HRExportError('completeness_schema')
   if not isinstance(v['rows'],list) or len(v['rows'])>500:raise HRExportError('row_budget')
   fields=set(p['fields']);seen=set();as_of=day(v['as_of'])
+  extended={'gross_pay','deductions','bank_account','home_address','date_of_birth'}
+  if fields.intersection(extended) and p.get('format')!='psl.hr-finance-need/v2':raise HRExportError('field_contract_version')
   for r in v['rows']:
    if not isinstance(r,dict) or set(r)!=fields:raise HRExportError('out_of_contract_fields')
    if not isinstance(r['employee_id'],str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,99}',r['employee_id']):raise HRExportError('employee_identity_schema')
@@ -46,6 +48,11 @@ class SuppliedHRExportAdapter:
    if start>as_of or end is not None and (end<start or (as_of>end if p['effective_until_semantics']=='inclusive' else as_of>=end)):raise HRExportError('employee_not_effective_at_snapshot')
    if 'role' in r and r['role'] is not None and (not isinstance(r['role'],str) or not 1<=len(r['role'])<=100):raise HRExportError('role_schema')
    if 'monthly_pay' in r and r['monthly_pay'] is not None and (not isinstance(r['monthly_pay'],str) or not re.fullmatch(r'-?(0|[1-9][0-9]{0,23})(\.[0-9]{1,8})?',r['monthly_pay'])):raise HRExportError('pay_schema')
+   for field in ['gross_pay','deductions']:
+    if field in r and r[field] is not None and (not isinstance(r[field],str) or not re.fullmatch(r'-?(0|[1-9][0-9]{0,23})(\.[0-9]{1,8})?',r[field])):raise HRExportError('pay_schema')
+   for field,limit in [('bank_account',100),('home_address',1000)]:
+    if field in r and r[field] is not None and (not isinstance(r[field],str) or not r[field].strip() or len(r[field])>limit):raise HRExportError('private_field_schema')
+   if 'date_of_birth' in r and r['date_of_birth'] is not None and day(r['date_of_birth'])>as_of:raise HRExportError('birth_date_schema')
    if 'currency' in r and (not isinstance(r['currency'],str) or not re.fullmatch(r'[A-Z]{3}',r['currency'])):raise HRExportError('currency_schema')
   return v
 

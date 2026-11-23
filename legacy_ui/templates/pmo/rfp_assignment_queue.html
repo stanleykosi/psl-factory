@@ -1,0 +1,19 @@
+{% extends 'base.html' %}{% load studio_ui %}{% block content %}
+<a class="back-link" href="{% url 'home' %}?queue=unassigned">← Back to unassigned work</a>
+<div class="page-heading"><h1>Unassigned bids</h1></div>
+<section class="workspace-panel" aria-label="Bids awaiting a project manager">
+{% if page_error %}<p role="alert">{{ page_error }}</p><a href="{% url 'rfp_assignment_queue' %}">Open first page</a>
+{% else %}
+  {% for bid in rows %}
+    <a class="factory-work-row" href="{% url 'rfp_assignment' bid.case_id %}">
+      <div class="work-row-main"><strong>{{ bid.reference }}</strong><span>{{ bid.case|workspace_name }}</span></div>
+      <div class="work-row-state"><strong>{% if bid.owner_access_required %}Project manager access needs review{% else %}Project manager needed{% endif %}</strong></div>
+      <div class="work-row-time">{{ bid.current_intake.received_at|date:'d M Y H:i T' }}</div>
+      {% include 'ui/icon.html' with icon='arrow' %}
+    </a>
+  {% empty %}<p>No bids you can assign were found on this page.</p>{% endfor %}
+  {% if next_cursor %}<nav class="actions" aria-label="Bid pages"><a href="?cursor={{ next_cursor|urlencode }}">Next page</a></nav>{% endif %}
+{% endif %}
+</section>
+{% if checked %}<p class="coverage-note">{{ checked }} received bid{{ checked|pluralize }} checked on this page.</p>{% endif %}
+{% endblock %}

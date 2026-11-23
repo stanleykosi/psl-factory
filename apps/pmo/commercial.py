@@ -1,9 +1,13 @@
 from django.core.exceptions import ValidationError, PermissionDenied
 from django.db import transaction
+from apps.core.evidence_access import public_evidence
 from apps.core.services import lock_case, event, bump
+from apps.core.read_observation import observed_fact
 from apps.documents.controlled import baseline_manifest, create_version
-from apps.documents.models import Template, PublicationReceipt
+from apps.documents.models import Publication, PublicationReceipt, Template
+from apps.identity.services import require
 from apps.policy.services import decision_authority, active_component, reference_values
+from apps.workflows.models import HumanTask
 from .models import (Baseline, CommercialCase, CommercialRevision, CommercialDecision,
     CommercialDocumentBinding, ClientResponse, BaselineAdoption)
 from .services import subject
@@ -49,6 +53,12 @@ def check_decision(decision):
 
 
 def valid_approvals(revision, roles=ROLES, *, check_authority=True):
+    return _valid_approvals(revision.dossier, revision.pk, roles, check_authority=check_authority)
+
+
+@observed_fact
+def _valid_approvals(dossier, revision_id, roles, *, check_authority=True):
+    revision = CommercialRevision.objects.select_related('dossier__case').get(pk=revision_id, dossier=dossier)
     from .costing import verify_costing
     verify_costing(subject(revision.dossier.case,revision.sources['costing'],'costing'),revision.sources['plan'])
     decisions = latest_decisions(revision)
@@ -159,8 +169,40 @@ def decide_proposal(actor, case_id, revision_id, role, verdict, note, expected, 
     return result
 
 
+def sow_bindings(case):
+    from .models import RFPResponse
+
+    bids = RFPResponse.objects.filter(rfp__case=case, commercial_id__isnull=False).values('commercial_id')
+    return CommercialDocumentBinding.objects.filter(revision__dossier__case=case, version__document__case=case,
+        version__template__case=case, version__template__definition__document_type='sow', version__audience='client',
+    ).exclude(revision_id__in=bids)
+
+
+def returned_statement(version):
+    return (HumanTask.objects.filter(version=version, status='returned').exists()
+            and version.reviews.order_by('-pk').values_list('verdict', 'payload_sha256').first()
+                == ('return', version.payload_sha256))
+
+
+def _returned_predecessor(actor, case, revision, version_id):
+    for action in ('case.read', 'commercial.read', 'document.read'):
+        require(actor, case, action)
+    prior = sow_bindings(case).filter(version_id=version_id).select_related('version__document').first()
+    if (not prior or prior.revision_id != revision.previous_id or prior.version.document.current_id != version_id
+            or sow_bindings(case).filter(revision=revision).exists()):
+        raise ValidationError('Choose the current returned statement and its directly corrected commercial proposal.')
+    version = prior.version
+    if not returned_statement(version) or Publication.objects.filter(version__document_id=version.document_id).exists():
+        raise ValidationError('Only a returned statement without a prior delivery reservation can continue here.')
+    ids = {source['id'] for source in version.source_manifest}
+    if set(public_evidence(case.evidence.filter(pk__in=ids)).values_list('pk', flat=True)) != ids:
+        raise ValidationError('Authorized original statement sources are required.')
+    return version
+
+
 @transaction.atomic
-def draft_submission(actor, case_id, revision_id, template_id, expected, *, template_scope_id=None):
+def draft_submission(actor, case_id, revision_id, template_id, expected, *, template_scope_id=None,
+                     replaces_version_id=None):
     case = lock_case(actor, case_id, 'commercial.submit', expected)
     require_project_conversion(case)
     revision = current_revision(case, revision_id)
@@ -172,11 +214,16 @@ def draft_submission(actor, case_id, revision_id, template_id, expected, *, temp
         raise ValidationError('Returned, rejected or withdrawn proposals need revision')
     decisions = valid_approvals(revision)
     template = Template.objects.filter(case=case, pk=template_id, definition__document_type='sow').first()
+    from .coordinator_intake import accept
+    accept(actor,case,revision,"P08","P09")
     if not template:
         raise ValidationError('Select this case controlled SOW template')
     from adapters.commercial import LocalCommercialAdapter
     fields = LocalCommercialAdapter().submission_fields(case, revision)
-    version = create_version(actor, case.pk, template.pk, 'Commercial proposal '+str(revision.number), 'client', fields, case.revision, template_scope_id=template_scope_id)
+    previous = _returned_predecessor(actor, case, revision, replaces_version_id) if replaces_version_id is not None else None
+    title = previous.document.title if previous else 'Commercial proposal '+str(revision.number)
+    version = create_version(actor, case.pk, template.pk, title, 'client', fields, case.revision,
+                             previous.document_id if previous else None, template_scope_id=template_scope_id)
     CommercialDocumentBinding.objects.create(version=version, revision=revision, decision_ids=decisions)
     return version
 
@@ -228,6 +275,8 @@ def adopt_signed(actor, case_id, revision_id, response_id, expected):
     response = ClientResponse.objects.filter(pk=response_id, revision=revision, kind='signed').first()
     if not response or revision.responses.order_by('-pk').first().pk != response.pk:
         raise ValidationError('Current response must attest the exact delivered signed version')
+    from .commercial_client_response import current_for_signature
+    current_for_signature(actor, case, response.evidence, revision.pk)
     binding = CommercialDocumentBinding.objects.get(version=response.receipt.publication.version)
     if binding_findings(binding):
         raise ValidationError(binding_findings(binding))
@@ -235,6 +284,9 @@ def adopt_signed(actor, case_id, revision_id, response_id, expected):
         raise ValidationError('Signature evidence cannot be reused for another baseline')
     from .signatures import current_packet, record_use
     signature_packet = current_packet(case, response.evidence_id, revision)
+    from .coordinator_intake import accept
+    accept(actor,case,response.receipt,"P19")
+    accept(actor,case,signature_packet,"P20")
     before = baseline_manifest(case)
     if before.get('signed_id'):
         # A signed scope change also needs the independently controlled change authorization.

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}{% load studio_ui %}
+{% block title %}Record and match actuals · {{ scenario.reference }}{% endblock %}
+{% block content %}
+<a href="{% url 'finance_forecast' case.pk %}" class="back-link">← Cash forecasts</a>
+<header class="page-heading"><div><h1>Record and match actuals</h1>
+  <p>{{ scenario.reference }} · Version {{ scenario.number }} · {{ scenario.payload.currency }}</p></div></header>
+<section class="card">
+  <form method="get"><label for="forecast-month">Forecast month</label>
+    <select id="forecast-month" name="month">{% for option in months %}<option value="{{ option }}"{% if option == month %} selected{% endif %}>{{ option }}</option>{% endfor %}</select>
+    <button>Show month</button>
+  </form>
+  <h2>Forecast against actual</h2>
+  <p>Actuals reflect verified amounts matched within the selected month.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Forecast item</th><th scope="col">Expected</th><th scope="col">Matched actual</th><th scope="col">Match</th></tr></thead>
+    <tbody>{% for row in projection.rows %}<tr><th scope="row">{{ row.item.source_ref }}</th>
+      <td>{% if row.item.amount is None %}Unknown{% else %}{{ scenario.payload.currency }} {{ row.item.amount|decimal_display }}{% endif %}</td>
+      <td>{% if row.actual is None %}Unknown{% else %}{{ scenario.payload.currency }} {{ row.actual|decimal_display }}{% endif %}</td>
+      <td>{{ row.status }}</td></tr>
+    {% empty %}<tr><td colspan="4">No forecast items are dated in this month.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+<div class="factory-case-layout"><div>
+  <section class="card"><h2>Recorded receipts and payments</h2>
+    {% for item in projection.actuals %}<p>{{ item.transaction }} · {{ item.payload.account }} · {{ item.payload.occurred_on }}
+      · {% if item.payload.amount is None %}Unknown{% else %}{{ item.payload.currency }} {{ item.payload.amount|decimal_display }}{% endif %}
+      · {% if item.lot_id or item.independently_verified %}Verified{% else %}Awaiting verification{% endif %}</p>
+    {% empty %}<p>No actuals recorded for this period and forecast scope.</p>{% endfor %}
+    {% if projection.more_actuals %}<p>Showing the latest 50 records in this period.</p>{% endif %}
+    {% if can_report %}<a href="{% url 'finance_forecast' case.pk %}#forecast-actions">Record a supplied receipt or payment</a>{% endif %}
+  </section>
+  <section class="card"><h2>Unmatched notes and match history</h2>
+    {% for row in projection.rows %}{% for entry in row.notes %}<article>
+      <strong>{{ row.item.source_ref }} · {{ entry.data.transaction }} · Left unmatched</strong>
+      <p>{{ entry.data.reason }}</p><p>{{ entry.actor.get_full_name|default:entry.actor.username }} · {{ entry.created_at|recorded_time }}</p>
+    </article>{% endfor %}{% endfor %}
+    {% for link in projection.history %}<article><strong>{{ link.item_key }} · {{ link.actual.transaction }}</strong>
+      <p>{{ scenario.payload.currency }} {{ link.amount|decimal_display }} · {{ link.actual.payload.occurred_on }}
+        · {% if link.reversal %}Reversed{% else %}Recorded match{% endif %}</p>
+      {% if link.reversal %}<p>{{ link.reversal.reason }}</p>{% endif %}
+    </article>{% endfor %}
+    {% if projection.more_history or projection.more_notes %}<p>Showing recent history for this period.</p>{% endif %}
+  </section>
+</div><aside>
+  {% for command in commands %}<section class="card"><h2>{{ command.label }}</h2>
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="{{ command.action }}">
+      {{ command.form.as_p }}<button>{{ command.label }}</button>
+    </form>
+  </section>{% endfor %}
+  {% if rules_needed %}<section class="card"><p>Set up the forecast matching rules to verify or match actuals.</p></section>{% endif %}
+</aside></div>
+{% endblock %}

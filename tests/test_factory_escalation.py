@@ -1,6 +1,7 @@
 """P44 native factory diagnostics. Only publication transport is fault-injected."""
 import json
 from pathlib import Path
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -10,15 +11,15 @@ from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.services import transition,register_reference
 from apps.identity.models import Grant
 from apps.documents.models import Publication,PublicationJob,PublicationReceipt,ControlledReview
-from apps.documents.controlled import reserve_publication
+from apps.documents.controlled import request_review as native_request_review, reserve_publication
 from apps.pmo import escalations as native
 from apps.pmo.models import EscalationDecision,EscalationRequest,EscalationDocumentBinding
 from apps.pmo.issues import log_issue,update_issue
-from apps.workflows import factory,factory_escalation as domain
-from apps.workflows.models import FactoryWork,FactoryAttempt
+from apps.workflows import factory,factory_escalation as domain,factory_progress
+from apps.workflows.models import FactoryWork,FactoryAttempt,HumanTask
 from adapters.publications import InternalPublicationAdapter,PublicationTimeoutAfterAccept
 from tests.test_escalations import fixture,profile
-from tests.helpers import rev,activate
+from tests.helpers import check_investigation_progress, rev,activate
 from tests.document_helpers import artifact
 
 class FactoryEscalationTests(TestCase):
@@ -36,6 +37,8 @@ class FactoryEscalationTests(TestCase):
         self.w.refresh_from_db();return domain.decide(self.a,self.w.pk,self.w.revision,rev(self.c),self.r.pk,'Head of PMO',verdict,'Human decision on exact client request')
     def review(self,verdict='approve'):
         self.w.refresh_from_db();v=domain.document(self.w);self.assertIsNotNone(v,self.w.finding)
+        if not HumanTask.objects.filter(version=v).exists():
+            domain.request_communication_review(self.a,self.w.pk,self.w.revision,rev(self.c),v.pk)
         return domain.review(self.a,self.w.pk,self.w.revision,rev(self.c),v.pk,verdict,'Human review of exact communication')
     def ready(self):self.start();self.advance();self.decision();self.advance();self.review()
     def finish(self):
@@ -52,6 +55,52 @@ class FactoryEscalationTests(TestCase):
         self.state.issue.refresh_from_db();self.assertEqual(self.state.issue.current.status,'Open');self.assertEqual(len(proof['receipt_ids']),1)
     def test_client_deescalation_requires_its_current_approval(self):
         self.start('de_escalate');self.advance();self.assertIsNone(domain.document(self.w));self.decision();self.advance();self.review();proof=self.finish();self.assertEqual(proof['direction'],'de_escalate')
+
+    def test_api_client_escalation_requires_authority_and_returns_exact_communication_receipt(self):
+        self.client.force_login(self.a)
+        register = f'/api/v1/projects/{self.c.pk}/escalation-register'
+        options = self.client.get(register).json()
+        self.assertIn(self.state.pk, [row['current_id'] for row in options['issues']])
+
+        def write(url, **body):
+            response = self.client.post(url, body, content_type='application/json')
+            self.assertLess(response.status_code, 300, response.content)
+            return response.json()
+
+        source = write(register, action='classify', revision=options['revision'], issue_id=self.state.issue_id,
+            state_id=self.state.pk, classification='client_dependent', timeline_impact=True, trigger_at=None,
+            evidence_id=self.e.pk, note='Client evidence is required for the current issue')
+        native_request = write(register, action='request', revision=source['revision'], profile_id=source['id'],
+            direction='escalate', target='Client', evidence_id=self.e.pk, note='Request a client communication')
+        self.r = EscalationRequest.objects.get(pk=native_request['id'])
+        self.w = domain.start(self.a, self.c.pk, 'API-P44', self.r.pk, self.t.pk, 'Scoped escalation', rev(self.c))
+        self.advance()
+        detail = f'/api/v1/work/{self.w.pk}/escalation'
+        controls = self.client.get(detail).json()
+        self.assertTrue(any(row['role'] == 'Head of PMO' and 'approve' in row['verdicts']
+                            for row in controls['client_decisions']))
+        fields = {'action': 'decide_client_action', 'request_id': self.r.pk, 'role': 'Head of PMO', 'verdict': 'approve',
+                  'note': 'I reviewed this exact request', 'delegated': False, 'expected_revision': controls['expected_revision'],
+                  'case_revision': controls['case_revision']}
+        decision = write(detail, **fields)
+        record = self.client.get(f'{register}/{self.r.pk}')
+        self.assertEqual(record.status_code, 200, record.content)
+        self.assertEqual(record.json()['issue_id'], self.state.issue_id)
+        self.assertEqual(record.json()['decisions'][0]['verdict'], 'approve')
+        self.advance()
+        panel = self.client.get(detail).json()
+        self.assertTrue(panel['can_request_communication_review'])
+        write(detail, action='request_communication_review', version_id=panel['document_version_id'],
+              expected_revision=panel['expected_revision'], case_revision=panel['case_revision'])
+        reviewed = write(f'/api/v1/work/{self.w.pk}/reviews', kind='document', version_id=panel['document_version_id'],
+            verdict='approve', note='Independent review of the exact client communication.',
+            expected_revision=self.w.revision, case_revision=rev(self.c))
+        self.assertIsNotNone(reviewed['review_id'])
+        proof = self.finish()
+        delivered = self.client.get(detail).json()
+        self.assertEqual([item['id'] for item in delivered['receipts']], proof['receipt_ids'])
+        self.assertEqual(delivered['history'][0]['id'], decision['record_id'])
+        self.assertEqual(self.state.issue.current.status, 'Open')
     def test_internal_route_has_no_invented_business_decision(self):
         ref=register_reference(self.a,self.c.pk,'role:internal-pmo','schema:psl/role-assignment/v1',{'role':'PMO','user_id':self.a.pk},self.owner.pk)
         from apps.policy.services import active_component
@@ -72,6 +121,43 @@ class FactoryEscalationTests(TestCase):
         self.r=native.request_escalation(self.a,self.c.pk,self.p.pk,'escalate','Client',self.e.pk,'Corrected source and human request',rev(self.c))
         domain.correct(self.a,self.w.pk,self.w.revision,rev(self.c),self.r.pk,self.t.pk,'Explicit source successor');self.w.refresh_from_db()
         self.assertEqual(self.w.budget_used,spent);self.assertEqual(old.decisions.get().verdict,'return');self.decision();self.advance();self.review();self.finish()
+
+    def test_decline_requires_its_own_role_and_records_no_communication(self):
+        self.start()
+        check_investigation_progress(self, self.a, self.w, 'Investigating the blocker and who needs to decide.')
+        self.advance()
+        self.client.force_login(self.a)
+        url = reverse('factory_detail', args=[self.w.pk])
+        self.assertNotContains(self.client.get(url), 'Decline client communication')
+        api = f'/api/v1/work/{self.w.pk}/escalation'
+        initial = self.client.get(api).json()
+        self.assertFalse(any('reject' in row['verdicts'] for row in initial['client_decisions']))
+        values = {'action': 'decision', 'revision': self.w.revision, 'case_revision': rev(self.c),
+                  'request': self.r.pk, 'role': 'Head of PMO', 'verdict': 'reject',
+                  'note': 'The synthetic dependency can be handled internally.'}
+        page = self.client.post(url, values)
+        self.assertContains(page, values['note'])
+        self.assertFalse(self.r.decisions.exists())
+        artifact(self.a,self.c,'D05.decision_action_matrix','schema:psl/decision-actions/v1',
+                 {'rules':[{'role':'Head of PMO','actions':['reject']}]},self.owner)
+        self.assertContains(self.client.get(url), 'Decline client communication', count=1)
+        options = self.client.get(api).json()
+        declined = self.client.post(api, {'action': 'decide_client_action', 'request_id': self.r.pk,
+            'role': 'Head of PMO', 'verdict': 'reject', 'note': values['note'], 'delegated': False,
+            'expected_revision': options['expected_revision'], 'case_revision': options['case_revision']},
+            content_type='application/json')
+        self.assertEqual(declined.status_code, 200, declined.content)
+        page = self.client.get(url)
+        self.assertContains(page, 'Not escalated')
+        self.assertContains(page, 'No recorded communication receipt.')
+        self.assertNotContains(page, 'Approve client communication')
+        self.assertEqual(self.r.decisions.get().verdict, 'reject')
+        self.advance()
+        self.assertIsNone(domain.document(self.w))
+        self.assertFalse(Publication.objects.filter(factory_work=self.w).exists())
+        result = self.client.get(api).json()
+        self.assertEqual(result['history'][-1]['id'], declined.json()['record_id'])
+        self.assertEqual(result['receipts'], [])
     def test_returned_document_requires_deliberate_successor_without_resetting_history(self):
         artifact(self.a,self.c,'D05.decision_action_matrix','schema:psl/decision-actions/v1',{'rules':[{'role':'PMO Lead','actions':['return']}]},self.owner)
         self.start();self.decision();self.advance();old=domain.document(self.w);self.review('return');self.advance();spent=self.w.budget_used
@@ -79,7 +165,15 @@ class FactoryEscalationTests(TestCase):
         self.advance();self.assertNotEqual(old.pk,domain.document(self.w).pk);self.review();self.finish();self.assertEqual(old.reviews.get().verdict,'return')
     def test_same_source_cannot_reset_pending_native_review(self):
         self.start();self.decision();self.advance()
+        version = domain.document(self.w)
+        with self.assertRaisesMessage(ValidationError,'current draft'):
+            domain.correct(self.a,self.w.pk,self.w.revision,rev(self.c),self.r.pk,self.t.pk,'Retain the exact draft')
+        original = native_request_review(self.a,self.c.pk,version.pk,rev(self.c))
+        self.assertFalse(domain.projection(self.a,self.w)['can_request_review'])
         with self.assertRaisesMessage(ValidationError,'pending'):domain.correct(self.a,self.w.pk,self.w.revision,rev(self.c),self.r.pk,self.t.pk,'Do not erase review wait')
+        self.review();proof=self.finish()
+        self.assertEqual(HumanTask.objects.get(version=version).pk,original.pk)
+        self.assertEqual(proof['document_version'],version.pk)
     def test_unbound_publication_and_forged_verified_status_rejected_by_database(self):
         self.ready();v=domain.document(self.w)
         with self.assertRaises(DatabaseError),transaction.atomic():reserve_publication(self.a,self.c.pk,v.pk,rev(self.c))
@@ -118,14 +212,62 @@ class FactoryEscalationTests(TestCase):
         self.assertTrue(domain.projection(self.a,self.w)['readiness_changed']);self.assertEqual(PublicationReceipt.objects.get().pk,receipt.pk);self.w.refresh_from_db();self.assertEqual(self.w.budget_used,spent)
     def test_primary_http_intake_decisions_review_and_get_preserves_rows(self):
         self.start();self.client.force_login(self.a);url=reverse('factory_detail',args=[self.w.pk]);self.advance()
-        count=FactoryAttempt.objects.count();revision=self.w.revision;self.assertContains(self.client.get(url),'Client escalation or de-escalation decision');self.assertEqual(FactoryAttempt.objects.count(),count);self.w.refresh_from_db();self.assertEqual(self.w.revision,revision)
+        count=FactoryAttempt.objects.count();revision=self.w.revision;self.assertContains(self.client.get(url),'Client communication decision');self.assertEqual(FactoryAttempt.objects.count(),count);self.w.refresh_from_db();self.assertEqual(self.w.revision,revision)
         self.assertEqual(self.client.post(url,{'action':'decision','revision':self.w.revision,'case_revision':rev(self.c),'request':self.r.pk,'role':'Head of PMO','verdict':'approve','note':'Human approves client communication'}).status_code,302)
         self.advance();v=domain.document(self.w)
+        self.assertEqual(connection.vendor,'postgresql')
+        self.assertIsNotNone(v,self.w.finding)
+        self.assertFalse(HumanTask.objects.filter(version=v).exists())
+        self.assertFalse(Publication.objects.filter(factory_work=self.w).exists())
+        response=self.client.get(url)
+        self.assertContains(response,'Message drafted')
+        self.assertContains(response,'Send for review',count=1)
+        self.assertNotContains(response,'Approve exact communication')
+        review={'action':'review','revision':self.w.revision,'case_revision':rev(self.c),'version':v.pk,'verdict':'approve','note':'Human approves exact projection'}
+        self.assertContains(self.client.post(url,review),'no open human review task')
+        background=factory_progress.set_progress(self.a,self.w.pk,self.w.revision,True)
+        for _ in range(8):
+            factory_progress.run_once();background.refresh_from_db()
+            if background.status=='waiting':break
+        self.assertEqual(background.status,'waiting')
+        self.assertTrue(background.observation)
+        self.w.refresh_from_db()
+        submit={'action':'request_review','revision':self.w.revision,'case_revision':rev(self.c),'version':v.pk}
+        self.assertRedirects(self.client.post(url,submit),url)
+        task=HumanTask.objects.get(version=v)
+        self.assertEqual((task.created_by_id,task.status,task.required_role),(self.a.pk,'open','PMO Lead'))
+        background.refresh_from_db()
+        self.assertEqual((background.status,background.observation),('waiting',''))
+        self.assertFalse(Publication.objects.filter(factory_work=self.w).exists())
+        self.assertContains(self.client.post(url,dict(submit,case_revision=rev(self.c))),'already requested')
         response=self.client.get(url);self.assertContains(response,'Awaiting exact document review');self.assertIn('no-store',response['Cache-Control'])
-        self.assertEqual(self.client.post(url,{'action':'review','revision':self.w.revision,'case_revision':rev(self.c),'version':v.pk,'verdict':'approve','note':'Human approves exact projection'}).status_code,302)
+        self.assertNotContains(response,'Send for review')
+        self.assertEqual(self.client.post(url,dict(review,revision=self.w.revision,case_revision=rev(self.c))).status_code,302)
         self.finish();self.assertContains(self.client.get(url),'Issue resolution is tracked separately')
         self.assertContains(self.client.get(reverse('factory_configuration',args=[self.c.pk])+'?definition=pmo-escalation/v1'),'Existing escalation communication preparer')
         Grant.objects.filter(case=self.c,user=self.a,action='issue.read').update(active=False);self.assertEqual(self.client.get(url).status_code,404)
+
+    def test_cannot_submit_without_exact_current_preparer_work_case_and_source(self):
+        self.start();self.decision();self.advance();version=domain.document(self.w)
+        url=reverse('factory_detail',args=[self.w.pk])
+        submit={'action':'request_review','revision':self.w.revision,'case_revision':rev(self.c),'version':version.pk}
+        reader=get_user_model().objects.create_user(username='escalation-submission-reader')
+        Grant.objects.bulk_create([Grant(case=self.c,user=reader,action=action)
+            for action in ('case.read','issue.read','factory.read','document.request_review')])
+        self.client.force_login(reader)
+        self.assertNotContains(self.client.get(url),'Send for review')
+        self.assertEqual(self.client.post(url,submit).status_code,403)
+
+        self.client.force_login(self.a)
+        self.assertContains(self.client.post(url,dict(submit,revision=self.w.revision+1)),'Refresh the current escalation')
+        self.assertContains(self.client.post(url,dict(submit,case_revision=submit['case_revision']+1)),'Stale revision')
+        self.assertContains(self.client.post(url,dict(submit,version=version.pk+1)),'Select the exact current communication draft')
+        self.assertContains(self.client.post(url,dict(submit,version=0)),'Select the current work, project and draft versions')
+        profile(self.a,self.c,self.state,self.e,'client_dependent',True)
+        self.assertContains(self.client.post(url,dict(submit,case_revision=rev(self.c))),'Issue or escalation facts changed')
+        self.assertNotContains(self.client.get(url),'Send for review')
+        self.assertFalse(HumanTask.objects.filter(version=version).exists())
+        self.assertFalse(Publication.objects.filter(factory_work=self.w).exists())
     def test_role_assignment_change_preserves_generic_grant_but_rejects_current_publication(self):
         from apps.policy.services import active_component
         self.ready();v=domain.document(self.w);p=reserve_publication(self.a,self.c.pk,v.pk,rev(self.c),factory_work_id=self.w.pk)

@@ -4,6 +4,7 @@ from pathlib import Path
 from django.core.exceptions import ValidationError,PermissionDenied
 from django.db import DatabaseError,transaction
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 from apps.core.services import add_evidence
 from apps.identity.models import Grant
@@ -28,6 +29,49 @@ class FactoryIssueTests(TestCase):
         issue,_=domain.source(self.work,self.a)
         operation='progress' if issue.current.acknowledged_at else 'acknowledge'
         return domain.respond(self.a,self.work.pk,self.work.revision,rev(self.c),t.pk,t.revision,operation,self.e['requirements'].pk,'I will investigate cause','Gather source-owner evidence')
+
+    def test_issue_console_uses_readable_records_and_current_operation_permissions(self):
+        self.client.force_login(self.a)
+        url=reverse('issues',args=[self.c.pk])
+        page=self.client.get(url)
+        self.assertContains(page,'No external records linked.')
+        self.assertNotContains(page,'external_lifecycle_changed')
+        self.assertContains(page,'Owner acknowledges')
+        self.assertNotContains(page,'Owner resolves with fix')
+        Grant.objects.filter(case=self.c,user=self.a,action__in=['issue.manage','issue.work','issue.reference.observe',
+            'issue.reference.configure','issue.close_log','agent.issues']).update(active=False)
+        page=self.client.get(url)
+        self.assertEqual(page.status_code,200)
+        self.assertContains(page,self.state.title)
+        self.assertNotContains(page,'Record owned issue</button>')
+        self.assertNotContains(page,'Record issue state</button>')
+        self.assertNotContains(page,'Record source observation</button>')
+        self.assertNotContains(page,'Investigate acknowledgement and root-cause gaps</button>')
+
+    def test_api_issue_register_capture_and_exact_owner_acknowledgement(self):
+        self.client.force_login(self.a)
+        url = f'/api/v1/projects/{self.c.pk}/issues'
+        submitted = self.client.post(url, {'case_revision': rev(self.c), 'reference': 'ISS-API-1',
+            'title': 'Synthetic issue for a known owner', 'kind': 'Delivery', 'owner_id': self.a.pk,
+            'next_action': 'Check the original evidence.', 'evidence_id': self.e['requirements'].pk,
+            'note': 'Synthetic issue intake.', 'severity': None, 'external_links': []},
+            content_type='application/json')
+        self.assertEqual(submitted.status_code, 201, submitted.content)
+        saved = submitted.json()
+        issue = f"{url}/{saved['issue_id']}"
+        values = {'case_revision': saved['case_revision'], 'action': 'update', 'state_id': saved['state_id'],
+                  'operation': 'acknowledge', 'evidence_id': self.e['requirements'].pk,
+                  'note': 'The named owner acknowledges.', 'next_action': 'Gather the original evidence.',
+                  'owner_id': None, 'severity': None, 'fix_id': None, 'root_cause_id': None}
+        updated = self.client.post(issue, values, content_type='application/json')
+        self.assertEqual(updated.status_code, 201, updated.content)
+        self.assertNotEqual(updated.json()['state_id'], saved['state_id'])
+        detail = self.client.get(issue)
+        self.assertEqual(detail.status_code, 200, detail.content)
+        self.assertIsNotNone(detail.json()['acknowledgement']['at'])
+        self.assertEqual(detail.json()['issue']['status'], 'Open')
+        replay = self.client.post(issue, values, content_type='application/json')
+        self.assertNotEqual(replay.status_code, 201)
     def test_scoped_investigation_owned_followup_verified_without_issue_closure(self):
         self.advance();self.assertEqual(self.work.status,'waiting',self.work.finding)
         attempt=FactoryAttempt.objects.get(activity__work=self.work,activity__kind='ACT04',phase='observed')
@@ -49,6 +93,10 @@ class FactoryIssueTests(TestCase):
         with self.assertRaises(DatabaseError),transaction.atomic():FactoryWork.objects.filter(pk=self.work.pk).update(status='verified')
         self.advance();Grant.objects.filter(case=self.c,user=self.a,action='issue.work').update(active=False)
         with self.assertRaises(PermissionDenied):self.respond()
+        self.client.force_login(self.a)
+        page=self.client.get(f'/work/{self.work.pk}/')
+        self.assertContains(page,'The recorded owner needs current access')
+        self.assertNotContains(page,'Record my update')
         self.assertEqual(HumanTask.objects.get().status,'open')
     def test_cancel_and_explicit_restart_preserve_owner_task_and_budget(self):
         self.advance();spent=self.work.budget_used
@@ -58,8 +106,18 @@ class FactoryIssueTests(TestCase):
         self.assertEqual(self.work.budget_used,spent);self.advance();self.respond();self.advance();self.assertEqual(self.work.status,'verified',self.work.finding)
     def test_staff_intake_detail_get_preservation_and_native_owner_post(self):
         self.client.force_login(self.a)
+        start_url = '/factory/new/?definition=pmo-issues/v1&case=' + str(self.c.pk)
+        self.assertContains(self.client.get(start_url), 'Continue in background after starting')
+        started = self.client.post(start_url, {
+            'definition': 'pmo-issues/v1', 'key': self.work.key, 'case': self.c.pk,
+            'issue': self.state.issue_id, 'revision': rev(self.c), 'background': 'on',
+        })
+        self.assertRedirects(started, f'/work/{self.work.pk}/', fetch_redirect_response=False)
+        self.assertEqual(self.work.background_progress.status, 'queued')
         before=(rev(self.c),self.work.revision,FactoryAttempt.objects.count())
-        r=self.client.get(f'/work/{self.work.pk}/');self.assertEqual(r.status_code,200);self.assertContains(r,'Native issue lifecycle')
+        r=self.client.get(f'/work/{self.work.pk}/');self.assertEqual(r.status_code,200);self.assertContains(r,'Issue register')
+        register=self.client.get(f'/projects/{self.c.pk}/registers/')
+        self.assertContains(register,f'/cases/{self.c.pk}/issues/#issue-{self.state.issue_id}')
         self.assertEqual(before,(rev(self.c),FactoryWork.objects.get(pk=self.work.pk).revision,FactoryAttempt.objects.count()))
         self.advance();t=HumanTask.objects.get()
         r=self.client.post(f'/work/{self.work.pk}/',{'action':'respond','revision':self.work.revision,'case_revision':rev(self.c),'task':t.pk,'task_revision':t.revision,'operation':'acknowledge','evidence':self.e['requirements'].pk,'note':'Accountable owner response','next_action':'Gather evidence'})

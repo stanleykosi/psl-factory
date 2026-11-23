@@ -1,0 +1,9 @@
+{
+  "classification": "Synthetic interface example. Operational teams, recorder roles and channels remain owner-supplied.",
+  "value": {
+    "recorder_roles": ["PM"],
+    "teams": [{"key": "sample-engineering", "label": "SAMPLE Engineering"}],
+    "channels": ["email", "meeting"],
+    "clock_basis": "human_attested_source_time"
+  }
+}
