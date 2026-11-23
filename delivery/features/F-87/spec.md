@@ -201,3 +201,7 @@ F-87 also adds the shared seam every line's write form attaches to, because lane
 ## Coordinator note (lane C, 23 Nov): two additive asks from lane D
 - `LineContext` gains `state` (the work item's `state` from GET /work/{id}, read-only), so a line's `Actions` can offer a control only in the states the server reports. Lane D's ledger Restart needs this. No client-side rule about which state allows what: the line reads the served state and the server still answers 409/422.
 - `useWorkCommand` supports multipart bodies: a `CommandDescriptor` may say `contentType: 'multipart/form-data'`, and `useWorkCommand` sends `FormData` with the same press lock, uncertain lock, CSRF handling and re-read as JSON. Lane D's fixed-assets dates and opening proof (F-102B) and hypercare observations (F-115B) send through it, so there is no second sender. Unit-test both content types.
+
+## Coordinator note (lane C, 23 Nov): two more seams for lanes B and D
+- `LineAdapter.read()` receives the `LineContext` (additive; adapters that ignore it keep working), so a line need not re-read GET /work/{id}.
+- Line adapters register in one place: a new `src/features/workspace/lines/index.ts` that imports each line's adapter module (side-effect `registerLineAdapter`). `LiveWorkItemView.tsx` imports only that file. The weekly report adapter moves its registration there. Lanes add one import line each, in their own commit.
