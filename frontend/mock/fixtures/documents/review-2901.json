@@ -1,0 +1,34 @@
+{
+  "title": "Statement of work",
+  "version": 2,
+  "revision": 7,
+  "audience": "Client · Lagoon Health",
+  "current": true,
+  "decisions": [
+    "approve",
+    "return"
+  ],
+  "django_url": "/legacy/unused",
+  "preview": [
+    {
+      "field": "Scope",
+      "text": "The patient app covers booking, reminders and results for 3 clinics.\n\nClinics are named in the order form; any later clinic is a change request."
+    },
+    {
+      "field": "Deliverables",
+      "text": "Android and iOS apps; staff web console; handover pack."
+    },
+    {
+      "field": "Milestones and stages",
+      "text": "4 stages; amounts from the costing approved 24 Jun."
+    },
+    {
+      "field": "Assumptions",
+      "text": "Client supplies clinic data by week 2."
+    },
+    {
+      "field": "Out of scope",
+      "text": "Insurance claims; lab integrations."
+    }
+  ]
+}
