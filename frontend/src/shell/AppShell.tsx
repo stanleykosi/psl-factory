@@ -47,7 +47,7 @@ export function usePhoneBack({ label, href, note, onNote }: PhoneBack) {
 }
 
 /** Pages a signed-out person opens: no frame, so no /me read, no bars and no role words. F-59 and F-60 add theirs. */
-export const PUBLIC_PATHS: readonly string[] = ['/sign-in'];
+export const PUBLIC_PATHS: readonly string[] = ['/sign-in', '/staff/join'];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? '/';
