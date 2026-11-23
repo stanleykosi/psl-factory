@@ -8,6 +8,7 @@
 .delivery__reasons { grid-column: 2 / -1; font-size: var(--text-small-size); color: var(--ink); }
 .delivery__reasons ul { margin: var(--space-1) 0 0; padding-left: var(--space-4); }
 .delivery__finding { color: var(--ink-muted); }
+.delivery__rule { margin: 0; padding: var(--space-3) var(--space-4); border-top: 1px solid var(--rule-soft); font-size: 13px; color: var(--ink-muted); }
 .delivery__asof { padding: var(--space-3) var(--space-4); }
 @media (max-width: 719.98px) {
   .delivery__row { grid-template-columns: 28px minmax(0, 1fr) auto; row-gap: var(--space-1); }

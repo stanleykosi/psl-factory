@@ -63,6 +63,12 @@ describe('success', () => {
     expect(screen.getByText(/^Checked /)).toBeTruthy();
   });
 
+  it('draws the board\'s static sentence under the rows, with the board wording', async () => {
+    await open();
+    const note = screen.getByText("Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance's confirmation.");
+    expect(note.previousElementSibling!.tagName).toBe('OL');
+  });
+
   it('shows no counts, DLV number, gate wording or Tola text, and makes only GET requests', async () => {
     await open();
     await until(() => expect(paths()).toHaveLength(3));

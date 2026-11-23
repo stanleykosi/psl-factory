@@ -84,6 +84,7 @@ function DeliveryRows({ overview, reasons }: { overview: DeliveryOverview; reaso
           );
         })}
       </ol>
+      <p className="delivery__rule">Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance&#39;s confirmation.</p>
       <p className="projects__note delivery__asof">Checked {formatDateTime(overview.as_of)}</p>
     </Panel>
   );
