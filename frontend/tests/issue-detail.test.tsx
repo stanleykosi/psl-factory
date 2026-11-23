@@ -343,7 +343,7 @@ describe('record a reply and raise an escalation (AC 9, 10)', () => {
     expect(await screen.findByText('Owner reply · recorded by PM')).toBeTruthy();
   });
 
-  it('Raise an escalation opens Start work on the escalation line with the prefill and posts nothing on this page', async () => {
+  it('Raise an escalation opens Start work, which has no live escalation form yet, and posts nothing on this page', async () => {
     await open(item('W-2412'));
     const lines = read('start-work/lines.pm.json');
     const base = fetchStub.getMockImplementation()!;
@@ -356,7 +356,8 @@ describe('record a reply and raise an escalation (AC 9, 10)', () => {
     });
     await press('Raise an escalation');
     expect(await screen.findByRole('dialog')).toBeTruthy();
-    await waitFor(() => expect(within(screen.getByRole('dialog')).getAllByText(/Escalat/i).length).toBeGreaterThan(0));
+    // F-86: the drawer starts live lines only; the escalation has no live form yet.
+    expect(await within(screen.getByRole('dialog')).findByText('You can’t start this here.')).toBeTruthy();
     expect(sent.filter((r) => r.method === 'POST')).toHaveLength(0);
     expect(document.body.textContent).not.toMatch(/escalation (was|has been) (started|raised)/i);
   });

@@ -103,8 +103,8 @@ describe('the Django embed is gone', () => {
     const root = join(__dirname, '..');
     const removed = new RegExp(['FactoryDesk', 'work_desk_url', 'django_url', 'factory-forms', 'factory-assets', 'NEXT_PUBLIC_FACTORY_ORIGIN'].join('|'));
     const hits = matchingSources(['src', 'tests', 'e2e', 'mock'].map((d) => join(root, d)), removed);
-    // The live contract itself and its generated types name these fields (the frame reads `/me` and ignores them); the mock's `/me` fixtures hold the fixed /retired/ value and tests/mock-live-me.test.ts proves their shape. mock/work-live.mjs serves the live work item, whose required `django_url` field it must carry (F-85).
-    const allowed = ['next-config.test.ts', 'shell-no-embed.test.tsx', 'live-schema.d.ts', 'shell-live.test.tsx', 'client.test.ts', 'destinations.ts', 'mock-live-me.test.ts', 'work-live.mjs'];
+    // The live contract itself and its generated types name these fields (the frame reads `/me` and ignores them); the mock's `/me` fixtures hold the fixed /retired/ value and tests/mock-live-me.test.ts proves their shape. mock/work-live.mjs serves the live work item, whose required `django_url` field it must carry (F-85). F-86: the chooser links a line it cannot start to its `django_url`, and its mock and test carry the field.
+    const allowed = ['next-config.test.ts', 'shell-no-embed.test.tsx', 'live-schema.d.ts', 'shell-live.test.tsx', 'client.test.ts', 'destinations.ts', 'mock-live-me.test.ts', 'work-live.mjs', 'LineChooser.tsx', 'start-live.mjs', 'start-work-live.test.tsx'];
     expect(hits.filter((file) => !allowed.some((name) => file.endsWith(name)) && !/mock\/fixtures\/me\.[a-z_]+\.json$/.test(file))).toEqual([]);
   });
 });

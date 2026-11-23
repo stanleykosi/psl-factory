@@ -92,3 +92,8 @@ div.sw-next { display: flex; flex-direction: column; gap: var(--space-6px); bord
   /* a 44px target that keeps the 18px line of the sheet head */
   .sw-change { min-height: var(--control-md); margin-block: calc((var(--space-18px) - var(--control-md)) / 2); }
 }
+
+/* a line this screen cannot start: a card that is not a choice, with its link to the full form */
+.sw-lines .sw-unavailable { display: block; cursor: default; }
+.sw-unavailable__note { display: block; margin-top: 2px; }
+.sw-stack { display: flex; flex-direction: column; gap: var(--space-2); }
