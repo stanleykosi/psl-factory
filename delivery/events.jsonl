@@ -3977,3 +3977,11 @@
 {"at":"2026-11-23T09:36:07Z","feature":"F-57","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"qa","severity":"medium","owner":"backend","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-23T09:36:07Z","feature":"F-57","round":2,"kind":"finding","action":"add","finding":"QA-2-2","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
 {"at":"2026-11-23T09:36:07Z","feature":"F-57","round":2,"kind":"transition","head":"5262fbd45ea1","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-23T09:40:02Z","feature":"F-57","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"5262fbd45ea1","findings":{"PMO-2-1":"low"},"written_at":"2026-11-23T09:37:08Z"}
+{"at":"2026-11-23T09:40:02Z","feature":"F-57","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), recorded by the coordinator","commit":"5262fbd45ea1","written_at":"2026-11-23T09:39:55Z"}
+{"at":"2026-11-23T09:40:02Z","feature":"F-57","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-23T09:40:36Z","feature":"F-57","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/97","git.pr_number":97}}
+{"at":"2026-11-23T09:40:36Z","feature":"F-57","round":2,"kind":"transition","head":"5262fbd45ea1","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-23T09:40:58Z","feature":"F-57","round":2,"kind":"fields","fields":{"git.ci_status":"passed"}}
+{"at":"2026-11-23T09:41:45Z","feature":"F-57","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"5262fbd45ea1","reasons":["risk 'medium' is not auto-mergeable","surface 'auth' always needs a human","surface 'contract-change' always needs a human","surface 'product-decision' always needs a human","surface 'security' always needs a human","83 changed files exceed the auto-merge limit of 15","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
+{"at":"2026-11-23T09:41:45Z","feature":"F-57","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}

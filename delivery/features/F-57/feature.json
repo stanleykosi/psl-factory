@@ -4,7 +4,7 @@
   "project_id": "psl-factory",
   "feature_id": "F-57",
   "outcome": "The app frame loads from the live API: live types and client, session and error handling, role words from role-dashboard",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -114,20 +114,24 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance for F-57 (FE-CONNECT-1 part b). Not client or product acceptance, merge or release.",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-57/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), recorded by the coordinator",
+      "authority": "the design engineer's answer in the delivery session, 23 Nov 2026",
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -420,6 +424,29 @@
           "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732"
         }
       ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Product acceptance is pending. Delivery is accepted here; it does not stand in for the design engineer's acceptance, the merge or the release decision.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-57/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-23T09:40:02Z",
+          "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -512,11 +539,11 @@
     "task_branch": "fe-connect-1-live-client",
     "head_sha": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
     "worktree": "/Users/Hunchoo/psl-factory",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
-    "designated_approver": null,
-    "ci_status": "not_run",
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/97",
+    "pr_number": 97,
+    "pr_author": "hunchoweb",
+    "designated_approver": "hunchoweb",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -625,12 +652,22 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-57/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'auth' always needs a human",
+      "surface 'contract-change' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "surface 'security' always needs a human",
+      "83 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -701,6 +738,14 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-23T09:36:07Z",
+      "round": 2,
+      "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-23T09:40:36Z",
       "round": 2,
       "head": "5262fbd45ea1743f1bbde3e0c5fc07eaa992e732",
       "reason": null
