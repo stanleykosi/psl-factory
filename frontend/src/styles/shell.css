@@ -123,3 +123,15 @@ body { margin: 0; background: var(--steel); }
   .shell-phone .sw-phoneslot { right: var(--space-2); }
   .shell-phone .sw-phoneslot .shell-bellwrap:not(:last-child) { margin-right: var(--space-1); }
 }
+
+/* (h) account menu (SCR-15-desktop-account): the name is a button in the who-line's place; its menu opens under the bar at the right edge */
+button.psl-nav__who { background: none; border: none; padding: 0; font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+button.psl-nav__who::after { content: " ▾"; }
+/* below 900px the bar has no room for the caret beside the bell and Start work (the 720 to 899px bar is tuned to the pixel, F-15); the button still names itself as a menu */
+@media (max-width: 899.98px) { button.psl-nav__who::after { content: none; } }
+.shell-topbar .psl-nav__in { position: relative; }
+.shell-accountpop { position: absolute; top: 100%; right: var(--space-6); z-index: var(--z-pop); }
+.shell-accountpop .psl-pop.cmp-pop { position: static; width: 340px; }
+.shell-accountpop .psl-pop { color: var(--ink); }
+.shell-accountpop .cmp-menuhead small { display: block; font-size: var(--text-small-size); color: var(--ink-muted); }
+.shell-menuaction { width: 100%; align-items: flex-start; background: none; border: none; font: inherit; text-align: left; }

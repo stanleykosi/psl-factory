@@ -46,7 +46,7 @@ import { resetTemplates, templatesList, templateVersion } from './templates.mjs'
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { workList } from './work-list.mjs';
 import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
-import { ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, sessionRoute } from './session.mjs';
+import { LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
 import { isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, ASSISTANT_UPLOADS_PATH, createAssistantMock } from './assistant.mjs';
@@ -236,9 +236,9 @@ function decodeCookie(value) {
   }
 }
 
-function send(res, status, body) {
+function send(res, status, body, headers = {}) {
   const text = JSON.stringify(body);
-  res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+  res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...headers });
   res.end(text);
 }
 
@@ -292,6 +292,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
+      // F-58: after a logout (cookie psl_mock_session=out) every other read and write answers 401, as a signed-out session does.
+      if (url.pathname.startsWith('/api/') && url.pathname !== SESSION_PATH && url.pathname !== LOGOUT_PATH && parseCookies(req.headers.cookie).psl_mock_session === 'out') return send(res, ...SIGNED_OUT_REPLY);
       // F-85: live work item reads (integer ids only) and the case file upload (work-live.mjs); not in v7. v7 ids and v7 case routes fall through.
       if (WORK_LIVE_PATH.test(url.pathname) || CASE_FILES_PATH.test(url.pathname)) {
         const cookies = parseCookies(req.headers.cookie);
@@ -322,14 +324,23 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
         return send(res, ...stationItems({ url, cookies, floorRuns: demoOn(cookies) ? runs.floor() : [] }));
       }
-      // Live frame reads (session.mjs): not in v7. Reads only, so no token check.
-      if (method === 'get' && (url.pathname === SESSION_PATH || url.pathname === ROLE_DASHBOARD_PATH)) {
+      // Live session reads and writes (session.mjs): not in v7. Reads need no token; sign-in and sign-out check it.
+      if (url.pathname === SESSION_PATH || url.pathname === LOGOUT_PATH || url.pathname === ROLE_DASHBOARD_PATH || url.pathname === ONBOARDING_PATH) {
         const cookies = parseCookies(req.headers.cookie);
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
-        if (url.pathname === SESSION_PATH) return send(res, ...sessionRoute({ scenario, me: me[persona] }));
-        if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
-        return send(res, ...roleDashboardRoute({ persona }));
+        const ctx = { cookies, scenario, me: me[persona], persona, raw, token: req.headers['x-csrftoken'] };
+        if (method === 'get' && url.pathname === SESSION_PATH) return send(res, ...sessionRoute(ctx));
+        if (method === 'post' && url.pathname === SESSION_PATH) return send(res, ...signInRoute(ctx));
+        if (method === 'post' && url.pathname === LOGOUT_PATH) return send(res, ...logoutRoute(ctx));
+        if (method === 'get' && url.pathname === ONBOARDING_PATH) {
+          if (signedOut(ctx)) return send(res, ...SIGNED_OUT_REPLY);
+          return send(res, ...onboardingRoute(ctx));
+        }
+        if (method === 'get' && url.pathname === ROLE_DASHBOARD_PATH) {
+          if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+          return send(res, ...roleDashboardRoute({ persona }));
+        }
       }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);

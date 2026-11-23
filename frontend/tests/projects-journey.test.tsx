@@ -244,7 +244,7 @@ describe('tabs other than Journey', () => {
   it('401 on a tab signs in back to that tab', async () => {
     respond = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open('P-0101', 'milestones');
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects%2FP-0101%2Fmilestones');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fprojects%2FP-0101%2Fmilestones');
   });
 });
 
@@ -319,7 +319,7 @@ describe('signed out, failures and stale responses', () => {
   it('401 shows the signed-out callout with next=/projects/P-0101', async () => {
     respond = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open();
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects%2FP-0101');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fprojects%2FP-0101');
   });
 
   it.each([

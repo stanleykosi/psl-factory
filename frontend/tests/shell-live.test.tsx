@@ -170,12 +170,12 @@ describe('signed out', () => {
     routes['/api/v1/me'] = () => json(401, { code: 'unauthenticated', message: 'Sign in to continue.' });
   });
 
-  it('shows the callout and the later-release line, with no anchor in main and nothing for /accounts/', async () => {
+  it('shows the callout and a Sign in link to /sign-in?next=<path>, with nothing for /accounts/', async () => {
     renderShell();
     expect(await screen.findByText('You’re signed out.')).toBeTruthy();
-    expect(screen.getByText(/Sign-in opens in a later release\. Ask your administrator if you need access now\./)).toBeTruthy();
+    expect(document.body.textContent).not.toContain('Sign-in opens in a later release');
     const main = screen.getByRole('main');
-    expect(main.querySelectorAll('a')).toHaveLength(0);
+    expect([...main.querySelectorAll('a')].map((a) => [a.textContent, a.getAttribute('href')])).toEqual([['Sign in', '/sign-in?next=%2Fmy-work']]);
     expect(document.body.innerHTML).not.toContain('/accounts/');
     expect(within(topNav()).queryAllByRole('link')).toEqual([]);
     expect(screen.queryByRole('button', { name: 'Menu' })).toBeNull();

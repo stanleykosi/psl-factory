@@ -273,12 +273,12 @@ describe('settings (SCR-15-desktop-settings)', () => {
   it('401 on the read, and on the save, shows signed out with next=/settings/alerts', async () => {
     hook = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     const { unmount } = await open();
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fsettings%2Falerts');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fsettings%2Falerts');
     unmount();
     hook = (call) => (call.method === 'PUT' ? json(401, { code: 'not_signed_in', message: 'Sign in to continue.' }) : undefined);
     await open();
     save();
-    await until(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fsettings%2Falerts'));
+    await until(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fsettings%2Falerts'));
   });
 });
 

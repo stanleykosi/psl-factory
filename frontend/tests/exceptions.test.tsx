@@ -254,7 +254,7 @@ describe('exceptions list', () => {
     serve(() => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' }));
     render(<ExceptionsList />);
     await screen.findByText('You’re signed out.');
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fexceptions');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fexceptions');
   });
 
   for (const status of [403, 404]) {

@@ -41,6 +41,9 @@ api.use(csrfMiddleware);
 export const liveApi = createClient<livePaths>(clientOptions);
 liveApi.use(csrfMiddleware);
 
+/** The live contract names X-CSRFToken as a parameter of its writes; the middleware above sets the real value, so this only satisfies the types. */
+export const csrfHeader = { header: { 'X-CSRFToken': '' } } as const;
+
 /** GET /api/v1/session: stores the token it returns and gives back the body. Used before sign-in and after a stale token. */
 export async function refreshSession() {
   const session = await call(liveApi.GET('/api/v1/session'), false);

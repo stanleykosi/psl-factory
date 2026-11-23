@@ -261,7 +261,7 @@ describe('access', () => {
   it('401 signs in back to the delivery path', async () => {
     respond = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
     await open();
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects%2FP-0101%2Fdelivery');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fprojects%2FP-0101%2Fdelivery');
   });
 
   for (const status of [403, 404]) {

@@ -132,7 +132,8 @@ describe('the bell in the top bar', () => {
     const order = [...topBar().querySelector('.psl-nav__in')!.children].map((el) => el.className);
     expect(order).toEqual(['psl-brand', 'psl-nav__links', 'shell-bellwrap', 'psl-nav__who', 'shell-navend']);
     const focusable = [...topBar().querySelectorAll('a, button')].map((el) => el.getAttribute('aria-label') ?? el.textContent);
-    expect(focusable.at(-3)).toBe('Alerts, 4 unread, 3 need you');
+    expect(focusable.at(-4)).toBe('Alerts, 4 unread, 3 need you');
+    expect(focusable.at(-3)).toMatch(/^Account menu: /);
     expect(focusable.slice(-2)).toEqual(['Start work', 'More ways to start']);
     expect(lists()).toHaveLength(1);
     expect([...lists()[0].url.searchParams.keys()]).toEqual([]);
@@ -453,7 +454,7 @@ describe('states', () => {
     await mount();
     await openDrawer();
     expect(dialog()!.textContent).toContain('You’re signed out.');
-    expect(within(dialog()!).getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fmy-work');
+    expect(within(dialog()!).getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fmy-work');
     fireEvent.keyDown(dialog()!, { key: 'Escape' });
     await openDrawer();
     expect(lists()).toHaveLength(1);

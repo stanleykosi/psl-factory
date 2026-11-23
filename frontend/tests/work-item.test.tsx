@@ -306,7 +306,7 @@ describe('item states', () => {
     serve(() => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' }));
     await open('W-1001');
     expect(screen.getByText('You’re signed out.')).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fwork%2FW-1001');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fwork%2FW-1001');
   });
 
   it('a server error shows the work-item error card; Try again re-reads and shows the item', async () => {

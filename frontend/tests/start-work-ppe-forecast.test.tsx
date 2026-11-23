@@ -431,7 +431,7 @@ describe('13 and 14: access, plain text, no limits', () => {
     await forecastReady();
     press('Start forecast');
     expect(await within(dialog()).findByText('You’re signed out.')).toBeTruthy();
-    expect(within(dialog()).getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fmy-work');
+    expect(within(dialog()).getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fmy-work');
   });
 
   it('a fixed line without case_revision is "can’t start here yet" and sends nothing', async () => {

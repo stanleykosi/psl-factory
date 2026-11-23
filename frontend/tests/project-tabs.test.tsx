@@ -405,7 +405,7 @@ describe('access and errors (all tabs)', () => {
   it('a 401 on the tab signs in back to the tab with its query', async () => {
     respond = (url) => (url.pathname.endsWith('/registers') ? json(401, { code: 'not_signed_in', message: 'x' }) : undefined);
     await open('P-0101', 'registers', 'register=changes&q=sms');
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/accounts/login/?next=%2Fprojects%2FP-0101%2Fregisters%3Fregister%3Dchanges%26q%3Dsms');
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fprojects%2FP-0101%2Fregisters%3Fregister%3Dchanges%26q%3Dsms');
   });
 
   it('a 500 and a network failure show the error card; Retry sends exactly one new request', async () => {

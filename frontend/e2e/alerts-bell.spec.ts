@@ -92,11 +92,13 @@ test.describe('desktop 1440', () => {
     await expectNoAxeViolations(page);
   });
 
-  test('Tab goes links, bell, Start work, with Start work last in the bar', async ({ page }) => {
+  test('Tab goes links, bell, name menu, Start work, with Start work last in the bar', async ({ page }) => {
     await ready(page);
     await bar(page).getByRole('link', { name: 'Setup' }).focus();
     await page.keyboard.press('Tab');
     await expect(bell(page)).toBeFocused();
+    await page.keyboard.press('Tab');
+    await expect(bar(page).getByRole('button', { name: /^Account menu: / })).toBeFocused();
     await page.keyboard.press('Tab');
     await expect(bar(page).getByRole('button', { name: 'Start work' })).toBeFocused();
     await page.keyboard.press('Tab');
@@ -139,7 +141,7 @@ test.describe('desktop 1440', () => {
     const foot = [await box(d.getByRole('link', { name: 'See all alerts' })), await box(d.getByRole('link', { name: 'Alert settings' }))];
     expect(foot[0].x).toBeLessThan(foot[1].x);
     expect(foot[1].y + foot[1].height).toBeGreaterThan(850);
-    await expect(page.getByRole('button', { name: /sign out|account/i })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /sign out/i })).toHaveCount(0);
     await shot(page, 'bell-1440-open');
     await expectNoAxeViolations(page);
   });
@@ -304,7 +306,7 @@ test.describe('desktop 1440', () => {
     await ready(page);
     await bell(page).click();
     await expect(dialog(page)).toContainText('You’re signed out.');
-    await expect(dialog(page).getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/accounts/login/?next=%2Fmy-work');
+    await expect(dialog(page).getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in?next=%2Fmy-work');
     await page.keyboard.press('Escape');
     await bell(page).click();
     await expect(dialog(page)).toContainText('You’re signed out.');
