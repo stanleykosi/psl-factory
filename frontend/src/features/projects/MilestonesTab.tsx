@@ -3,6 +3,8 @@
 // SCR-38 Milestones: the contract stages of /money (amount, completion, invoice and paid as separate facts), then the
 // recorded completions of /milestones as their own list. A change sits beside the stage it changes; its amount is shown
 // next to the contract amount and never added to it. A stage is tied to a completion only through `milestone_id`.
+import { useEffect, useRef } from 'react';
+
 import { Button, Callout, Table, Tag, useIsPhone, VisuallyHidden, When, type Column } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
@@ -138,7 +140,7 @@ function MilestoneCards({ items, rows, proofs }: { items: MoneyItem[]; rows: Com
 /** One recorded completion: what was completed, its state, when, and who recorded it. */
 function CompletionItem({ row, proofs }: { row: CompletionRow; proofs: Proofs }) {
   return (
-    <li className="ptabs__completion">
+    <li tabIndex={-1} className="ptabs__completion">
       <strong>{row.title}</strong>
       <span>{row.state}</span>
       {row.at && <When value={row.at} show="daytime" />}
@@ -151,6 +153,18 @@ function CompletionItem({ row, proofs }: { row: CompletionRow; proofs: Proofs })
 export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: string }) {
   const phone = useIsPhone();
   const { money, completions, more, proofs, retryMoney, retryCompletions, showMore, readProof } = useMilestones(caseId);
+  const listRef = useRef<HTMLUListElement>(null);
+  const count = completions.status === 'ready' ? completions.rows.length : 0;
+  const before = useRef(count);
+  useEffect(() => {
+    // After Show more, when its button went with the last page, focus moves to the first new completion.
+    const previous = before.current;
+    before.current = count;
+    if (count <= previous || previous === 0) return;
+    const active = document.activeElement;
+    if (active && active !== document.body && active.isConnected) return;
+    (listRef.current?.children[previous] as HTMLElement | undefined)?.focus();
+  }, [count]);
   const proof: Proofs = { proofs, press: (slot, id) => void readProof(slot, id) };
 
   if (money.status === 'loading' || completions.status === 'loading') return <LoadingState />;
@@ -186,7 +200,7 @@ export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: 
           {rows.length === 0 ? (
             <p className="ptabs__note">No completions recorded yet.</p>
           ) : (
-            <ul className="ptabs__completionlist">
+            <ul ref={listRef} className="ptabs__completionlist">
               {rows.map((row) => (
                 <CompletionItem key={row.record_id} row={row} proofs={proof} />
               ))}

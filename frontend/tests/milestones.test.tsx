@@ -360,6 +360,7 @@ describe('errors and paging', () => {
     await until(() => expect(panel().querySelectorAll('.ptabs__completion')).toHaveLength(27));
     expect(reads().filter((r) => r.startsWith('/milestones'))).toEqual(['/milestones', '/milestones?page=2']);
     expect(within(panel()).queryByRole('button', { name: 'Show more' })).toBeNull();
+    await until(() => expect(document.activeElement).toBe(panel().querySelectorAll('.ptabs__completion')[25]));
   });
 
   it('a failed second page says so and Show more tries again', async () => {
