@@ -4061,3 +4061,5 @@
 {"at":"2026-11-23T13:31:31Z","feature":"F-62","round":0,"kind":"transition","head":"924e7cdc51c6","from":"PLANNED","to":"READY"}
 {"at":"2026-11-23T13:31:39Z","feature":"F-62","round":1,"kind":"transition","head":"924e7cdc51c6","from":"READY","to":"IMPLEMENTING"}
 {"at":"2026-11-23T13:31:57Z","feature":"F-90","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-23T13:32:56Z","feature":"F-76","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","auth"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-23T13:32:58Z","feature":"F-76","round":0,"kind":"transition","from":"PLANNED","to":"READY"}

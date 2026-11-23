@@ -152,6 +152,13 @@ Context: the reset boards draw only "ask" and "Check your email."; live gives no
   1. (Recommended) Accept all: B14 the agent notes, next-action button, "received this month", bank-data date, coverage sentence, row and filter counts, milestone label, per-row colour and month-end "N of M" are hidden (no live source), the strip gains a "data as of" cell and the State filter keeps the five live states; B15 "overdue by" becomes AGE ("N days") until the backend says what overdue means; B16 a "Partial result" notice when the data is partial, the basis beside each figure, one total per currency and basis, and month-end cash reads "By project" when it is not one figure; B17 the reminder, record-payment and review-payment actions show disabled with a reason when the server gives no link.
   2. Keep the missing parts as "Not available" placeholders.
 
+### Batch 2 (lane B)
+
+- **F-76 · B18. A person page that no board draws.** Live gives each person's access workspace by workspace (`GET /staff/{id}`), but SCR-21 draws only the list.
+  1. (Recommended) Add a plain read-only person page at `/setup/staff/<person>` in the existing Setup style: name, status and access per workspace. We build this now.
+  2. No person page; the list only, and the per-workspace access is not shown.
+  Context: no write controls either way; invite, deactivate and roles wait for PSL (D-ADMIN-AUTHORITY).
+
 ## Lane C
 
 ### LC-Q1 · F-85, F-87 · Work item parts the live API does not give

@@ -454,3 +454,5 @@ Added during the two-day push (D-180), with a lane prefix (LA-, LB-, LC-).
 - **LC-4 (F-88)** `POST /received-bids` on a repeated `reference` or a repeated `start_key` with different values: which status and `code` come back (409 or 200 replay), and does a replay with the same `start_key` return the same `receipt_id`?
 - **LC-5 (F-88)** After `POST …/assignment` returns 201, does the item leave `GET /received-bids/assignments` at once, and which work state does it have? A second assignment on the same `intake`: 409 with which `code`?
 - **LC-6 (F-86)** `GET /projects/{case_id}/intake-sources?line=pmo-weekly-report/v1`: which names come back in `fields[]` for the weekly report, and does any of them list templates or client content (the ids `template_id` and `content_id` in the `POST /work` weekly body, both nullable)? Until answered the weekly start sends both as null.
+
+- **LB-1** (lane B, F-76, SCR-21) `GET /staff` returns `available: false` with `observed_at`. We read it as "the list is partial or stale as of `observed_at`" and show a notice. Is that right, or does it mean something else (staff directory offline, no rows at all)? Related to A-50.

@@ -3,26 +3,59 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-76",
-  "outcome": "Staff accounts in Setup list people and their roles from the live staff operations, with invite and deactivate only as far as the Admin authority decision allows",
-  "state": "PLANNED",
+  "outcome": "Staff accounts, read-only: see who has an account and what each person can reach",
+  "state": "READY",
   "task_ids": [
     "FE-SETUP-ROLES"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "With a signed-in account the server serves the list to, `/setup/staff` shows the \"Staff accounts\" tab selected and one row per person from `GET /api/v1/staff` (name, email, `access`, account state) \u2014 verify: open the page against the Django API on 8010 and the mock; the rows match the response body.",
+    "A person with `active: false` reads as deactivated and an `active: true` person as active, from the data only \u2014 verify: mock fixture with both; rows show the two states.",
+    "Pending, expired, accepted and superseded invitations each read differently, and the \"expires\" text uses `expires_at` \u2014 verify: mock fixture with one of each; component test.",
+    "The page never shows a people count, \"Last signed in\", \"Invite sent \u2026 ago\", or \"Deactivated <date>\" \u2014 verify: component test asserts none of those strings render with the full fixture.",
+    "No Invite, Edit roles, Deactivate, Restore or Resend control exists anywhere on the list or person page, active or disabled \u2014 verify: component test finds no button or link with those names; no non-GET request is made on either screen (test asserts the fetch log).",
+    "Typing in search sends `q` (trimmed, no more than 120 characters) and returns to the first page; choosing Active or Inactive sends `status`; All sends none or `all` \u2014 verify: component test reads the request URLs.",
+    "\"Show more\" on people follows `next_page` and appends; the invitations group pages by `next_invitations_page` independently; both disappear when the next page is null \u2014 verify: mock with 30+ people; row count goes 25 then more.",
+    "403 and 404 on `GET /staff` show the existing not-open state and nothing about the list \u2014 verify: scenario 403 in the mock; page shows `NotOpenState` text, no table, no frame error. (Wrong user.)",
+    "401 shows the signed-out state with a sign-in link; a network or 5xx failure shows the error card with retry, and retry reloads \u2014 verify: scenarios 401 and 503.",
+    "A failed \"Show more\" keeps the rows already shown and offers a retry \u2014 verify: component test, second request fails.",
+    "`available: false` shows the partial-list notice with \"As of <observed_at>\" and still shows returned rows \u2014 verify: mock scenario.",
+    "Empty answer shows the empty state, and with a search active mentions the search may be hiding people \u2014 verify: scenario `empty` and a `q` with no match.",
+    "`/setup/staff/<id>` shows the person and one row per workspace with `name`, `access`, and `primary_role` or \"No primary role set\" \u2014 verify: open from a list row; matches `GET /staff/{id}`.",
+    "A workspace row shows the \"can edit profile\" / \"can assign primary role\" lines only when the flags are true, and no control sits beside them \u2014 verify: fixtures with each flag combination.",
+    "A person id the server does not know (404), or one with no access (403), shows the not-open state; a non-numeric id shows it with no request \u2014 verify: `/setup/staff/abc` and `/setup/staff/99999`. (Wrong tenant/user.)",
+    "Invalid input is not sent: a search over 120 characters is cut at 120 and a page counter outside 1 to 10000 is never produced \u2014 verify: unit test on the request builder.",
+    "Every fixture and every mock-served body for both reads validates against `contracts/psl-factory.openapi.json`, and a fixture with an extra key fails \u2014 verify: new `frontend/tests/mock-live-staff.test.ts` (run `npx vitest run tests/mock-live-staff.test.ts` from the lane-b `frontend/`).",
+    "The phone layout (390 px) shows cards with no horizontal scroll and the phone back link on the person page \u2014 verify: page at phone width in the Next.js dev server (4970/4971).",
+    "The frame stays across the list and person pages and drops when a staff read loses access (as other Setup tabs do) \u2014 verify: scenario 403 on the second read.",
+    "Typecheck, lint and the existing tests pass with no change to `src/api`, `src/shell` or `src/features/workspace` \u2014 verify: `git diff --stat` for those paths is empty."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The slice reads personal data (email, username, access) and is role-gated by the server, but it has no write and nothing hard to undo. The surfaces are ui, api and auth. The reviewers should confirm that the 403 is shown honestly and that no control is drawn as active."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-76/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +92,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-76/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +192,29 @@
   "created_at": "2026-11-23T13:22:09Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-23T13:32:58Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-76/readiness.md",
+      "delivery/features/F-76/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
