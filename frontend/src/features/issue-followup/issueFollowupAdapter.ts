@@ -9,6 +9,12 @@ import { sections, type Followup, type IssueDetail, type IssueMessages, type Rea
 
 const WORK_ID = /^\/api\/v1\/work\/(\d+)\/issue-followup$/;
 
+/** The work id in the panel route, or null when the route is not an issue follow-up route (never 0 or NaN). */
+function workIdOf(url: string): number | null {
+  const match = WORK_ID.exec(url);
+  return match ? Number.parseInt(match[1], 10) : null;
+}
+
 /** A read that failed on its own keeps the rest of the page; a lost session or record replaces the page (rethrown). */
 async function alone<T>(read: Promise<T>): Promise<T | { error: ApiError }> {
   try {
@@ -22,8 +28,8 @@ async function alone<T>(read: Promise<T>): Promise<T | { error: ApiError }> {
 
 /** The follow-up read, then the issue detail and the messages together. The case id is the work item's own `case_id`. */
 async function read(ref: { key: string; url: string }): Promise<Readback> {
-  const workId = Number(WORK_ID.exec(ref.url)?.[1]);
-  if (!Number.isInteger(workId)) throw new Error('Not an issue follow-up route.');
+  const workId = workIdOf(ref.url);
+  if (workId === null) throw new Error('Not an issue follow-up route.');
   const [followup, work] = await Promise.all([
     readPanel<Followup>(ref),
     call(liveApi.GET('/api/v1/work/{work_id}', { params: { path: { work_id: workId } } })),
