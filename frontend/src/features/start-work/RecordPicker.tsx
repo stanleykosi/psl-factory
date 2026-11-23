@@ -17,6 +17,9 @@ export const SEARCH_DEBOUNCE_MS = 250;
 /** The last row of a list whose line carries the mock overlay `allow_new` (F-49, G-23-1). */
 export const NEW_CLIENT = 'New client';
 
+/** Where the options come from when it is not E-LINE-OPTIONS (the live project list): one page by search and cursor. */
+export type OptionSource = (q: string, cursor: string | undefined) => Promise<{ items: LineOption[]; next_cursor?: string }>;
+
 type Props = {
   lineKey: string;
   field: Field;
@@ -27,6 +30,10 @@ type Props = {
   labelId: string;
   describedBy: string | undefined;
   invalid: boolean;
+  /** Replaces E-LINE-OPTIONS as the data source; the list UI is the same. */
+  source?: OptionSource;
+  /** The empty list's line, where "Nothing to choose from." is not the line's words. */
+  emptyText?: string;
 };
 
 type ListState =
@@ -34,7 +41,7 @@ type ListState =
   | { status: 'ready'; items: LineOption[]; next?: string; more: boolean }
   | { status: 'error'; items: LineOption[] };
 
-export function RecordPicker({ lineKey, field, parent, value, onChange, disabled, labelId, describedBy, invalid }: Props) {
+export function RecordPicker({ lineKey, field, parent, value, onChange, disabled, labelId, describedBy, invalid, source, emptyText }: Props) {
   const multiple = field.type === 'records';
   const adding = isNew(value);
   const chosen = multiple ? ((value as LineOption[] | undefined) ?? []) : value && !adding ? [value as LineOption] : [];
@@ -58,7 +65,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
       lastCursor.current = cursor;
       setList((current) => (cursor ? { status: 'ready', items: current.items, next: cursor, more: true } : { status: 'loading', items: [] }));
       try {
-        const page = await fetchOptions(lineKey, field.name, { parent, q: query, cursor, limit });
+        const page = await (source ? source(query, cursor) : fetchOptions(lineKey, field.name, { parent, q: query, cursor, limit }));
         if (seq !== request.current) return;
         setList((current) => ({ status: 'ready', items: cursor ? [...current.items, ...page.items] : page.items, next: page.next_cursor, more: false }));
       } catch {
@@ -66,7 +73,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
         setList((current) => ({ status: 'error', items: cursor ? current.items : [] }));
       }
     },
-    [field.name, lineKey, parent, query],
+    [field.name, lineKey, parent, query, source],
   );
 
   const rows = list.items;
@@ -194,7 +201,7 @@ export function RecordPicker({ lineKey, field, parent, value, onChange, disabled
               </Button>
             </p>
           )}
-          {list.status === 'ready' && list.items.length === 0 && !allowsNew(field) && <p className="psl-hint sw-picker__empty">Nothing to choose from.</p>}
+          {list.status === 'ready' && list.items.length === 0 && !allowsNew(field) && <p className="psl-hint sw-picker__empty">{emptyText ?? 'Nothing to choose from.'}</p>}
           {(list.items.length > 0 || (list.status === 'ready' && allowsNew(field))) && (
             <ul ref={listRef} className="psl-listbox" role="listbox" aria-labelledby={labelId} aria-multiselectable={multiple || undefined}>
               {rows.map((option) => {
