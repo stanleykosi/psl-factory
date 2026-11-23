@@ -3,7 +3,7 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-69",
-  "outcome": "People run the emergency change and escalation lines in their live line workspaces (SCR-50, SCR-51) on lane C's shared work item page and line adapter, from intake through each line's decisions to its verified output",
+  "outcome": "People run the emergency change line in its live line workspace (SCR-50: record, refused, review, retro, report) on lane C's shared work item page and line adapter, from intake through its decisions to its verified output (part 1 of FE-EMERGENCY-ESCALATION; SCR-51 escalation follows in its own feature)",
   "state": "PLANNED",
   "task_ids": [
     "FE-EMERGENCY-ESCALATION"
