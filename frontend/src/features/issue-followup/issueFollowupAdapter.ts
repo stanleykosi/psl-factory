@@ -45,7 +45,7 @@ async function read(ref: { key: string; url: string }): Promise<Readback> {
 export const issueFollowupAdapter: LineAdapter<Readback> = {
   key: 'issue-followup',
   read,
-  sections: (readback, ctx) => sections(readback, ctx.caseId),
+  sections: (readback) => sections(readback),
   commands: () => [],
 };
 

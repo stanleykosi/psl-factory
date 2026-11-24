@@ -30,7 +30,7 @@ test('5101 shows the issue, owner, age and the blocked milestone', async ({ page
   await expect(page.getByText('In Progress', { exact: true })).toBeVisible();
   await expect(page.getByText('Engineering', { exact: true })).toBeVisible();
   await expect(page.getByText('3 days')).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Go-live' })).toBeVisible();
+  await expect(page.getByText('Go-live', { exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'What has happened' })).toBeVisible();
   await expect(page.getByText('Owner acknowledged')).toBeVisible();
   await noWriteControls(page);
@@ -41,6 +41,7 @@ test('5102 overdue shows the banner, the chasing rows and the timing', async ({ 
   await open(page, 5102);
   await expect(page.getByText('No response since 09 Nov')).toBeVisible();
   await expect(page.getByText('No receipt yet')).toBeVisible();
+  await expect(page.locator('body')).not.toContainText('Time unknown');
   await expect(page.getByText('Reminder due')).toBeVisible();
   await expect(page.getByText('Escalate by')).toBeVisible();
   await expect(page.getByText('PMO lead', { exact: true })).toBeVisible();
@@ -59,7 +60,7 @@ test('5103 no owner shows the banner and no zero or placeholder', async ({ page 
 test('5104 verified leads with the finding and a planned UAT that is not a link', async ({ page }) => {
   await open(page, 5104);
   await expect(page.getByText('The fix was confirmed by Engineering on 22 Nov.')).toBeVisible();
-  await expect(page.getByText('UAT (planned UAT)')).toBeVisible();
+  await expect(page.getByText('UAT (planned)')).toBeVisible();
   await expect(page.getByRole('link', { name: /UAT/ })).toHaveCount(0);
   await expect(page.locator('body')).not.toContainText('Closed');
   await noWriteControls(page);
@@ -80,5 +81,5 @@ test('5106 is unavailable', async ({ page }) => {
 test('5107 detail 503 shows the facts and a message in place of the timeline', async ({ page }) => {
   await open(page, 5107);
   await expect(page.getByText('ISS-0233')).toBeVisible();
-  await expect(page.getByText('Try again shortly.')).toBeVisible();
+  await expect(page.getByText(/Reload the page to try again/)).toBeVisible();
 });

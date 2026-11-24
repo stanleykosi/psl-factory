@@ -43,13 +43,8 @@ export function errorText(error: ApiError, forbidden = 'You don’t have access 
   if (error.kind === 'not_found') return UNAVAILABLE;
   if (error.kind === 'unauthenticated') return 'You are signed out. Sign in to see this.';
   if (error.kind === 'network') return 'We couldn’t reach the server.';
-  if (error.kind === 'rate_limited' || error.kind === 'read_limited' || error.status === 503) return 'Try again shortly.';
+  if (error.kind === 'rate_limited' || error.kind === 'read_limited' || error.status === 503) return 'This is not available right now. Reload the page to try again.';
   return 'We couldn’t load this part of the page.';
-}
-
-/** What the person may do, from the follow-up read only. No write control is drawn until F-111B. */
-export function allowedActions(f: Followup) {
-  return { requestUpdate: f.can_request_update, record: f.team.can_record, resolve: f.team.can_resolve, hasResponseTask: f.response_task !== null };
 }
 
 export const noOwner = (f: Followup) => f.team.assignment_id === null && f.issue.status !== 'Resolved' && f.issue.status !== 'Closed';
@@ -59,7 +54,7 @@ export function timelineItems(detail: IssueDetail): Item[] {
     const word = Object.hasOwn(KIND_WORDS, row.kind) ? KIND_WORDS[row.kind] : undefined;
     return {
       id: `${row.kind}-${row.id ?? i}`,
-      ...(word ? { label: word, text: row.status } : { text: [row.kind, row.status].filter(Boolean).join(' ') }),
+      ...(word ? { label: word, ...(word.toLowerCase().includes(row.status.toLowerCase()) ? {} : { text: row.status }) } : { text: [row.kind, row.status].filter(Boolean).join(' ') }),
       at: row.at,
     };
   });
@@ -79,7 +74,7 @@ function chasingItems(m: IssueMessages): Item[] {
 
 const note = (key: string, text: string): Section => ({ key, kind: 'text', items: [], note: text });
 
-export function sections(r: Readback, caseId: string): Section[] {
+export function sections(r: Readback): Section[] {
   const { followup: f, detail, messages } = r;
   const { issue, team } = f;
   const out: Section[] = [];
@@ -92,13 +87,14 @@ export function sections(r: Readback, caseId: string): Section[] {
   const facts: Item[] = [{ id: 'reference', label: 'Reference', value: issue.reference }];
   if (issue.severity) facts.push({ id: 'severity', label: 'Severity', tag: { label: issue.severity, tone: 'neutral' } });
   facts.push({ id: 'status', label: 'Status', tag: { label: issue.status, tone: STATUS_TONE[issue.status] } });
-  if (team.label) facts.push({ id: 'owner', label: 'Owner', value: team.label });
+  // the contract gives an unassigned team a label too; with no assignment there is no owner to name
+  if (team.label && team.assignment_id !== null) facts.push({ id: 'owner', label: 'Owner', value: team.label });
   facts.push({ id: 'raised', label: 'Raised', value: when(issue.opened_at) }, { id: 'age', label: 'Age', value: ageText(issue.age_days) });
   const planned = f.blocked_milestone ? null : f.blocked_planned_milestone;
-  if (planned) facts.push({ id: 'blocks', label: 'Blocks', value: `${planned.name} (planned ${planned.stage === 'uat' ? 'UAT' : 'completion'})` });
+  // The shared facts list draws text only, so the milestone is named here and not linked (a link needs lane C's Section).
+  if (f.blocked_milestone) facts.push({ id: 'blocks', label: 'Blocks', value: f.blocked_milestone.name });
+  if (planned) facts.push({ id: 'blocks', label: 'Blocks', value: planned.name.toLowerCase().includes(planned.stage) ? `${planned.name} (planned)` : `${planned.name} (planned ${planned.stage === 'uat' ? 'UAT' : 'completion'})` });
   out.push({ key: 'issue', kind: 'facts', items: facts });
-  // The shared renderer draws a link only to a project, so the milestone name links to the project.
-  if (f.blocked_milestone) out.push({ key: 'blocks', kind: 'text', items: [{ id: 'blocks', label: 'Blocks', cites: [{ case_id: caseId, label: f.blocked_milestone.name }] }] });
 
   if (failed(detail)) {
     out.push({ key: 'happened', kind: 'text', title: 'What has happened', items: [{ id: 'error', text: errorText(detail.error) }] });
@@ -106,18 +102,20 @@ export function sections(r: Readback, caseId: string): Section[] {
     const rows = timelineItems(detail);
     out.push({ key: 'happened', kind: 'timeline', title: 'What has happened', items: rows.length ? rows : [{ id: 'none', text: NO_TIMELINE }] });
     const ack = detail.acknowledgement;
-    out.push({
-      key: 'ack',
-      kind: 'text',
-      items: [{ id: 'ack', text: ack.at ? ack.status : 'Not acknowledged yet', ...(ack.at ? { detail: [formatDayTime(ack.at), ack.basis].filter(Boolean).join(' · ') } : {}) }],
-    });
+    if (!ack.at || ack.basis) {
+      out.push({
+        key: 'ack',
+        kind: 'text',
+        items: [{ id: 'ack', text: ack.at ? ack.status : 'Not acknowledged yet', ...(ack.at ? { detail: [formatDayTime(ack.at), ack.basis].filter(Boolean).join(' · ') } : {}) }],
+      });
+    }
   }
 
   if (failed(messages)) {
     out.push({ key: 'chasing', kind: 'text', title: 'Chasing', items: [{ id: 'error', text: errorText(messages.error, 'Chasing is not available to you') }] });
   } else {
     const rows = chasingItems(messages);
-    if (rows.length) out.push({ key: 'chasing', kind: 'timeline', title: 'Chasing', items: rows });
+    if (rows.length) out.push({ key: 'chasing', kind: 'text', title: 'Chasing', items: rows });
     else if (!messages.timing) out.push({ key: 'chasing', kind: 'text', title: 'Chasing', items: [{ id: 'none', text: NO_MESSAGE }] });
     if (messages.timing) {
       const t = messages.timing;
@@ -130,7 +128,7 @@ export function sections(r: Readback, caseId: string): Section[] {
     }
   }
 
-  const next = [f.next_action, r.workState === 'verified' ? '' : f.finding].filter(Boolean);
+  const next = [noOwner(f) ? '' : f.next_action, r.workState === 'verified' ? '' : f.finding].filter(Boolean);
   if (next.length) out.push({ key: 'next', kind: 'text', title: 'Next', items: next.map((text, i) => ({ id: `next-${i}`, text })) });
   return out;
 }

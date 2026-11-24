@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { ApiError } from '@/api/errors';
 import { issueFollowupAdapter } from '@/features/issue-followup/issueFollowupAdapter';
-import { ageText, allowedActions, errorText, sections, type Followup, type Readback } from '@/features/issue-followup/model';
+import { ageText, errorText, sections, type Followup, type Readback } from '@/features/issue-followup/model';
 import { adapterFor, type LineContext } from '@/features/workspace/adapter';
 import type { Section } from '@/features/workspace/labels';
 import { SectionView } from '@/features/workspace/Sections';
@@ -85,56 +85,57 @@ describe('the adapter (AC16, AC14, AC8)', () => {
 describe('the four states', () => {
   it('5101 in progress (AC1, AC2)', async () => {
     stubFetch();
-    const list = sections(await read(5101), CASE);
+    const list = sections(await read(5101));
     draw(list);
     for (const t of ['ISS-0233', 'High', 'In Progress', 'Engineering', '3 days', 'Go-live', 'What has happened', 'Chasing', 'Reminder due', 'Escalate by']) expect(screen.getAllByText(new RegExp(t)).length).toBeGreaterThan(0);
     const happened = list.find((s) => s.key === 'happened')!;
-    expect(happened.items.map((i) => `${i.label}|${i.text}`)).toEqual(['Status changed|Open', 'Update requested|Sent', 'Owner acknowledged|Acknowledged', 'Status changed|In Progress']);
-    expect(screen.getByRole('link', { name: 'Go-live' }).getAttribute('href')).toBe(`/projects/${CASE}`);
+    expect(happened.items.map((i) => `${i.label}|${i.text}`)).toEqual(['Status changed|Open', 'Update requested|Sent', 'Owner acknowledged|undefined', 'Status changed|In Progress']);
+    expect(list.find((s) => s.key === 'issue')!.items.find((i) => i.label === 'Blocks')!.value).toBe('Go-live');
+    expect(list.some((s) => s.key === 'chasing' && s.kind === 'text')).toBe(true);
+    expect(screen.queryByText('Time unknown')).toBeNull();
     expect(list.some((s) => s.note)).toBe(false);
   });
 
   it('5102 overdue shows the banner from the flags (AC3)', async () => {
     stubFetch();
     const r = await read(5102);
-    draw(sections(r, CASE));
+    draw(sections(r));
     expect(screen.getByText('No response since 09 Nov')).toBeTruthy();
     expect(screen.getByText('No receipt yet')).toBeTruthy();
     expect(screen.getByText('PMO lead')).toBeTruthy();
     const t = (r.messages as { timing: { reminder_overdue: boolean; escalation_overdue: boolean } }).timing;
     t.reminder_overdue = false;
     t.escalation_overdue = false;
-    expect(sections(r, CASE).some((s) => s.key === 'overdue')).toBe(false);
+    expect(sections(r).some((s) => s.key === 'overdue')).toBe(false);
   });
 
   it('an overdue flag with an empty finding reads the default sentence', async () => {
     stubFetch();
     const r = await read(5102);
     (r.messages as { timing: { finding: string } }).timing.finding = '';
-    expect(sections(r, CASE).find((s) => s.key === 'overdue')!.note).toBe('The owner has not responded in time.');
+    expect(sections(r).find((s) => s.key === 'overdue')!.note).toBe('The owner has not responded in time.');
   });
 
   it('5103 no owner: banner, no owner name, no zero, no severity, no timing (AC4, AC9)', async () => {
     stubFetch();
     const r = await read(5103);
-    const list = sections(r, CASE);
+    const list = sections(r);
     expect(list.find((s) => s.key === 'no-owner')!.note).toBe('This issue has no owner. Choose an owner for this issue.');
     const facts = list.find((s) => s.key === 'issue')!.items;
-    expect(facts.map((i) => i.label)).toEqual(['Reference', 'Status', 'Raised', 'Age']);
+    expect(facts.map((i) => i.label)).toEqual(['Reference', 'Status', 'Raised', 'Age', 'Blocks']);
     expect(facts.find((i) => i.label === 'Raised')!.value).toBe('Not recorded');
     expect(facts.find((i) => i.label === 'Age')!.value).toBe('Not recorded');
     expect(text(list)).not.toMatch(/0 days|Unassigned|Reminder due/);
     expect(list.find((s) => s.key === 'chasing')!.items[0].text).toBe('No message has been sent to the owner.');
-    expect(allowedActions(r.followup)).toEqual({ requestUpdate: false, record: false, resolve: false, hasResponseTask: false });
-    expect(allowedActions((await read(5101)).followup)).toMatchObject({ requestUpdate: true, record: true });
+    expect(text(list.filter((s) => s.key === 'next'))).not.toMatch(/Choose an owner/);
   });
 
   it('5104 verified: lead sentence, planned UAT is not a link, never "Closed" (AC5, AC6)', async () => {
     stubFetch();
-    const list = sections(await read(5104), CASE);
+    const list = sections(await read(5104));
     draw(list);
     expect(screen.getByText('The fix was confirmed by Engineering on 22 Nov.')).toBeTruthy();
-    expect(screen.getByText('UAT (planned UAT)')).toBeTruthy();
+    expect(screen.getByText('UAT (planned)')).toBeTruthy();
     expect(screen.queryByRole('link', { name: /UAT/ })).toBeNull();
     expect(text(list)).not.toMatch(/Closed/);
     expect(list.some((s) => s.key === 'no-owner')).toBe(false);
@@ -145,19 +146,19 @@ describe('the four states', () => {
     const r = await read(5104);
     r.followup.blocked_planned_milestone = null;
     r.followup.blocked_milestone = null;
-    expect(text(sections(r, CASE))).not.toMatch(/Blocks/);
+    expect(text(sections(r))).not.toMatch(/Blocks/);
   });
 
   it('banned v7 words never appear (AC7)', async () => {
     stubFetch();
-    for (const id of [5101, 5102, 5103, 5104]) expect(text(sections(await read(id), CASE))).not.toMatch(/FIX IN TESTING|FOLLOW-UP VERIFIED|recorded by PM|not available/i);
+    for (const id of [5101, 5102, 5103, 5104]) expect(text(sections(await read(id)))).not.toMatch(/FIX IN TESTING|FOLLOW-UP VERIFIED|recorded by PM|not available/i);
   });
 });
 
 describe('separate section states (AC10, AC11)', () => {
   it('5105 messages 403: the rest shows, Chasing says it is not available to you', async () => {
     stubFetch();
-    const list = sections(await read(5105), CASE);
+    const list = sections(await read(5105));
     expect(list.find((s) => s.key === 'chasing')!.items[0].text).toBe('Chasing is not available to you');
     expect(list.find((s) => s.key === 'happened')!.kind).toBe('timeline');
     expect(list.some((s) => s.key === 'issue') && list.some((s) => s.key === 'next')).toBe(true);
@@ -165,8 +166,8 @@ describe('separate section states (AC10, AC11)', () => {
 
   it('5107 detail 503: facts and Next show, What has happened shows the mapped message', async () => {
     stubFetch();
-    const list = sections(await read(5107), CASE);
-    expect(list.find((s) => s.key === 'happened')!.items[0].text).toBe('Try again shortly.');
+    const list = sections(await read(5107));
+    expect(list.find((s) => s.key === 'happened')!.items[0].text).toMatch(/Reload the page to try again/);
     expect(list.some((s) => s.key === 'issue') && list.some((s) => s.key === 'next')).toBe(true);
   });
 
@@ -175,7 +176,7 @@ describe('separate section states (AC10, AC11)', () => {
     expect(errorText(e(404, 'not_found'))).toBe('This record is unavailable.');
     expect(errorText(e(403, 'csrf'))).toBe('Refresh your session and try again.');
     expect(errorText(e(403, 'forbidden'))).not.toBe('Refresh your session and try again.');
-    expect(errorText(e(429, 'rate_limited'))).toBe('Try again shortly.');
+    expect(errorText(e(429, 'rate_limited'))).toMatch(/Reload the page to try again/);
     expect(errorText(e(0, 'network'))).toBe('We couldn’t reach the server.');
   });
 });
@@ -193,24 +194,24 @@ describe('the mapper edge cases (AC19)', () => {
   it('an unknown timeline kind and an empty status show raw text; an empty timeline says so', async () => {
     const r = await base();
     (r.detail as { timeline: unknown[] }).timeline = [{ id: null, kind: 'odd', status: '', at: '2026-11-20T08:30:00Z' }];
-    expect(sections(r, CASE).find((s) => s.key === 'happened')!.items[0].text).toBe('odd');
+    expect(sections(r).find((s) => s.key === 'happened')!.items[0].text).toBe('odd');
     (r.detail as { timeline: unknown[] }).timeline = [];
-    expect(sections(r, CASE).find((s) => s.key === 'happened')!.items[0].text).toBe('Nothing has happened yet.');
+    expect(sections(r).find((s) => s.key === 'happened')!.items[0].text).toBe('Nothing has happened yet.');
   });
 
   it('null timing draws no timing rows; null dates read Not set; the target is drawn when sent', async () => {
     const r = await base();
     const m = r.messages as { timing: Record<string, unknown> | null };
     m.timing = { ...m.timing, reminder_due_at: null, escalation_target: 'PMO lead' };
-    const timing = sections(r, CASE).find((s) => s.key === 'timing')!;
+    const timing = sections(r).find((s) => s.key === 'timing')!;
     expect(timing.items.map((i) => i.value)).toEqual(['Not set', expect.any(String), 'PMO lead']);
     m.timing = null;
-    expect(sections(r, CASE).some((s) => s.key === 'timing')).toBe(false);
+    expect(sections(r).some((s) => s.key === 'timing')).toBe(false);
   });
 
   it('a no-owner banner is not shown on a Resolved issue', async () => {
     const r = await base();
     r.followup = { ...r.followup, team: { ...r.followup.team, assignment_id: null }, issue: { ...r.followup.issue, status: 'Resolved' } } as Followup;
-    expect(sections(r, CASE).some((s) => s.key === 'no-owner')).toBe(false);
+    expect(sections(r).some((s) => s.key === 'no-owner')).toBe(false);
   });
 });

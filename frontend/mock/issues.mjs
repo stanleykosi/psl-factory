@@ -15,7 +15,7 @@ const BODY = {
 
 const work = (id, patch) => ({
   id, case_id: CASE, title: 'Login fails on older Android phones', line: 'pmo_issues', state: 'waiting', status_label: 'Waiting', owner: 'Tunde Bello', sample: false,
-  updated_at: NOW, api_url: `/api/v1/work/${id}`, reference: null, started_at: '2026-11-20T09:00:00Z', verified_at: null,
+  updated_at: NOW, django_url: `/work/${id}/`, api_url: `/api/v1/work/${id}`, reference: null, started_at: '2026-11-20T09:00:00Z', verified_at: null,
   queue_output_url: null, exception_code: null, exception_next_step: null, exception_started_at: null, action_kind: null, station: null, agent: null,
   tracking_url: null, proofs_url: null, revision: 3, case_revision: 7, next_step: 'Wait for the owner to update the issue.', blocker: '', tasks: [], screens: [], actions: [],
   progress: null, aggregate: null, panels: [{ key: 'issue-followup', url: `/api/v1/work/${id}/issue-followup`, contract_path: null }], output_url: null,
@@ -56,7 +56,7 @@ const ITEMS = {
   5103: {
     work: work(5103, { owner: null }),
     issue: issue(235, { status: 'Open', severity: null, opened_at: null, age_days: null, acknowledged_at: null }),
-    team: team({ status: 'unassigned', assignment_id: null, label: '', can_record: false, finding: 'This issue has no owner.' }),
+    team: team({ status: 'unassigned', assignment_id: null, label: 'No owner', can_record: false, finding: 'This issue has no owner.' }),
     followup: { can_request_update: false, blocked_milestone: milestone, blocked_planned_milestone: null, response_task: null, next_action: 'Choose an owner for this issue.', finding: '' },
     timeline: [request(1, 'state', 'Open', '2026-11-20T08:30:00Z')],
     ack: { status: 'Not acknowledged', at: null, basis: null, reply_id: null },
