@@ -26,7 +26,8 @@ export type Submit =
   | { status: 'now_recorded' }
   | { status: 'refused'; message: string }
   | { status: 'no_access' }
-  | { status: 'signed_out' };
+  /** `saved`: the 201 came and only the re-read was refused, so the completion exists. */
+  | { status: 'signed_out'; saved?: boolean };
 export type Chosen = { kind: 'proof'; id: number } | { kind: 'pdf' } | null;
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
@@ -40,7 +41,7 @@ function refusal(e: ApiError): string | null {
       return 'You can’t mark this milestone complete.';
     case 'invalid':
     case 'bad_request':
-      return e.fields[0]?.message ?? (e.kind === 'invalid' && e.message ? e.message : FALLBACK);
+      return e.fields[0]?.message ?? FALLBACK;
     case 'too_large':
       return 'That file is too large to upload.';
     case 'unsupported':
@@ -66,7 +67,7 @@ export function useMilestoneComplete(caseId: string, name: string) {
   const [confirmed, setConfirmed] = useState(false);
   const [fileChecked, setFileChecked] = useState(false);
   const [submit, setSubmit] = useState<Submit>({ status: 'idle' });
-  const [notes, setNotes] = useState<{ conflict: boolean; proofGone: boolean; notRecorded: boolean }>({ conflict: false, proofGone: false, notRecorded: false });
+  const [notes, setNotes] = useState<{ conflict: boolean; proofGone: boolean; notRecorded: boolean; reloadFailed: boolean }>({ conflict: false, proofGone: false, notRecorded: false, reloadFailed: false });
   const seq = useRef(0);
   const inFlight = useRef(false);
   const written = useRef<{ id: number | null }>({ id: null });
@@ -95,7 +96,7 @@ export function useMilestoneComplete(caseId: string, name: string) {
     setUpload(null);
     setConfirmed(false);
     setFileChecked(false);
-    setNotes({ conflict: false, proofGone: false, notRecorded: false });
+    setNotes({ conflict: false, proofGone: false, notRecorded: false, reloadFailed: false });
     void load();
   }, [load]);
 
@@ -153,7 +154,7 @@ export function useMilestoneComplete(caseId: string, name: string) {
         setSubmit({ status: 'recorded', completion });
       } catch (error) {
         const e = asApiError(error);
-        if (e.kind === 'unauthenticated') setSubmit({ status: 'signed_out' });
+        if (e.kind === 'unauthenticated') setSubmit({ status: 'signed_out', saved: true });
         else setSubmit({ status: 'unconfirmed', id, checking: false });
       }
     },
@@ -166,7 +167,7 @@ export function useMilestoneComplete(caseId: string, name: string) {
     if (chosen.kind === 'pdf' && !(upload && fileChecked)) return;
     if (!confirmed) return;
     inFlight.current = true;
-    setNotes({ conflict: false, proofGone: false, notRecorded: false });
+    setNotes({ conflict: false, proofGone: false, notRecorded: false, reloadFailed: false });
     setSubmit({ status: 'busy' });
     const body = chosen.kind === 'proof' ? { revision: options.revision, name, evidence_id: chosen.id } : { revision: options.revision, name, upload_id: upload!.upload_id as number, checked: true as const };
     let recorded;
@@ -180,10 +181,11 @@ export function useMilestoneComplete(caseId: string, name: string) {
         return;
       }
       if (e.kind === 'stale') {
+        // stays busy until the reload settles, so a quick second press cannot send the old revision
+        const options = await reload(true);
+        setNotes((n) => ({ ...n, conflict: options !== null, reloadFailed: options === null }));
         setSubmit({ status: 'idle' });
-        setNotes((n) => ({ ...n, conflict: true }));
         inFlight.current = false;
-        await reload(true);
         return;
       }
       if (e.kind === 'not_found') {
@@ -225,5 +227,11 @@ export function useMilestoneComplete(caseId: string, name: string) {
     } else setSubmit({ status: 'uncertain', checking: false });
   }, [submit, confirm, reload]);
 
-  return { read, retry: load, showMore, chosen, setChosen, upload, setUpload, confirmed, setConfirmed, fileChecked, setFileChecked, submit, notes, complete, check };
+  /** A new file or a removal clears the tick: it confirmed the file that was there. */
+  const changeUpload = useCallback((file: UploadedFile | null) => {
+    setUpload(file);
+    setFileChecked(false);
+  }, []);
+
+  return { read, retry: load, showMore, chosen, setChosen, upload, setUpload: changeUpload, confirmed, setConfirmed, fileChecked, setFileChecked, submit, notes, complete, check };
 }
