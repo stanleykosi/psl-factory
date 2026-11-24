@@ -596,3 +596,13 @@ The tool only gives a new rework budget through a human change request on an ope
 2. F-119B runs gate, lenses, QA, PMO and merge as normal.
 3. F-119's record is closed as superseded by F-119B. Its round 1 to 5 evidence and its D-202 signatures carry over, cited in F-119B's spec.
 Nothing merges unreviewed.
+
+## D-209 (24 Nov 2026): lean mode, and backend changes for a demo this week
+The weekly Claude limit was at 76%, and the design engineer wants a demo this week ("i cant wait that long"). They report that the backend developer gave them the go-ahead "to fix or add anything to the backend to make this work". They answered:
+- **"Yes, lean mode".** The four lane sessions stop, and this coordinator session runs the rest: one feature at a time, Sonnet builders, the CI gate, and one combined review per feature (technical plus QA plus UI where the layout changes). Security review is kept for money, sign-in and write paths. The fidelity tool runs only when layout changes. There are no re-check rounds after a main sync that touches none of the feature's files (D-188 spirit). Usage is checked as work goes, with a clean handover at about 95%.
+- **"Yes, merge them"** covers three backend changes for the demo, each as a PR to main merged by the coordinator once CI passes:
+  1. a demo seed that activates the synthetic weekly-report execution profile from the repo's own fixture and produces a real pending decision;
+  2. fixes to the stale `seed_*` commands;
+  3. mapping the PMO Lead role to `milestone.complete` (LB-2).
+  Synthetic policy is activated only in the local `psl_demo` database. Nothing touches Railway or production (D-196 is unchanged).
+- **Order:** finish the eight nearly-done features (F-75, F-78, F-119B, F-103, F-91, F-63, F-65, F-60), then the backend demo changes, then a demo walk on `app-live`.
