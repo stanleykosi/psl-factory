@@ -72,14 +72,17 @@ for (const [label, viewport] of [
       }
     }
 
-    test('milestones: stages from /money, Proof on a linked completion, the changed state adds CHANGES; no completion control', async ({ page, context }) => {
+    test('milestones: stages from /money, Proof on a linked completion, the changed state adds CHANGES; Mark complete only on open stages', async ({ page, context }) => {
       await page.goto('/projects/P-0101/milestones');
       await loaded(page);
       await expect(page.getByText('Done 27 Oct').first()).toBeVisible();
       await expect(page.getByText('INV-0398 · Delivered').first()).toBeVisible();
       await expect(page.getByText('Paid NGN 2,000,000.00 · Owed NGN 500,000.00').first()).toBeVisible();
       await expect(page.getByRole('heading', { level: 2, name: 'Recorded completions' })).toBeVisible();
-      await expect(page.getByRole('link', { name: /complete/i })).toHaveCount(0);
+      // F-78: "Mark complete" only on uncompleted rows, and only where the server allows it (can_complete).
+      const notDone = await page.getByText('Not completed').count();
+      expect(notDone).toBeGreaterThan(0);
+      await expect(page.getByRole('link', { name: /^Mark complete/ })).toHaveCount(notDone);
       if (!phone) await expect(page.getByRole('columnheader')).toHaveText(['MILESTONE', 'CONTRACT AMOUNT', 'COMPLETION', 'INVOICE', 'PAID']);
       await page.getByRole('button', { name: 'Proof for Kick-off' }).first().click();
       await expect(page.getByText('Proof version 2')).toBeVisible();
@@ -94,6 +97,14 @@ for (const [label, viewport] of [
       }
       expect(await noHorizontalScroll(page)).toBe(true);
       await expectNoAxeViolations(page);
+    });
+
+    test('milestones: no "Mark complete" link where the server does not allow completing', async ({ page, context }) => {
+      await setCookies(context, { psl_mock_complete: 'norole' });
+      await page.goto('/projects/P-0101/milestones');
+      await loaded(page);
+      await expect(page.getByText('Not completed').first()).toBeVisible();
+      await expect(page.getByRole('link', { name: /^Mark complete/ })).toHaveCount(0);
     });
 
     test('milestones without money access (P-0108) show the completions and the plain note', async ({ page, context }) => {
@@ -123,7 +134,7 @@ for (const [label, viewport] of [
       const registers = page.getByRole('tablist', { name: 'Register' }).getByRole('tab');
       await expect(registers).toHaveText(['Issues 3', 'Changes 2', 'Emergencies 0', 'RFPs 1']);
       await expect(page.getByRole('button', { name: /filter/i })).toHaveCount(0);
-      expect(requests.map((u) => u.search)).toEqual(['?limit=10&register=issues']);
+      expect(requests.map((u) => u.search)).toEqual(['']);
 
       await registers.nth(0).focus();
       await page.keyboard.press('End');
@@ -133,9 +144,9 @@ for (const [label, viewport] of [
 
       await registers.nth(1).click();
       await expect(page).toHaveURL(/\/projects\/P-0101\/registers\?register=changes$/);
-      await expect(page.getByText('CR-0027').first()).toBeVisible();
-      expect(requests.at(-1)!.searchParams.get('register')).toBe('changes');
-      expect(requests.at(-1)!.searchParams.has('cursor')).toBe(false);
+      await expect(page.getByText('CHG-0027').first()).toBeVisible();
+      // switching register reads nothing again: every register came with the first answer
+      expect(requests).toHaveLength(1);
       await registers.nth(0).click();
       await expect(page).toHaveURL(/\/projects\/P-0101\/registers$/);
 
@@ -143,7 +154,7 @@ for (const [label, viewport] of [
       await expect(page).toHaveURL(/registers\?q=android$/);
       await expect(page.getByText('ISS-0233').first()).toBeVisible();
       await expect(page.getByText('ISS-0229')).toHaveCount(0);
-      expect(requests.at(-1)!.searchParams.get('q')).toBe('android');
+      expect(requests.at(-1)!.search).toBe('?q=android');
       await page.getByRole('searchbox', { name: 'Search' }).fill('');
       await expect(page).toHaveURL(/registers$/);
       await expect(page.getByText('ISS-0229').first()).toBeVisible();
@@ -166,15 +177,14 @@ for (const [label, viewport] of [
       await loaded(page);
       const more = page.getByRole('button', { name: 'Show more' });
       await expect(more).toBeVisible();
-      await expect(page.getByText('10 showing')).toBeVisible();
+      await expect(page.getByRole('tab', { name: 'Issues 30' })).toBeVisible();
+      await expect(page.getByText('ISS-1025').first()).toBeAttached();
+      await expect(page.getByText('ISS-1030')).toHaveCount(0);
       if (phone) await expectTouchTargets([more]);
       await more.click();
-      await expect(page.getByText('20 showing')).toBeVisible();
-      expect(requests.at(-1)!.searchParams.get('cursor')).toBe('o10');
-      await more.click();
-      await expect(page.getByText('ISS-1025').first()).toBeAttached();
-      expect(requests.at(-1)!.searchParams.get('cursor')).toBe('o20');
-      expect(page.url()).not.toContain('cursor');
+      await expect(page.getByText('ISS-1030').first()).toBeAttached();
+      expect(requests.at(-1)!.search).toBe('?page=2');
+      expect(page.url()).not.toContain('page');
       await expect(page.getByRole('button', { name: 'Show more' })).toHaveCount(0);
       await expect(page.locator(':focus')).not.toHaveCount(0);
       expect(await noHorizontalScroll(page)).toBe(true);
@@ -184,10 +194,12 @@ for (const [label, viewport] of [
     test('actions: header counts, search, footer', async ({ page }) => {
       await page.goto('/projects/P-0101/actions');
       await loaded(page);
-      await expect(page.locator('.psl-resultcount')).toHaveText('9 ACTIONS · 3 OVERDUE · 1 WITHOUT OWNER');
+      await expect(page.locator('.psl-resultcount')).toHaveText('9 ACTIONS · 2 OVERDUE · 1 WITHOUT OWNER');
       await expect(page.getByText('Actions come from confirmed minutes.')).toBeVisible({ visible: !phone });
       await expect(page.getByText('Assess the SMS reminders change').first()).toBeVisible();
       await expect(page.getByText('Unknown').first()).toBeVisible();
+      // a due date-time shows its day in Africa/Lagos
+      await expect(page.getByText('13 Nov').first()).toBeVisible();
       await page.getByRole('searchbox', { name: 'Search' }).fill('sign');
       await expect(page).toHaveURL(/actions\?q=sign$/);
       await expect(page.getByText('Sign UAT plan').first()).toBeVisible();

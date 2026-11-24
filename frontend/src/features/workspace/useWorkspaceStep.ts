@@ -14,6 +14,7 @@ import type { paths } from '@/api/schema';
 
 import type { Step } from './labels';
 import type { WorkspacePage } from './usePageReload';
+import { useWriteLock } from './useWriteLock';
 
 export type StepBody = paths['/api/v1/work/{work_id}/steps']['post']['requestBody']['content']['application/json'];
 
@@ -75,14 +76,12 @@ type Args = {
 };
 
 export function useWorkspaceStep({ id, revision, page, awaitingReconcile }: Args) {
-  const [pending, setPending] = useState<string | null>(null);
   const [notice, setNotice] = useState<StepNotice | null>(null);
   // INV-RESEND: an uncertain effect turns every step off; a failed step that sends stays off. The press itself locks at once; the item's own state keeps it locked.
   const [pressLocked, setAllLocked] = useState(false);
   // ...and it stays off after a reload, because the item itself says it is awaiting reconcile.
   const allLocked = pressLocked || awaitingReconcile;
-  const [locked, setLocked] = useState<ReadonlySet<string>>(() => new Set());
-  const writing = useRef(false);
+  const { pending, locked, writing, begin, end, lock } = useWriteLock();
   const key = useRef<{ token: string; key: string } | null>(null);
 
   /** A new attempt: a fresh key (a form opening, or after done, 409 or 422). */
@@ -99,9 +98,7 @@ export function useWorkspaceStep({ id, revision, page, awaitingReconcile }: Args
 
   const submit = useCallback(
     async (attempt: Attempt, extra: Pick<StepBody, 'inputs' | 'evidence_ids' | 'note' | 'case_revision'> = {}): Promise<SubmitResult> => {
-      if (writing.current || allLocked || locked.has(attempt.step.key) || page.refreshFailed || revision === undefined) return { kind: 'kept' };
-      writing.current = true;
-      setPending(attempt.token);
+      if (allLocked || locked.has(attempt.step.key) || page.refreshFailed || revision === undefined || !begin(attempt.token)) return { kind: 'kept' };
       const { step } = attempt;
       const body: StepBody = { expected_revision: revision, step: step.key, idempotency_key: keyFor(attempt.token), ...extra };
       if (attempt.itemIds) body.item_ids = attempt.itemIds;
@@ -153,7 +150,7 @@ export function useWorkspaceStep({ id, revision, page, awaitingReconcile }: Args
             // Network or server: it may or may not have happened. Reload to show what did; never resend on our own.
             if (step.sends) {
               drop();
-              setLocked((current) => new Set(current).add(step.key));
+              lock(step.key);
             }
             setNotice({ kind: 'failed', sends: step.sends === true, attempt: attempt.token, label: step.label });
             await page.reload();
@@ -161,13 +158,12 @@ export function useWorkspaceStep({ id, revision, page, awaitingReconcile }: Args
           }
         }
       } finally {
-        writing.current = false;
-        setPending(null);
+        end();
       }
     },
     // keyFor and drop only touch the ref
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [allLocked, id, locked, page, revision],
+    [allLocked, begin, end, id, lock, locked, page, revision],
   );
 
   return { submit, renew, pending, notice, setNotice, allLocked, locked, writing };

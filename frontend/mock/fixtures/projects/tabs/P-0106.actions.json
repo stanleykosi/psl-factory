@@ -1,5 +1,12 @@
 {
-  "items": [],
   "as_of": "2026-11-12T15:40:00Z",
-  "actions": []
+  "sections": [
+    {
+      "key": "meetings",
+      "title": "Project actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/actions",
+      "items": []
+    }
+  ]
 }
