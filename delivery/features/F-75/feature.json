@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-75",
   "outcome": "Registers and Actions tabs read the live sectioned project tab",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -122,7 +122,7 @@
       "status": "passed",
       "reviewer": "technical-reviewer",
       "authority": "technical reviewer (lead)",
-      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
       "evidence_refs": [
         "delivery/features/F-75/round-2/review-technical.md"
       ]
@@ -131,25 +131,27 @@
       "status": "passed",
       "reviewer": "qa-reviewer",
       "authority": "integrated QA reviewer",
-      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
       "evidence_refs": [
         "delivery/features/F-75/round-2/review-qa.md"
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery only; client/product acceptance, merge and release keep their own authorities)",
+      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-75/readiness.md",
       "status": "passed",
       "reviewer": "design engineer (hunchoweb), recorded by the lane B coordinator; B35 signed by the main coordinator under D-207",
-      "authority": "accepted in batch, delegated under D-184 (D-182 \"Hide, accept all recs\", 23 Nov 2026); fidelity sign-offs approved by the coordinator under D-207 (B35, 24 Nov 2026)",
-      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "authority": "accepted in batch, delegated under D-184 (D-182 \"Hide, accept all recs\", 23 Nov 2026); fidelity sign-offs approved by the coordinator under D-207 (B35, 24 Nov 2026); carried over under D-188/D-193 (sync with main only) from 286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
       "evidence_refs": [
         "delivery/features/F-75/round-2/acceptance-product.md"
       ]
@@ -158,7 +160,7 @@
       "status": "passed",
       "reviewer": "ux-reviewer",
       "authority": "UX reviewer",
-      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
       "evidence_refs": [
         "delivery/features/F-75/round-2/review-ux.md"
       ]
@@ -167,7 +169,7 @@
       "status": "passed",
       "reviewer": "ui-reviewer",
       "authority": "UI design reviewer",
-      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
       "evidence_refs": [
         "delivery/features/F-75/round-2/review-ui.md"
       ]
@@ -630,6 +632,75 @@
           "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5"
         }
       ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
+      "owner": "pmo",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "`feature.json` `acceptance_criteria` still holds the 1.22.0 list, not the re-specified 1.24.0 criteria in `spec.md` (D-185). Examples: criterion 2 says \"no count badges ... no Actions header counts\", criterion 3 says \"no AGE column\", criterion 10 says no \"From\" line. The build shows all of these, as `spec.md` (criteria 3, 4, 11, 12) and product acceptance say. I judged against `spec.md`. A later reader of the record would see the build contradict its own criteria. Expected: the record carries the 21 spec criteria. Actual: 17 stale criteria. Refresh the record from `spec.md`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T19:41:09Z",
+          "head": "d5c203969d05cdde59c15127792da33cc30d3580"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`fidelity-exceptions.json` lines 130-150: the five `extras_not_gating` entries still read \"pending sign-off (questions-batch B35)\" or \"pending design engineer\". The 18 gating exceptions and the four visual waivers carry the D-207 approval. The B35 text in `coordinator-answers.md` and `acceptance-product.md` covers (i) to (iii) generally, so this is a record gap, not a missing decision. Expected: each entry shows the D-207 approval. Actual: five entries show \"pending\". Update them.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T19:41:09Z",
+          "head": "d5c203969d05cdde59c15127792da33cc30d3580"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Criterion 20 (live backend as `live-lead`, real rows, badges and Actions header against live `total` and `counts`) is not met beyond the empty state. QA's e2e run also shows 4 of 35 \"exactly one request\" checks failing under `next dev` (registers line 126 and the Try again test line 217, at 1440 and 390). QA attributes it to the StrictMode double effect, and F-71 tabs double the same way. It is not proved under `next start`, and the gate does not run e2e. The steps after line 126 of that registers test did not run, so QA walked them by hand. Expected: a production-build e2e run, or tests that tolerate the dev double read, plus one live run on a seeded project. Actual: neither. Carry both into the next live-data pass.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T19:41:09Z",
+          "head": "d5c203969d05cdde59c15127792da33cc30d3580"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -709,12 +780,12 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "f355d33908d66468082b5cadac12aaf6dd6b09ce",
+    "base_sha": "eb100065e9af366413e28783654d82280dcf3001",
     "task_branch": "fe-connect-1-registers-actions-tabs",
-    "head_sha": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+    "head_sha": "d5c203969d05cdde59c15127792da33cc30d3580",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b2",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/118",
+    "pr_number": 118,
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "not_run",
@@ -848,6 +919,14 @@
       "at": "2026-11-24T16:24:48Z",
       "round": 2,
       "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-24T19:41:09Z",
+      "round": 2,
+      "head": "d5c203969d05cdde59c15127792da33cc30d3580",
       "reason": null
     }
   ],

@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 286b41057cb2df45c6d577f7d2f4a203d8dd7fa5
+COMMIT: d5c203969d05cdde59c15127792da33cc30d3580
 BUILDER: builder
 LANE: full
 
@@ -38,3 +38,9 @@ As round 1; criterion 21 focus now covered by render tests at both widths. Crite
 - `git diff --name-only $(git merge-base HEAD origin/main) HEAD | grep -E '^delivery/|^\.github/'` printed nothing.
 - Not run: full suite, e2e, fidelity re-run, servers.
 - Note: the merge and the three fixes are in one commit (286b4105) because the merge files were already mixed with the fixes.
+
+## Coordinator sync before merge (D-193)
+- d5c20396 merges origin/main eb100065, bringing in F-61 (#112), F-88 (#110) and #117, into the builder's 286b4105.
+- The one conflict was frontend/tests/next-config.test.ts: main's one-per-line allow-list kept, plus F-75's 'project-sections-model.test.ts' as a new line. frontend/tests/demo-mock.test.ts auto-merged. Both pass (37 tests).
+- D-200: F-75's own diff touches no protected path, so base_sha moved to eb100065.
+- ci-mode checks.sh PASS on d5c20396 (GitHub Actions).

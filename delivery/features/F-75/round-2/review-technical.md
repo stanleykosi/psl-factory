@@ -1,9 +1,12 @@
 VERDICT: PASS
-COMMIT: 286b41057cb2df45c6d577f7d2f4a203d8dd7fa5
+COMMIT: d5c203969d05cdde59c15127792da33cc30d3580
 REVIEWER: technical-reviewer
 AUTHORITY: technical reviewer (lead)
 
 ## Summary
+- D-193 pre-merge re-check of the main sync (eb100065 merged into 286b4105, giving d5c20396). The earlier evidence below was gathered on 286b4105 and still stands.
+- RegistersTab.tsx and ActionsTab.tsx are unchanged between 286b4105 and d5c20396 (empty diff). F-75 changed no screen code in the sync.
+- Only two files are shared by F-75 and main: next-config.test.ts (main's one-per-line list kept, with F-75's 'project-sections-model.test.ts' added as its own line) and demo-mock.test.ts (auto-merged, alerts assertions only). Neither covers the Registers or Actions tabs. Main's other changes (alerts, received-bid, AppShell bell) do not touch the project tabs or the shared hook. CI ci-mode checks passed on d5c20396 (GitHub Actions, success).
 - The merge with F-71 is sound. AmountValue is gone, the stale cookies argument is dropped, and a bad page answers 422. The money, milestones, mock-live-money, project-sections, project-tabs and mock-project-tabs tests pass (123 tests, run here).
 - UI-1-1 (column order, AGE right-aligned) and UX-1-2 (Severity note on Issues only) are correct, and tests cover them.
 - UX-1-1: focus lands on the first new row or card after Show more. Documents is covered by the hook's existing tests. Milestones does not use the hook.

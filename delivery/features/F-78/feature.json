@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-78",
   "outcome": "Mark a milestone complete, recorded only after a re-read",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-MILESTONE-COMPLETE"
   ],
@@ -175,7 +175,7 @@
         "delivery/features/F-78/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -192,11 +192,25 @@
           ],
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "refs": [
+            "ef8757e3 adds the optional `accept`, `label` and `describeError` props. The page passes `accept={['.pdf']}`, `label=\"Or upload a private PDF\"` and `pdfUploadMessage` (MilestoneComplete.tsx:248-250). With `accept`, FileUpload refuses a non-PDF before calling `onFile`. The test \"TECH-1-1: a PNG is refused\u2026\" checks three things: `accept=\".pdf\"`, that the input's accessible name is \"Or upload a private PDF\", and that no `/files` request is made. The upload 413/415 `it.each` checks \"That file is too large to upload.\" and \"Only a PDF can be attached as proof.\". Backward-compatible: the defaults are `accept` undefined (FileUpload falls back to `PROOF_TYPES`, as before), `label='Evidence file'` and `describeError=uploadErrorMessage`. StartUpload.tsx:19-25 and evidence.test.tsx:99-121 pass none of the new props. `npx vitest run tests/evidence.test.tsx` gave 15 passed, and `tests/start-work-live.test.tsx` gave 54 passed."
+          ],
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "ca4abee2 + EvidencePicker commit"
+      ],
+      "verified_by": "technical-reviewer",
+      "verification_refs": [
+        "ef8757e3 adds the optional `accept`, `label` and `describeError` props. The page passes `accept={['.pdf']}`, `label=\"Or upload a private PDF\"` and `pdfUploadMessage` (MilestoneComplete.tsx:248-250). With `accept`, FileUpload refuses a non-PDF before calling `onFile`. The test \"TECH-1-1: a PNG is refused\u2026\" checks three things: `accept=\".pdf\"`, that the input's accessible name is \"Or upload a private PDF\", and that no `/files` request is made. The upload 413/415 `it.each` checks \"That file is too large to upload.\" and \"Only a PDF can be attached as proof.\". Backward-compatible: the defaults are `accept` undefined (FileUpload falls back to `PROOF_TYPES`, as before), `label='Evidence file'` and `describeError=uploadErrorMessage`. StartUpload.tsx:19-25 and evidence.test.tsx:99-121 pass none of the new props. `npx vitest run tests/evidence.test.tsx` gave 15 passed, and `tests/start-work-live.test.tsx` gave 54 passed."
       ]
     },
     {
@@ -212,7 +226,7 @@
         "delivery/features/F-78/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -229,11 +243,25 @@
           ],
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "refs": [
+            "`changeUpload` (useMilestoneComplete.ts:231-234) clears `fileChecked` on every new file and every removal, and the page exposes it as `setUpload`. A 409 reload never calls it, so the tick survives a conflict. The test \"TECH-1-2: the file tick is cleared\u2026\" uploads, ticks, removes and uploads again. It asserts the box is unticked, the button disabled and no POST sent. \"AC 9: a 409 keeps the uploaded PDF and both ticks\" covers the other side."
+          ],
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "ca4abee2"
+      ],
+      "verified_by": "technical-reviewer",
+      "verification_refs": [
+        "`changeUpload` (useMilestoneComplete.ts:231-234) clears `fileChecked` on every new file and every removal, and the page exposes it as `setUpload`. A 409 reload never calls it, so the tick survives a conflict. The test \"TECH-1-2: the file tick is cleared\u2026\" uploads, ticks, removes and uploads again. It asserts the box is unticked, the button disabled and no POST sent. \"AC 9: a 409 keeps the uploaded PDF and both ticks\" covers the other side."
       ]
     },
     {
@@ -249,7 +277,7 @@
         "delivery/features/F-78/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -266,11 +294,25 @@
           ],
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "refs": [
+            "New tests cover the 401 on the write (signed-out state), the options-read 404 (no-access card) and 500 (WorkErrorCard with Try again, no control), and a 409 that keeps the PDF and both ticks. They also cover a 409 that drops the chosen proof, with \"That proof is no longer available.\" and the radio deselected, and \"It wasn't recorded\" with the proof and the confirmation still ticked. The last case checks the full Recorded wording and an allowed request list (completions, milestone, files, project read). `npx vitest run tests/milestone-complete.test.tsx` gave 44 passed. No test was skipped, `.only`-ed or weakened: the one helper rewrite only factors out `uploadPdf`."
+          ],
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "ca4abee2"
+      ],
+      "verified_by": "technical-reviewer",
+      "verification_refs": [
+        "New tests cover the 401 on the write (signed-out state), the options-read 404 (no-access card) and 500 (WorkErrorCard with Try again, no control), and a 409 that keeps the PDF and both ticks. They also cover a 409 that drops the chosen proof, with \"That proof is no longer available.\" and the radio deselected, and \"It wasn't recorded\" with the proof and the confirmation still ticked. The last case checks the full Recorded wording and an allowed request list (completions, milestone, files, project read). `npx vitest run tests/milestone-complete.test.tsx` gave 44 passed. No test was skipped, `.only`-ed or weakened: the one helper rewrite only factors out `uploadPdf`."
       ]
     },
     {
@@ -286,7 +328,7 @@
         "delivery/features/F-78/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -303,11 +345,25 @@
           ],
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "refs": [
+            "On a 409, useMilestoneComplete.ts:183-189 keeps the state `busy` and `inFlight` true until `reload(true)` returns. A failed reload sets `reloadFailed`, which shows \"\u2026we couldn't reload it. Reload this page\u2026\", instead of the \"We reloaded it\" note. The test checks the failure wording; TECH-2-3 covers the missing busy assertion."
+          ],
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "ca4abee2"
+      ],
+      "verified_by": "technical-reviewer",
+      "verification_refs": [
+        "On a 409, useMilestoneComplete.ts:183-189 keeps the state `busy` and `inFlight` true until `reload(true)` returns. A failed reload sets `reloadFailed`, which shows \"\u2026we couldn't reload it. Reload this page\u2026\", instead of the \"We reloaded it\" note. The test checks the failure wording; TECH-2-3 covers the missing busy assertion."
       ]
     },
     {
@@ -323,7 +379,7 @@
         "delivery/features/F-78/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -340,11 +396,25 @@
           ],
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "refs": [
+            "`refusal` now returns `e.fields[0]?.message ?? FALLBACK` for `invalid` and `bad_request` (useMilestoneComplete.ts:42-44). The test \"TECH-1-5: a 422 without a field message\u2026\" shows the fallback, and the server's text does not appear."
+          ],
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "ca4abee2"
+      ],
+      "verified_by": "technical-reviewer",
+      "verification_refs": [
+        "`refusal` now returns `e.fields[0]?.message ?? FALLBACK` for `invalid` and `bad_request` (useMilestoneComplete.ts:42-44). The test \"TECH-1-5: a 422 without a field message\u2026\" shows the fallback, and the server's text does not appear."
       ]
     },
     {
@@ -406,7 +476,7 @@
         "delivery/features/F-78/round-1/review-technical.md"
       ],
       "raised_by": "technical-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -423,11 +493,25 @@
           ],
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "refs": [
+            "A 401 on the re-read sets `{status:'signed_out', saved:true}` (useMilestoneComplete.ts:157). The page then shows \"We saved your completion but couldn't confirm it yet\u2026\" above `SignedOutState` (MilestoneComplete.tsx:94-101). The test asserts both texts and no \"Milestone recorded\"."
+          ],
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "ca4abee2"
+      ],
+      "verified_by": "technical-reviewer",
+      "verification_refs": [
+        "A 401 on the re-read sets `{status:'signed_out', saved:true}` (useMilestoneComplete.ts:157). The page then shows \"We saved your completion but couldn't confirm it yet\u2026\" above `SignedOutState` (MilestoneComplete.tsx:94-101). The test asserts both texts and no \"Milestone recorded\"."
       ]
     },
     {
@@ -489,7 +573,7 @@
         "delivery/features/F-78/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -506,11 +590,25 @@
           ],
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "refs": [
+            "1440 screenshots: the card header is the dark #1F2427 band with white capitals (\"MILESTONE\"; the stage number is excepted under conflict 4). The \"What happens next\" panel has the blue header band as drawn, but its heading text is unreadable; tracked as UI-2-1."
+          ],
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "ca4abee2"
+      ],
+      "verified_by": "ui-reviewer",
+      "verification_refs": [
+        "1440 screenshots: the card header is the dark #1F2427 band with white capitals (\"MILESTONE\"; the stage number is excepted under conflict 4). The \"What happens next\" panel has the blue header band as drawn, but its heading text is unreadable; tracked as UI-2-1."
       ]
     },
     {
@@ -526,7 +624,7 @@
         "delivery/features/F-78/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -543,11 +641,25 @@
           ],
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "refs": [
+            "1440 ok and hold states: bordered read-only \"Project: Lagoon Health \u00b7 patient app\" and bordered \"Milestone: Go-live\" fields. Project is now a fidelity match (the tool lists it as moved, not missing)."
+          ],
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "ca4abee2"
+      ],
+      "verified_by": "ui-reviewer",
+      "verification_refs": [
+        "1440 ok and hold states: bordered read-only \"Project: Lagoon Health \u00b7 patient app\" and bordered \"Milestone: Go-live\" fields. Project is now a fidelity match (the tool lists it as moved, not missing)."
       ]
     },
     {
@@ -563,7 +675,7 @@
         "delivery/features/F-78/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -580,11 +692,25 @@
           ],
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "refs": [
+            "390: h1 is the milestone name at 22px, a grey project line under it, no breadcrumb, no card borders, bordered-free flat layout, short next text, scrollWidth 390, 'Mark complete' in a bottom bar with the content ending above it. The dev \"N\" badge overlaps the bar only in dev mode."
+          ],
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "ca4abee2"
+      ],
+      "verified_by": "ui-reviewer",
+      "verification_refs": [
+        "390: h1 is the milestone name at 22px, a grey project line under it, no breadcrumb, no card borders, bordered-free flat layout, short next text, scrollWidth 390, 'Mark complete' in a bottom bar with the content ending above it. The dev \"N\" badge overlaps the bar only in dev mode."
       ]
     },
     {
@@ -669,7 +795,7 @@
         "delivery/features/F-78/round-1/review-security.md"
       ],
       "raised_by": "security-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -686,11 +812,209 @@
           ],
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "refs": [
+            "The test fetch log now records the `X-CSRFToken` header. The SEC-1-2/AC 13 case asserts the completions POST carries `mock-csrf-pm` from `/me`."
+          ],
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "ca4abee2"
+      ],
+      "verified_by": "technical-reviewer",
+      "verification_refs": [
+        "The test fetch log now records the `X-CSRFToken` header. The SEC-1-2/AC 13 case asserts the completions POST carries `mock-csrf-pm` from `/me`."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A 429 on the PDF upload shows lane C's \"Try again shortly.\" instead of the standard `rate_limited` wording the spec asks for. The spec (\"Control\": \"429 the standard `rate_limited` wording\") means \"Too many requests. Try again shortly.\" (src/api/errors.ts:38). `pdfUploadMessage` maps only `too_large` and `unsupported`, and everything else falls through to `uploadErrorMessage` (src/features/projects/MilestoneComplete.tsx:47-51; src/features/workspace/evidence.ts `uploadErrorMessage`). Expected: map `rate_limited` to the standard message in `pdfUploadMessage`, and add a third row to the 413/415 `it.each`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-78/round-2/review-technical.md"
+      ],
+      "raised_by": "technical-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The read-only Project and Milestone values are plain `<div aria-labelledby=\u2026>` elements (MilestoneComplete.tsx:171,177). ARIA 1.2 does not allow `aria-labelledby` on an element with no role, so assistive technology ignores it and axe reports `aria-prohibited-attr`. The visible text still reads correctly. Expected: use a `<dl>`/`<dt>`/`<dd>` pair, or drop the attribute. This is UI-1-2's markup; the UI reviewer may prefer to own it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-78/round-2/review-technical.md"
+      ],
+      "raised_by": "technical-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-3",
+      "round": 2,
+      "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The test \"TECH-1-4: \u2026 the form stays busy until the reload settles\" (tests/milestone-complete.test.tsx:426) only checks the \"couldn't reload\" message. It never holds the reload open to check that the button is busy, or that a second press during the reload sends nothing. The code is correct: useMilestoneComplete.ts:183-189 awaits `reload(true)` before it clears `inFlight` and goes back to idle. Expected: put the options read behind a gate, press again during the reload, and assert one POST and `aria-busy`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-78/round-2/review-technical.md"
+      ],
+      "raised_by": "technical-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-4",
+      "round": 2,
+      "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Three spec amendments are still outstanding in spec.md:",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-78/round-2/review-technical.md"
+      ],
+      "raised_by": "technical-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The \"What happens next\" panel head is unreadable: the text is rgb(22,56,143) on the rgb(36,89,214) head, a contrast of about 1.7:1 (WCAG needs 4.5:1 for text; the build says it uses the board's white on-strong). Cause: the shared rule `.cmp-panelbox.psl-panel--agent > .psl-panel__head { color: var(--action-ink) }` (components.css:90, three classes) beats `.mscomplete__next > .psl-panel__head { color: var(--on-strong) }` (milestone-complete.css:9, two classes). Expected: white heading text on the blue head, as the board shows. Seen at 1440 on the allowed record (png-1440.png). frontend/src/features/projects/milestone-complete.css:9",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-78/round-2/review-ux.md"
+      ],
+      "raised_by": "ux-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ux-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 2,
+      "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A PNG picked for upload shows \"PNG files can't be used as proof\" with a \"Try again\" link. The spec wording (\"Only a PDF can be attached as proof.\") appears only on a server 415, and the client-side refusal uses the picker's own words. Suggest the spec wording for both. frontend/src/features/workspace/EvidencePicker.tsx",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-78/round-2/review-ux.md"
+      ],
+      "raised_by": "ux-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ux-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "\"WHAT HAPPENS NEXT\" header text colour. Board SCR-19-desktop: white text on the blue #2459D6 header. Built: #16388F text on the #2459D6 band (fidelity look \"text colour #FFFFFF on the board, #16388F on the page\"; seen in side-by-side.png). `.mscomplete__next > .psl-panel__head` in frontend/src/features/projects/milestone-complete.css:9 sets the colour on the head, but the heading inside the agent Panel keeps its own colour. Set the heading colour to white (--on-strong) too. Contrast is below readable.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-78/round-2/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The phone and desktop Mark complete controls match the board only when ready (blue, ticked). In the default state the grey disabled button is the state difference already listed as a not-gating extra; no change asked.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-78/round-2/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T19:39:33Z",
+          "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+        }
       ]
     }
   ],
@@ -755,6 +1079,70 @@
           "snapshot_ref": "07aca01552f49d7d12a62a81baa077e2b2394cc7",
           "evidence_refs": [
             "delivery/features/F-78/round-1/review-security.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "technical-reviewer",
+          "authority": "technical review (lead)",
+          "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "evidence_refs": [
+            "delivery/features/F-78/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-78/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "ux-reviewer",
+          "authority": "UX reviewer",
+          "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "evidence_refs": [
+            "delivery/features/F-78/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "ui-reviewer",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "evidence_refs": [
+            "delivery/features/F-78/round-2/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "passed",
+          "reviewer": "security-reviewer",
+          "authority": "security",
+          "snapshot_ref": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+          "evidence_refs": [
+            "delivery/features/F-78/round-2/review-security.md"
           ]
         }
       }
@@ -842,7 +1230,7 @@
     }
   },
   "created_at": "2026-11-23T13:22:10Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -908,6 +1296,22 @@
       "round": 2,
       "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T19:39:33Z",
+      "round": 2,
+      "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T19:39:33Z",
+      "round": 3,
+      "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+      "reason": null
     }
   ],
   "routing": {
@@ -924,10 +1328,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

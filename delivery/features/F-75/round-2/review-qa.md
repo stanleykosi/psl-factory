@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 286b41057cb2df45c6d577f7d2f4a203d8dd7fa5
+COMMIT: d5c203969d05cdde59c15127792da33cc30d3580
 REVIEWER: qa-reviewer
 AUTHORITY: integrated QA reviewer
 
 ## Summary
+- D-193 pre-merge re-check of the main sync. Head d5c20396 is 286b4105 plus one merge of origin/main eb100065. Evidence below was gathered on 286b4105 and is carried forward by the impact assessment in "D-193 re-check". Ci-mode checks passed on d5c20396 (GitHub Actions run, success, reported by the coordinator; not rerun by me).
 - MOCK, shared dev server (Next 4970, mock 4971), not touched. `e2e/project-tabs.spec.ts` ran in full through a scratch config with the existing server: 31 passed, 4 failed. All 4 failures are the "exactly one request" checks (registers test line 126 and the error/Try again test line 217, at 1440 and 390). Each received the same URL twice. The same doubling shows on the F-71 tabs (milestones makes 2x money + 2x milestones, money 2x) on first load. That is the `next dev` StrictMode double effect, not an F-75 defect. Not proved under `next start`.
 - The spec's success and failure journeys were walked by hand at 1440 and 390 on the mock (P-0101, P-0102, P-0106, P-0099, P-0103), with 401/403/404/422/500/503 forced by route stubs. All behaved as specified (details below). F-71 Money and Milestones load beside these tabs with no console errors and no sideways scroll, and the e2e milestones cases passed.
 - LIVE (criterion 20), read-only on Django 8010 (started by me, PID 68245, stopped afterwards; 8010 no longer listens): the qa-seed account's registers and actions bodies validate against the 1.24.0 contract schema with Ajv (strict). But the account's only project is empty (all totals 0), so only the empty state is proved live.
@@ -53,3 +54,10 @@ Live (Django 8010, Postgres 55433, qa-seed)
 - Mock versus live difference, not blocking: for registers `?page=99` live answers 200 page 1 where the mock answers 404 past the last page on Milestones (F-71's choice). Registers and Actions in the mock were not probed past the last page by me.
 - The browser console shows "Failed to load resource" lines for the intended 403/404 answers on P-0099 and P-0103. One 500 console line appeared once on a first dev compile and not again.
 - To close criterion 20 fully, someone needs a live project with real issues, changes, actions and overdue items, plus a browser pointed at 8010 as `live-lead`. Fidelity sign-off (B35) remains the design engineer's.
+
+## D-193 re-check (diff only, no servers, no full runs)
+- `git diff 286b4105 d5c20396 --stat`: 64 files, all under frontend/ (none outside). Changes are main's F-61 alerts, F-88 received RFP/assign-PM, start-work lines, the shell alert badge, mock server routes for alerts and received bids, and their tests.
+- `git diff 286b4105 d5c20396 -- frontend/src/features/projects/RegistersTab.tsx frontend/src/features/projects/ActionsTab.tsx`: empty (0 lines). No F-75 screen code changed. No other file under features/projects or the project-tab mock changed.
+- `frontend/tests/next-config.test.ts`: allow-list is now one entry per line; 'project-sections-model.test.ts' is kept as an entry. The F-61 sentence in the comment and 'received-bids.mjs' come from main. `frontend/tests/demo-mock.test.ts`: only main's alert-shape assertions changed. No F-75 assertion was weakened.
+- `frontend/mock/server.mjs` and `AppShell.tsx` diffs: added alert and received-bid routes, removed the v7 alert operations from the mock list, and changed the bell count source. The project tab routes (E-PROJECT-TAB) and the registers/actions mock are untouched, so the mock journeys, status stubs and page-parameter 422s I walked are not affected.
+- Impact: nothing from main changes what my lens covers on the Registers and Actions tabs. Live evidence (Django 8010, Ajv against the 1.24.0 contract) is unaffected: no backend or contract file is in the diff. The earlier note that the Show more and one-request checks are unproved under `next start` still stands.
