@@ -526,3 +526,10 @@ By morning the lanes had 12 worktrees (lane A five, lane D four), about 11 GB. F
 
 ## D-198 (24 Nov 2026): F-88's board questions answered
 LC-Q33 to LC-Q36, "Accept all four": the field is labelled "Client" and lists existing organisations only, with no new-client hint. The board's note and deadline hints are left out. Assign PM's undrawn states are plain callouts in the drawer's style, to be drawn later. The submission method keeps the board's segment, which can't be cleared once picked.
+
+## D-199 (24 Nov 2026): feature gates run on GitHub Actions
+Asked to move gates off the laptop, the design engineer answered "yes lets do that", and then "Yes, merge #107". PR #107 (main 8692cf87) adds `.github/workflows/frontend-checks.yml`: the gate's steps (Django check against Postgres 16, then npm ci, lint, typecheck, unit tests and build) run on GitHub's runners on pushes to main, fe-**, ci-** and dlv-** and on PRs. `delivery/checks.sh`, here and on main, now defaults to ci mode: it waits for that run on the exact pushed HEAD and passes only if the run succeeded. A full run took 3.5 minutes. Branches without the workflow still gate locally until they merge main.
+Changes for the lanes:
+- Merge `origin/main` into a branch so it has the workflow, then push before running `feature.py gate`.
+- A ci-mode gate only polls GitHub, so it is not a heavy job and runs without `heavy-lock.sh`. Local-mode gates, full local vitest runs, builds, Playwright suites and `npm ci` still queue (D-189, D-197).
+- PR #107 also fixed `tests/mock-contract.test.ts` (full history) and the load-sensitive `tests/hypercare.test.tsx` toast wait.

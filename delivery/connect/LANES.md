@@ -52,6 +52,7 @@ Lane D takes the Finance line workspaces from lane B (SCR-32, 53, 54, 55, 56, 57
 
 ## Rules that never bend
 
+- Gates run on GitHub Actions (D-199): merge `origin/main` (for the workflow), push, then `feature.py gate`. A ci-mode gate is not a heavy job and runs without the lock.
 - At most two worktrees per lane, and at most one queued or running heavy job per lane (D-197). Remove a worktree when its feature merges or parks.
 - Never call Railway tools (`mcp__…railway…`, whatever the tool names). Only the main coordinator uses the Railway connector, read-only by default (D-196). Ask the coordinator for logs or status.
 - Stop only processes whose PID the agent recorded when it started them, never by name or pattern (`pkill`, `killall`, `kill $(pgrep …)`). On 24 Nov a reviewer killed the design engineer's app mock (port 3001) by pattern.
