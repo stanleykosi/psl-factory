@@ -3,7 +3,7 @@
 // SCR-38 Milestones: the contract stages of /money (amount, completion, invoice and paid as separate facts), then the
 // recorded completions of /milestones as their own list. A change sits beside the stage it changes; its amount is shown
 // next to the contract amount and never added to it. A stage is tied to a completion only through `milestone_id`.
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button, Callout, Table, Tag, useIsPhone, VisuallyHidden, When, type Column } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
@@ -19,13 +19,17 @@ const NO_FINANCE = 'Contract amounts, invoices and payments aren’t available t
 
 type Proofs = { proofs: Record<string, ProofState>; press: (slot: string, id: number) => void };
 
-/** "Proof" for one recorded completion; pressing it reads that completion once and shows the answer under the button. */
+/** "Proof" for one recorded completion: a toggle. Opening it reads that completion once and shows the answer under the button; pressing again hides it. */
 function Proof({ slot, id, label, proofs }: { slot: string; id: number; label: string; proofs: Proofs }) {
   const phone = useIsPhone();
-  const state = proofs.proofs[slot];
+  const [open, setOpen] = useState(false);
+  const state = open ? proofs.proofs[slot] : undefined;
   return (
     <span className="ptabs__proof">
-      <Button kind="secondary" size={phone ? 'md' : 'sm'} aria-expanded={state !== undefined && state.status !== 'loading'} busy={state?.status === 'loading'} busyLabel="Loading…" onClick={() => proofs.press(slot, id)}>
+      <Button kind="secondary" size={phone ? 'md' : 'sm'} aria-expanded={open} busy={state?.status === 'loading'} busyLabel="Loading…" onClick={() => {
+          if (!open) proofs.press(slot, id);
+          setOpen(!open);
+        }}>
         Proof<VisuallyHidden> for {label}</VisuallyHidden>
       </Button>
       {state?.status === 'ready' && (

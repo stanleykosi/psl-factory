@@ -245,6 +245,24 @@ describe('F-71 round 2: Unknown, headings, Proof state', () => {
     expect(kickoff.getAttribute('aria-expanded')).toBe('true');
     expect(proofButtons().filter((b) => b !== kickoff).every((b) => b.getAttribute('aria-expanded') === 'false')).toBe(true);
   });
+
+  it('TECH-2-1: Proof is a toggle; aria-expanded is true from the press, through the read, until the second press', async () => {
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    respond = (url) => (/\/milestones\/\d+$/.test(url.pathname) ? gate.then(() => json(200, { id: 3101, name: 'Kick-off', completed_at: '2026-10-27T10:00:00Z', evidence_id: 1, proof_version: 2 })) : undefined);
+    await open('P-0101');
+    const kick = buttons('Proof for Kick-off')[0];
+    fireEvent.click(kick);
+    const kickoff = () => kick;
+    expect(kickoff().getAttribute('aria-expanded')).toBe('true');
+    release();
+    await until(() => expect(panel().textContent).toContain('Proof version 2'));
+    expect(kickoff().getAttribute('aria-expanded')).toBe('true');
+    await press('Proof for Kick-off');
+    expect(kickoff().getAttribute('aria-expanded')).toBe('false');
+    expect(panel().textContent).not.toContain('Proof version 2');
+    expect(detailCalls()).toHaveLength(1);
+  });
 });
 
 describe('Proof', () => {
@@ -256,6 +274,9 @@ describe('Proof', () => {
     expect(detailCalls().map((u) => u.pathname)).toEqual([`/api/v1/projects/${uuidOf('P-0101')}/milestones/3101`]);
     const shown = panel().querySelector('.ptabs__proofbody')!.textContent;
     expect(shown).toBe('Kick-offCompleted 27 OctProof version 2');
+    await press('Proof for Kick-off');
+    expect(panel().querySelector('.ptabs__proofbody')).toBeNull();
+    expect(detailCalls()).toHaveLength(1);
     await press('Proof for Kick-off');
     await until(() => expect(detailCalls()).toHaveLength(2));
   });
