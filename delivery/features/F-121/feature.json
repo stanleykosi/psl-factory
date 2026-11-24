@@ -3,26 +3,68 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-121",
-  "outcome": "People run the escalation line in its live line workspace (SCR-51) on lane C's shared work item page and line adapter, from intake through its decisions to its verified output (part 2 of FE-EMERGENCY-ESCALATION, after F-69 SCR-50)",
-  "state": "PLANNED",
+  "outcome": "The escalation line workspace shows the live escalation and lets the PMO Lead decide, review and recover it",
+  "state": "READY",
   "task_ids": [
     "FE-EMERGENCY-ESCALATION"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "`/work/4122` (mock) shows \"Decide \u00b7 PMO Lead\", a note field and exactly the buttons \"Escalate to the client\", \"Don't escalate\" and \"Return for rework\"; `/work/4129` (`client_decisions:[]`) shows none of them \u2014 verify: `frontend/e2e/work-item-escalation.spec.ts` asserts the buttons by name on both.",
+    "Pressing \"Escalate to the client\" sends one `POST /api/v1/work/4122/escalation` with `{action:\"decide_client_action\", expected_revision, case_revision, request_id (= read id), role:\"PMO Lead\", verdict:\"approve\", note:\"\", delegated:false}`; \"Don't escalate\" sends `verdict:\"reject\"` and \"Return for rework\" sends `verdict:\"return\"` \u2014 verify: unit test on the descriptor bodies and e2e request assertion; no `approve` is ever sent by \"Don't escalate\".",
+    "\"Don't escalate\" and \"Return for rework\" with an empty or blank note send nothing and show \"Add a note to return or refuse\" next to the field \u2014 verify: e2e asserts zero POSTs; unit test on the validator.",
+    "A verdict not listed for the role (for example a read with only `[\"approve\"]`) draws no button for the others \u2014 verify: unit test on `sections`/`Panel` with that read.",
+    "`/work/4123` shows \"PMO Lead decided not to escalate on {date}\" and the note in quotes, and no \"Escalate\"/\"Don't escalate\" buttons; with `note:null` no quote or placeholder is drawn; `/work/4124` reads \"returned this for rework\" and never \"not to escalate\" \u2014 verify: e2e on both and unit test on null note.",
+    "The verdict words come only from the verdict: `reject` is never shown as \"returned\" and `return` is never shown as \"declined\" \u2014 verify: unit test over all three verdicts in `history`.",
+    "`/work/4125` shows \"Message v1\" with each section's heading and text exactly as in the read, the recipients as given, and a \"Send for review\" button; pressing it sends `{action:\"request_communication_review\", expected_revision, case_revision, version_id}` with `version_id` equal to `document_version_id`; with `document_version_id:null` the button is disabled and nothing is sent \u2014 verify: e2e and unit test.",
+    "`/work/4130` (`recipients:null`) shows \"Recipients not available to you.\" and no invented recipient \u2014 verify: e2e.",
+    "`/work/4126` shows the same message under \"Approve and send\" and \"Return with a note\"; \"Approve and send\" posts `/work/4126/reviews` `{kind:\"document\", expected_revision, case_revision, version_id, verdict:\"approve\", note:\"\"}`; \"Return with a note\" with a blank note sends nothing, with a note posts `verdict:\"return\"` \u2014 verify: e2e request assertions; the page does not say \"sent\" after the approve, only the re-read state and receipts.",
+    "A `review_verdicts` of `[\"reject\"]` draws no review button and the message stays readable \u2014 verify: unit test.",
+    "`/work/4127` shows \"Delivery recorded {time}\" once per `receipts[]` row and the board sentence that it doesn't resolve the issue; an item with `receipts:[]` shows no \"Delivery recorded\", \"Delivered\" or \"verified\" text anywhere in the panel, whatever `jobs[]` or `state` say \u2014 verify: e2e on 4127 and 4126; unit test with jobs present and no receipts.",
+    "\"Verified\" appears in the panel only when the work item's state is `verified`; it is not derived from `receipts[]` alone \u2014 verify: unit test with receipts and state `processing`.",
+    "`/work/4128` shows the job with \"Retry\" and \"Cancel\" and a required reason; \"Check original delivery\" is drawn because the state is `effect_uncertain`; Retry with a blank reason sends nothing; Cancel asks yes/no first; each posts `{action:\"recover_delivery\", expected_revision, case_revision, job_id, operation, reason}` \u2014 verify: e2e request assertions. A job whose `operations` is `[]` shows no button.",
+    "\"Check original delivery\" posts `{action:\"check_original_delivery\", expected_revision, case_revision}`, is not locked after an uncertain failure, and is not drawn when the state is not `awaiting_reconciliation` or `effect_uncertain` \u2014 verify: e2e and unit tests.",
+    "After any 200 the page re-reads the item and this panel and shows the re-read state; a double click makes one request \u2014 verify: e2e counts requests; `useWorkCommand` is imported, not copied (`grep -n \"liveApi.POST\" frontend/src/features/work-item frontend/src/features/workspace` shows no new POST outside `useWorkCommand`).",
+    "`/work/4131` (409 on writes) re-reads, shows \"This changed while you were working. Showing the latest version.\" with the server message, keeps the typed note, and does not resend; `/work/4132` (403) shows \"You can't do this.\" with the server message and the other controls follow the re-read \u2014 verify: e2e on both.",
+    "A network failure or 5xx on a decision or review press shows \"We couldn't confirm that this happened. Check the page before trying again.\", locks that button until the re-read shows a new revision, and sends nothing by itself \u2014 verify: unit test with fake timers (no timer sends) and e2e.",
+    "A 404 on the panel read gives \"This record is unavailable.\" (same as the page); a 500 shows \"We couldn't load this part of the page.\" with Try again and the rest of the page loads \u2014 verify: mock scenarios and e2e.",
+    "A read with a `direction`, `target` or `stage` value the page has no words for shows it raw and does not break; \"Asked for\" reads \"Escalate to the client\" for `escalate`/`Client` and no PMO/CTO/de-escalate wording is shown when the read says otherwise (the read's values are shown) \u2014 verify: unit test.",
+    "Nothing is drawn for Tola's findings (days late, milestone, times asked), investigation steps, \"raised by\" or an issue reference, and no placeholder stands in for them \u2014 verify: e2e asserts those strings are absent on 4121 to 4127.",
+    "No approver, role or authority is named by the UI except the `role` strings and history roles the read serves; no client-side role check hides or shows a control apart from the read's lists \u2014 verify: grep `escalationAdapter.ts` and `EscalationPanel.tsx` for the literals \"PMO Lead\", \"Head of PMO\", \"CEO\", \"CTO\" (none outside tests and the verdict-to-role type) and review the diff.",
+    "A page load, a poll and navigation make no POST; the only POSTs come from presses \u2014 verify: e2e asserts zero POSTs on load of each fixture.",
+    "Against live Django (8020, Postgres 55433), for a real escalation work item the panel shows the same direction, target, history, message and receipts as `GET /api/v1/work/{id}/escalation`, and the panel is found under the key the live `panels[]` gives \u2014 verify: compare the page with `oa.py live GET /api/v1/work/{id}/escalation` output; if the key differs from `escalation`, register the live key and record it in the PR.",
+    "Unit tests cover: `sections` for each board row above, `commands` bodies, the note and reason validators, the verdict-to-word mapping and the \"no receipt, no delivered\" rule \u2014 verify: `npm test` lists them.",
+    "Viewport check at 1440 and 390: each of the six boards matches its SCR-51 desktop and mobile artboard for the parts drawn, and no part leaves an empty heading or gap \u2014 verify: screenshots at both widths reviewed against `design/screens.md` SCR-51 artboards.",
+    "`npm run lint`, `npm run typecheck` and `npm test` pass; `weeklyReportAdapter` tests still pass unchanged \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High because the line records a client-escalation decision and sends a message outside the company. Misreading reject as return, or treating a job claim as a delivered receipt, would misstate a business record (connect map SCR-51, D-31, D-32). Surfaces are ui, api and contract-change for the new reads and commands, auth for the server-gated decisions, external-messaging for the send and receipts, and product-decision because the flow is new to the client. Product acceptance is required."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-121/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +101,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-121/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +201,29 @@
   "created_at": "2026-11-23T21:23:28Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-24T09:00:38Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-121/readiness.md",
+      "delivery/features/F-121/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

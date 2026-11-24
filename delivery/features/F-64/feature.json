@@ -111,6 +111,18 @@
       "at": "2026-11-24T01:00:40Z",
       "seconds": 1580.3,
       "evidence_ref": "delivery/features/F-64/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "ec939861a647cc4a8e62d795394263c13a08b2e6",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T09:57:41Z",
+      "seconds": 1195.7,
+      "evidence_ref": "delivery/features/F-64/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -888,9 +900,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "ec939861a647cc4a8e62d795394263c13a08b2e6"
   },
   "blocked": null
 }

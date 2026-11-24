@@ -4736,3 +4736,5 @@
 {"at":"2026-11-24T09:55:45Z","feature":"F-113","round":2,"kind":"transition","head":"0c081045fa29","from":"READY_FOR_ACCEPTANCE","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-24T09:55:45Z","feature":"F-87","round":2,"kind":"gate","verdict":"FAIL","attempt":2,"exit_code":0,"seconds":170.3,"commit":"a960d20decf3","protected":["M delivery/checks.sh"]}
 {"at":"2026-11-24T09:55:55Z","feature":"F-113","round":3,"kind":"transition","head":"0c081045fa29","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-24T09:57:41Z","feature":"F-64","round":2,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":1195.7,"commit":"ec939861a647"}
+{"at":"2026-11-24T09:58:09Z","feature":"F-60","round":1,"kind":"gate","verdict":"FAIL","attempt":2,"exit_code":1,"seconds":2.9,"commit":"558514bbc832","protected":["M delivery/checks.sh"]}

@@ -143,7 +143,7 @@
     "base_branch": "main",
     "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-alerts-live-alerts-and-settings",
-    "head_sha": "c5287e4830c81d0a33017068df510dc2046ebba0",
+    "head_sha": "5c45943fb017314d39ad32a59afc6f30463202f6",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a3",
     "pr_url": null,
     "pr_number": null,
@@ -195,6 +195,7 @@
       "frontend/tests/hr-mock.test.ts",
       "frontend/tests/mock-contract.test.ts",
       "frontend/tests/next-config.test.ts",
+      "frontend/tests/rfp-submission.test.tsx",
       "frontend/tests/shell-no-embed.test.tsx"
     ]
   },

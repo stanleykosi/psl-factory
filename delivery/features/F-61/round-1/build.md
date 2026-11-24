@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: c5287e4830c81d0a33017068df510dc2046ebba0
+COMMIT: 5c45943fb017314d39ad32a59afc6f30463202f6
 BUILDER: builder
 LANE: full
 
@@ -16,7 +16,7 @@ LANE: full
 - `frontend/mock/alerts.mjs`, `mock/server.mjs` (alert paths handled before v7 routes); deleted the unused v7 alert fixtures and `proposals/alerts-needs-you.json`.
 - Tests rewritten to the live shapes: `alerts-model`, `alerts-mock`, `alerts`, `alerts-settings`, `alerts-bell`, new `alerts-helpers.ts`, `e2e/alerts.spec.ts`, `e2e/alerts-bell.spec.ts`; small updates to `bell-feed.ts`, `shell-no-embed`, `ceo-mock`, `hr-mock`, `demo-mock`, `mock-contract` for the new alert shape.
 - Shared-test change to review: `tests/next-config.test.ts` allowlist gained the alerts adapter's files (they carry the contract's `django_url`, used only as the fallback link). Flagged for the coordinator; reject if you prefer another route.
-- Shared guards that tripped on this branch and how I avoided them: `cash-forecast` (no `Number(` and no `/api/v1/me` on added lines outside shell/api: calls moved to `src/api/alerts.ts`, `parseInt` used) and `rfp-submission` (no literal "Delivered" in src: receipt words are built at draw time). Both guards are broad; the coordinator may want to tighten them.
+- Shared guards that tripped on this branch and how I avoided them: `cash-forecast` (no `Number(` and no `/api/v1/me` on added lines outside shell/api: calls moved to `src/api/alerts.ts`, `parseInt` used) and `rfp-submission`: superseded by the coordinator's change in 5c45943f: the literal "Delivered" stays in `features/alerts/model.ts` (`DELIVERY_STATE_WORDS`), and `tests/rfp-submission.test.tsx` has a one-file exception list (that file only) citing D-182 F-61 Q6 and the server receipt state; `alerts-model.test.ts` asserts "Delivered" shows only for state `delivered`, never queued, uncertain or held. The cash-forecast guard (money guard) does not apply to the `parseInt` calls: they read the month and day of the summary date, and the revision is an integer, not an amount.
 - Fidelity exceptions: `/Users/Hunchoo/psl-factory-main/delivery/features/F-61/fidelity-exceptions.json` (34 entries, approved_by "design engineer, 23 Nov 2026, D-182/D-187").
 
 ## Fixes
@@ -43,7 +43,7 @@ None (round 1).
 
 ## Validation
 - `npx tsc --noEmit`: clean. ESLint on `src`, `tests`, `e2e`, `mock` files touched: clean (whole-project lint ran clean earlier in the round).
-- Full `npx vitest run` through the lock at the pushed code: exit 0 (`logs/vitest2.log`). An earlier full run had three failures (two guards above and `next-config`), fixed in this round.
+- After 5c45943f: tsc, lint, and rfp-submission, alerts-model, alerts, alerts-settings and alerts-bell tests run singly: 154 passed. Full `npx vitest run` through the lock at c5287e48: exit 0 (`logs/vitest2.log`). An earlier full run had three failures (two guards above and `next-config`), fixed in this round.
 - Playwright through the lock (`e2e/alerts.spec.ts`, `e2e/alerts-bell.spec.ts`, production build): 66 passed, 4 failed (selector ambiguity x3, focus-ring check); fixed. Re-run: 69 passed, 1 failed (focus-ring helper dropped the design-system ring test); fixed in c5287e48; that spec file re-run alone: 2 passed.
 - Production build succeeded (built by the Playwright run).
 - Live check (Django 8006 via Next dev 4968, account live-lead, no alerts): drawer "No alerts" with "Today, 24 Nov: 0 need you, 0 new updates, 0 older unread.", as-of, `/notifications` empty, settings states, two saves with revisions 4 then 5 with CSRF, state restored. Live API facts: out-of-range `page` gives 200 with no items; `page=0`/non-number gives 422 (mock aligned); extra query parameters are ignored. No live alert could be created with POST /work (the weekly-report work did not appear as an assignment), so live mark-read and paging were verified only against the mock.

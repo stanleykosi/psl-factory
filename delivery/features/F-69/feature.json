@@ -3,26 +3,65 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-69",
-  "outcome": "People run the emergency change line in its live line workspace (SCR-50: record, refused, review, retro, report) on lane C's shared work item page and line adapter, from intake through its decisions to its verified output (part 1 of FE-EMERGENCY-ESCALATION; SCR-51 escalation follows in its own feature)",
-  "state": "PLANNED",
+  "outcome": "Emergency change line: record, refused, review, retrospective and report, live on the work item page",
+  "state": "READY",
   "task_ids": [
     "FE-EMERGENCY-ESCALATION"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Opening `/work/4301` in the mock shows \"Preauthorisation refused\", \"CTO refused the preauthorisation.\" and the \"Raise a new emergency change\" link or its absence per the Start work drawer, and no authorise, record, review or retrospective control \u2014 verify: open the page; unit test on the model with a `reject` decision.",
+    "The refused board draws no refuser name, time or reason, and the track marks step 1 refused \u2014 verify: unit test asserts the section text has no name; page view.",
+    "`/work/4302` shows \"Authorised by Segun Okoro \u00b7 13 Nov 08:05\" from `authorization_history`, and the \"Record what happened\" form with proof options listing only `change_implementation` evidence \u2014 verify: page; unit test that kind `post_implementation_review` evidence is not offered.",
+    "Record outcome without `implemented_at`, or with a future date, or with a negative or fractional \"Customers affected\", is refused in the form and sends nothing \u2014 verify: unit test and e2e assert no POST; field messages shown.",
+    "Record outcome with both impact fields blank sends `customers_affected: null` and `side_effects: null`, not `0` or `\"\"` \u2014 verify: unit test inspects the request body; mock `POST /work/4302/emergency` receives them.",
+    "`/work/4303` shows \"Customers affected: Unknown\" and \"Side effects: Unknown\"; `/work/4304` shows \"0\" and \"None found\" \u2014 verify: page; unit test for `customers_affected: 0` renders \"0\" not \"Unknown\".",
+    "The review board has exactly one decision button, \"Confirm outcome\", and no \"Return with a note\" or return control \u2014 verify: page; test asserts the label list.",
+    "\"Confirm outcome\" sends `action:\"record_review\"` with `evidence_id` of kind `post_implementation_review`, a non-empty `note`, and the tokens from the read; with no matching evidence the button is disabled and says \"No proof is available yet.\" \u2014 verify: unit test on the body; page.",
+    "\"Accept as handled\" sends `retrospective_decision` verdict `approve`; \"Needs follow-up work\" sends `return`; the role field offers only `Product` and `Engineering Lead`; `reject` is never sent from this form \u2014 verify: unit tests on the body for both.",
+    "The follow-up form appears only when the followups read has `can_manage: true`; it sends `action:\"create\"` with `category` `Normal` or `Standard` and the followups read's `revision`; on `can_manage:false` or a 403 it is absent \u2014 verify: page against `4304` and `4308`; unit test on the body.",
+    "`/work/4305` shows the report as drafted with \"Not reviewed yet\" and \"No receipt yet\"; `/work/4306` shows \"Approved\", \"2 delivery receipts recorded\" and \"The emergency is closed\"; \"closed\" does not appear on `4305` \u2014 verify: page.",
+    "The report review sends `POST /work/{id}/reviews` with `kind:\"document\"`, `version_id` equal to `document_version_id`, the tokens and a verdict; \"Return report\" and \"Refuse report\" without a note send nothing \u2014 verify: unit test on the body; e2e.",
+    "A control appears only for an action in `actions[]`: a read with `actions:[]` draws no write control; `4307` draws \"Authorise the change\" and it asks for confirmation before sending \u2014 verify: unit test over the six actions; page.",
+    "A 409 on any write keeps the typed text, re-reads, shows \"This changed while you were working. Check it and press again.\" and does not resend \u2014 verify: mock `4309`; unit test counts requests.",
+    "A 403 `csrf_failed` is not shown as \"no access\"; a 403 on the report review shows \"You can't review this report.\" \u2014 verify: unit test with mocked client.",
+    "While a write is in flight its button is disabled and a second press sends nothing; after a network failure the panel is re-read before Try again is offered \u2014 verify: unit test with a deferred promise; request count.",
+    "A write is not reported as saved until the re-read shows it: after 201 with an unchanged read the page says it could not confirm the change and offers a re-read \u2014 verify: unit test with a mock that answers 201 but an unchanged GET.",
+    "`critical_production: null` shows \"Not classified\", never \"No\" \u2014 verify: unit test.",
+    "A work id the account cannot see answers 404 and the page shows exactly \"This record is unavailable.\" \u2014 verify: open a live id the account cannot see and a mock 404; compare text.",
+    "An unknown `stage` value shows its raw text and no track; unknown `actions[]` entries draw nothing \u2014 verify: unit test.",
+    "The adapter is registered with `registerLineAdapter` under `emergency`, `commands()` descriptors use `POST /api/v1/work/{id}/emergency`, carry `profile_id`, and never put `0` for a null token \u2014 verify: `frontend/src/features/emergency/emergencyAdapter.test.ts`.",
+    "Against live Django (8020, account with an emergency work item) the page matches `oa.py live GET /api/v1/work/{id}/emergency` for stage, decisions, history names and times, and impact \u2014 verify: compare page with the viewer output.",
+    "No new \"not available\" placeholders are drawn for data the read does not carry (decision names, notes, `implemented_at`, recipients) \u2014 verify: grep the sections for those words; page.",
+    "The fidelity review compares the desktop and mobile boards `SCR-50-*-refused/record/review/retro/report` with the page and every difference is on the Conflicts list below or is fixed \u2014 verify: design fidelity tool output for the five states."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "auth",
+      "contract-change",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High because the line records authorisations and outcomes for emergency production changes. Showing null customers affected as zero, or misreading reject as return, would misstate a business record. Surfaces: ui, api and contract-change for the new reads and commands; auth for the role-gated decisions; product-decision because the flow is new to the client. Sources: architecture/packages/v9/tasks.csv and delivery/connect/screens-d-delivery-issues-escalation.md."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-69/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +98,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-69/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +198,29 @@
   "created_at": "2026-11-23T21:21:53Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-24T09:00:33Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-69/readiness.md",
+      "delivery/features/F-69/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

@@ -3,26 +3,71 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-122",
-  "outcome": "People run the leadership report line in its live line workspace (SCR-52: setup, drafting, review, Tuesday, received) on lane C's shared work item page and line adapter, from intake through review to the received report",
-  "state": "PLANNED",
+  "outcome": "People run the leadership report (Tuesday and monthly) live on the shared work item page",
+  "state": "READY",
   "task_ids": [
     "FE-LEADERSHIP-REPORT"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Starting a Tuesday report: pick project `C-LR-1`, report \"Internal Tuesday\", From and To, Reference, leave all six Include boxes checked, press Start; the request is `POST /api/v1/projects/C-LR-1/leadership-report-intake` with exactly `{action:\"start\", case_revision, key, reference, background:false, selection:{template_id, start_at, end_at, kind:\"internal_tuesday\", audience:\"internal\", scope:{domains:[six]}}, sections:null}` and `X-CSRFToken`, and the page lands on `/work/4201` \u2014 verify: unit test on `buildBody`, mock request log in `e2e/leadership-report-live.spec.ts`.",
+    "The start body never contains `selections`, `content_id`, record ids, `include` flags or any key not listed above \u2014 verify: unit test asserts exact key set.",
+    "Monthly asks for Audience with two options and none preselected; Start stays disabled until it is chosen; Tuesday shows \"Internal\" and cannot change it \u2014 verify: component test.",
+    "With `C-LR-2` (`all_projects_available:false`) the no-access sentence is shown and the form still starts; with `C-LR-1` the other sentence is shown; neither shows a project list or record picker \u2014 verify: e2e on both; grep the form files for `sources` use shows none beyond the hook's read.",
+    "Template: one template is preselected \"Test template v1\"; none shows \"No template\" and sends `template_id:null`; several require a choice \u2014 verify: component test on the three intake fixtures.",
+    "To before From, empty Reference, zero Include boxes and an unchosen kind each block the press with a message beside the field, and no request is sent \u2014 verify: component test counts fetch calls.",
+    "A 422 with `fields[{name:\"reference\"}]` shows the message beside Reference; a 409 re-reads `case_revision` and says the project changed; 429 and 503 say \"Try again shortly.\"; a dropped network after the press says the start could not be confirmed and a second press sends the same `key` \u2014 verify: mock scenarios and a unit test comparing the two request keys.",
+    "A 403 `csrf_failed` on start refreshes the session once and does not show the no-access state \u2014 verify: mock scenario plus unit test counting fetches.",
+    "`/work/4201` (drafting) shows the state tag, `current_activity.label`, the \"left out\" sentence naming the project with `unavailable_domains`, and no step list, no \"step N of M\", no count of milestones or invoices, no \"Send for leadership review\" and no \"Ask Tola\" \u2014 verify: e2e; DOM assertions for those absences.",
+    "`/work/4202` shows five sections in the API order with their coverage tags; the section with `coverage:\"unknown\"` and empty text reads \"Not recorded\" and \"Unknown\", and no text is filled in \u2014 verify: e2e and adapter unit test.",
+    "The counts block on `/work/4202` shows Meetings 41, Issues 12, Milestones 3, Escalations 2 each \"in this report\", and Actions and Changes read \"Not recorded\" (never 0); \"As of\" shows `captured_at` in the viewer's timezone; \"Projects covered: 5\" has no \"of\"; there is no Invoices row; no total is shown \u2014 verify: e2e and unit test (`counts` missing a domain).",
+    "Scope words: `all_psl_projects` reads \"All PSL projects\", `approved_project_scope` \"Your approved projects\", `selected_records` \"Selected records\" \u2014 verify: unit test.",
+    "On `/work/4202` three buttons appear in the order Approve and send, Return with a note, Refuse; with `review_verdicts:[\"approve\"]` only Approve appears; with `[]` none appears and no decide card \u2014 verify: e2e on three variants.",
+    "Return and Refuse with an empty note are blocked before any request, with the message beside the note; Approve with an empty note is allowed \u2014 verify: component test counts fetch calls.",
+    "Approve sends exactly one `POST /api/v1/work/4202/reviews` `{kind:\"document\", expected_revision:7, case_revision:12, version_id:9001, verdict:\"approve\", note}`; buttons are disabled while it is in flight; after the 200 the page re-reads and shows the new state \u2014 verify: e2e request log (count is 1) and unit test.",
+    "A 409 on review shows \"This report changed. Read the new version before deciding.\" and re-reads both reads; a 403 shows \"You can't decide this review.\"; a network drop after the press re-reads, locks the buttons with the \"couldn't confirm\" text, and unlocks only when the re-read still shows the same `document_version_id` with verdicts offered \u2014 verify: mock scenarios and unit test.",
+    "When `expected_revision`, `case_revision` or `document_version_id` is null, the decide buttons are disabled with \"This report can't be decided right now.\" and no request is sent; a null is never sent as 0 \u2014 verify: unit test on the command descriptor (`body()` keeps null).",
+    "With `can_correct:true` the \"Edit the report\" form opens with the existing text, requires a Reason, and sends `POST /api/v1/work/{id}/leadership-report` with the readback tokens, all sections, unchanged `evidence_ids` and `coverage`, and a `selection` with no `scope.mode`, `scope.actor` or `scope.configuration`; with `can_correct:false` there is no Edit control \u2014 verify: unit test on the body; e2e on both fixtures.",
+    "A 409 on edit keeps the typed text in the form and says it was kept \u2014 verify: component test.",
+    "`/work/4203` (Tuesday) shows sections Progress, Risks, Blockers, Dependencies, the counts block, and a decide card only if `review_verdicts[]` is non-empty (here empty: none). No page text says \"no review\", \"published without review\" or \"review required\" \u2014 verify: e2e DOM text assertion.",
+    "Recipients: `receipt_id:null` rows read \"No receipt yet\" with their `status`; rows with a receipt read \"Receipt recorded\" and the `recorded_at` time; the \"Received by every recipient\" line shows only when state is `verified` and every row has a receipt (`/work/4204` shows it; `/work/4203` does not) \u2014 verify: e2e on both; adapter unit test.",
+    "`/work/4203` shows F-87's \"Check what happened\" because `actions[]` has `reconcile`; pressing it sends `POST /work/4203/actions` `{expected_revision, action:\"reconcile\"}` once and re-reads; `/work/4204` shows no such button; there is no Resend, Send again or Try sending control anywhere in this feature \u2014 verify: e2e request log; grep for those words in the new files returns nothing.",
+    "`/work/4204` shows the \"Open the report\" link only through `output_url`; `/work/4202` with `output_url:null` shows none \u2014 verify: e2e on both.",
+    "`/work/4206` and a live id the account cannot see both show exactly \"This record is unavailable.\" \u2014 verify: open both and compare text.",
+    "A 401 on any read or write shows the signed-out state with `/sign-in?next=<current path>` \u2014 verify: sign out in the mock, open `/work/4202`.",
+    "A `panels[]` entry with key `leadership-report` on a work item loads through `adapterFor`; the adapter registers once; `commands()` returns `leadership-report.correct` and `leadership-report.review`, the review one with `idempotency.field === null` and no key in its body \u2014 verify: `leadershipReportAdapter.test.ts`; typecheck passes.",
+    "Against live Django (account with PMO Lead or Finance Lead authority, port 8020), the intake read, a start, the readback and one review show the same fields and counts as `GET /api/v1/work/{id}/leadership-report` \u2014 verify: compare the page with the `curl` JSON, and record in the PR the live values of `all_projects_available`, `automatic_project_scope` and the live panel key.",
+    "Viewport check at 1440 and 390: setup, drafting, review, Tuesday and received render without horizontal scroll, targets at least 44 px on phone, no empty heading or gap where a part is absent, and `axe` (wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa) has no violations \u2014 verify: screenshots against the SCR-52 artboards and the e2e axe run.",
+    "Wrong-person and wrong-tenant cases: a user without access to the work gets the 404 state; a user whose `review_verdicts[]` is empty sees no decide card and cannot reach a decide request from the page; nothing in the page decides access client-side \u2014 verify: e2e with two mock personas.",
+    "`npm run lint`, `npm run typecheck`, `npm test` pass and `api-live-schema-drift.test.ts` is unchanged \u2014 verify: `delivery/checks.sh`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change",
+      "external-messaging",
+      "product-decision"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. The builder has to reshape three setup choices into the live intake (D-33), render narrative sections with coverage, and drive review, send and reconcile on a shared adapter. That is a cross-layer contract (design/screens.md SCR-52, connect map section SCR-52). It is not high risk because it adds no data, money, identity change or migration, and the backend enforces permissions and delivery. Surfaces include external-messaging (the report is sent to recipients) and product-decision (the meaning of the counts and coverage markers). The design is approved under the recorded exception in design/review.json, which covers only the design engineer's upload-concepts change and not SCR-52. Client acceptance is required because it is a new flow with new copy."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-122/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +104,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-122/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +204,29 @@
   "created_at": "2026-11-23T21:23:28Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-24T09:00:41Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-122/readiness.md",
+      "delivery/features/F-122/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,
