@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-87",
   "outcome": "The work item can check what happened, resume or cancel, and pause or continue background work, live",
-  "state": "AWAITING_USER_APPROVAL",
+  "state": "DONE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -141,7 +141,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead), lighter panel (D-180), Opus for high risk",
-      "snapshot_ref": "f296a554242b27ef690d2ec359765ff2669b5377",
+      "snapshot_ref": "3af9c1dc75c5de9224ef957711b15cf7974c3aab",
       "evidence_refs": [
         "delivery/features/F-87/round-3/review-technical.md"
       ]
@@ -890,9 +890,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -904,7 +904,7 @@
     "base_branch": "main",
     "base_sha": "5b60a572f3ae6b4e57d6e732da378b32db433560",
     "task_branch": "fe-connect-1-work-item-controls",
-    "head_sha": "f296a554242b27ef690d2ec359765ff2669b5377",
+    "head_sha": "3af9c1dc75c5de9224ef957711b15cf7974c3aab",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/113",
     "pr_number": 113,
@@ -912,8 +912,8 @@
     "designated_approver": null,
     "ci_status": "passed",
     "human_approval": "approved",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "merge_status": "merged",
+    "merge_sha": "1e78793f0fdb21e1f3b35f2a82cd2bb8e5b6c373",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/work-item-controls.spec.ts",
@@ -1083,6 +1083,30 @@
       "round": 3,
       "head": "f296a554242b27ef690d2ec359765ff2669b5377",
       "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-24T19:46:00Z",
+      "round": 3,
+      "head": "3af9c1dc75c5de9224ef957711b15cf7974c3aab",
+      "reason": "Design engineer in chat to the coordinator (D-203): \"Accept and merge\"; head 3af9c1dc, technical re-check (Opus) PASS on the F-111 merge delta, CI PASS"
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-24T19:46:01Z",
+      "round": 3,
+      "head": "3af9c1dc75c5de9224ef957711b15cf7974c3aab",
+      "reason": "merged by coordinator as 1e78793f (#113)"
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-24T19:46:01Z",
+      "round": 3,
+      "head": "3af9c1dc75c5de9224ef957711b15cf7974c3aab",
+      "reason": "on main 1e78793f; Check what happened and Resume mock-proven only (PMO-3-1 accepted risk)"
     }
   ],
   "routing": {

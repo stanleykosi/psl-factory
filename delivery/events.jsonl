@@ -5359,3 +5359,11 @@
 {"at":"2026-11-24T19:41:09Z","feature":"F-75","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-24T19:41:09Z","feature":"F-75","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"medium","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-24T19:41:09Z","feature":"F-75","round":2,"kind":"transition","head":"d5c203969d05","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-24T19:45:03Z","feature":"F-119B","round":2,"kind":"review","role":"integrated_qa","verdict":"CHANGES","reviewer":"qa","commit":"48221d25fe73","findings":{"QA-2-1":"medium","QA-2-2":"low","QA-2-3":"low"},"written_at":"2026-11-24T19:44:12Z"}
+{"at":"2026-11-24T19:45:34Z","feature":"F-103","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":274.4,"commit":"5086ecf920a9"}
+{"at":"2026-11-24T19:46:00Z","feature":"F-87","round":3,"kind":"fields","fields":{"git.merge_status":"merged"}}
+{"at":"2026-11-24T19:46:00Z","feature":"F-87","round":3,"kind":"fields","fields":{"git.merge_sha":"1e78793f0fdb21e1f3b35f2a82cd2bb8e5b6c373"}}
+{"at":"2026-11-24T19:46:00Z","feature":"F-87","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"3af9c1dc75c5","findings":{"TECH-3-1":"low","TECH-3-2":"low"},"written_at":"2026-11-24T19:45:17Z"}
+{"at":"2026-11-24T19:46:00Z","feature":"F-87","round":3,"kind":"transition","head":"3af9c1dc75c5","reason":"Design engineer in chat to the coordinator (D-203): \"Accept and merge\"; head 3af9c1dc, technical re-check (Opus) PASS on the F-111 merge delta, CI PASS","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-24T19:46:01Z","feature":"F-87","round":3,"kind":"transition","head":"3af9c1dc75c5","reason":"merged by coordinator as 1e78793f (#113)","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-24T19:46:01Z","feature":"F-87","round":3,"kind":"transition","head":"3af9c1dc75c5","reason":"on main 1e78793f; Check what happened and Resume mock-proven only (PMO-3-1 accepted risk)","from":"MERGED","to":"DONE"}
