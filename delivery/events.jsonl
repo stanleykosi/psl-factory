@@ -5111,3 +5111,14 @@
 {"at":"2026-11-24T15:30:02Z","feature":"F-64","round":2,"kind":"transition","head":"9d93d66ccb96","reason":"Design engineer in chat to the coordinator (D-203): \"Merge now, prove after\"","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
 {"at":"2026-11-24T15:30:02Z","feature":"F-64","round":2,"kind":"transition","head":"9d93d66ccb96","reason":"merged by coordinator as 4fd055ce (#111)","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-24T15:30:03Z","feature":"F-64","round":2,"kind":"transition","head":"9d93d66ccb96","reason":"on main 4fd055ce; live decision proof on psl_demo is a follow-up (D-203)","from":"MERGED","to":"DONE"}
+{"at":"2026-11-24T15:30:17Z","feature":"F-87","round":3,"kind":"finding","action":"accept-risk","finding":"PMO-3-1","by":"design-engineer"}
+{"at":"2026-11-24T15:30:19Z","feature":"F-87","round":3,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-24T15:30:24Z","feature":"F-111","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"8a5c09fe624b","findings":{"QA-2-1":"medium","QA-2-2":"low","QA-2-3":"low","QA-2-4":"low"},"written_at":"2026-11-24T15:30:08Z"}
+{"at":"2026-11-24T15:30:24Z","feature":"F-111","round":2,"kind":"finding","action":"verify","finding":"UX-1-2","by":"qa"}
+{"at":"2026-11-24T15:30:24Z","feature":"F-111","round":2,"kind":"finding","action":"verify","finding":"UX-1-4","by":"qa"}
+{"at":"2026-11-24T15:30:24Z","feature":"F-111","round":2,"kind":"finding","action":"verify","finding":"UX-1-5","by":"qa"}
+{"at":"2026-11-24T15:30:24Z","feature":"F-111","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"qa","severity":"medium","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T15:30:24Z","feature":"F-111","round":2,"kind":"finding","action":"add","finding":"QA-2-2","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T15:30:24Z","feature":"F-111","round":2,"kind":"finding","action":"add","finding":"QA-2-3","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T15:30:24Z","feature":"F-111","round":2,"kind":"finding","action":"add","finding":"QA-2-4","by":"qa","severity":"low","owner":"integration","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T15:30:24Z","feature":"F-111","round":2,"kind":"transition","head":"8a5c09fe624b","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}

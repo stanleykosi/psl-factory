@@ -750,15 +750,24 @@
         "delivery/features/F-87/round-3/acceptance-pmo.md"
       ],
       "raised_by": "pmo-acceptance",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "pmo-acceptance",
           "at": "2026-11-24T14:44:27Z",
           "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design-engineer",
+          "at": "2026-11-24T15:30:17Z",
+          "refs": [],
+          "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+          "reason": "\"Accept and merge\": Check what happened and Resume accepted as mock-proven, live unproven, like F-60 and F-88; Pause and Continue proven live"
         }
-      ]
+      ],
+      "risk_authority": "D-203, design engineer in chat to the coordinator"
     }
   ],
   "prior_review_records": [
@@ -902,7 +911,7 @@
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "not_run",
-    "human_approval": "pending",
+    "human_approval": "approved",
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
