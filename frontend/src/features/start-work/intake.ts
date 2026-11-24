@@ -1,7 +1,7 @@
 // Start work intake, pure: which fields this release renders, the submitted value per kind (D-START-INTAKE),
 // the case a start goes to, and which fields a parent clears. Nothing here checks business rules: the
 // server's 422 is the only source of field errors, and a case is only ever taken from the line or the chosen option.
-import type { Field, Line, LineOption, StartBody } from './types';
+import type { Field, LegacyLine as Line, LegacyStartBody as StartBody, LineOption } from './types';
 
 export type RangeValue = { from: string; to: string };
 /** A client that is not in the list yet (F-49, overlay `allow_new`): sent as {new: {name}}. */

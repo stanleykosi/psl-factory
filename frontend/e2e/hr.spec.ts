@@ -80,18 +80,15 @@ test('Assistant: two conversations open in full, the salary one is declined, and
   await expect(page.getByText(/I do not show pay amounts/)).toBeVisible();
 });
 
-test('hr starts the stand-in staff list line and lands on a new work item', async ({ page }) => {
+// F-86: the drawer lists live lines; the HR staff list has no live form yet (LC-Q3), so it opens the chooser and offers the full form's link.
+test('hr opens Start work: a line without a live form is unavailable, with a link to its full form, and starts nothing', async ({ page }) => {
   await page.goto('/my-work');
   await expect(tab(page, /^Needs me/)).toBeVisible();
   await page.locator('nav.psl-nav').getByRole('button', { name: 'Start work' }).first().click();
-  const dialog = page.getByRole('dialog');
-  await expect(dialog.getByText('Send the staff list for payroll').first()).toBeVisible();
-  await expect(dialog.getByText(/Stand-in/).first()).toBeVisible();
-  await dialog.getByLabel('Month').fill('2026-11');
-  await dialog.locator('[data-field="proof"] input[type="file"]').setInputFiles({ name: 'staff_november.xlsx', mimeType: 'application/octet-stream', buffer: Buffer.alloc(64, 7) });
-  await dialog.getByRole('button', { name: /^Start/ }).click();
-  await expect(page).toHaveURL(/\/work\/W-4611$/);
-  await expect(page.getByRole('heading', { level: 1, name: 'Staff list for payroll · November' })).toBeVisible();
+  const dialog = page.getByRole('dialog', { name: 'Choose a line' });
+  await expect(dialog.getByText('Payroll', { exact: true })).toBeVisible();
+  await expect(dialog.getByRole('link', { name: 'Open in the full form' }).first()).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Next', exact: true })).toBeDisabled();
 });
 
 test('hr is refused Projects, Exceptions and Setup', async ({ page }) => {
