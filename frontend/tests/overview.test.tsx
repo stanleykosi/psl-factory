@@ -429,7 +429,7 @@ describe('the 3D option follows reduced motion, WebGL and width', () => {
     expect(screen.getByText('This device can’t show the 3D floor, so it’s shown flat.')).toBeTruthy();
   });
 
-  it('phone: title, two-figure summary, coverage, rows, the Updated line under them, no switch and no hint', async () => {
+  it('phone: the Updated line above the title, two-figure summary, coverage, rows, no switch and no hint', async () => {
     media['(max-width: 719.98px)'] = true;
     await open();
     expect(screen.queryByRole('radiogroup', { name: 'View' })).toBeNull();
@@ -438,7 +438,7 @@ describe('the 3D option follows reduced motion, WebGL and width', () => {
     expect(h1.closest('header')!.nextElementSibling!.textContent).toBe('10 in progress · 4 need a person');
     expect(h1.closest('header')!.nextElementSibling!.nextElementSibling!.textContent).toBe('Counted from all 15 items you can see');
     expect(tiles()).toHaveLength(0);
-    expect(linesSection()!.nextElementSibling!.textContent).toBe('FACTORY FLOOR · UPDATED 23 Nov 10:30 WAT');
+    expect(h1.closest('header')!.previousElementSibling!.textContent).toBe('FACTORY FLOOR · UPDATED 23 Nov 10:30 WAT');
     expect(lineRows()).toHaveLength(5);
   });
 

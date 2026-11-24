@@ -244,6 +244,7 @@ function FactoryFloor() {
     <div className="overview">
       {phone ? (
         <>
+          {eyebrow}
           {title}
           {hasLines &&
             (counts ? (
@@ -294,9 +295,6 @@ function FactoryFloor() {
       ) : (
         <EmptyState title="No lines to show yet.">Lines appear here when work you can see starts.</EmptyState>
       )}
-
-      {/* The phone board has no coverage line; the time still shows, under the lines. */}
-      {phone && eyebrow}
 
       <section className="overview-exceptions" aria-labelledby="overview-exceptions-title">
         <div className="overview-exceptions__head">
