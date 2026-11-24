@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-125",
   "outcome": "/my-work shows its existing error state on live rows instead of crashing",
-  "state": "IN_REVIEW",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -68,18 +68,22 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead), light panel (D-180)",
+      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "evidence_refs": [
+        "delivery/features/F-125/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "qa",
+      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "evidence_refs": [
+        "delivery/features/F-125/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -98,18 +102,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "evidence_refs": [
+        "delivery/features/F-125/round-1/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer",
+      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "evidence_refs": [
+        "delivery/features/F-125/round-1/review-ui.md"
+      ]
     }
   },
   "findings": [],
@@ -239,6 +247,22 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-24T02:56:49Z",
+      "round": 1,
+      "head": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-24T02:58:40Z",
+      "round": 1,
+      "head": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-24T03:02:30Z",
       "round": 1,
       "head": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
       "reason": null
