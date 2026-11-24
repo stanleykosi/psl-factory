@@ -1,0 +1,208 @@
+{
+  "exceptions": [
+    {
+      "role": "searchbox",
+      "name": "Search",
+      "reason": "Hidden: the live API takes only `page`, so there is nothing to search (D-182 Q3).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "button",
+      "name": "Filter",
+      "reason": "Hidden: agent and unread filters are not in the live API (only `page`) (D-182 Q3).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Filter",
+      "reason": "Hidden: agent and unread filters are not in the live API (D-182 Q3).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "4 ALERTS",
+      "reason": "Hidden: the API returns no total of alerts; the page says how many are loaded and how many are unread (D-182 Q3, D-187 Q8).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Chidi · WhatsApp and email · 10:42",
+      "reason": "Changed: the 'via WhatsApp / digest' part is removed because email and WhatsApp delivery is deferred (A-44, D-182 Q1); the row keeps agent and time where the alert has them.",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Tola · Email · 09:00 daily digest",
+      "reason": "Changed: delivery channel and digest wording removed (A-44, D-182 Q1).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Zainab · In app only (you are not HR)",
+      "reason": "Changed: delivery channel wording removed (A-44, D-182 Q1).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Chidi · In app · yesterday",
+      "reason": "Changed: delivery channel wording removed (A-44, D-182 Q1).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "columnheader",
+      "name": "WHEN",
+      "reason": "Hidden: the per-event matrix (event rows with WhatsApp, Email and Timing) has no data in the live API; settings are two switches (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "columnheader",
+      "name": "WHATSAPP",
+      "reason": "Hidden: the per-event matrix (event rows with WhatsApp, Email and Timing) has no data in the live API; settings are two switches (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "columnheader",
+      "name": "EMAIL",
+      "reason": "Hidden: the per-event matrix (event rows with WhatsApp, Email and Timing) has no data in the live API; settings are two switches (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "columnheader",
+      "name": "TIMING",
+      "reason": "Hidden: the per-event matrix (event rows with WhatsApp, Email and Timing) has no data in the live API; settings are two switches (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "pattern",
+      "name": "Table rows with columns WHEN / WHATSAPP / EMAIL / TIMING",
+      "reason": "Hidden: per-event rows are not in the live API (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "A decision is waiting for me",
+      "reason": "Hidden: per-event alert rows are not in the live API (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Information is requested from me",
+      "reason": "Hidden: per-event alert rows are not in the live API (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Work I started is stuck",
+      "reason": "Hidden: per-event alert rows are not in the live API (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Work I started is verified",
+      "reason": "Hidden: per-event alert rows are not in the live API (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Everything else",
+      "reason": "Hidden: per-event alert rows are not in the live API (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Straight away",
+      "reason": "Hidden: per-event timing is not in the live API (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "In the daily digest",
+      "reason": "Hidden: per-event timing is not in the live API (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Daily digest",
+      "reason": "Hidden: per-event timing is not in the live API (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Daily digest at",
+      "reason": "Hidden: no digest time exists in API 1.24.0 (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "combobox",
+      "name": "Daily digest at",
+      "reason": "Hidden: no digest time exists in API 1.24.0 (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "08:00",
+      "reason": "Hidden: digest time value (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Quiet hours",
+      "reason": "Hidden: no quiet hours exist in API 1.24.0 (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "combobox",
+      "name": "Quiet hours",
+      "reason": "Hidden: no quiet hours exist in API 1.24.0 (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "20:00 to 07:00, and weekends",
+      "reason": "Hidden: quiet hours value (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Quiet hours 20:00 to 07:00 and weekends",
+      "reason": "Hidden: quiet hours line on the phone board (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "WhatsApp number",
+      "reason": "Hidden: the verified-number block and phone entry wait on D-ALERTS-ENTRY; the account tab is out (D-182 Q7).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "+234 803 *** 4412 · verified",
+      "reason": "Hidden: the verified-number block waits on D-ALERTS-ENTRY (D-182 Q7).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "Alerts never include amounts or client details beyond the name.",
+      "reason": "Hidden: this note belongs to the per-event matrix and number block, which are hidden (D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "search",
+      "name": "",
+      "reason": "Hidden: the search and Filter toolbar has no data in the live API (only `page`) (D-182 Q3).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "table",
+      "name": "",
+      "reason": "Hidden: the per-event matrix is not in the live API; settings are two switches (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "WhatsApp Email",
+      "reason": "Hidden: the per-event WhatsApp and Email switch labels on the phone board; per-event rows are not in the live API (A-44, D-182 Q2).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182/D-187"
+    }
+  ]
+}

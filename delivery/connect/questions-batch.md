@@ -160,11 +160,12 @@ Context: these three build on lane C's F-85 page and line adapter and also need 
 5. The "left out" sentence on drafting and review: recommendation a muted line under the state/facts, naming projects. Alternative: a held-tone callout.
 6. "Open the full report" link: the contract serves no report page for `document_version_id`. Recommendation: draw nothing now and add the link when the document review page for this version is chosen (it is not built for live). Alternative: link to F-85's `output_url` only once verified (this spec does that for the received board).
 
-### Lane A · visual waivers for F-60 (account set-up) and F-64 (Decision desk)
+### Lane A · visual waivers for F-60 (account set-up), F-61 (alerts) and F-64 (Decision desk)
 Context: both features pass coverage once the D-182 exceptions apply, but the fidelity tool's visual score stays under 90 because the approved changes move the layout. D-179 waived the same thing for sign-in.
 1. F-64 Decision desk. Visual: done 70.5 / 64.3, stale 69.1 / 74.5, not-yours 78.6 (desktop / phone; not-yours phone is 92.6). Coverage with exceptions is 93 to 100%. The gaps left are sample values (amounts, names, times) that come from live data. (a) Recommended: waive visual for these five boards, as D-179 did. (b) Ask for another fix round on a named board.
 2. F-64 extras the boards don't draw (UI-1-6): a "0 / 2000" note counter, an "Open the work item" link under the not-yours comment, and a shorter footnote. (a) Recommended: keep all three (the counter shows the limit; the other two come from the spec). (b) Remove the counter. (c) Remove all three.
 3. F-60 account set-up, phone. Visual is 58.3 and coverage with exceptions is 80%. The reviewer saw the phone brand band as missing; the builder shows it is there, as on /sign-in, and the score is low because the approved confirm field and validity line push the page down. The two items left are the board's sample email and masked password inside input boxes, which the tool can't read from a live input. (a) Recommended: waive visual for the phone set-up board, and accept those two as "input value the tool cannot read". (b) Ask for another fix round.
+4. F-61 alerts. Coverage is 100% on all four boards once the D-182 and D-187 exceptions apply. Visual: drawer desktop 83.6, settings desktop 79.9, drawer phone 72.4, settings phone 73.4. The approved removals (search, filters, per-event rows) and additions (daily summary, recent deliveries) move the layout. (a) Recommended: waive visual for these four boards. (b) Ask for another fix round on a named board.
 
 ## Lane B
 
