@@ -4,25 +4,40 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-119B",
   "outcome": "F-119's closure and retrospective, with UX-5-1 fixed",
-  "state": "PLANNED",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "to 23. Apply F-119's acceptance criteria 1 to 23 unchanged, on the F-119B round head. \u2014 verify: as named in `delivery/features/F-119/spec.md` (gate `delivery/checks.sh`, `frontend/e2e/retrospective.spec.ts`, `npm test` in `frontend/`).",
+    "(UX-5-1) At 390px width on `/projects/<2001>/retrospective?dossier=5001`, every control in the form that takes keyboard focus (reached by Tab from the first box through to Save and the decisions and follow-up controls) ends fully above the fixed Save bar: its bounding box bottom is at or above the bar's top. For each one, `document.elementFromPoint` at the control's centre returns that control or one of its descendants. Negative case: a control hidden under the bar fails the check. \u2014 verify: the phone focus test in `frontend/e2e/retrospective.spec.ts` (Playwright, mobile 390px project), run on the F-119B round head and recorded in the round's `checks.md`."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium, unchanged from F-119. The screen has several behaviours (versioned save, action creation, checklist link) and a cross-layer contract (revisions, evidence ids, the `summary` convention). It writes internal meeting records only; no money, payroll, external messaging, auth or migrations, and saves append versions. Surfaces are ui (phone layout and focus behaviour, product-visible form change), api (live 1.24.0 operations) and contract-change (three boxes packed into one `summary`). Product acceptance is required for the changed form layout and the hidden draft, as in F-119."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-119B/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -35,7 +50,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "9d9b149c0eee33789567d9006229314f1224d6d0",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T16:04:49Z",
+      "seconds": 10.2,
+      "evidence_ref": "delivery/features/F-119B/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -45,7 +73,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -59,9 +87,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
-      "status": "not_assessed",
+      "required": true,
+      "assessment_reason": "delivery/features/F-119B/readiness.md",
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -90,9 +132,9 @@
     "repository": null,
     "task_id": "FE-DELIVERY-CLOSURE",
     "base_branch": "main",
-    "base_sha": null,
+    "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-delivery-closure-retrospective",
-    "head_sha": null,
+    "head_sha": "9d9b149c0eee33789567d9006229314f1224d6d0",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d2",
     "pr_url": null,
     "pr_number": null,
@@ -103,7 +145,27 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/retrospective.spec.ts",
+      "frontend/mock/retrospective.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/src/api/types.ts",
+      "frontend/src/app/projects/[caseId]/retrospective/page.tsx",
+      "frontend/src/features/retrospective/ActionForm.tsx",
+      "frontend/src/features/retrospective/ChecklistStrip.tsx",
+      "frontend/src/features/retrospective/FailureNotice.tsx",
+      "frontend/src/features/retrospective/RetroForm.tsx",
+      "frontend/src/features/retrospective/RetrospectiveView.tsx",
+      "frontend/src/features/retrospective/SavedVersion.tsx",
+      "frontend/src/features/retrospective/failure.ts",
+      "frontend/src/features/retrospective/model.ts",
+      "frontend/src/features/retrospective/retrospective.css",
+      "frontend/src/features/retrospective/summary.ts",
+      "frontend/src/features/retrospective/useRetrospective.ts",
+      "frontend/tests/retrospective-failure.test.ts",
+      "frontend/tests/retrospective-model.test.ts",
+      "frontend/tests/retrospective-summary.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -136,15 +198,51 @@
     }
   },
   "created_at": "2026-11-24T16:01:04Z",
-  "round": 0,
-  "round_limit": null,
-  "history": [],
-  "routing": null,
+  "round": 1,
+  "round_limit": 5,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-24T16:03:30Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T16:03:42Z",
+      "round": 1,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T16:05:18Z",
+      "round": 1,
+      "head": "9d9b149c0eee33789567d9006229314f1224d6d0",
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-119B/readiness.md",
+      "delivery/features/F-119B/spec.md"
+    ]
+  },
   "gate": {
-    "round": 0,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "round": 1,
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "9d9b149c0eee33789567d9006229314f1224d6d0"
   },
   "blocked": null
 }
