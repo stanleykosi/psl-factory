@@ -1,20 +1,20 @@
 'use client';
 
-// The bell's drawer (F-15): concept 3 inside concept 1's drawer (design/concepts/alerts-bell-concepts.html), with
+// The bell's drawer (F-15, F-61): concept 3 inside concept 1's drawer (design/concepts/alerts-bell-concepts.html), with
 // SCR-15's rows, in the shared 500px Drawer (a full-height sheet below 720px, with the two groups as tabs). The
 // Drawer holds focus, closes on Esc and the scrim and gives focus back to the bell that opened it. The page lists
-// what the server returned for this person only; which group an alert sits in comes from `needs_you` (PROPOSAL),
+// what the server returned for this person only (page 1); which group an alert sits in comes from its `group`,
 // never from its text.
 import NextLink from 'next/link';
 import { useState, type MouseEvent } from 'react';
 
-import { buttonClass, Drawer, Link, Tabs, VisuallyHidden } from '@/components';
+import { buttonClass, Drawer, formatTime, Link, Tabs, VisuallyHidden } from '@/components';
 import { ForbiddenState, LoadingState, SignedOutState } from '@/shell/FrameStates';
 
-import { AlertAvatar, AlertBody, AlertsLoadError, useOpenAlert, type OpenAlert } from './AlertParts';
-import type { AlertWithNeed } from './types';
+import { AlertAvatar, AlertBody, AlertsLoadError, RowTail, useAlertActions, type OpenAlert, type RowNotice } from './AlertParts';
+import type { Alert } from './types';
 import type { AlertsFeed } from './useAlertsFeed';
-import { needsYou, needsYouKnown, workHref } from './model';
+import { alertHref, needsYou, summaryLine } from './model';
 import './alerts.css';
 
 type Tab = 'need' | 'info';
@@ -25,23 +25,27 @@ const plainClick = (event: MouseEvent) => event.button === 0 && !event.metaKey &
 
 export function AlertsDrawer({ feed, phone, pathname, onClose, onLeave }: Props) {
   const [chosen, setChosen] = useState<Tab>();
-  const { data, error, refresh, markRead } = feed;
-  const openAlert = useOpenAlert((alert) => markRead(alert.id), feed.stop);
+  const { data, error, refresh } = feed;
+  const actions = useAlertActions({ onGone: () => void refresh(), onSignedOut: feed.stop });
 
-  const open: OpenAlert = (event, alert) => {
-    void openAlert(event, alert);
-    if (plainClick(event)) onLeave(workHref(alert));
+  // A read alert is left to its link; an unread one is marked read first. The drawer stays open until the work opens; after a
+  // failed mark-read it is closed by the route change itself, so its row keeps the notice until then.
+  const open: OpenAlert = async (event, alert) => {
+    const result = await actions.open(event, alert);
+    const href = alertHref(alert);
+    if (href && plainClick(event) && (alert.read || result === 'read')) onLeave(href);
+    return result;
   };
   const follow = (event: MouseEvent<HTMLAnchorElement>) => {
     if (plainClick(event)) onLeave(event.currentTarget.getAttribute('href') ?? '');
   };
 
   const items = data?.items ?? [];
-  const known = needsYouKnown(items);
-  const need = known ? items.filter(needsYou) : [];
-  const info = known ? items.filter((alert) => !needsYou(alert)) : items;
+  const need = items.filter(needsYou);
+  const info = items.filter((alert) => !needsYou(alert));
   const tab: Tab = chosen ?? (need.length > 0 ? 'need' : 'info');
   const now = data?.now ?? 0;
+  const rows = { now, onOpen: open, onMark: (alert: Alert) => void actions.markRead(alert), notices: actions.notices };
 
   let body;
   if (error?.kind === 'unauthenticated') body = <SignedOutState pathname={pathname} />;
@@ -49,34 +53,38 @@ export function AlertsDrawer({ feed, phone, pathname, onClose, onLeave }: Props)
   else if (!data && !error) body = <LoadingState />;
   else {
     const failed = error && <AlertsLoadError error={error} asOf={data?.asOf} onRetry={() => void refresh()} />;
+    const summary = summaryLine(data?.summary);
     let list;
     if (!data) list = null;
-    else if (items.length === 0) list = <p className="alerts-none">No alerts yet.</p>;
-    else if (phone && known) {
+    else if (items.length === 0) list = <p className="alerts-none">No alerts</p>;
+    else if (phone) {
       const shown = tab === 'need' ? need : info;
       list = (
-        <div role="tabpanel" id="alerts-panel" aria-label={tab === 'need' ? 'Needs you' : 'For your information'}>
-          <Rows items={shown} now={now} primary={tab === 'need'} onOpen={open} empty={tab === 'need' ? 'Nothing needs you right now.' : 'No other alerts.'} />
+        <div role="tabpanel" id="alerts-panel" aria-label={tab === 'need' ? 'Needs you' : 'For information'}>
+          <Rows items={shown} {...rows} primary={tab === 'need'} empty={tab === 'need' ? 'Nothing needs you right now.' : 'No other alerts.'} />
         </div>
       );
     } else {
       list = (
         <>
-          {known && <Group id="need" title="Needs you" items={need} now={now} onOpen={open} empty="Nothing needs you right now." />}
-          <Group id="info" title="For your information" items={info} now={now} onOpen={open} empty="No other alerts." />
+          <Group id="need" title="Needs you" items={need} {...rows} empty="Nothing needs you right now." />
+          <Group id="info" title="For information" items={info} {...rows} empty="No other alerts." />
         </>
       );
     }
     body = (
       <>
         {failed && <div className="alerts-dstate">{failed}</div>}
+        {summary && <p className="alerts-summary">{summary}</p>}
         {list}
+        {data && <p className="alerts-asof">As of {formatTime(data.asOf)}</p>}
       </>
     );
   }
   const stateBody = error?.kind === 'unauthenticated' || error?.kind === 'forbidden' || (!data && !error);
 
-  const showTabs = phone && known && items.length > 0 && !stateBody;
+  const showTabs = phone && items.length > 0 && !stateBody;
+  const unread = data && !error ? data.unread : undefined;
 
   return (
     <Drawer
@@ -86,7 +94,7 @@ export function AlertsDrawer({ feed, phone, pathname, onClose, onLeave }: Props)
       footer={
         <>
           <Link href="/notifications" onClick={follow}>
-            See all alerts
+            See all alerts{unread !== undefined && ` (${unread} unread)`}
           </Link>
           <Link href="/settings/alerts" onClick={follow}>
             Alert settings
@@ -102,7 +110,7 @@ export function AlertsDrawer({ feed, phone, pathname, onClose, onLeave }: Props)
           onSelect={setChosen}
           tabs={[
             { key: 'need', label: 'Needs you', count: need.length > 0 ? need.length : undefined },
-            { key: 'info', label: 'For your information' },
+            { key: 'info', label: 'For information' },
           ]}
         />
       )}
@@ -111,10 +119,11 @@ export function AlertsDrawer({ feed, phone, pathname, onClose, onLeave }: Props)
   );
 }
 
-type GroupProps = { id: Tab; title: string; items: AlertWithNeed[]; now: number; onOpen: OpenAlert; empty: string };
+type RowsProps = { items: Alert[]; now: number; onOpen: OpenAlert; onMark: (alert: Alert) => void; notices: Record<string, RowNotice> };
+type GroupProps = RowsProps & { id: Tab; title: string; empty: string };
 
-/** A group header (mono, with the count of its alerts) and its rows. */
-function Group({ id, title, items, now, onOpen, empty }: GroupProps) {
+/** A group header (mono, with the count of its loaded alerts) and its rows. */
+function Group({ id, title, items, empty, ...rows }: GroupProps) {
   return (
     <section aria-labelledby={`alerts-grp-${id}`}>
       <h3 id={`alerts-grp-${id}`} className={`alerts-grp${id === 'need' ? ' alerts-grp--need' : ''}`}>
@@ -124,32 +133,38 @@ function Group({ id, title, items, now, onOpen, empty }: GroupProps) {
           {items.length}
         </span>
       </h3>
-      <Rows items={items} now={now} primary={id === 'need'} onOpen={onOpen} empty={empty} />
+      <Rows items={items} {...rows} primary={id === 'need'} empty={empty} />
     </section>
   );
 }
 
-type RowsProps = { items: AlertWithNeed[]; now: number; primary: boolean; onOpen: OpenAlert; empty: string };
-
-/** SCR-15 rows with Open as the only action: filled in Needs you, outlined in For your information; no NEW tag. */
-function Rows({ items, now, primary, onOpen, empty }: RowsProps) {
+/** SCR-15 rows with Open as the only action: filled in Needs you, outlined in For information; a row with no link has Mark as read. */
+function Rows({ items, now, primary, onOpen, onMark, notices, empty }: RowsProps & { primary: boolean; empty: string }) {
   if (items.length === 0) return <p className="alerts-none">{empty}</p>;
   return (
     <ul className="alerts-dlist">
-      {items.map((alert) => (
-        <li key={alert.id} className={alert.read === false ? 'alerts-row alerts-row--unread alerts-drow' : 'alerts-row alerts-drow'}>
-          <AlertAvatar agent={alert.agent} />
-          <AlertBody alert={alert} now={now} />
-          <NextLink
-            href={workHref(alert)}
-            className={`${buttonClass(primary ? 'primary' : 'secondary', 'sm')} cmp-btn-sm`}
-            aria-label={`Open: ${alert.text}`}
-            onClick={(event) => onOpen(event, alert)}
-          >
-            Open
-          </NextLink>
-        </li>
-      ))}
+      {items.map((alert) => {
+        const href = alertHref(alert);
+        return (
+          <li key={alert.id} className={alert.read === false ? 'alerts-row alerts-row--unread alerts-drow' : 'alerts-row alerts-drow'}>
+            <AlertAvatar agent={alert.agent} />
+            <span className="alerts-rowmain">
+              <AlertBody alert={alert} now={now} />
+              <RowTail alert={alert} notice={notices[alert.id]} onMark={onMark} />
+            </span>
+            {href && (
+              <NextLink
+                href={href}
+                className={`${buttonClass(primary ? 'primary' : 'secondary', 'sm')} cmp-btn-sm`}
+                aria-label={`Open: ${alert.title}`}
+                onClick={(event) => void onOpen(event, alert)}
+              >
+                Open
+              </NextLink>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 }

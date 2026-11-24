@@ -1,16 +1,17 @@
 'use client';
 
-// CMP-23 drawer: reads E-LINES on every opening, then shows the chooser or a line's drawer. The main button opens
-// E-LINES `default_line` directly; without one (CEO and CTO, D-LEADERS-START), and from the chevron or "+ Start",
-// the chooser opens first. A start that answers 201 closes the drawer and goes to the new work item.
+// CMP-23 drawer: reads `GET /lines` on every opening, then shows the chooser or a line's drawer. The live contract has no
+// default line, so every entry (the main button, the chevron, "+ Start") opens the chooser. `prefill` opens a form
+// only for a line this person can start here. A start that answers 200 closes the drawer and goes to the new work item.
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 
 import { Callout, Loading } from '@/components';
 
 import { DrawerFrame } from './DrawerFrame';
-import { LineChooser } from './LineChooser';
-import { LineForm } from './LineForm';
+import { isStartable, LineChooser } from './LineChooser';
+import { LineDrawer } from './LineForm';
+import { lineFormFor, ownLineFor } from './lines';
 import type { Line } from './types';
 import { useLines } from './useStartWork';
 
@@ -20,14 +21,15 @@ export type StartEntry = 'default' | 'chooser';
 
 type Step = { kind: 'entry' } | { kind: 'chooser' } | { kind: 'line'; line: Line };
 
-export function StartWorkDrawer({ entry, onClose, prefill, onStarted: started, onConflict }: {
-  entry: StartEntry;
+export function StartWorkDrawer({ onClose, prefill, onStarted: started, onConflict }: {
+  /** Every entry opens the chooser; kept so callers need not change. */
+  entry?: StartEntry;
   onClose: () => void;
-  /** The assistant's draft: opens this line's form directly, filled for the person to check. */
+  /** The assistant's draft: opens this line's form directly, when it is one this person can start here. */
   prefill?: { line_key: string; intake: Record<string, unknown> };
   /** Replaces the default (close and go to the new work item). */
   onStarted?: (workId: string) => void;
-  /** Called when a start answers 409 (the record changed or was started elsewhere), so the caller can read it again. */
+  /** Called when a start answers 409 (the record changed), so the caller can read it again. */
   onConflict?: () => void;
 }) {
   const router = useRouter();
@@ -47,11 +49,10 @@ export function StartWorkDrawer({ entry, onClose, prefill, onStarted: started, o
   let view: Step = step;
   if (step.kind === 'entry') {
     const data = state.status === 'ready' ? state.data : undefined;
-    const wanted = prefill ? prefill.line_key : entry === 'default' ? data?.default_line : undefined;
-    const direct = wanted ? data?.items.find((l) => l.key === wanted) : undefined;
+    const direct = prefill ? data?.items.find((l) => l.key === prefill.line_key && isStartable(l)) : undefined;
     if (direct) view = { kind: 'line', line: direct };
     else if (prefill && data) {
-      // The draft names a line this person can't start: no form.
+      // The draft names a line this person can't start here: no form.
       return (
         <DrawerFrame eyebrow="START WORK" title="Start work" onClose={onClose} focusKey="not-here">
           <Callout kind="problem">
@@ -59,7 +60,7 @@ export function StartWorkDrawer({ entry, onClose, prefill, onStarted: started, o
           </Callout>
         </DrawerFrame>
       );
-    } else if ((entry === 'default' || prefill) && state.status === 'loading') {
+    } else if (prefill && state.status === 'loading') {
       return (
         <DrawerFrame eyebrow="START WORK" title="Start work" onClose={onClose} focusKey="entry-loading">
           <Loading>Loading…</Loading>
@@ -68,17 +69,22 @@ export function StartWorkDrawer({ entry, onClose, prefill, onStarted: started, o
     } else view = { kind: 'chooser' };
   }
 
-  if (view.kind === 'line') {
+  const own = view.kind === 'line' ? ownLineFor(view.line.key) : undefined;
+  if (view.kind === 'line' && own) {
+    return <own.Own key={own.key} onBack={() => setStep({ kind: 'chooser' })} onClose={onClose} pathname={pathname} />;
+  }
+  const form = view.kind === 'line' ? lineFormFor(view.line.key) : undefined;
+  if (view.kind === 'line' && form) {
     return (
-      <LineForm
+      <LineDrawer
         key={view.line.key}
-        line={view.line}
+        form={form}
+        lineKey={view.line.key}
         onBack={() => setStep({ kind: 'chooser' })}
         onClose={onClose}
         onStarted={onStarted}
         pathname={pathname}
         onConflict={onConflict}
-        initialIntake={prefill?.line_key === view.line.key ? prefill.intake : undefined}
       />
     );
   }

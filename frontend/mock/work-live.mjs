@@ -3,7 +3,8 @@
 // routes). Integer work ids only: v7 ids ("W-1003") keep answering from the v7 fixtures. Sample data; no business rules.
 // Fixtures: 4101 verified, 4102 processing with a weekly report panel, 4103 a decision waiting, 4104 stuck with null
 // revisions, 4105 handoff-only (null revision), 4106 unavailable to everyone, 4107 a weekly report with no parts and
-// nothing cited, 4108 history of exactly 30 rows.
+// nothing cited, 4108 history of exactly 30 rows. 2501 to 2505 back the delivery overview rows of project P-0101
+// (delivery-overview.mjs): the same line, state, reference and date as the row that links to them.
 // A scenario (cookie psl_mock_scenario or header X-Mock-Scenario) answers every route here with that status; csrf_failed
 // answers writes with the stale-token 403.
 export const WORK_LIVE_PATH = /^\/api\/v1\/work\/(\d+)(\/history|\/weekly-report)?$/;
@@ -66,7 +67,16 @@ const item = (id, patch) => ({
   ...patch,
 });
 
+const delivery = (id, line, title, state, status_label, reference, updated_at) =>
+  item(id, { case_id: '00000000-0000-4000-8000-000000000101', title: `${title} for Lagoon Health`, line, state, status_label, reference, updated_at, next_step: state === 'verified' ? 'Nothing more to do.' : 'No further step is needed yet.' });
+
 const WORK = {
+  // F-113: the work behind the delivery overview rows of P-0101 (mock/delivery-overview.mjs).
+  2501: delivery(2501, 'delivery-release/v1', 'Release gates', 'verified', 'Verified', 'REL-0091', '2026-03-25T10:00:00Z'),
+  2502: delivery(2502, 'delivery-go-live/v1', 'Go-live acceptance', 'verified', 'Verified', 'GLV-0104', '2026-04-02T10:00:00Z'),
+  2503: delivery(2503, 'delivery-hypercare/v1', 'Hypercare', 'verified', 'Verified', 'HYP-0062', '2026-11-18T10:00:00Z'),
+  2504: delivery(2504, 'delivery-handover/v1', 'Handover to Support', 'action_needed', 'Action needed', 'HND-0048', '2026-11-20T10:00:00Z'),
+  2505: delivery(2505, 'delivery-archive/v1', 'Archive', 'ready', 'Ready', 'ARC-0130', '2026-11-19T10:00:00Z'),
   4101: item(4101, { title: 'Invoice for Lagoon Health', line: 'invoice', state: 'verified', status_label: 'Verified', next_step: 'Nothing more to do.', output_url: '/api/v1/work/4101/output' }),
   4102: item(4102, {
     state: 'processing',

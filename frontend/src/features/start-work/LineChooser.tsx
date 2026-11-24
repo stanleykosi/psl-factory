@@ -1,8 +1,8 @@
 'use client';
 
-// SCR-04 "Choose a line": the lines E-LINES returned as bordered cards, grouped by `group` in the order returned
-// (named groups for assistive technology; the board draws no visible group headings),
-// with a search on title and subtitle. Only returned lines are offered; nothing is added from /me or from roles.
+// SCR-04 "Choose a line": the lines `GET /lines` returned as bordered cards in the order returned, with a search on title
+// and description. A line with a registered form and `can_submit_via_api` is a choice; any other is an "unavailable" card with a link to
+// its full form. Nothing is added from roles.
 // On the phone (SCR-04-mobile-lines) the sheet shows the count in its head and the titles only, with no search.
 import Link from 'next/link';
 import { useId, useMemo, useState } from 'react';
@@ -11,6 +11,8 @@ import { AgentAvatar, Button, Callout, Loading, RadioGroup, SearchField, Skeleto
 import { SignedOutState } from '@/shell/FrameStates';
 
 import { DrawerFrame, useWide } from './DrawerFrame';
+import { UNAVAILABLE_LINK, UNAVAILABLE_NOTE } from './labels';
+import { lineFormFor, ownLineFor } from './lines';
 import type { Line } from './types';
 import type { LinesState } from './useStartWork';
 
@@ -42,20 +44,47 @@ function LoadingLines() {
   );
 }
 
+
+/** Startable: the contract lets the API start it and a form is registered for it, or the line owns its own submit (F-88). */
+export const isStartable = (line: Line) => ownLineFor(line.key) !== undefined || (line.can_submit_via_api && lineFormFor(line.key) !== undefined);
+
+function Unavailable({ line, wide }: { line: Line; wide: boolean }) {
+  return (
+    <div className="psl-choice sw-unavailable" data-line={line.key}>
+      <span>
+        <strong>{line.title}</strong>
+        {wide && line.description && <small>{line.description}</small>}
+        <small className="sw-unavailable__note">
+          {UNAVAILABLE_NOTE} <a href={line.django_url}>{UNAVAILABLE_LINK}</a>
+        </small>
+      </span>
+    </div>
+  );
+}
+
 export function LineChooser({ state, onRetry, onNext, onClose, pathname }: Props) {
   const wide = useWide();
   const [q, setQ] = useState('');
   const [chosen, setChosen] = useState<string | null>(null);
   const countId = useId();
   const items = useMemo(() => (state.status === 'ready' ? state.data.items : []), [state]);
-  const groups = useMemo(() => {
+  const shown = useMemo(() => {
     const needle = wide ? q.trim().toLowerCase() : '';
-    const shown = items.filter((line) => `${line.title}\n${line.subtitle ?? ''}`.toLowerCase().includes(needle));
-    const byGroup = new Map<string, Line[]>();
-    for (const line of shown) byGroup.set(line.group, [...(byGroup.get(line.group) ?? []), line]);
-    return [...byGroup];
+    return items.filter((line) => `${line.title}\n${line.description}`.toLowerCase().includes(needle));
   }, [items, q, wide]);
-  const selected = items.find((line) => line.key === chosen);
+  // Runs of startable lines are one radio group each; an unavailable card sits between them where it was returned.
+  const runs = useMemo(() => {
+    const out: ({ kind: 'choose'; lines: Line[] } | { kind: 'unavailable'; line: Line })[] = [];
+    for (const line of shown) {
+      const last = out[out.length - 1];
+      if (!isStartable(line)) out.push({ kind: 'unavailable', line });
+      else if (last?.kind === 'choose') last.lines.push(line);
+      else out.push({ kind: 'choose', lines: [line] });
+    }
+    return out;
+  }, [shown]);
+  const startable = useMemo(() => items.filter(isStartable).length, [items]);
+  const selected = items.find((line) => line.key === chosen && isStartable(line));
 
   let body;
   if (state.status === 'loading') body = <LoadingLines />;
@@ -90,26 +119,30 @@ export function LineChooser({ state, onRetry, onNext, onClose, pathname }: Props
           <>
             <SearchField label="Find a line" placeholder="Find a line…" value={q} onChange={setQ} />
             <span className="psl-drawer__eyebrow" id={countId}>
-              LINES YOU CAN START · {items.length}
+              LINES YOU CAN START · {startable}
             </span>
           </>
         )}
-        {groups.length === 0 ? (
+        {shown.length === 0 ? (
           <p className="sw-plain">{`No line matches "${q.trim()}".`}</p>
         ) : (
-          <div role="radiogroup" aria-labelledby={countId} className="sw-lines">
-            {groups.map(([group, lines]) => (
-              <RadioGroup
-                key={group}
-                className="sw-group"
-                legend={<VisuallyHidden>{group}</VisuallyHidden>}
-                name="start-line"
-                cards
-                value={chosen ?? undefined}
-                onChange={setChosen}
-                options={lines.map((line) => ({ value: line.key, label: line.title, detail: wide ? line.subtitle : undefined }))}
-              />
-            ))}
+          <div role="group" aria-labelledby={countId} className="sw-lines">
+            {runs.map((run, at) =>
+              run.kind === 'unavailable' ? (
+                <Unavailable key={run.line.key} line={run.line} wide={wide} />
+              ) : (
+                <RadioGroup
+                  key={`run-${at}`}
+                  className="sw-group"
+                  legend={<VisuallyHidden>Lines you can start</VisuallyHidden>}
+                  name="start-line"
+                  cards
+                  value={chosen ?? undefined}
+                  onChange={setChosen}
+                  options={run.lines.map((line) => ({ value: line.key, label: line.title, detail: wide ? line.description : undefined }))}
+                />
+              ),
+            )}
           </div>
         )}
         <TolaLink onClose={onClose} />
@@ -126,7 +159,7 @@ export function LineChooser({ state, onRetry, onNext, onClose, pathname }: Props
         wide ? (
           'Step 1 of 2'
         ) : state.status === 'ready' && items.length > 0 ? (
-          <span id={countId}>Lines you can start · {items.length}</span>
+          <span id={countId}>Lines you can start · {startable}</span>
         ) : undefined
       }
       onClose={onClose}

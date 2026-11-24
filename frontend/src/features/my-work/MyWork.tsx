@@ -6,8 +6,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, EmptyState, ListToolbar, Loading, ShowMore, Skeleton, Tabs, useIsPhone, usePagedRows, useToast, DEFAULT_PAGE_SIZE, type FilterChip } from '@/components';
-import { AssignPmDrawer, type Assigned } from '@/features/rfp/AssignPmDrawer';
+import { Button, EmptyState, ListToolbar, Loading, ShowMore, Skeleton, Tabs, useIsPhone, usePagedRows, DEFAULT_PAGE_SIZE, type FilterChip } from '@/components';
+import { UnassignedBids } from '@/features/rfp/UnassignedBids';
 import { SignedOutState } from '@/shell/FrameStates';
 
 import { CaughtUp } from './CaughtUp';
@@ -17,6 +17,7 @@ import {
   buildWorkQuery,
   filterCount as countFilters,
   isNarrowed,
+  isV7Row,
   lineOptions,
   mergeRefresh,
   parseView,
@@ -67,8 +68,6 @@ export function MyWork() {
   const [signedOut, setSignedOut] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   // F-36: the assign panel's write went through but the list could not be read back; the confirmation itself is a toast (D-151)
-  const [notice, setNotice] = useState<string>();
-  const toast = useToast();
 
   const seq = useRef(0);
   const inFlight = useRef(0);
@@ -81,7 +80,6 @@ export function MyWork() {
   const tabs = useRef<HTMLDivElement>(null);
   const navigate = useCallback(
     (next: Partial<View>) => {
-      setNotice(undefined);
       router.replace(`/my-work${viewSearch({ ...viewRef.current, ...next })}`, { scroll: false });
     },
     [router],
@@ -91,7 +89,10 @@ export function MyWork() {
   const fetchPage = useCallback(async (v: View, cursor?: string, limit: Limit = DEFAULT_PAGE_SIZE) => {
     inFlight.current += 1;
     try {
-      return await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery({ ...v, limit }, cursor) } }));
+      const data = await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery({ ...v, limit }, cursor) } }));
+      // Rows that are not v7 rows fail the whole response, so they never reach the row components.
+      if (!data.items.every(isV7Row)) throw networkError();
+      return data;
     } finally {
       inFlight.current -= 1;
     }
@@ -278,20 +279,8 @@ export function MyWork() {
   }, []);
   const removeFilter = (filters: Filters) => navigate(filters);
 
-  // F-36: closing the panel keeps the list's own view; after a write the list is read again, the panel closes and the person is told
-  const closeAssign = (wrote = false) => {
-    router.replace(`/my-work${viewSearch(viewRef.current)}`, { scroll: false });
-    if (wrote) void refresh(true);
-  };
-  const assigned = async ({ reference, assignedTo, reread }: Assigned) => {
-    const listed = await refresh(true);
-    if (reread && listed) {
-      setNotice(undefined);
-      toast.show(`${reference} is now with ${assignedTo}.`);
-    } else setNotice('The assignment was sent, but we couldn’t refresh to confirm it. Reload My work to check.');
-    router.replace(`/my-work${viewSearch(viewRef.current)}`, { scroll: false });
-    requestAnimationFrame(() => tabs.current?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]')?.focus());
-  };
+  // F-88: closing the assign drawer keeps the list's own view; the list reads itself again after a write
+  const closeAssign = () => router.replace(`/my-work${viewSearch(viewRef.current)}`, { scroll: false });
 
   if (signedOut) return <SignedOutState pathname="/my-work" />;
 
@@ -326,11 +315,13 @@ export function MyWork() {
     />
   );
 
-  // F-36: an Unassigned row opens the assign panel over the list; an item that carries no `assign` goes on to its own page from there
-  const rowHref = (item: WorkItem) => (view.queue === 'unassigned' ? `/my-work${viewSearch({ ...view, assign: item.id })}` : `/work/${item.id}`);
+  const rowHref = (item: WorkItem) => `/work/${item.id}`;
 
   let body;
-  if (list.status === 'loading') {
+  if (view.queue === 'unassigned') {
+    // F-88: the received RFPs waiting for a PM come from their own read, not the work list; the drawer opens over them
+    body = <UnassignedBids openId={assignId} hrefFor={(caseId) => `/my-work${viewSearch({ ...view, assign: caseId })}`} onClose={closeAssign} pathname="/my-work?queue=unassigned" />;
+  } else if (list.status === 'loading') {
     body = (
       <div className="shell-loading">
         <Skeleton widths={[90, 70, 80]} />
@@ -409,12 +400,10 @@ export function MyWork() {
             <p className="my-work__updated">{records ? `${records} · updated ${formatTime(asOf)}` : `Updated ${formatTime(asOf)}`}</p>
           ))}
       </div>
-
-      {notice && (
-        <Callout kind="warning" className="my-work__notice">
-          {notice}
-        </Callout>
-      )}
+      {/* D-182: until F-63 places it, Verified outputs is reached from under the My work heading. */}
+      <p className="my-work__verified">
+        <Link href="/verified">Verified outputs</Link>
+      </p>
 
       <div className="my-work__tabs" ref={tabs}>
         <Tabs
@@ -432,7 +421,7 @@ export function MyWork() {
         ref={toolbar}
         role="search"
         className="my-work__toolbar"
-        hidden={caughtUp}
+        hidden={caughtUp || view.queue === 'unassigned'}
         onSubmit={(event) => {
           event.preventDefault();
           applySearch(text);
@@ -461,8 +450,6 @@ export function MyWork() {
       >
         {body}
       </div>
-
-      {assignId && <AssignPmDrawer key={assignId} workId={assignId} onClose={closeAssign} onAssigned={assigned} />}
     </>
   );
 }

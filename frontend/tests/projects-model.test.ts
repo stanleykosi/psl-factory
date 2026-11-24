@@ -88,11 +88,12 @@ describe('values the response may not carry', () => {
 });
 
 describe('tabs', () => {
-  it('keeps the keys the frontend routes, in the returned order; Delivery and unrouted keys never show', () => {
+  it('keeps the keys the frontend routes, in the returned order; Delivery is added after Journey; unrouted keys never show', () => {
     const keys = (list: string[]) => visibleTabs(list.map((key) => ({ key }))).map((t) => t.key);
-    expect(keys(['journey', 'milestones', 'documents', 'templates', 'money', 'month-end', 'registers', 'actions', 'hr'])).toEqual(['journey', 'milestones', 'documents', 'money', 'registers', 'actions']);
-    expect(keys(['actions', 'journey', 'delivery'])).toEqual(['actions', 'journey']);
-    expect(keys(['journey', 'milestones'])).toEqual(['journey', 'milestones']);
+    expect(keys(['journey', 'milestones', 'documents', 'templates', 'money', 'month-end', 'registers', 'actions', 'hr'])).toEqual(['journey', 'delivery', 'milestones', 'documents', 'money', 'registers', 'actions']);
+    expect(keys(['actions', 'journey', 'delivery'])).toEqual(['actions', 'journey', 'delivery']);
+    expect(keys(['journey', 'milestones'])).toEqual(['journey', 'delivery', 'milestones']);
+    expect(keys(['milestones'])).toEqual(['milestones']);
     expect(keys([])).toEqual([]);
   });
 });
