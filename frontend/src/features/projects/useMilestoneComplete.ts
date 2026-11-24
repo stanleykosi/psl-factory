@@ -31,7 +31,6 @@ export type Chosen = { kind: 'proof'; id: number } | { kind: 'pdf' } | null;
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
 
-const CONFLICT = 'This project changed while you were confirming. We reloaded it. Check the proof and press Mark complete again.';
 const FALLBACK = 'We couldn’t record this. Check the proof and try again.';
 
 /** The refusal in words for a status where nothing was recorded; null when the result is uncertain. */

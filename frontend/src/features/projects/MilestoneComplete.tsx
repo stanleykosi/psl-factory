@@ -229,7 +229,7 @@ function Body({ caseId, name }: { caseId: string; name: string }) {
               </fieldset>
             )}
 
-            {options.can_complete && submit.status !== 'now_recorded' && (
+            {options.can_complete && (settled || submit.status === 'busy' || submit.status === 'confirming') && (
               <>
                 <Checkbox label="I confirm this milestone is complete as the SOW describes it." checked={m.confirmed} disabled={locked} onChange={(e) => m.setConfirmed(e.target.checked)} />
                 {usingPdf && (

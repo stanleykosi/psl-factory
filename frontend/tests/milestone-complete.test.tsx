@@ -86,7 +86,7 @@ async function open(name: string | null = NAME) {
     return;
   }
   await until(() => expect(optionReads().length).toBeGreaterThan(0));
-  await until(() => expect(text()).toContain('Milestone'));
+  await until(() => expect(text()).not.toContain('Loading…'));
   await act(async () => {});
 }
 const pickProof = () => fireEvent.click(screen.getByLabelText('Completion evidence · version 2'));
@@ -154,8 +154,9 @@ describe('the write and the re-read', () => {
     let release: () => void = () => {};
     onReread = () => new Promise<Response>((resolve) => (release = () => resolve(json(200, REREAD))));
     await ready();
-    fireEvent.click(button()!);
-    fireEvent.click(button()!);
+    const press = button()!;
+    fireEvent.click(press);
+    fireEvent.click(press);
     await until(() => expect(text()).toContain('Checking the record…'));
     expect(text()).not.toContain('Milestone recorded');
     expect(posts()).toHaveLength(1);
@@ -199,6 +200,7 @@ describe('the write and the re-read', () => {
     fireEvent.change(input, { target: { files: [new File(['%PDF'], 'signoff.pdf', { type: 'application/pdf' })] } });
     await until(() => expect(text()).toContain('signoff.pdf'));
     confirmBox();
+    await until(() => expect(screen.queryByLabelText('I have checked this file is the proof for this milestone.')).not.toBeNull());
     expect(button()!.disabled).toBe(true);
     fireEvent.click(screen.getByLabelText('I have checked this file is the proof for this milestone.'));
     expect(button()!.disabled).toBe(false);
@@ -286,7 +288,8 @@ describe('failures', () => {
     await until(() => expect(text()).toContain('This project or milestone isn’t available to you.'));
     expect(button()).toBeNull();
     cleanup();
-    const { can_attach_pdf: _drop, ...bad } = OPTIONS;
+    const bad: Record<string, unknown> = { ...OPTIONS };
+    delete bad.can_attach_pdf;
     optionsBody = bad;
     await open();
     await until(() => expect(text()).toContain('We couldn’t load this milestone.'));

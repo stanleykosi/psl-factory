@@ -88,6 +88,7 @@ export function milestoneComplete({ method, url, raw, persona, cookies = {}, can
   const withProof = Number.isInteger(body.evidence_id);
   const withPdf = Number.isInteger(body.upload_id) && body.checked === true;
   if (withProof === withPdf || (withProof && 'upload_id' in body) || (withPdf && 'evidence_id' in body)) return { status: 422, body: { code: 'invalid', message: 'Send one proof.', fields: [] } };
+  if (current.hold === 'name_in_use') return { status: 409, body: STALE };
   if (!current.can_complete) return { status: 403, body: FORBIDDEN };
   if (scenario === 'uncertain') return { status: 503, body: SERVER_ERROR };
   const completion = { id: nextId++, revision: current.revision + 1, name, evidence_id: withProof ? body.evidence_id : 7900, completed_at: '2026-11-23T10:15:00Z', proof_version: 2 };
