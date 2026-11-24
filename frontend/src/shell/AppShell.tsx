@@ -9,7 +9,7 @@ import type { Me } from '@/api/types';
 import { ToastProvider, useIsPhone } from '@/components';
 import { AlertsDrawer } from '@/features/alerts/AlertsDrawer';
 import type { BellProps } from '@/features/alerts/AlertsBell';
-import { needsYou, needsYouKnown } from '@/features/alerts/model';
+import { needsYou } from '@/features/alerts/model';
 import { useAlertsFeed } from '@/features/alerts/useAlertsFeed';
 
 import { destinationForPath, visibleDestinations } from './destinations';
@@ -136,8 +136,8 @@ function FramedShell({ pathname, children }: { pathname: string; children: React
     const ok = feed.data && !feed.error;
     const items = ok ? feed.data!.items : [];
     bell = {
-      unread: ok ? feed.data!.unreadCount : undefined,
-      need: needsYouKnown(items) ? items.filter((alert) => needsYou(alert) && alert.read === false).length : 0,
+      unread: ok ? feed.data!.unread : undefined,
+      need: items.filter((alert) => needsYou(alert) && !alert.read).length,
       open: alertsOpen,
       onOpen: (button) => {
         if (alertsOpen) return closeAlerts();
