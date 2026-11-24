@@ -15,8 +15,8 @@ import { useFocusAfterMore } from './useFocusAfterMore';
 import { useProjectTab } from './useProjectTab';
 import { useRef } from 'react';
 
-// useProjectTab needs a view; Documents has no register, search or filter, so this carries nothing the query sends.
-const VIEW = { register: 'issues' } as const;
+// useProjectTab needs a view; Documents has no search or filter, so this carries nothing the query sends.
+const VIEW = {};
 
 function Title({ caseId, row }: { caseId: string; row: DocumentRow }) {
   const href = reviewHrefOf(caseId, (row as { api_url?: unknown }).api_url);

@@ -2,7 +2,8 @@
 // fixtures/projects/tabs/<case_id>.<tab>.json. Visibility follows fixtures/projects/list.json as E-PROJECT does:
 // P-0099 and a project the persona cannot see answer 404; P-0103 answers 403 for every tab. Money goes to money.mjs (F-26). `register` (Registers only), `q`, `cursor` (o<n>) and `limit` (10, 20, 50) are honoured;
 // anything else unreadable answers 404 invalid_query. F-71: milestones is the live shape (one section of recorded completions, `page`, 25 a page;
-// P-0105 answers 404 for it) and the changed state lives in money.mjs. The mock never adds or computes a value: it slices the rows a fixture holds. Sample data only.
+// P-0105 answers 404 for it) and the changed state lives in money.mjs. F-75: registers and actions answer the live sections shape (sectionsTab).
+// An unreadable `page` or `q` on a live tab answers 422 invalid_filter. The mock never adds or computes a value: it slices the rows a fixture holds. Sample data only.
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,7 +24,12 @@ const LISTED_TABS = ['milestones', 'documents', 'registers', 'actions']; // mone
 const LIMITS = [10, 20, 50];
 const REGISTERS = ['issues', 'changes', 'emergencies', 'rfps'];
 const EMPTY_CASE_ID = 'P-0106';
+const SECTION_PAGE = 25;
+const MAX_Q = 120;
+const NO_ISSUE_READ_PERSONA = 'pmo_lead'; // scripted: this persona cannot read Issues or Escalations, so their sections are not returned
+const INACTIVE_CODES = ['completed', 'cancelled', 'paused'];
 
+const INVALID_FILTER = { code: 'invalid_filter', message: 'We could not read that list request.' };
 const INVALID_QUERY = { code: 'invalid_query', message: 'We could not read that list request.' };
 const NOT_FOUND = { code: 'not_found', message: 'We could not find that record.' };
 const FORBIDDEN = { code: 'forbidden', message: 'Your role does not allow this.' };
@@ -46,12 +52,56 @@ function fixtureFor(caseId, tab) {
   return files[`${caseId}.${tab}`] ?? files[`${EMPTY_CASE_ID}.${tab}`];
 }
 
+/**
+ * F-75: the live Registers and Actions read. A fixture holds every row of each section; this slices 25 a section by one shared
+ * `page` (a section with fewer pages answers its last page again, with its own `page`), filters by `q` on title, reference and
+ * detail, and gives `total` for the rows matching `q`. Actions `counts` are over the matching rows (overdue: a due date before
+ * `as_of` on a state that is not completed, cancelled or paused; unassigned: "Owner needed" on an active state); other sections
+ * `counts: null`. `state`, `owner` and `severity` are ignored; an unreadable `page` or `q` answers 422 invalid_filter.
+ */
+function sectionsTab(caseId, tab, params, persona) {
+  const pageText = params.get('page');
+  const page = pageText === null ? 1 : Number(pageText);
+  const q = params.get('q');
+  if (!Number.isInteger(page) || page < 1 || (pageText !== null && !/^\d+$/.test(pageText)) || (q !== null && (q === '' || q.length > MAX_Q))) return { status: 422, body: INVALID_FILTER };
+
+  const fixture = fixtureFor(caseId, tab);
+  const needle = q?.toLowerCase();
+  const asOf = Date.parse(fixture.as_of);
+  const active = (item) => !INACTIVE_CODES.includes(item.state_code);
+  const sections = fixture.sections
+    .filter((section) => persona !== NO_ISSUE_READ_PERSONA || !['issues', 'escalations'].includes(section.key))
+    .map((section) => {
+      const matching = section.items.filter((item) => !needle || [item.title, item.reference, item.detail].some((text) => text?.toLowerCase().includes(needle)));
+      const pages = Math.max(1, Math.ceil(matching.length / SECTION_PAGE));
+      const answered = Math.min(page, pages);
+      const counts =
+        tab === 'actions'
+          ? {
+              total: matching.length,
+              overdue: matching.filter((item) => item.due && Date.parse(item.due) < asOf && active(item)).length,
+              unassigned: matching.filter((item) => item.detail === 'Owner needed' && active(item)).length,
+            }
+          : null;
+      return {
+        ...section,
+        page: answered,
+        has_more: answered < pages,
+        total: matching.length,
+        counts,
+        items: matching.slice((answered - 1) * SECTION_PAGE, answered * SECTION_PAGE),
+      };
+    });
+  return { status: 200, body: { case_id: uuidOf(caseId), tab, sections, as_of: fixture.as_of } };
+}
+
 /** F-71: the live milestones read, one section of recorded completions, 25 a page (`page`); other tabs keep the v7 shape. */
 function milestonesTab(caseId, params) {
   const fixture = files[`${caseId}.milestones`] ?? files[`${EMPTY_CASE_ID}.milestones`];
   const page = params.has('page') ? Number(params.get('page')) : 1;
   const all = fixture.sections[0].items;
-  if (!Number.isInteger(page) || page < 1 || (page > 1 && (page - 1) * COMPLETIONS_PAGE >= all.length)) return { status: 404, body: INVALID_QUERY };
+  if (!Number.isInteger(page) || page < 1) return { status: 422, body: INVALID_FILTER };
+  if (page > 1 && (page - 1) * COMPLETIONS_PAGE >= all.length) return { status: 404, body: INVALID_QUERY };
   const items = all.slice((page - 1) * COMPLETIONS_PAGE, page * COMPLETIONS_PAGE);
   const section = { ...fixture.sections[0], items, page, has_more: page * COMPLETIONS_PAGE < all.length, total: all.length };
   return { status: 200, body: { ...fixture, case_id: uuidOf(caseId), sections: [section] } };
@@ -65,6 +115,7 @@ export function projectTab({ url, persona }) {
   const row = list.rows.find((r) => r.id === caseId);
   if (caseId === NO_ACCESS_CASE_ID || (row && !row.personas.includes(persona)) || (demoProject(caseId) && !demoVisible(persona))) return { status: 404, body: NOT_FOUND };
   if (caseId === FORBIDDEN_CASE_ID) return { status: 403, body: FORBIDDEN };
+  if (tab === 'registers' || tab === 'actions') return sectionsTab(caseId, tab, url.searchParams, persona);
   if (tab === 'milestones') return caseId === MILESTONES_REFUSED_CASE_ID ? { status: 404, body: NOT_FOUND } : milestonesTab(caseId, url.searchParams);
 
   const params = url.searchParams;
