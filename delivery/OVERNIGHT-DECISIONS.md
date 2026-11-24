@@ -571,3 +571,9 @@ F-64 and F-61 conflicted with main after F-71 (#114). Each lane syncs main and r
 - F-75 round 1 attempt 2 on bfcad616 (attempt 3 then passed on the same sha);
 - F-71's pre-merge run on f29087ed, which wasn't a gate attempt.
 Fix: branch `ci-checks-appear-wait` (b161241f). A `gh` error now keeps the wait going, and the appear window is 15 minutes (`PSL_CI_APPEAR`). It goes to main by PR.
+
+## D-205 (24 Nov 2026): demo focus lifted, back to the full list
+The design engineer: "can we continue with the other task and leave demo for now". D-201's demo-path order no longer applies:
+- Each lane finishes what is in flight (F-88, F-87, F-61, F-111, F-119, F-75, F-63, F-65, F-78 and F-103), then takes its remaining features in its own runbook order (LANES.md), including the parked ones.
+- The `psl_demo` database and the `demo-backend` and `app-live` launch configs stay in place for later. The demo-seed note for the backend developer is in `delivery/connect/note-to-backend-demo-seed.md` on the main checkout.
+- D-202 and D-203 answers, review rules (D-180) and merge approvals are unchanged.
