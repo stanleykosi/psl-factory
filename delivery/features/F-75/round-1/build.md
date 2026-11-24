@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 8d8849474b9d23ad85b3eee54d0e52eb3be23bbb
+COMMIT: bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9
 BUILDER: builder
 LANE: full
 
@@ -56,3 +56,6 @@ None (round 1).
 - Design fidelity not run: both boards need the tool at 1440 and 390 on a production build.
 - Merge with F-71 (`fe-connect-1-money-milestones-tabs`) will conflict, small: `tabsModel.ts` (they add `ReadTab`, narrow `ListTab`), `TabParts.tsx` (`tabStateView` signature, `OwnerValue` removed here), `mock/project-tabs.mjs` (add the `sectionsTab` branch beside their milestones branch), `tests/demo-mock.test.ts`, `mock-project-tabs.test.ts`, `project-tabs*.test.*`, `next-config.test.ts` allow-list. Keep both sides; after merge `RegisterRow`/`ActionRow`/registers+actions `ROW_CHECKS` entries are dead and can go with `ReadTab = 'documents'`.
 - Shared-code note: `useFocusAfterMore` focuses the table frame, not the first new row, when rows have no links (same for any link-less list).
+
+## Edits to other lanes' tests
+- `tests/issue-assign-mock.test.ts` (lane C, F-30): only the test "the register row for ISS-0233 opens W-2411" is reworked, commit bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9. Reason: live register rows have no `work_id` and are plain text (F-75 spec conflict 4, accepted under D-182). It now asserts the live P-0101 fixture carries ISS-0233 (by `reference`) with no `work_id`, and keeps `not.toContain('W-1002')`. No other test in the file changed.

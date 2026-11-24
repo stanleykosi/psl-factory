@@ -1,93 +1,33 @@
-GATE: FAIL
-COMMIT: 8d8849474b9d23ad85b3eee54d0e52eb3be23bbb
-ATTEMPT: 1
+GATE: PASS
+COMMIT: bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9
+ATTEMPT: 3
 
 ## Summary
-- checks.sh failed with exit 1
+- checks.sh passed
 - Protected paths: none changed
-- Commit 8d8849474b9d, round 1, attempt 1
+- Commit bfcad616bcb0, round 1, attempt 3
 
 ## checks.sh (last 80 lines of checks.log)
 
 ```
-checks	frontend · unit tests	2026-11-24T14:53:49.8494200Z  ^[[32m✓^[[39m tests/components/menu.test.tsx ^[[2m(^[[22m^[[2m4 tests^[[22m^[[2m)^[[22m^[[32m 270^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:50.0033967Z  ^[[32m✓^[[39m tests/delivery-model.test.ts ^[[2m(^[[22m^[[2m30 tests^[[22m^[[2m)^[[22m^[[32m 9^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:50.3066533Z  ^[[32m✓^[[39m tests/mock-work-live.test.ts ^[[2m(^[[22m^[[2m11 tests^[[22m^[[2m)^[[22m^[[32m 52^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:50.6355256Z Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-checks	frontend · unit tests	2026-11-24T14:53:50.6783222Z  ^[[32m✓^[[39m tests/components/search-toolbar.test.tsx ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 250^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:51.1351830Z Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-checks	frontend · unit tests	2026-11-24T14:53:51.2424108Z  ^[[32m✓^[[39m tests/components/segmented-tabs.test.tsx ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 183^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:51.6883252Z  ^[[32m✓^[[39m tests/components/table.test.tsx ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 260^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:52.1758374Z  ^[[32m✓^[[39m tests/components/money-field.test.tsx ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 195^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:52.5793970Z Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-checks	frontend · unit tests	2026-11-24T14:53:52.6125539Z  ^[[32m✓^[[39m tests/components/button.test.tsx ^[[2m(^[[22m^[[2m7 tests^[[22m^[[2m)^[[22m^[[32m 184^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:53.1533441Z  ^[[32m✓^[[39m tests/components/select.test.tsx ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 222^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:53.5876038Z  ^[[32m✓^[[39m tests/components/checkbox-radio.test.tsx ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 214^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:54.0727451Z  ^[[32m✓^[[39m tests/components/toast-tooltip.test.tsx ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 150^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:54.4922618Z  ^[[32m✓^[[39m tests/components/text-field.test.tsx ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 145^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:54.9804300Z  ^[[32m✓^[[39m tests/overview-floor-reject.test.tsx ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 205^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:55.1424206Z  ^[[32m✓^[[39m tests/styles-drift.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 22^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:55.3039996Z  ^[[32m✓^[[39m tests/conversation-list-merge.test.tsx ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 137^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:55.9002824Z  ^[[32m✓^[[39m tests/shell-no-embed.test.tsx ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 79^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:56.0934326Z  ^[[32m✓^[[39m tests/components/tag.test.tsx ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 73^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:56.2494486Z  ^[[32m✓^[[39m tests/floor.test.ts ^[[2m(^[[22m^[[2m5 tests^[[22m^[[2m)^[[22m^[[32m 5^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:56.5873569Z  ^[[32m✓^[[39m tests/floor-support.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 7^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:56.7535337Z  ^[[32m✓^[[39m tests/overview-imports.test.ts ^[[2m(^[[22m^[[2m10 tests^[[22m^[[2m)^[[22m^[[32m 46^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:56.9105607Z  ^[[32m✓^[[39m tests/sign-in-next.test.ts ^[[2m(^[[22m^[[2m60 tests^[[22m^[[2m)^[[22m^[[32m 7^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:57.0090939Z  ^[[32m✓^[[39m tests/floor3d-keys.test.tsx ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 77^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:57.7344360Z  ^[[32m✓^[[39m tests/components/callout.test.tsx ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 102^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:57.8555217Z  ^[[32m✓^[[39m tests/components/icon.test.tsx ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 115^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:57.8985653Z  ^[[32m✓^[[39m tests/focus-rules.test.ts ^[[2m(^[[22m^[[2m3 tests^[[22m^[[2m)^[[22m^[[32m 9^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:58.0238889Z  ^[[32m✓^[[39m tests/no-success-callouts.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:58.7574376Z  ^[[32m✓^[[39m tests/components/panel.test.tsx ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 119^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:59.1955418Z  ^[[32m✓^[[39m tests/api-schema-drift.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[33m 806^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:53:59.1958706Z    ^[[33m^[[2m✓^[[22m^[[39m src/api/schema.d.ts equals openapi-typescript output for the v7 openapi.json^[[33m 804^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:00.0329440Z  ^[[32m✓^[[39m tests/components/link.test.tsx ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 106^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:00.1907407Z  ^[[32m✓^[[39m tests/mock-row-item-match.test.ts ^[[2m(^[[22m^[[2m43 tests^[[22m^[[2m)^[[22m^[[32m 8^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:00.5523089Z  ^[[32m✓^[[39m tests/frame-fixtures.test.tsx ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[32m 6^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:00.9380993Z  ^[[32m✓^[[39m tests/api-live-schema-drift.test.ts ^[[2m(^[[22m^[[2m2 tests^[[22m^[[2m)^[[22m^[[33m 2040^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:00.9382882Z    ^[[33m^[[2m✓^[[22m^[[39m src/api/live-schema.d.ts equals openapi-typescript output for the live contract^[[33m 2038^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.3934384Z  ^[[32m✓^[[39m tests/components/count-badge.test.tsx ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 68^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.5650576Z  ^[[32m✓^[[39m tests/client-types.test.ts ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 3^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7174366Z  ^[[32m✓^[[39m tests/components/sample-label.test.tsx ^[[2m(^[[22m^[[2m1 test^[[22m^[[2m)^[[22m^[[32m 65^[[2mms^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7276500Z 
-checks	frontend · unit tests	2026-11-24T14:54:01.7294140Z ^[[31m⎯⎯⎯⎯⎯⎯⎯^[[39m^[[1m^[[41m Failed Tests 1 ^[[49m^[[22m^[[31m⎯⎯⎯⎯⎯⎯⎯^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7321435Z 
-checks	frontend · unit tests	2026-11-24T14:54:01.7323761Z ^[[41m^[[1m FAIL ^[[22m^[[49m tests/issue-assign-mock.test.ts^[[2m > ^[[22mthe four issue fixtures^[[2m > ^[[22mthe register row for ISS-0233 opens W-2411
-checks	frontend · unit tests	2026-11-24T14:54:01.7344240Z ^[[31m^[[1mAssertionError^[[22m: expected '{"as_of":"2026-11-12T15:40:00Z","sect…' to match /"work_id":\s*"W-2411"/^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7344962Z 
-checks	frontend · unit tests	2026-11-24T14:54:01.7345289Z ^[[32m- Expected:^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7345735Z /"work_id":\s*"W-2411"/
-checks	frontend · unit tests	2026-11-24T14:54:01.7346005Z 
-checks	frontend · unit tests	2026-11-24T14:54:01.7346249Z ^[[31m+ Received:^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7369603Z "{\"as_of\":\"2026-11-12T15:40:00Z\",\"sections\":[{\"key\":\"issues\",\"title\":\"Issues\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/issues/\",\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/issues\",\"items\":[{\"title\":\"ISS-0233\",\"state\":\"Fix in testing\",\"state_code\":\"fix_in_testing\",\"detail\":\"Login fails on older Android phones\",\"at\":null,\"due\":null,\"severity\":\"High\",\"owner\":\"Tunde Bello\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/issues/#233\",\"record_id\":233,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/issues/233\",\"reference\":\"ISS-0233\",\"age_days\":2,\"origin_meeting\":null},{\"title\":\"ISS-0229\",\"state\":\"Waiting on Engineering\",\"state_code\":\"waiting_on_engineering\",\"detail\":\"Report totals round differently\",\"at\":null,\"due\":null,\"severity\":\"Critical\",\"owner\":\"Engineering\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/issues/#229\",\"record_id\":229,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/issues/229\",\"reference\":\"ISS-0229\",\"age_days\":4,\"origin_meeting\":null},{\"title\":\"ISS-0221\",\"state\":\"Closed by QA and PM\",\"state_code\":\"closed\",\"detail\":\"Slow search on patient list\",\"at\":null,\"due\":null,\"severity\":\"Low\",\"owner\":null,\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/issues/#221\",\"record_id\":221,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/issues/221\",\"reference\":\"ISS-0221\",\"age_days\":null,\"origin_meeting\":null}]},{\"key\":\"escalations\",\"title\":\"Escalations\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/escalations/\",\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/escalations\",\"items\":[{\"title\":\"ISS-0240\",\"state\":\"Awaiting decision\",\"state_code\":\"awaiting_decision\",\"detail\":\"Payment webhook keeps failing\",\"at\":null,\"due\":null,\"severity\":null,\"owner\":null,\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/escalations/#77\",\"record_id\":77,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/escalations/77\",\"reference\":\"ISS-0240\",\"age_days\":null,\"origin_meeting\":null}]},{\"key\":\"changes\",\"title\":\"Changes\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/change-versions/\",\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/change-versions\",\"items\":[{\"title\":\"CHG-0031\",\"state\":\"Version 2\",\"state_code\":\"recorded\",\"detail\":\"Reminders\",\"at\":null,\"due\":null,\"severity\":null,\"owner\":null,\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/change-versions/#31\",\"record_id\":31,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/change-versions/31\",\"reference\":null,\"age_days\":null,\"origin_meeting\":null},{\"title\":\"CHG-0027\",\"state\":\"Version 1\",\"state_code\":\"recorded\",\"detail\":\"Visit list export\",\"at\":null,\"due\":null,\"severity\":null,\"owner\":null,\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/change-versions/#27\",\"record_id\":27,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/change-versions/27\",\"reference\":null,\"age_days\":null,\"origin_meeting\":null}]},{\"key\":\"emergencies\",\"title\":\"Emergency changes\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/emergency-changes/\",\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/emergency-changes\",\"items\":[]},{\"key\":\"rfp\",\"title\":\"Bid requests\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/received-bids/\",\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/received-bids\",\"items\":[{\"title\":\"RFP-0044\",\"state\":\"Bid request recorded\",\"state_code\":\"recorded\",\"detail\":null,\"at\":null,\"due\":null,\"severity\":null,\"owner\":null,\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/received-bids/#44\",\"record_id\":44,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/received-bids/44\",\"reference\":null,\"age_days\":null,\"origin_meeting\":null}]}]}"
-checks	frontend · unit tests	2026-11-24T14:54:01.7387252Z 
-checks	frontend · unit tests	2026-11-24T14:54:01.7387958Z ^[[36m ^[[2m❯^[[22m tests/issue-assign-mock.test.ts:^[[2m103:18^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7389218Z     ^[[90m101|^[[39m     ^[[34mexpect^[[39m(rows)^[[33m.^[[39mnot^[[33m.^[[39m^[[34mtoContain^[[39m(^[[32m'W-1002'^[[39m)^[[33m;^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7390701Z     ^[[90m102|^[[39m     ^[[34mexpect^[[39m(tab^[[33m.^[[39mrows ^[[33m??^[[39m rows)^[[33m.^[[39m^[[34mtoBeTruthy^[[39m()^[[33m;^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7391873Z     ^[[90m103|^[[39m     ^[[34mexpect^[[39m(rows)^[[33m.^[[39m^[[34mtoMatch^[[39m(^[[36m/"work_id":\s*"W-2411"/^[[39m)^[[33m;^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7392747Z     ^[[90m   |^[[39m                  ^[[31m^^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7393267Z     ^[[90m104|^[[39m   })^[[33m;^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7393906Z     ^[[90m105|^[[39m })^[[33m;^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7394086Z 
-checks	frontend · unit tests	2026-11-24T14:54:01.7394339Z ^[[31m^[[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯^[[22m^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7394537Z 
-checks	frontend · unit tests	2026-11-24T14:54:01.7394574Z 
-checks	frontend · unit tests	2026-11-24T14:54:01.7394996Z ^[[2m Test Files ^[[22m ^[[1m^[[31m1 failed^[[39m^[[22m^[[2m | ^[[22m^[[1m^[[32m164 passed^[[39m^[[22m^[[90m (165)^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7418192Z ^[[2m      Tests ^[[22m ^[[1m^[[31m1 failed^[[39m^[[22m^[[2m | ^[[22m^[[1m^[[32m3847 passed^[[39m^[[22m^[[90m (3848)^[[39m
-checks	frontend · unit tests	2026-11-24T14:54:01.7419008Z ^[[2m   Start at ^[[22m 14:51:22
-checks	frontend · unit tests	2026-11-24T14:54:01.7426604Z ^[[2m   Duration ^[[22m 159.27s^[[2m (tests 71%, environment 13%, import 8%, setup 4%, transform 3%)^[[22m
-checks	frontend · unit tests	2026-11-24T14:54:01.7448178Z 
-checks	frontend · unit tests	2026-11-24T14:54:01.7449056Z ^[[2m    Isolate ^[[22m ^[[33m165 workers spawned^[[39m^[[2m · ~340ms startup each (spawn + environment, per file)^[[22m
-checks	frontend · unit tests	2026-11-24T14:54:01.7450205Z ^[[2m            ^[[22m ^[[2mat least ~27.72s faster with ^[[22m^[[33misolate: false^[[39m^[[2m — reuses workers across files instead of one per file^[[22m
-checks	frontend · unit tests	2026-11-24T14:54:01.7450729Z 
-checks	frontend · unit tests	2026-11-24T14:54:01.7493377Z 
-checks	frontend · unit tests	2026-11-24T14:54:01.7549973Z ##[error]AssertionError: expected '{"as_of":"2026-11-12T15:40:00Z","sect…' to match /"work_id":\s*"W-2411"/
-checks	frontend · unit tests	
-checks	frontend · unit tests	- Expected:
-checks	frontend · unit tests	/"work_id":\s*"W-2411"/
-checks	frontend · unit tests	
-checks	frontend · unit tests	+ Received:
-checks	frontend · unit tests	"{\"as_of\":\"2026-11-12T15:40:00Z\",\"sections\":[{\"key\":\"issues\",\"title\":\"Issues\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/issues/\",\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/issues\",\"items\":[{\"title\":\"ISS-0233\",\"state\":\"Fix in testing\",\"state_code\":\"fix_in_testing\",\"detail\":\"Login fails on older Android phones\",\"at\":null,\"due\":null,\"severity\":\"High\",\"owner\":\"Tunde Bello\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/issues/#233\",\"record_id\":233,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/issues/233\",\"reference\":\"ISS-0233\",\"age_days\":2,\"origin_meeting\":null},{\"title\":\"ISS-0229\",\"state\":\"Waiting on Engineering\",\"state_code\":\"waiting_on_engineering\",\"detail\":\"Report totals round differently\",\"at\":null,\"due\":null,\"severity\":\"Critical\",\"owner\":\"Engineering\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/issues/#229\",\"record_id\":229,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/issues/229\",\"reference\":\"ISS-0229\",\"age_days\":4,\"origin_meeting\":null},{\"title\":\"ISS-0221\",\"state\":\"Closed by QA and PM\",\"state_code\":\"closed\",\"detail\":\"Slow search on patient list\",\"at\":null,\"due\":null,\"severity\":\"Low\",\"owner\":null,\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/issues/#221\",\"record_id\":221,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/issues/221\",\"reference\":\"ISS-0221\",\"age_days\":null,\"origin_meeting\":null}]},{\"key\":\"escalations\",\"title\":\"Escalations\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/escalations/\",\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/escalations\",\"items\":[{\"title\":\"ISS-0240\",\"state\":\"Awaiting decision\",\"state_code\":\"awaiting_decision\",\"detail\":\"Payment webhook keeps failing\",\"at\":null,\"due\":null,\"severity\":null,\"owner\":null,\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/escalations/#77\",\"record_id\":77,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/escalations/77\",\"reference\":\"ISS-0240\",\"age_days\":null,\"origin_meeting\":null}]},{\"key\":\"changes\",\"title\":\"Changes\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/change-versions/\",\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/change-versions\",\"items\":[{\"title\":\"CHG-0031\",\"state\":\"Version 2\",\"state_code\":\"recorded\",\"detail\":\"Reminders\",\"at\":null,\"due\":null,\"severity\":null,\"owner\":null,\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/change-versions/#31\",\"record_id\":31,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/change-versions/31\",\"reference\":null,\"age_days\":null,\"origin_meeting\":null},{\"title\":\"CHG-0027\",\"state\":\"Version 1\",\"state_code\":\"recorded\",\"detail\":\"Visit list export\",\"at\":null,\"due\":null,\"severity\":null,\"owner\":null,\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/change-versions/#27\",\"record_id\":27,\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/change-versions/27\",\"reference\":null,\"age_days\":null,\"origin_meeting\":null}]},{\"key\":\"emergencies\",\"title\":\"Emergency changes\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/emergency-changes/\",\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/emergency-changes\",\"items\":[]},{\"key\":\"rfp\",\"title\":\"Bid requests\",\"django_url\":\"/projects/00000000-0000-4000-8000-000000000101/received-bids/\",\"api_url\":\"/api/v1/projects/00000000-0000-4000-8000-000000000101/received-bids\",\"items\":[{\"title\":\"RFP-0044\",\"state\":\"Bid request recorded\",\"state_code\":\"recorded\",\"detail\":null,\"at\":null,\"due\":null,\"se
-checks	frontend · unit tests	2026-11-24T14:54:01.8216043Z ##[error]Process completed with exit code 1.
+== ci: GitHub frontend-checks.yml for bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9
+run: https://github.com/stanleykosi/psl-factory/actions/runs/45420280544
+  success  Set up job
+  success  Initialize containers
+  success  Run actions/checkout@v4
+  success  Run actions/setup-python@v5
+  success  backend · install
+  success  backend · django system check
+  success  Run actions/setup-node@v4
+  success  frontend · install
+  success  frontend · lint
+  success  frontend · typecheck
+  success  frontend · unit tests
+  success  frontend · build
+  success  Post Run actions/setup-node@v4
+  success  Post Run actions/setup-python@v5
+  success  Post Run actions/checkout@v4
+  success  Stop containers
+  success  Complete job
+== ci: PASS
 ```
