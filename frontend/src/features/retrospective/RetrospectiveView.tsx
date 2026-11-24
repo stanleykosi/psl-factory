@@ -7,7 +7,7 @@ import type { ApiError } from '@/api/errors';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
-import { Breadcrumb, Button, Callout, EmptyState, formatClock, Loading, PageTitle, Panel, SampleLabel } from '@/components';
+import { Breadcrumb, Button, Callout, EmptyState, formatClock, Loading, PageTitle, Panel, SampleLabel, useToastWhen } from '@/components';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
 import { ActionForm } from './ActionForm';
@@ -44,6 +44,8 @@ export function RetrospectivePage({ caseId }: { caseId: string }) {
   const r = useRetrospective(caseId, query);
   const [editing, setEditing] = useState(false);
   const [now] = useState(() => new Date());
+  // Saved is drawn from the re-read that follows the write (savedNote is set only then); the result of the press is a toast.
+  useToastWhen(r.savedNote ? `Saved ${formatClock(r.savedNote.at)} WAT, version ${r.savedNote.version}.` : null);
 
   const title = r.project.status === 'ready' ? r.project.data.title : null;
   const header = (
@@ -134,12 +136,6 @@ export function RetrospectivePage({ caseId }: { caseId: string }) {
             <EmptyState title="Nothing saved yet" level={2}>
               No retrospective has been saved for this project yet.
             </EmptyState>
-          )}
-
-          {r.savedNote && !editing && (
-            <Callout kind="success">
-              Saved {formatClock(r.savedNote.at)} WAT, version {r.savedNote.version}.
-            </Callout>
           )}
 
           {form && (

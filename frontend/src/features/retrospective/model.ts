@@ -9,6 +9,19 @@ export type MeetingRow = MeetingList['items'][number];
 export type MeetingAction = MeetingDetail['actions'][number];
 export type Check = ClosureChecklist['checks'][number];
 
+/** A whole-number id from text; null when there is none. Ids are never amounts, and a missing one is never 0. */
+export function idOf(value: string): number | null {
+  const id = /^\d+$/.test(value) ? Number.parseInt(value, 10) : Number.NaN;
+  return Number.isSafeInteger(id) ? id : null;
+}
+
+/** An id the form has already checked is chosen; reaching here with none is a bug, never a 0 on the wire. */
+function chosen(value: string): number {
+  const id = idOf(value);
+  if (id === null) throw new Error('A required id is missing.');
+  return id;
+}
+
 export const PURPOSE = 'Project retrospective';
 export const NOT_RECORDED = 'Not recorded';
 export const NO_DEADLINE = 'No deadline set';
@@ -38,12 +51,12 @@ export const stripChecks = (checks: readonly Check[]) => checks.filter((check) =
 /** The pieces of a closure checklist's retrospective link: the meeting id, when the API named it. */
 export function meetingIdFromUrl(url: string | null): number | null {
   const match = /\/meetings\/(\d+)(?:[/?#]|$)/.exec(url ?? '');
-  return match ? Number(match[1]) : null;
+  return match ? idOf(match[1]) : null;
 }
 
 /** The query of the page: positive integers or nothing. */
 export function positiveInt(value: string | null | undefined): number | null {
-  return value && /^[1-9]\d{0,9}$/.test(value) ? Number(value) : null;
+  return value && /^[1-9]\d{0,9}$/.test(value) ? idOf(value) : null;
 }
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -120,10 +133,10 @@ export function saveBody(draft: SaveDraft, revision: number): MeetingSaveBody {
     summary: draftSummary(draft),
     participant_ids: draft.participantIds,
     decisions: draft.decisions.map((row) => {
-      const base = { text: row.text, evidence_id: Number(row.evidenceId) };
+      const base = { text: row.text, evidence_id: chosen(row.evidenceId) };
       return row.changeEvidenceId === null ? base : { ...base, change_evidence_id: row.changeEvidenceId };
     }),
-    evidence_id: Number(draft.evidenceId),
+    evidence_id: chosen(draft.evidenceId),
     meeting_id: draft.meetingId,
   };
 }
@@ -151,9 +164,9 @@ export function actionBody(draft: ActionDraft, revision: number, meetingId: numb
     revision,
     reference: draft.reference.trim(),
     description: draft.description,
-    owner_id: draft.ownerId === '' ? null : Number(draft.ownerId),
+    owner_id: idOf(draft.ownerId),
     due_at: draft.dueAt === '' ? null : occurredIso(draft.dueAt),
-    evidence_id: Number(draft.evidenceId),
+    evidence_id: chosen(draft.evidenceId),
     reason: draft.reason,
     meeting_id: meetingId,
   };
