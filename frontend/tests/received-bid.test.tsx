@@ -361,7 +361,7 @@ describe('the registry and the chooser (AC17, AC20)', () => {
     expect(screen.queryByRole('combobox', { name: 'Project' })).toBeNull();
     expect(screen.getByText(/Logging an RFP opens a new pre-engagement workspace/)).toBeTruthy();
     expect(screen.getByText('START WORK · PRE-SALE')).toBeTruthy();
-    expect(screen.getAllByRole('heading', { name: 'Lines you can start' }).length).toBeLessThanOrEqual(1);
+    expect(screen.queryAllByRole('heading', { name: 'Lines you can start' }).length).toBeLessThanOrEqual(1);
     expect(hits(/^\/api\/v1\/lines\/projects$/)).toHaveLength(0);
   });
 
