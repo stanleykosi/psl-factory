@@ -13,6 +13,8 @@
 .overview__total:last-child { border-right: none; }
 .overview__total dt { font-family: var(--font-mono); font-size: var(--text-label-size); color: var(--ink-muted); }
 .overview__total dt { line-height: normal; }
+.overview__total small { font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
+.overview__unavailable, .overview__coverage { margin: 0; }
 .overview__total dd { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: var(--text-page-title-28-size); line-height: normal; }
 
 /* lines: name, station track on a 2px ink rule, tag */
@@ -20,6 +22,15 @@
 .overview__rows { margin: 0; padding: 0; }
 .overview__row { display: grid; grid-template-columns: 210px minmax(0, 1fr) 150px; gap: var(--space-20px); align-items: center; padding: var(--space-4) var(--space-20px); border-bottom: var(--rule-thin) solid var(--rule-soft); }
 .overview__row:last-child { border-bottom: none; }
+/* a floor is a block: its own row (name, open work), then one row per line */
+.overview__floor-block { border-bottom: var(--rule-strong) solid var(--ink); }
+.overview__floor-block:last-child { border-bottom: none; }
+.overview__row--floor { grid-template-columns: minmax(0, 1fr) auto; background: var(--surface-subtle); }
+.overview__open-total { font-size: var(--text-small-size); color: var(--ink-muted); }
+.overview__open-total strong { font-family: var(--font-display); font-size: var(--text-lead-size); color: var(--ink); }
+.overview__lines-of { margin: 0; padding: 0; }
+.overview__count { font-size: var(--text-small-size); color: var(--ink-muted); }
+.overview__unknown { font-size: var(--text-small-size); color: var(--ink-muted); }
 .overview__who { display: flex; align-items: center; gap: var(--space-10px); min-width: 0; }
 .overview__id { display: flex; flex-direction: column; min-width: 0; line-height: normal; }
 .overview__name { font-family: var(--font-display); font-weight: 700; font-size: var(--text-lead-size); overflow-wrap: anywhere; }
@@ -39,7 +50,8 @@
 .overview__sq--button::after { content: ""; position: absolute; inset: -9px; }
 .overview__open { grid-column: 1 / -1; padding-top: var(--space-2); border-top: var(--rule-thin) solid var(--rule-soft); }
 .overview__open .floor__strip { min-height: 0; }
-.overview__tag { text-align: right; min-width: 0; }
+.overview__tag { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1); min-width: 0; }
+.overview__tag .psl-link { display: inline-flex; align-items: center; min-height: 24px; }
 
 /* 3D floor: canvas the width of the Lines panel */
 .overview__floor { display: block; width: 100%; height: 480px; }
@@ -60,13 +72,15 @@
   .overview { gap: var(--space-3); }
   .overview__lines { background: none; border: none; }
   .overview__rows { display: flex; flex-direction: column; gap: var(--space-3); }
-  .overview__row { grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-6px) var(--space-3); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
-  .overview__row:last-child { border-bottom: 2px solid var(--ink); }
+  .overview__floor-block, .overview__floor-block:last-child { background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+  .overview__row { grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-6px) var(--space-3); padding: var(--space-3); }
+  .overview__unknown { grid-column: 1 / -1; grid-row: 2; }
+  .overview__tag .psl-link { min-height: 44px; }
   .overview__who { gap: var(--space-2); }
   .overview__name { font-family: inherit; font-weight: 600; font-size: var(--text-body-phone-size); }
   .overview__sub { display: none; }
   .overview__track { grid-column: 1 / -1; grid-row: 2; gap: var(--space-1); }
-  .overview__sq { width: 18px; height: 18px; font-size: 10px; }
+  .overview__sq { width: 18px; height: 18px; font-size: var(--text-label-size); }
   .overview__sq--button::after { inset: -13px; }
   .overview-exceptions__head { flex-direction: column; gap: var(--space-6px); }
   .overview-exceptions h2 { font-size: var(--text-lead-size); }

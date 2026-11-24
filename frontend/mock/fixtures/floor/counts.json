@@ -1,0 +1,159 @@
+{
+  "as_of": "2026-11-23T09:30:02Z",
+  "evaluated": 15,
+  "limited": false,
+  "verified_month": "2026-11",
+  "queues": [
+    {
+      "key": "needs_me",
+      "observed": 4,
+      "total": 4
+    }
+  ],
+  "lines": [
+    {
+      "key": "commercial/v1",
+      "needs_person": 2,
+      "held": 0,
+      "open": 3,
+      "stopped": 0,
+      "verified": 1,
+      "verified_this_month": 1,
+      "stations": [
+        {
+          "key": "intake",
+          "count": 1,
+          "needs_person": 0
+        },
+        {
+          "key": "execution",
+          "count": 1,
+          "needs_person": 0
+        },
+        {
+          "key": "decision",
+          "count": 1,
+          "needs_person": 2
+        },
+        {
+          "key": "delivery",
+          "count": 0,
+          "needs_person": 0
+        },
+        {
+          "key": "verified",
+          "count": 1,
+          "needs_person": 0
+        }
+      ]
+    },
+    {
+      "key": "rfp-response/v1",
+      "needs_person": 0,
+      "held": 0,
+      "open": 1,
+      "stopped": 0,
+      "verified": 2,
+      "verified_this_month": 1,
+      "stations": [
+        {
+          "key": "intake",
+          "count": 0,
+          "needs_person": 0
+        },
+        {
+          "key": "execution",
+          "count": 1,
+          "needs_person": 0
+        },
+        {
+          "key": "decision",
+          "count": 0,
+          "needs_person": 0
+        },
+        {
+          "key": "delivery",
+          "count": 0,
+          "needs_person": 0
+        },
+        {
+          "key": "verified",
+          "count": 2,
+          "needs_person": 0
+        }
+      ]
+    },
+    {
+      "key": "pmo-finance/v1",
+      "needs_person": 1,
+      "held": 1,
+      "open": 4,
+      "stopped": 1,
+      "verified": 0,
+      "verified_this_month": 0,
+      "stations": [
+        {
+          "key": "intake",
+          "count": 1,
+          "needs_person": 0
+        },
+        {
+          "key": "execution",
+          "count": 1,
+          "needs_person": 0
+        },
+        {
+          "key": "decision",
+          "count": 1,
+          "needs_person": 1
+        },
+        {
+          "key": "delivery",
+          "count": 1,
+          "needs_person": 0
+        },
+        {
+          "key": "verified",
+          "count": 0,
+          "needs_person": 0
+        }
+      ]
+    },
+    {
+      "key": "pmo-minutes/v1",
+      "needs_person": 1,
+      "held": 0,
+      "open": 2,
+      "stopped": 0,
+      "verified": 1,
+      "verified_this_month": 1,
+      "stations": [
+        {
+          "key": "intake",
+          "count": 0,
+          "needs_person": 0
+        },
+        {
+          "key": "execution",
+          "count": 1,
+          "needs_person": 0
+        },
+        {
+          "key": "decision",
+          "count": 1,
+          "needs_person": 1
+        },
+        {
+          "key": "delivery",
+          "count": 0,
+          "needs_person": 0
+        },
+        {
+          "key": "verified",
+          "count": 1,
+          "needs_person": 0
+        }
+      ]
+    }
+  ]
+}

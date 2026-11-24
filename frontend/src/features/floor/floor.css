@@ -22,18 +22,12 @@
 .floor__bar > .psl-btn { margin-left: auto; }
 .floor__readout { flex: 1 1 320px; margin: 0; min-height: 18px; font: 500 13px/18px var(--font-mono); color: var(--ink); }
 
-/* The strip (D-162): a station's head line and its rows. Its height holds five rows, so the page below does not jump as the pointer moves. */
+/* The strip (D-162): a station's head line and its way into the queue. */
 .floor__chip--pinned { box-shadow: inset 0 0 0 var(--rule-strong) var(--focus); }
-.floor__strip { flex: 1 1 320px; min-width: 0; min-height: 236px; display: flex; flex-direction: column; gap: var(--space-2); }
+.floor__strip { flex: 1 1 320px; min-width: 0; min-height: 100px; display: flex; flex-direction: column; gap: var(--space-2); }
 .floor__head { display: flex; align-items: center; gap: var(--space-3); min-height: 44px; }
 .floor__headline { margin: 0; flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 0 var(--space-3); font: 500 13px/18px var(--font-mono); color: var(--ink); }
 .floor__headline strong { font-weight: 700; }
 .floor__headline span { color: var(--ink-muted); }
 .floor__pin { font: 700 11px/18px var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); }
-.floor__rows { list-style: none; margin: 0; padding: 0; }
-.floor__rows--scroll { max-height: 360px; overflow-y: auto; }
-.floor__row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); padding: var(--space-1) 0; border-top: var(--rule-thin) solid var(--ink-subtle); font: 500 14px/20px var(--font-sans); }
-.floor__meta { flex: none; font: 500 12px/18px var(--font-mono); color: var(--ink-muted); }
-.floor__meta--person { color: var(--signal-ink); }
-.floor__empty { margin: 0; font: 500 14px/20px var(--font-sans); color: var(--ink-muted); }
-.floor__all { align-self: flex-start; }
+.floor__strip .psl-link { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; }
