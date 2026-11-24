@@ -565,3 +565,9 @@ The design engineer answered in chat:
 - **F-87 work item actions (#113): "Accept and merge".** PMO-3-1 is accepted risk: "Check what happened" and Resume are proven on the mock only, not live, the same as F-60 and F-88. Pause and Continue are proven live. The merge is approved.
 - **F-111 issues, LD-Q7: "Sign all".** 57 exceptions and eight D-83 visual waivers (desktop 74.8, 77.6, 84.4 and 83.6; phone 76.5, 76.9, 75.1 and 76.8).
 F-64 and F-61 conflicted with main after F-71 (#114). Each lane syncs main and re-gates, and the coordinator then merges with `--match-head-commit`.
+
+## D-204 (24 Nov 2026): a ci-gate "no run after 5 minutes" is a tool fault
+`checks.sh` ci mode treated a failed `gh` call (network) as "no run" and gave up after 5 minutes. GitHub's run for the same commit later passed. Recorded tool faults, which don't count as real failures under D-190:
+- F-75 round 1 attempt 2 on bfcad616 (attempt 3 then passed on the same sha);
+- F-71's pre-merge run on f29087ed, which wasn't a gate attempt.
+Fix: branch `ci-checks-appear-wait` (b161241f). A `gh` error now keeps the wait going, and the appear window is 15 minutes (`PSL_CI_APPEAR`). It goes to main by PR.
