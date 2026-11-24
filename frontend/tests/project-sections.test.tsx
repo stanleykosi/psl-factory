@@ -138,11 +138,11 @@ describe('Registers (SCR-11)', () => {
 
   it('Issues rows: reference, issue title, severity as sent (Critical is its own tag), owner, age and state; no row is a link', async () => {
     await open('P-0101', 'registers');
-    expect([...document.querySelectorAll('thead th')].map((th) => th.textContent)).toEqual(['ISSUE', 'WHAT', 'SEVERITY', 'OWNER', 'AGE', 'STATE']);
+    expect([...document.querySelectorAll('thead th')].map((th) => th.textContent)).toEqual(['ISSUE', 'WHAT', 'SEVERITY', 'OWNER', 'STATE', 'AGE']);
     expect(rowsOf()).toEqual([
-      ['ISS-0233', 'Login fails on older Android phones', '■■■High', 'Tunde Bello', '2d', 'Fix in testing'],
-      ['ISS-0229', 'Report totals round differently', 'Critical', 'Engineering', '4d', 'Waiting on Engineering'],
-      ['ISS-0221', 'Slow search on patient list', '■□□Low', 'Owner needed', '—', 'Closed by QA and PM'],
+      ['ISS-0233', 'Login fails on older Android phones', '■■■High', 'Tunde Bello', 'Fix in testing', '2d'],
+      ['ISS-0229', 'Report totals round differently', 'Critical', 'Engineering', 'Waiting on Engineering', '4d'],
+      ['ISS-0221', 'Slow search on patient list', '■□□Low', 'Owner needed', 'Closed by QA and PM', '—'],
     ]);
     expect(document.querySelector('.ptabs__noowner')!.textContent).toBe('Owner needed');
     expect(document.querySelector('tbody')!.querySelector('a')).toBeNull();
@@ -159,20 +159,20 @@ describe('Registers (SCR-11)', () => {
       return json(200, body);
     };
     await open('P-0101', 'registers');
-    expect(rowsOf().map((r) => r[4])).toEqual(['0d', '4d', '—']);
+    expect(rowsOf().map((r) => r[5])).toEqual(['0d', '4d', '—']);
   });
 
   it('Changes, Emergencies and RFPs: one set of columns, a dash where live has no value, no owner role text', async () => {
     await open('P-0101', 'registers', 'register=changes');
     expect(registerTabs()[1].getAttribute('aria-selected')).toBe('true');
     expect(rowsOf()).toEqual([
-      ['CHG-0031', 'Reminders', '—', '—', '—', 'Version 2'],
-      ['CHG-0027', 'Visit list export', '—', '—', '—', 'Version 1'],
+      ['CHG-0031', 'Reminders', '—', '—', 'Version 2', '—'],
+      ['CHG-0027', 'Visit list export', '—', '—', 'Version 1', '—'],
     ]);
     expect(document.querySelector('.psl-resultcount')!.textContent).toBe('2 CHANGES');
     cleanup();
     await open('P-0101', 'registers', 'register=rfps');
-    expect(rowsOf()).toEqual([['RFP-0044', '—', '—', '—', '—', 'Bid request recorded']]);
+    expect(rowsOf()).toEqual([['RFP-0044', '—', '—', '—', 'Bid request recorded', '—']]);
     expect(text()).not.toMatch(/Owner needed|recorded by PM|outside/i);
     cleanup();
     await open('P-0101', 'registers', 'register=emergencies');
@@ -198,6 +198,7 @@ describe('Registers (SCR-11)', () => {
     expect(registerTabs().map((t) => t.textContent)).toEqual(['Changes 2', 'Emergencies 0', 'RFPs 1']);
     expect(registerTabs()[0].getAttribute('aria-selected')).toBe('true');
     expect(rowsOf()[0][0]).toBe('CHG-0031');
+    expect(text()).not.toContain('Severity is set by the PM');
     cleanup();
     respond = (url) => (url.pathname.endsWith('/registers') ? json(200, { ...served(url), sections: [] }) : undefined);
     await open('P-0101', 'registers');
@@ -233,8 +234,19 @@ describe('Registers (SCR-11)', () => {
     expect(registerTabs()[1].getAttribute('href')).toBe('/projects/P-0102/registers?register=changes');
     toRegister('register=changes');
     await until(() => expect(rowsOf()).toHaveLength(1));
-    expect(rowsOf()).toEqual([['CHG-0090', 'Biometric login', '—', '—', '—', 'Version 1']]);
+    expect(rowsOf()).toEqual([['CHG-0090', 'Biometric login', '—', '—', 'Version 1', '—']]);
     expect(tabCalls()).toHaveLength(2);
+  });
+
+  it('phone: after the last Show more focus is on the first new card', async () => {
+    phone();
+    await open('P-0102', 'registers');
+    expect(cardsOf()).toHaveLength(25);
+    const more = screen.getByRole('button', { name: 'Show more' });
+    more.focus();
+    fireEvent.click(more);
+    await until(() => expect(cardsOf()).toHaveLength(30));
+    await waitFor(() => expect(document.activeElement).toBe(document.querySelectorAll('.ptabs__card')[25]));
   });
 
   it('the Show more button follows the selected register: Changes has none while Issues has more', async () => {

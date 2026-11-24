@@ -34,8 +34,8 @@ const columnsOf = (issues: boolean): Column<SectionItem>[] => [
   { key: 'what', header: 'WHAT', cell: (row) => row.detail ?? NONE },
   { key: 'severity', header: 'SEVERITY', cell: (row) => <Severity value={row.severity} /> },
   { key: 'owner', header: 'OWNER', cell: (row) => <Owner value={row.owner} issues={issues} /> },
-  { key: 'age', header: 'AGE', cell: (row) => ageText(row.age_days) },
   { key: 'state', header: 'STATE', cell: (row) => row.state },
+  { key: 'age', header: 'AGE', num: true, cell: (row) => ageText(row.age_days) },
 ];
 
 /** SCR-11 phone: reference and severity, the WHAT text (else the reference), then "state · owner · age" without a part that reads "—". */
@@ -125,7 +125,7 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
           </div>
           <MoreFooter hasMore={section.has_more} busy={more === 'loading'} failed={more === 'error'} onMore={showMore} />
           <AsOf value={ready.asOf} />
-          <p className="ptabs__note">Severity is set by the PM. Closing an issue needs QA and the PM; there is no separate approval.</p>
+          {issues && <p className="ptabs__note">Severity is set by the PM. Closing an issue needs QA and the PM; there is no separate approval.</p>}
         </>
       );
   }

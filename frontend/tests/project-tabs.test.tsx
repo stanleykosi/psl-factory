@@ -46,7 +46,7 @@ vi.mock('next/navigation', () => ({
   },
 }));
 
-type Tab = 'milestones' | 'documents' | 'registers' | 'actions';
+type Tab = 'documents' | 'registers' | 'actions';
 const me = (persona: string) => JSON.parse(readFileSync(join(__dirname, `../mock/fixtures/me.${persona}.json`), 'utf8'));
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -118,118 +118,13 @@ async function open(caseId: string, tab: Tab, search = '') {
 
 const text = () => document.body.textContent ?? '';
 const rowsOf = () => [...document.querySelectorAll('tbody tr')].map((tr) => [...tr.children].map((c) => c.textContent));
-const cardsOf = () => [...document.querySelectorAll('.ptabs__card')].map((c) => c.textContent);
-const phone = () =>
-  vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('max-width'), media: q, addEventListener: () => {}, removeEventListener: () => {} }));
-
-describe('Milestones (SCR-38)', () => {
-  it('P-0101: the four milestones in returned order, one read, facts kept separate, no totals', async () => {
-    await open('P-0101', 'milestones');
-    expect(calls.map((u) => u.pathname)).toEqual(['/api/v1/projects/P-0101', `/api/v1/projects/${uuidOf('P-0101')}/milestones`]);
-    expect(tabCalls()[0].search).toBe('?limit=10');
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health · patient app');
-    expect(screen.getByRole('tab', { name: /^Milestones/ }).getAttribute('aria-selected')).toBe('true');
-    expect(document.querySelector('.ptabs__route')!.textContent).toBe('PM Tunde Bello · Route A');
-    expect([...document.querySelectorAll('thead th')].map((th) => th.textContent)).toEqual(['MILESTONE', 'CONTRACT AMOUNT', 'COMPLETION', 'INVOICE', 'PAID']);
-    expect(rowsOf()).toEqual([
-      ['1 · Kick-off', '₦3,000,000.00', 'Done 27 Oct · proof', 'INV-0398 · Verified', 'Part paid · ₦500,000.00 owed'],
-      ['2 · UAT sign-off', '₦4,250,000.00', 'Done 11 Nov · client UAT sign-off', 'INV-0412 · Waiting', '—'],
-      ['3 · Go-live', '₦4,250,000.00', 'Not yet', '—', '—'],
-      ['4 · Hypercare', 'Unknown', 'Not yet · amount set at go-live', '—', '—'],
-    ]);
-    expect(document.querySelector('.psl-unknown')!.textContent).toBe('Unknown');
-    expect(screen.getByRole('link', { name: 'INV-0398' }).getAttribute('href')).toBe('/work/W-1713');
-    expect(text()).toContain('Milestones and amounts come from the signed SOW.');
-    expect(text()).toMatch(/As of 12 Nov 16:40/);
-    expect(text()).not.toMatch(/₦0(\.00)?(?![\d,])/);
-    expect(screen.queryByRole('link', { name: /complete/i })).toBeNull();
-    expect(screen.queryByRole('button', { name: /complete/i })).toBeNull();
-    expect(document.querySelector('form')).toBeNull();
-  });
-
-  it('makes no further request in 60 s (no polling)', async () => {
-    await open('P-0101', 'milestones');
-    const before = calls.length;
-    vi.useFakeTimers();
-    await act(async () => {
-      vi.advanceTimersByTime(60_000);
-    });
-    vi.useRealTimers();
-    expect(calls).toHaveLength(before);
-  });
-
-  it('changed: a CHANGES column links the change; the amount reads next to the change, never added; INVOICE and PAID stay', async () => {
-    cookies = { psl_mock_milestones: 'changed' };
-    await open('P-0101', 'milestones');
-    expect([...document.querySelectorAll('thead th')].map((th) => th.textContent)).toEqual(['MILESTONE', 'CONTRACT AMOUNT', 'COMPLETION', 'INVOICE', 'PAID', 'CHANGES']);
-    const golive = rowsOf()[2];
-    expect(golive[1]).toBe('₦4,250,000.00 + the change · change amount Unknown');
-    expect(golive[5]).toBe('CR-0031 · SMS reminders');
-    expect(screen.getByRole('link', { name: 'CR-0031 · SMS reminders' }).getAttribute('href')).toBe('/work/W-1005');
-    expect(rowsOf()[0][5]).toBe('—');
-    expect(rowsOf()[0][3]).toBe('INV-0398 · Verified');
-    expect(text()).not.toContain('SOW amendment');
-  });
-
-  it('phone: one card per milestone with the paid line and the CHANGED tag', async () => {
-    phone();
-    cookies = { psl_mock_milestones: 'changed' };
-    await open('P-0101', 'milestones');
-    expect(cardsOf()).toEqual([
-      '1 · Kick-off₦3,000,000.00 · Done 27 Oct · proofINV-0398 · VerifiedPaid: Part paid · ₦500,000.00 owed',
-      '2 · UAT sign-off₦4,250,000.00 · Done 11 Nov · client UAT sign-offINV-0412 · WaitingPaid: —',
-      '3 · Go-live₦4,250,000.00 + the change · change amount Unknown · Not yet—Paid: —CHANGED · CR-0031',
-      '4 · HypercareUnknown · Not yet · amount set at go-live—Paid: —',
-    ]);
-    expect(screen.getByRole('link', { name: 'CHANGED · CR-0031' }).getAttribute('href')).toBe('/work/W-1005');
-  });
-
-  it('P-0102: unknown stays Unknown, each paid status is its own word, a known change amount is not added', async () => {
-    await open('P-0102', 'milestones');
-    const rows = rowsOf();
-    expect(rows[0]).toEqual(['1 · Discovery', 'Unknown', 'Done', '—', 'Unknown', '—']);
-    expect(rows[1]).toEqual(['2 · Design (billed in USD)', 'USD 1,250,000.50', 'Not yet', '—', 'Paid', '—']);
-    expect(rows[2][1]).toBe('₦9,500,000.00 + the change · change amount ₦750,000.00');
-    expect(rows[2].slice(2)).toEqual(['Done 05 Nov · build sign-off', 'INV-0501 · Verified', '—', 'CR-0090 · Biometric login']);
-    expect(rows[3]).toEqual(['4 · Pilot', '₦2,000,000.00 + the change · change amount Unknown', 'Done 08 Nov · proof', 'INV-0502 · Ready to continue', 'Part paid · Unknown owed', 'CR-0091 · Dark mode']);
-    expect(rows[4][4]).toBe('Not paid · ₦3,000,000.00 owed');
-    expect(rows[5][4]).toBe('Not due');
-    expect(rows[6][4]).toBe('Tracked by Finance');
-    // a not-yet milestone with an invoice still reads Not yet; the invoice is never read for paid
-    expect(rows[4].slice(2, 4)).toEqual(['Not yet', 'INV-0503 · Action needed']);
-    expect(text()).not.toContain('2,750,000');
-    expect(text()).not.toContain('10,250,000');
-    expect(text()).not.toMatch(/₦0(\.00)?(?![\d,])/);
-  });
-
-  it('an invoice without a state, or with one the contract does not list, reads Unknown, never a blank status', async () => {
-    respond = (url) => {
-      if (!url.pathname.endsWith('/milestones')) return undefined;
-      const body = projectTab({ url, persona, cookies }).body;
-      body.milestones[0].invoice = { reference: 'INV-0398' };
-      body.milestones[1].invoice = { reference: 'INV-0412', state: 'surprise' };
-      return json(200, body);
-    };
-    await open('P-0101', 'milestones');
-    expect(rowsOf()[0][3]).toBe('INV-0398 · Unknown');
-    expect(rowsOf()[1][3]).toBe('INV-0412 · Unknown');
-  });
-
-  it('P-0106 shows the empty sentence once and no table', async () => {
-    await open('P-0106', 'milestones');
-    expect(text()).toContain('No milestones on this project yet.');
-    expect(text().split('No milestones on this project yet.')).toHaveLength(2);
-    expect(document.querySelector('table')).toBeNull();
-    expect(text()).not.toContain('As of');
-  });
-});
 
 describe('access and errors (all tabs)', () => {
   it('P-0103: the tab answers 403; the header and tab bar stay and no fixture text is shown', async () => {
-    await open('P-0103', 'milestones');
+    await open('P-0103', 'documents');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Kora Logistics · fleet tracker');
     expect(screen.getByRole('heading', { level: 2, name: 'No access to this tab' })).toBeTruthy();
-    expect(text()).not.toMatch(/Kick-off|INV-|₦/);
+    expect(text()).not.toMatch(/Statement of work|INV-|₦/);
     expect(screen.getByRole('tablist', { name: 'Project' })).toBeTruthy();
   });
 
@@ -237,7 +132,7 @@ describe('access and errors (all tabs)', () => {
     nav.search = '';
     render(
       <AppShell>
-        <ProjectJourneyPage caseId="P-0099" tab="milestones" />
+        <ProjectJourneyPage caseId="P-0099" tab="documents" />
       </AppShell>,
     );
     await until(() => expect(screen.getByRole('heading', { name: /can.t open this project/ })).toBeTruthy());
@@ -247,11 +142,11 @@ describe('access and errors (all tabs)', () => {
   it('a 500 and a network failure show the error card; Retry sends exactly one new request', async () => {
     let fail: 'server' | 'network' | undefined = 'server';
     respond = (url) => {
-      if (!url.pathname.endsWith('/milestones') || !fail) return undefined;
+      if (!url.pathname.endsWith('/actions') || !fail) return undefined;
       if (fail === 'network') throw new TypeError('Failed to fetch');
       return json(500, { code: 'server_error', message: 'x' });
     };
-    await open('P-0101', 'milestones');
+    await open('P-0101', 'actions');
     expect(screen.getByText('We couldn’t load this tab. Your work is safe; nothing was changed.')).toBeTruthy();
     expect(tabCalls()).toHaveLength(1);
     fail = 'network';
@@ -264,16 +159,16 @@ describe('access and errors (all tabs)', () => {
     expect(tabCalls()).toHaveLength(2);
     fail = undefined;
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
-    await until(() => expect(rowsOf()).toHaveLength(4));
+    await until(() => expect(rowsOf()).toHaveLength(9));
     expect(tabCalls()).toHaveLength(3);
   });
 
   it('every role gets the same columns for the same fixture', async () => {
-    await open('P-0101', 'milestones');
+    await open('P-0101', 'actions');
     const pm = rowsOf();
     cleanup();
     persona = 'finance_lead';
-    await open('P-0101', 'milestones');
+    await open('P-0101', 'actions');
     expect(rowsOf()).toEqual(pm);
   });
 

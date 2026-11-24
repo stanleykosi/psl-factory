@@ -31,7 +31,7 @@ beforeAll(async () => {
 });
 afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
-type Body = Record<string, unknown> & { items: unknown[]; next_cursor?: string; milestones?: { name: string }[] };
+type Body = Record<string, unknown> & { items: unknown[]; next_cursor?: string };
 async function get(path: string, init: { persona?: string; cookie?: string; scenario?: string } = {}) {
   const headers: Record<string, string> = { Cookie: `psl_mock_persona=${init.persona ?? 'pm'}${init.cookie ? `; ${init.cookie}` : ''}` };
   if (init.scenario) headers['X-Mock-Scenario'] = init.scenario;
@@ -40,14 +40,15 @@ async function get(path: string, init: { persona?: string; cookie?: string; scen
 }
 
 describe('fixtures validate against the generated E-PROJECT-TAB 200 schema', () => {
-  it.each(fixtureFiles)('%s', (name) => {
+  // the milestones fixtures are the live shape (F-71, mock-live-money.test.ts)
+  it.each(fixtureFiles.filter((name) => !name.includes('.milestones.')))('%s', (name) => {
     const body = JSON.parse(readFileSync(join(tabs, name), 'utf8'));
     expect(valid200(body), ajv.errorsText(valid200.errors)).toBe(true);
   });
 
   it('the handler serves valid bodies for every tab of P-0101, P-0102 and P-0106', async () => {
     for (const id of ['P-0101', 'P-0102', 'P-0106']) {
-      for (const tab of ['milestones', 'documents']) {
+      for (const tab of ['documents']) {
         const { status, body } = await get(`${id}/${tab}`);
         expect(status).toBe(200);
         expect(valid200(body), `${id} ${tab}: ${ajv.errorsText(valid200.errors)}`).toBe(true);
@@ -78,21 +79,10 @@ describe('visibility and access', () => {
 });
 
 describe('query', () => {
-  it('404 for a bad limit, an unknown register, a bad cursor and a milestones cursor; Registers and Actions are the live shape', async () => {
-    for (const query of ['milestones?limit=7', 'milestones?cursor=x', 'documents?cursor=o999', 'documents?q=']) {
+  it('404 for a bad limit, an empty q and a bad cursor on documents', async () => {
+    for (const query of ['documents?limit=7', 'documents?q=', 'documents?cursor=x', 'documents?cursor=o999']) {
       const result = await get(`P-0101/${query}`);
       expect([query, result.status, result.body.code]).toEqual([query, 404, 'invalid_query']);
     }
-  });
-});
-
-describe('the changed cookie', () => {
-  it('psl_mock_milestones=changed serves the milestones with the change on Go-live; other tabs are unchanged', async () => {
-    const plain = (await get('P-0101/milestones')).body.milestones as { changes?: unknown }[];
-    const changed = (await get('P-0101/milestones', { cookie: 'psl_mock_milestones=changed' })).body.milestones as { name: string; changes?: { reference: string }[] }[];
-    expect(plain.some((m) => m.changes)).toBe(false);
-    expect(changed.find((m) => m.name === 'Go-live')!.changes!.map((c) => c.reference)).toEqual(['CR-0031']);
-    const actions = (await get('P-0101/actions', { cookie: 'psl_mock_milestones=changed' })).body.sections as { items: unknown[] }[];
-    expect(actions[0].items).toHaveLength(9);
   });
 });
