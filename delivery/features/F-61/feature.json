@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-61",
   "outcome": "Alerts list, drawer and alert settings on the live API",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -65,7 +65,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T13:52:42Z",
+      "seconds": 255.6,
+      "evidence_ref": "delivery/features/F-61/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -141,10 +154,10 @@
     "repository": null,
     "task_id": "FE-ALERTS",
     "base_branch": "main",
-    "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
+    "base_sha": "156996538dc28d1fdd1412c93023d8fa69a51def",
     "task_branch": "fe-alerts-live-alerts-and-settings",
-    "head_sha": "5c45943fb017314d39ad32a59afc6f30463202f6",
-    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a3",
+    "head_sha": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a2",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -248,6 +261,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T13:53:07Z",
+      "round": 1,
+      "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "reason": null
     }
   ],
   "routing": {
@@ -265,9 +286,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
   },
   "blocked": null
 }

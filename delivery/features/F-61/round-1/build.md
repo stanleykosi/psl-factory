@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 5c45943fb017314d39ad32a59afc6f30463202f6
+COMMIT: 5f61b03c833db545052bd88a34ed1a1ac62eb608
 BUILDER: builder
 LANE: full
 
@@ -54,3 +54,7 @@ None (round 1).
 Not blocked. Open items for others:
 - Backend/integration: a stale `revision` on `POST /me/alert-preferences` returns 422 `action_unavailable` ("Preferences changed..."), not the 409 the spec expects. The UI shows the server message (no Reload button for 422). Please confirm the intended status.
 - Questions 7 to 9 were built as the recommended options (D-187).
+
+## Merge note
+origin/main 8692cf87 (D-199, with F-72 and F-86) was merged into the branch at 0e5f278e. Two conflicts, resolved by keeping both sides: `frontend/mock/server.mjs` (F-61 alert block and F-86 start-live block, each with its own closing brace) and `frontend/tests/next-config.test.ts` (both allowed-file lists and both comments). No other lane code was changed. Run singly after the merge: typecheck clean; next-config, the alerts tests and every `*mock*` test file: 1427 passed. The full suite and fidelity were not re-run (gate runs on GitHub Actions).
+- Coordinator: merged main 15699653 (F-62, F-125) as 5f61b03c with no conflicts; tsc reports 0 errors. Base set to the merge base under D-200.
