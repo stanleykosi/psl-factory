@@ -1,19 +1,13 @@
 'use client';
 
-// SCR-08 document review (/projects/[caseId]/documents/[documentId]?v=<version>): read one drafted client document,
-// see what changed and what was checked, approve it or return it with a note. The document comes from E-DOCUMENT
-// (fields beyond the typed ones are mock proposals); the decision is the review task on the work item it names, with
-// the same claim and decide writes as the decision page (useDecision). The controls exist only for a task whose
-// you_can_act is true; /me roles never decide that (INV-ACCESS). Nothing here says the document was sent.
+// SCR-08 document review (/projects/[caseId]/documents/[documentId]): read one drafted client document by its live
+// version id, approve it or return it with a note. The reads are the document-review preview and (for the status word
+// and blockers) the publication read; the write is the document-review decision, with the revision the preview gave.
+// The controls exist only for the verdicts the preview offers (INV-ACCESS). Nothing here says the document was sent.
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { useCallback } from 'react';
 
-import { Breadcrumb, Button, buttonClass, Callout, Loading, PageTitle, Tag, useIsPhone, useToast, type TagTone } from '@/components';
-import { When } from '@/features/decide/DecisionContent';
-import { cannotActCopy, UncertainNotice } from '@/features/decide/DecideStates';
-import { findDecisionTask } from '@/features/decide/format';
-import { useDecision } from '@/features/decide/useDecision';
+import { Breadcrumb, Button, buttonClass, Callout, PageTitle, Tag, useIsPhone, useToast } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { ProjectTabs, PANEL_ID } from '@/features/projects/ProjectTabs';
 import { routeCaseId } from '@/features/projects/model';
@@ -22,14 +16,13 @@ import { useMe, usePhoneBack } from '@/shell/AppShell';
 import { hasDestination, visibleDestinations } from '@/shell/destinations';
 import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
 
-import { amountsTag, draftedByText, firstFlag, parseVersion, sectionsOf, textOf, type DocumentView } from './documentModel';
-import { AgentPanel, ChecksPanel, NoText, ReturnedBanner, Sections } from './DocumentParts';
+import { isVersionId, textOf, verdictsOf, type LiveDocument, type Publication, type Verdict } from './documentModel';
+import { AudiencePanel, Blockers, Sections } from './DocumentParts';
 import { ReviewControls } from './ReviewControls';
 import { useDocument } from './useDocument';
+import { useReview } from './useReview';
 
 import './document-review.css';
-
-type Decision = ReturnType<typeof useDecision>;
 
 /** 403 and 404 look the same (INV-ACCESS): nothing about the document is shown, not even its title or id. */
 function DocumentNoAccess() {
@@ -49,262 +42,110 @@ function DocumentNoAccess() {
   );
 }
 
-/** The tab bar (and its counts when E-PROJECT answers). A failed project read leaves the bar without counts. */
-function ProjectBar({ caseId }: { caseId: string }) {
-  const { state } = useProject(caseId);
-  return <ProjectTabs base={`/projects/${encodeURIComponent(caseId)}`} current="documents" tabs={state.status === 'ready' ? state.journey.tabs : undefined} />;
-}
+const NOTICE_ID = 'docrev-notice';
 
-/** The approval is told once, as a toast (D-151); the panel then has nothing more to say. */
-function Approved({ doc, step }: { doc: DocumentView; step: { person?: unknown; decided_at?: string | null } }) {
-  const toast = useToast();
-  const told = useRef(false);
-  useEffect(() => {
-    if (told.current) return;
-    told.current = true;
-    toast.show(
-      <>
-        <strong>You approved v{doc.version}</strong>
-        {textOf(step.person) && <> · {String(step.person)}</>}
-        {step.decided_at && (
-          <>
-            {' · '}
-            <When at={step.decided_at} />
-          </>
-        )}
-        . Not sent to the client.
-      </>,
-    );
-  }, [toast, doc.version, step.person, step.decided_at]);
-  return null;
-}
-
-const READ_ONLY = 'This review isn’t open to you here.';
-
-/** What sits where the controls would: the reason there are none, an unconfirmed write, or the approved notice. */
-function ReviewNotice({ doc, review, taskId, reread }: { doc: DocumentView; review: Decision; taskId: string | undefined; reread: boolean }) {
-  const { view } = review;
-  if (view.kind === 'loading') {
-    return (
-      <Loading className="docrev__loading">
-        Loading the review…
-      </Loading>
-    );
-  }
-  if (view.kind === 'error') {
-    if (view.error.kind === 'forbidden' || view.error.kind === 'not_found') return <p className="docrev__plain">{READ_ONLY}</p>;
-    return <WorkErrorCard message="We couldn’t load this review. Your work is safe; nothing was changed." error={view.error} onRetry={() => void review.retry()} />;
-  }
-  if (view.kind === 'done') {
-    if (view.result.verdict === 'return') {
-      if (doc.returned) return null;
-      // The page shows what the backend returned: still recording until the re-read is back, then its own status.
-      return reread ? (
-        <div role="alert">
-          <Callout kind="warning">
-            We couldn&rsquo;t confirm the return was recorded. The document still reads &ldquo;{doc.status}&rdquo;.{' '}
-            <Button kind="secondary" size="sm" onClick={() => void review.retry()}>
-              Try again
-            </Button>
-          </Callout>
-        </div>
-      ) : (
-        <p className="docrev__plain" role="status">
-          Recording the return…
-        </p>
-      );
-    }
-    const step = view.reloaded && findDecisionTask(view.reloaded, taskId)?.decision.chain.steps.find((s) => s.status === 'approved');
-    if (view.refreshFailed) {
-      return (
-        <div role="alert">
-          <Callout kind="warning">
-            We couldn&rsquo;t reload to confirm your approval was recorded.{' '}
-            <Button kind="secondary" size="sm" onClick={() => void review.retry()}>
-              Try again
-            </Button>
-          </Callout>
-        </div>
-      );
-    }
-    if (!view.reloaded) {
-      return (
-        <p className="docrev__plain" role="status">
-          Checking that your approval was recorded…
-        </p>
-      );
-    }
-    if (!step) return <p className="docrev__plain">{READ_ONLY}</p>;
-    return <Approved doc={doc} step={step} />;
-  }
-  if (view.kind === 'stale') {
+/** The notices that outlive the controls: why a decision was not recorded, or that it may not have been. */
+function ReviewNotice({ submit, recheck }: { submit: ReturnType<typeof useReview>['submit']; recheck: () => void }) {
+  if (submit.status === 'refused') {
     return (
       <div role="alert">
-        <Callout kind="warning">
-          This review changed while you were reading it, so nothing was recorded.{' '}
-          <Button kind="secondary" size="sm" onClick={review.reviewCurrent}>
-            Review the latest
-          </Button>
+        <Callout kind="warning" id={NOTICE_ID}>
+          {submit.message}
         </Callout>
       </div>
     );
   }
-  if (view.kind === 'unconfirmed') {
-    return (
-      <div role="alert">
-        <Callout kind="warning">
-          <strong>We couldn&rsquo;t confirm whether your decision was recorded.</strong> We also couldn&rsquo;t reload this item to check, so the decision buttons
-          stay off. Try again reloads the item; it doesn&rsquo;t send your decision again.{' '}
-          <Button kind="secondary" size="sm" busy={view.checking} busyLabel="Checking…" onClick={review.recheck}>
-            Try again
-          </Button>
-        </Callout>
-      </div>
-    );
-  }
-  const task = findDecisionTask(view.item, taskId);
-  if (!task) return <p className="docrev__plain">{READ_ONLY}</p>;
-  const copy = cannotActCopy(task.cannot_act_reason, task);
+  if (submit.status !== 'uncertain' && submit.status !== 'unconfirmed') return null;
   return (
-    <p className="docrev__plain docrev__cannot">
-      <strong>{copy.heading}</strong> {copy.text}
-    </p>
+    <div role="alert">
+      <Callout kind="warning" id={NOTICE_ID}>
+        <strong>
+          {submit.status === 'uncertain' ? 'We couldn’t confirm whether your decision was recorded.' : 'We couldn’t reload to confirm it was recorded.'}
+        </strong>{' '}
+        The decision buttons stay off. Try again reloads the document; it doesn&rsquo;t send your decision again.{' '}
+        <Button kind="secondary" size="sm" busy={submit.checking} busyLabel="Checking…" onClick={recheck}>
+          Try again
+        </Button>
+      </Callout>
+    </div>
   );
 }
 
-/** The status tag's colour: orange where a person must act (a returned document, or a review you can decide). */
-function statusTone(doc: DocumentView, canAct: boolean): TagTone {
-  if (doc.returned) return 'person';
-  if (canAct) return 'person';
-  return doc.review ? 'waiting' : 'neutral';
-}
-
-function DocumentBody({ doc, review, caseId, reread = false }: { doc: DocumentView; review: Decision | null; caseId: string | undefined; reread?: boolean }) {
+function DocumentBody({ caseId, versionId, doc, publication, refreshFailed, refresh }: { caseId: string; versionId: string; doc: LiveDocument; publication: Publication | null; refreshFailed: boolean; refresh: () => Promise<boolean> }) {
   const phone = useIsPhone();
-  const sections = sectionsOf(doc);
-  const taskId = textOf(doc.review?.task_id);
-  const base = caseId ? `/projects/${encodeURIComponent(caseId)}` : undefined;
-  usePhoneBack({ label: textOf(doc.project_title) ?? 'Projects', href: base ?? '/projects', note: textOf(doc.reference) });
+  const toast = useToast();
+  const project = useProject(caseId);
+  const base = `/projects/${encodeURIComponent(caseId)}`;
+  const title = project.state.status === 'ready' ? textOf(project.state.journey.title) : undefined;
+  usePhoneBack({ label: title ?? 'Projects', href: base });
 
-  const view = review?.view;
-  const item = view && 'item' in view ? view.item : undefined;
-  const task = item ? findDecisionTask(item, taskId) : undefined;
-  const canAct = Boolean(task?.you_can_act) && (view?.kind === 'item' || view?.kind === 'unconfirmed' || view?.kind === 'stale');
-  const returned = doc.returned;
   const version = doc.version;
-  const claim = review?.claim ?? null;
-  const showControls = !returned && view?.kind === 'item' && task?.you_can_act === true && claim !== null;
-  const changes = task?.decision.changes;
-  const changeItems = Array.isArray(changes?.items) ? changes.items.filter((t) => textOf(t)) : [];
-  const flag = sections ? firstFlag(sections) : undefined;
-  const amounts = amountsTag(doc);
-  const note = item?.workspace?.agent_note;
-  const drafted = draftedByText(doc);
+  const onRecorded = useCallback(
+    (verdict: Verdict) =>
+      toast.show(verdict === 'approve' ? <><strong>You approved v{version}</strong>. Not sent to the client.</> : <strong>You returned v{version}.</strong>),
+    [toast, version],
+  );
+  const { submit, decide, recheck } = useReview({ caseId, versionId, revision: doc.revision, refresh, onRecorded });
 
-  const crumb = [
-    ...(textOf(doc.project_title) ? [{ label: textOf(doc.project_title)!, href: base }] : []),
-    { label: 'Documents', href: undefined },
-  ];
+  const verdicts = verdictsOf(doc);
+  const status = textOf(publication?.review_status);
+  const findings = publication?.findings ?? [];
+  const held = submit.status === 'uncertain' || submit.status === 'unconfirmed';
+  const crumb = [...(title ? [{ label: title, href: base }] : []), { label: 'Documents', href: undefined }];
 
-  if (view?.kind === 'error' && view.error.kind === 'unauthenticated') {
-    return <SignedOutState pathname={`${base ?? '/projects'}/documents/${encodeURIComponent(doc.document_id)}?v=${encodeURIComponent(version)}`} />;
-  }
+  if (submit.status === 'signed_out') return <SignedOutState pathname={`${base}/documents/${versionId}`} />;
 
   return (
     <div className="docrev">
+      {refreshFailed && !held && (
+        <Callout kind="warning">
+          We couldn&rsquo;t refresh this page, so it may be out of date.{' '}
+          <Button kind="secondary" size="sm" onClick={() => void refresh()}>
+            Try again
+          </Button>
+        </Callout>
+      )}
       <header className="docrev__header">
         <div className="docrev__crumb">
-          <Breadcrumb items={crumb} current={textOf(doc.reference)} />
+          <Breadcrumb items={crumb} />
         </div>
         <div className="docrev__titlerow">
           <PageTitle size={36} phoneSize={24}>
             {doc.title} · v{version}
           </PageTitle>
-          {caseId && <ProjectBar caseId={caseId} />}
+          <ProjectTabs base={base} current="documents" tabs={project.state.status === 'ready' ? project.state.journey.tabs : undefined} />
         </div>
-        {textOf(doc.status) ? <Tag tone={statusTone(doc, canAct)} className="docrev__status">{doc.status}</Tag> : null}
-      </header>
-      <div role={caseId ? 'tabpanel' : undefined} id={caseId ? PANEL_ID : undefined} aria-label={caseId ? 'Documents' : undefined} className="docrev__panel">
-        {phone && !returned && (
-          <div className="docrev__phonetags">
-            {doc.test_template === true && <Tag tone="waiting">TEST TEMPLATE</Tag>}
-            {amounts && <Tag tone={amounts.tone}>{amounts.text.toUpperCase()}</Tag>}
-          </div>
-        )}
-        {returned && (
-          <>
-            <ReturnedBanner returned={returned} version={version} />
-            {note && note.lines.length > 0 && <AgentPanel agent={note.agent} lines={note.lines} next={Number(version) + 1} />}
-            {!phone && (
-              <div className="docrev__held">
-                <Button disabled size="lg" reason="Not available yet">
-                  Edit as v{Number(version) + 1}
-                </Button>
-              </div>
-            )}
-          </>
-        )}
-        {!returned && (drafted || changeItems.length > 0) && (
-          <p className="docrev__drafted">
-            {drafted}
-            {changeItems.length > 0 && ` Changes since ${changes?.previous_label}: ${changeItems.join('; ')}.`}
-          </p>
-        )}
-        <div className="docrev__board">
-          {sections ? <Sections doc={doc} sections={sections} /> : <NoText doc={doc} />}
-          {!returned && phone && flag && (
-            <p className="docrev__flag">
-              {flag.agent} flagged section {flag.number}: {flag.text}
-            </p>
+        <div className="docrev__tags">
+          {status && (
+            <Tag tone={verdicts.length > 0 ? 'person' : 'neutral'} className="docrev__status">
+              {status}
+            </Tag>
           )}
+          {!doc.current && <Tag tone="neutral">Not the current version</Tag>}
+        </div>
+      </header>
+      <div role="tabpanel" id={PANEL_ID} aria-label="Documents" className="docrev__panel">
+        <div className="docrev__board">
+          <Sections doc={doc} />
           <aside className="docrev__aside">
-            {!returned && <ChecksPanel doc={doc} />}
-            {!returned && review && !showControls && <ReviewNotice doc={doc} review={review} taskId={taskId} reread={reread} />}
-            {!returned && !review && doc.review && <p className="docrev__plain">{READ_ONLY}</p>}
-            {review && showControls && task && claim && (
-              <ReviewControls
-                version={version}
-                roleLabel={textOf(doc.review?.role_label)}
-                claim={claim}
-                submit={review.submit}
-                phone={phone}
-                onDecide={(verdict, text) => void review.decide(verdict, text)}
-                onRetryClaim={review.retryClaim}
-              />
+            <AudiencePanel audience={doc.audience} />
+            {findings.length > 0 && <Blockers findings={findings} />}
+            <ReviewNotice submit={submit} recheck={() => void recheck()} />
+            {verdicts.length > 0 ? (
+              <ReviewControls version={version} verdicts={verdicts} submit={submit} heldBy={held || submit.status === 'refused' ? NOTICE_ID : undefined} phone={phone} onDecide={(verdict, note) => void decide(verdict, note)} />
+            ) : (
+              <p className="docrev__plain docrev__cannot">No decision is open to you on this version.</p>
             )}
-            {review?.uncertain && <UncertainNotice />}
           </aside>
         </div>
-        {returned && phone && (
-          <div className="psl-actionbar docrev__bar">
-            <Button size="xl" block disabled reason="Not available yet">
-              Edit as v{Number(version) + 1}
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );
 }
 
-/** Reads the work item behind the review and re-reads the document after a decision. Rendered only with a work_id. */
-function ReviewHost({ doc, workId, refresh, caseId }: { doc: DocumentView; workId: string; refresh: () => Promise<void>; caseId: string | undefined }) {
-  // A returned document has nothing left to claim or decide on this version; the work item is read for the agent's note.
-  const review = useDecision(workId, doc.returned ? undefined : textOf(doc.review?.task_id));
-  const done = review.view.kind === 'done' ? review.view : null;
-  const refreshed = useRef<unknown>(null);
-  const [reread, setReread] = useState(false);
-  useEffect(() => {
-    if (!done || refreshed.current === done.result) return;
-    refreshed.current = done.result;
-    void refresh().then(() => setReread(true));
-  }, [done, refresh]);
-  return <DocumentBody doc={doc} review={review} caseId={caseId} reread={reread} />;
-}
-
-function DocumentLoaded({ routeCase, documentId, version }: { routeCase: string; documentId: string; version: string }) {
-  const { state, retry, refresh } = useDocument(documentId, version);
-  const pathname = `/projects/${encodeURIComponent(routeCase)}/documents/${encodeURIComponent(documentId)}?v=${encodeURIComponent(version)}`;
+function DocumentLoaded({ caseId, versionId }: { caseId: string; versionId: string }) {
+  const { state, retry, refresh } = useDocument(caseId, versionId);
+  const pathname = `/projects/${encodeURIComponent(caseId)}/documents/${versionId}`;
 
   if (state.status === 'loading') return <LoadingState />;
   if (state.status === 'error') {
@@ -313,42 +154,19 @@ function DocumentLoaded({ routeCase, documentId, version }: { routeCase: string;
     if (error.kind === 'forbidden' || error.kind === 'not_found') return <DocumentNoAccess />;
     return <WorkErrorCard message="We couldn’t load this document. Your work is safe; nothing was changed." error={error} onRetry={() => void retry()} />;
   }
-  const { doc } = state;
-  // A document of another project (or another version than the URL names) is never shown under this address.
-  if ((textOf(doc.case_id) && doc.case_id !== routeCase) || doc.version !== version || doc.document_id !== documentId) return <DocumentNoAccess />;
-  const caseId = textOf(doc.case_id);
-  const workId = textOf(doc.review?.work_id);
-  return (
-    <>
-      {state.refreshFailed && (
-        <Callout kind="warning">
-          We couldn&rsquo;t refresh this page, so it may be out of date.{' '}
-          <Button kind="secondary" size="sm" onClick={() => void refresh()}>
-            Try again
-          </Button>
-        </Callout>
-      )}
-      {workId ? <ReviewHost doc={doc} workId={workId} refresh={refresh} caseId={caseId} /> : <DocumentBody doc={doc} review={null} caseId={caseId} />}
-    </>
-  );
+  return <DocumentBody caseId={caseId} versionId={versionId} doc={state.doc} publication={state.publication} refreshFailed={state.refreshFailed} refresh={refresh} />;
 }
 
 function DocumentRoute({ caseId, documentId }: { caseId: string; documentId: string }) {
-  const params = useSearchParams();
   const me = useMe();
   usePhoneBack({ label: 'Projects', href: '/projects' });
-  const version = parseVersion(params?.get('v'));
   if (!hasDestination(me, 'projects')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
-  // The latest version is never guessed: a missing or unreadable v is not found, and nothing is requested.
-  if (!version) return <DocumentNoAccess />;
-  return <DocumentLoaded key={`${documentId}:${version}`} routeCase={caseId} documentId={documentId} version={version} />;
+  // The latest version is never guessed: an id that is not a whole version number is not found, and nothing is requested.
+  if (!isVersionId(documentId)) return <DocumentNoAccess />;
+  return <DocumentLoaded key={`${caseId}:${documentId}`} caseId={caseId} versionId={documentId} />;
 }
 
-/** /projects/<case_id>/documents/<document_id>?v=<version>. */
+/** /projects/<case_id>/documents/<version_id>. */
 export function DocumentReviewPage({ caseId, documentId }: { caseId: string; documentId: string }) {
-  return (
-    <Suspense fallback={<LoadingState />}>
-      <DocumentRoute caseId={routeCaseId(caseId)} documentId={routeCaseId(documentId)} />
-    </Suspense>
-  );
+  return <DocumentRoute caseId={routeCaseId(caseId)} documentId={routeCaseId(documentId)} />;
 }

@@ -18,6 +18,7 @@
 // Assistant (F-24): the five assistant operations go to assistant.mjs, which also recognises a draft's E-WORK-START.
 // Delegation (F-27): E-DELEGATIONS and E-DELEGATION go to delegations.mjs (scenario and save cookies, overlay proposals).
 // Invoices (F-41): E-INVOICES answers from invoices.mjs (variant cookie psl_mock_invoices, q, status, paging, overlay proposals).
+// Document review (F-72): the live document-review reads and decision (documents.mjs, cookie psl_mock_docreview); the v7 E-DOCUMENT stays for the work item's document link.
 // Live demo (F-54, D-155): demo.mjs holds the switches and the answer delay; with the demo off nothing changes.
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
@@ -30,7 +31,7 @@ import { delayMs, delayReply, demoOn } from './demo.mjs';
 import { addDemoProject } from './demo-projects.mjs';
 import { caseVisible, normaliseProjectPath, projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
-import { documentRead } from './documents.mjs';
+import { documentRead, isLiveDocumentPath, liveDocumentReview, resetDocumentReviews } from './documents.mjs';
 import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
 import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
@@ -42,9 +43,11 @@ import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.m
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { createLineRuns } from './line-runs.mjs';
 import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
+import { resetStartLive, START_LIVE_PATH, START_LIVE_WORK, startLive, startLiveLog } from './start-live.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { workList } from './work-list.mjs';
+import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
 import { LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
 import { isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
@@ -242,7 +245,9 @@ function send(res, status, body, headers = {}) {
   res.end(text);
 }
 
-export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'))) {
+// `liveStart`: answer Start work's reads and the weekly start in the live shapes (start-live.mjs). The mock run from the command line sets it; the
+// v7 contract tests start the server without it and keep the v7 start (start-work.mjs).
+export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')), { liveStart = false } = {}) {
   const routes = loadRoutes(openapi);
   const me = Object.fromEntries(PERSONAS.map((p) => [p, readFixture(`me.${p}`)]));
   const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME' && id !== 'E-PROJECT-TAB' && id !== 'E-INVOICES' && !START_OPERATIONS.includes(id) && !ASSISTANT_OPERATIONS.includes(id)).map((id) => [id, readFixture(id)]));
@@ -281,6 +286,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (method === 'post' && url.pathname === '/__mock/reset') {
         overrides.clear();
         startWork.reset();
+        resetStartLive();
         resetResponses();
         resetSetup();
         resetTemplates();
@@ -288,7 +294,9 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         alerts.reset();
         resetWorkspace();
         resetRetrospective();
+        resetWorkLive();
         resetClients();
+        resetDocumentReviews();
         assistant.reset();
         runs.reset();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
@@ -306,6 +314,24 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         return send(res, ...retrospectiveRoute({ method, url, raw, token: req.headers['x-csrftoken'], expected: me[persona].csrf_token }));
       }
+      // F-85: live work item reads (integer ids only) and the case file upload (work-live.mjs); not in v7. v7 ids and v7 case routes fall through.
+      if (WORK_LIVE_PATH.test(url.pathname) || CASE_FILES_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        return send(res, ...workLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
+      }
+      // F-86: the live Start work reads and the weekly start (start-live.mjs). The v7 routes of the same paths stay for the v7 contract tests (start without liveStart).
+      if (method === 'get' && url.pathname === '/__mock/start-live-log') return send(res, 200, startLiveLog());
+      if ((START_LIVE_PATH.test(url.pathname) && method === 'get') || (url.pathname === START_LIVE_WORK && method === 'post')) {
+        const cookies = parseCookies(req.headers.cookie);
+        if (liveStart) {
+          const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+          const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+          return send(res, ...startLive({ method, url, raw, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona }));
+        }
+      }
+      if (method === 'get' && url.pathname === '/__mock/work-live-log') return send(res, 200, workLiveLog());
       if (method === 'get' && url.pathname === WORKSPACE_LOG_PATH) return send(res, 200, workspaceLog());
       if (method === 'get' && url.pathname === ASSISTANT_LOG_PATH) return send(res, 200, assistant.log());
       // D-161 (proposal, not in v7): the assistant's image upload and its read-back.
@@ -345,6 +371,17 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
           if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
           return send(res, ...roleDashboardRoute({ persona }));
         }
+      }
+      // F-72 (SCR-08): the live document-review reads and decision (documents.mjs); not in v7.
+      if ((method === 'get' || method === 'post') && isLiveDocumentPath(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (scenario && SCENARIO_BODIES[scenario] && (method === 'post' || ['401', '403', '404'].includes(String(scenario)))) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        if (scenario === 'csrf_failed' && method === 'post') return send(res, 403, CSRF_FAILED);
+        if (method === 'post' && req.headers['x-csrftoken'] !== me[persona].csrf_token) return send(res, 403, CSRF_FAILED);
+        const r = liveDocumentReview({ method, url, raw, persona, cookies, canSee: caseVisible });
+        return send(res, r.status, r.body);
       }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
@@ -426,11 +463,11 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
   });
 }
 
-export function startMockServer({ port = Number(process.env.MOCK_PORT ?? 4010) } = {}) {
+export function startMockServer({ port = Number(process.env.MOCK_PORT ?? 4010), liveStart = false } = {}) {
   if (process.env.NODE_ENV === 'production') {
     throw new Error('The mock API refuses to start with NODE_ENV=production.');
   }
-  const server = createMockServer();
+  const server = createMockServer(undefined, { liveStart });
   return new Promise((resolve, reject) => {
     server.once('error', reject);
     server.listen(port, '127.0.0.1', () => resolve(server));
@@ -439,7 +476,8 @@ export function startMockServer({ port = Number(process.env.MOCK_PORT ?? 4010) }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   try {
-    const server = await startMockServer();
+    // The running mock serves the live Start work (F-86); the v7 contract tests start it without.
+    const server = await startMockServer({ liveStart: true });
     const { port } = server.address();
     console.log(`Mock API (sample data) on http://127.0.0.1:${port}/api/v1`);
   } catch (error) {

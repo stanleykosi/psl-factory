@@ -21,3 +21,11 @@ export type MeetingSaveBody = livePaths['/api/v1/projects/{case_id}/meetings']['
 export type MeetingSaved = livePaths['/api/v1/projects/{case_id}/meetings']['post']['responses'][201]['content']['application/json'];
 export type ActionCreateBody = livePaths['/api/v1/projects/{case_id}/actions/create']['post']['requestBody']['content']['application/json'];
 export type ClosureChecklist = livePaths['/api/v1/projects/{case_id}/delivery/{dossier_id}/closure-checklist']['get']['responses'][200]['content']['application/json'];
+
+// F-85: the live work item (contract 1.22.0). The work item page and the line adapters read these, not the v7 WorkItem above.
+type LiveGet<P extends keyof livePaths> = livePaths[P] extends { get: { responses: { 200: { content: { 'application/json': infer B } } } } } ? B : never;
+export type LiveWorkItem = LiveGet<'/api/v1/work/{work_id}'>;
+export type LiveWorkTask = LiveWorkItem['tasks'][number];
+export type LiveWorkHistory = LiveGet<'/api/v1/work/{work_id}/history'>;
+export type LiveHistoryRow = LiveWorkHistory['items'][number];
+export type LiveWeeklyReport = LiveGet<'/api/v1/work/{work_id}/weekly-report'>;
