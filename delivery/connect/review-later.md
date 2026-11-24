@@ -4,3 +4,4 @@ Each feature below was built, passed the GitHub Actions checks (lint, typecheck,
 
 | Feature | PR | Merge sha | What it changed | Reviews done before D-210 | Still to review |
 |---|---|---|---|---|---|
+| F-78 mark a milestone complete (SCR-19) | #120 | f7aa2057 | the Mark complete page, the Milestones tab link, the empty completions state | gate, technical, security, QA, UX and UI PASS on 86e1a6cf (round 4) | PMO acceptance; UI-4-1 (empty-state look); live completion once LB-2 is fixed |

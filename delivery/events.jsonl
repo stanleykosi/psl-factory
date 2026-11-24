@@ -5396,3 +5396,15 @@
 {"at":"2026-11-24T21:15:07Z","feature":"F-78","round":3,"kind":"finding","action":"verify","finding":"UX-2-1","by":"reviewer-ux"}
 {"at":"2026-11-24T21:15:07Z","feature":"F-78","round":3,"kind":"transition","head":"d9f900c2122f","reason":"QA-3-1 blocking (stale e2e assertion); QA-3-2 live empty-sections bug; round 4 fixes both","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-24T21:15:14Z","feature":"F-78","round":4,"kind":"transition","head":"d9f900c2122f","reason":"round 4: QA-3-1, QA-3-2, confirm UI-1-4","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-24T21:20:58Z","feature":"F-119B","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"48221d25fe73","findings":{"QA-2-1":"medium","QA-2-2":"low","QA-2-3":"low"},"written_at":"2026-11-24T21:20:43Z"}
+{"at":"2026-11-24T21:21:53Z","feature":"F-78","round":4,"kind":"finding","action":"fix","finding":"QA-3-1","by":"builder"}
+{"at":"2026-11-24T21:21:53Z","feature":"F-78","round":4,"kind":"finding","action":"fix","finding":"QA-3-2","by":"builder"}
+{"at":"2026-11-24T21:21:53Z","feature":"F-78","round":4,"kind":"finding","action":"fix","finding":"UI-1-4","by":"builder"}
+{"at":"2026-11-24T21:25:57Z","feature":"F-78","round":4,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":243.7,"commit":"86e1a6cfc20e"}
+{"at":"2026-11-24T21:26:45Z","feature":"F-78","round":4,"kind":"review","role":"security","verdict":"PASS","reviewer":"security-reviewer","commit":"86e1a6cfc20e","written_at":"2026-11-24T21:26:44Z"}
+{"at":"2026-11-24T21:27:53Z","feature":"F-78","round":4,"kind":"review","role":"technical","verdict":"PASS","reviewer":"technical-reviewer","commit":"86e1a6cfc20e","written_at":"2026-11-24T21:27:01Z"}
+{"at":"2026-11-24T21:29:47Z","feature":"F-78","round":4,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"86e1a6cfc20e","written_at":"2026-11-24T21:29:15Z"}
+{"at":"2026-11-24T21:29:47Z","feature":"F-78","round":4,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"86e1a6cfc20e","findings":{"UI-4-1":"low"},"written_at":"2026-11-24T21:29:05Z"}
+{"at":"2026-11-24T21:30:51Z","feature":"F-78","round":4,"kind":"fields","fields":{"git.pr_number":120}}
+{"at":"2026-11-24T21:30:51Z","feature":"F-78","round":4,"kind":"fields","fields":{"git.merge_status":"merged"}}
+{"at":"2026-11-24T21:30:51Z","feature":"F-78","round":4,"kind":"fields","fields":{"git.merge_sha":"f7aa20574a162a7777750a4c76c2bf527fb47c1e"}}

@@ -118,6 +118,18 @@
       "at": "2026-11-24T21:03:22Z",
       "seconds": 7.6,
       "evidence_ref": "delivery/features/F-78/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 4,
+      "attempt": 1,
+      "commit": "86e1a6cfc20e7f6d999d4472374f7a8298fcd29a",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T21:25:57Z",
+      "seconds": 243.7,
+      "evidence_ref": "delivery/features/F-78/round-4/checks.md"
     }
   ],
   "reviews": {
@@ -738,14 +750,28 @@
         "delivery/features/F-78/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "ui-reviewer",
           "at": "2026-11-24T16:09:47Z",
           "head": "07aca01552f49d7d12a62a81baa077e2b2394cc7"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T21:21:53Z",
+          "refs": [
+            "round-4/build.md"
+          ],
+          "head": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "round-4/build.md"
       ]
     },
     {
@@ -1098,14 +1124,28 @@
         "delivery/features/F-78/round-3/review-qa.md"
       ],
       "raised_by": "qa-reviewer",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "qa-reviewer",
           "at": "2026-11-24T21:14:36Z",
           "head": "d9f900c2122f048e73d85ec1b4e3daac63125900"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T21:21:53Z",
+          "refs": [
+            "122c9d29"
+          ],
+          "head": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "122c9d29"
       ]
     },
     {
@@ -1121,14 +1161,28 @@
         "delivery/features/F-78/round-3/review-qa.md"
       ],
       "raised_by": "qa-reviewer",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "qa-reviewer",
           "at": "2026-11-24T21:14:36Z",
           "head": "d9f900c2122f048e73d85ec1b4e3daac63125900"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T21:21:53Z",
+          "refs": [
+            "122c9d29"
+          ],
+          "head": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "122c9d29"
       ]
     }
   ],
@@ -1344,21 +1398,22 @@
     "repository": null,
     "task_id": "FE-MILESTONE-COMPLETE",
     "base_branch": "main",
-    "base_sha": "811465d841db6da9fbbeb6b8953df2816cf62295",
+    "base_sha": "0676bf24a54a736c3e7a04d28d891ce87639d5ed",
     "task_branch": "fe-milestone-complete-mark-complete",
-    "head_sha": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+    "head_sha": "86e1a6cfc20e7f6d999d4472374f7a8298fcd29a",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b",
     "pr_url": null,
-    "pr_number": null,
+    "pr_number": 120,
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "not_run",
     "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "merge_status": "merged",
+    "merge_sha": "f7aa20574a162a7777750a4c76c2bf527fb47c1e",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/money.spec.ts",
+      "frontend/e2e/project-tabs.spec.ts",
       "frontend/mock/milestone-complete.mjs",
       "frontend/mock/server.mjs",
       "frontend/src/app/projects/[caseId]/milestones/complete/page.tsx",
@@ -1371,6 +1426,7 @@
       "frontend/src/features/projects/useMilestones.ts",
       "frontend/src/features/workspace/EvidencePicker.tsx",
       "frontend/tests/milestone-complete.test.tsx",
+      "frontend/tests/milestones-model.test.ts",
       "frontend/tests/milestones.test.tsx",
       "frontend/tests/mock-live-milestone-complete.test.ts"
     ]
@@ -1529,9 +1585,9 @@
   },
   "gate": {
     "round": 4,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "86e1a6cfc20e7f6d999d4472374f7a8298fcd29a"
   },
   "blocked": null
 }
