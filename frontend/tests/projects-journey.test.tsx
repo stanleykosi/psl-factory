@@ -115,7 +115,7 @@ const facts = () => [...document.querySelectorAll('.psl-fact')].map((f) => [f.qu
 const moreButton = () => screen.queryByRole('button', { name: 'Show more' });
 
 describe('journey reads GET /projects/{case_id}, drawn as SCR-07', () => {
-  it('P-0101: breadcrumb, title, six tabs without counts, PM and route line, four facts, the work rows in order, no what-is-next and no summary', async () => {
+  it('P-0101: breadcrumb, title, seven tabs without counts, PM and route line, four facts, the work rows in order, no what-is-next and no summary', async () => {
     await open();
     expect(calls).toHaveLength(1);
     expect(calls[0].pathname).toBe(`/api/v1/projects/${LAGOON}`);
@@ -129,6 +129,7 @@ describe('journey reads GET /projects/{case_id}, drawn as SCR-07', () => {
     const base = `/projects/${LAGOON}`;
     expect(projectTabs().map((t) => [t.textContent, t.getAttribute('href'), t.getAttribute('aria-selected')])).toEqual([
       ['Journey', base, 'true'],
+      ['Delivery', `${base}/delivery`, 'false'],
       ['Milestones', `${base}/milestones`, 'false'],
       ['Documents', `${base}/documents`, 'false'],
       ['Money', `${base}/money`, 'false'],
@@ -236,8 +237,8 @@ describe('journey reads GET /projects/{case_id}, drawn as SCR-07', () => {
     fireEvent.keyDown(projectTabs()[0], { key: 'ArrowRight' });
     await waitFor(() => expect(document.activeElement).toBe(projectTabs()[1]));
     fireEvent.keyDown(projectTabs()[1], { key: 'End' });
-    await waitFor(() => expect(document.activeElement).toBe(projectTabs()[5]));
-    fireEvent.keyDown(projectTabs()[5], { key: 'ArrowRight' });
+    await waitFor(() => expect(document.activeElement).toBe(projectTabs()[6]));
+    fireEvent.keyDown(projectTabs()[6], { key: 'ArrowRight' });
     await waitFor(() => expect(document.activeElement).toBe(projectTabs()[0]));
   });
 });
@@ -300,16 +301,16 @@ describe('Show more on the journey', () => {
 });
 
 describe('tabs from the live tabs[]', () => {
-  it('shows only the keys live returned that are routed, in the returned order; no Delivery, Templates or counts', async () => {
+  it('shows only the keys live returned that are routed, in the returned order, with Delivery after Journey; no Templates or counts', async () => {
     respond = () => json(200, body({ tabs: ['journey', 'templates', 'actions', 'delivery', 'month-end', 'milestones', 'hr'].map((key) => ({ key, title: key })) }));
     await open();
-    expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Actions', 'Milestones']);
+    expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Delivery', 'Actions', 'Milestones']);
   });
 
   it('a person whose tabs[] lacks money sees no Money tab', async () => {
     respond = () => json(200, body({ tabs: ['journey', 'milestones', 'documents', 'registers', 'actions'].map((key) => ({ key, title: key })) }));
     await open();
-    expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Milestones', 'Documents', 'Registers', 'Actions']);
+    expect(projectTabs().map((t) => t.textContent)).toEqual(['Journey', 'Delivery', 'Milestones', 'Documents', 'Registers', 'Actions']);
   });
 });
 

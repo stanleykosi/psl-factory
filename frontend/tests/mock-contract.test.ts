@@ -40,7 +40,7 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 );
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
-const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: 'CL-3501', template_id: 'T-01', tab: 'milestones', document_id: 'D-2304', version: '1' };
+const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: 'CL-3501', template_id: 'T-01', tab: 'documents', document_id: 'D-2304', version: '1' };
 const PROJECT_UUID = '00000000-0000-4000-8000-000000000101';
 const NOTIFICATION_IDS: Record<string, string> = { finance_lead: 'N-0001', pm: 'N-0101', ceo: 'N-0401', none: 'N-0201', admin: 'N-0201', pmo_lead: 'N-0201', hr: 'N-0301', hr_lead: 'N-0311' };
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };

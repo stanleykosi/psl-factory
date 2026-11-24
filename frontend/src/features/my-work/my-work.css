@@ -5,6 +5,8 @@
 
 /* header: title, then the mono "records you can see · updated" line */
 .my-work__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--space-3); }
+.my-work__verified { margin: 0; }
+.my-work__verified a { display: inline-flex; align-items: center; min-height: var(--control-md); color: var(--ink); font-weight: 600; }
 .my-work__updated { margin: 0 0 0 auto; font-family: var(--font-mono); font-size: var(--text-small-size); color: var(--ink-muted); }
 
 /* queue tabs: buttons drawn as .psl-tab; on phones the strip scrolls sideways */

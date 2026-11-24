@@ -60,3 +60,8 @@
 @media (max-width: 719.98px) {
   .money__title { font-size: var(--text-body-phone-size); }
 }
+
+/* F-71: a figure keeps its currency code with its amount; Paid and Owed wrap between the two, never inside one */
+.money__fig, .money__amountlink, .money__amount { white-space: nowrap; }
+/* F-71: one line per invoice in the invoice and paid cells */
+.money__block { display: block; }

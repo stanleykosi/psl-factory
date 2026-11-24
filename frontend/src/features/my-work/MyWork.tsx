@@ -17,6 +17,7 @@ import {
   buildWorkQuery,
   filterCount as countFilters,
   isNarrowed,
+  isV7Row,
   lineOptions,
   mergeRefresh,
   parseView,
@@ -88,7 +89,10 @@ export function MyWork() {
   const fetchPage = useCallback(async (v: View, cursor?: string, limit: Limit = DEFAULT_PAGE_SIZE) => {
     inFlight.current += 1;
     try {
-      return await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery({ ...v, limit }, cursor) } }));
+      const data = await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery({ ...v, limit }, cursor) } }));
+      // Rows that are not v7 rows fail the whole response, so they never reach the row components.
+      if (!data.items.every(isV7Row)) throw networkError();
+      return data;
     } finally {
       inFlight.current -= 1;
     }
@@ -396,6 +400,10 @@ export function MyWork() {
             <p className="my-work__updated">{records ? `${records} · updated ${formatTime(asOf)}` : `Updated ${formatTime(asOf)}`}</p>
           ))}
       </div>
+      {/* D-182: until F-63 places it, Verified outputs is reached from under the My work heading. */}
+      <p className="my-work__verified">
+        <Link href="/verified">Verified outputs</Link>
+      </p>
 
       <div className="my-work__tabs" ref={tabs}>
         <Tabs

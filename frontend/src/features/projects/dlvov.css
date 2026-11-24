@@ -1,0 +1,22 @@
+/* SCR-43 Delivery tab: six rows (number box, title link with reference beneath, tag and date on the right). The panel body
+   supplies the inset. On phones the board draws one compact line (title, tag) with reference and date beneath. */
+.dlvov__body { padding: var(--space-14px); display: flex; flex-direction: column; gap: var(--space-3); }
+.dlvov__list { list-style: none; margin: 0; padding: 0; }
+.dlvov__row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; grid-template-areas: "num title tag" "num ref date"; align-items: center; column-gap: var(--space-14px); padding: var(--space-3) 0; border-top: 1px solid var(--rule-soft); }
+.dlvov__row:first-child { border-top: 0; }
+.dlvov__num { grid-area: num; width: 28px; height: 28px; box-sizing: border-box; border: var(--rule-strong) solid var(--ink); display: flex; align-items: center; justify-content: center; font-size: var(--text-label-size); }
+.dlvov__title { grid-area: title; font-weight: 600; overflow-wrap: anywhere; color: var(--ink); }
+.dlvov__ref { grid-area: ref; font-size: var(--text-small-size); color: var(--ink-muted); }
+.dlvov__tag { grid-area: tag; justify-self: end; }
+.dlvov__date { grid-area: date; justify-self: end; font-size: var(--text-small-size); color: var(--ink-muted); }
+.dlvov__reasons { grid-column: 2 / -1; margin-top: var(--space-2); font-size: var(--text-small-size); }
+.dlvov__reasons ul { margin: var(--space-1) 0 0; padding-left: var(--space-4); }
+.dlvov__finding { color: var(--ink-muted); }
+.dlvov__rule { margin: 0; font-size: 13px; color: var(--ink-muted); }
+.dlvov__asof { margin: 0; }
+@media (max-width: 719.98px) {
+  .dlvov__row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "title tag" "ref date"; row-gap: var(--space-1); }
+  .dlvov__num { display: none; }
+  .dlvov__reasons { grid-column: 1 / -1; }
+  a.dlvov__title { display: inline-flex; align-items: center; min-height: 44px; }
+}

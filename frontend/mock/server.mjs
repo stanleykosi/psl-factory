@@ -29,8 +29,9 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { delayMs, delayReply, demoOn } from './demo.mjs';
 import { addDemoProject } from './demo-projects.mjs';
-import { caseVisible, normaliseProjectPath, projects } from './projects.mjs';
+import { caseVisible, idOf, normaliseProjectPath, projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
+import { deliveryRead } from './delivery-overview.mjs';
 import { documentRead, isLiveDocumentPath, liveDocumentReview, resetDocumentReviews } from './documents.mjs';
 import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
 import { exceptionsList } from './exceptions.mjs';
@@ -47,10 +48,11 @@ import { RECEIVED_BIDS_PATH, receivedBids, receivedBidsLog, resetReceivedBids } 
 import { resetStartLive, START_LIVE_PATH, START_LIVE_WORK, startLive, startLiveLog } from './start-live.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
+import { LIVE_QUEUES, liveWorkItem, liveWorkList, ownsLiveWorkItem } from './live-work.mjs';
 import { workList } from './work-list.mjs';
 import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
 import { LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
-import { isMoneyRequest, moneyRoute } from './money.mjs';
+import { isMilestoneRequest, isMoneyRequest, moneyRoute } from './money.mjs';
 import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
 import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, ASSISTANT_UPLOADS_PATH, createAssistantMock } from './assistant.mjs';
 import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
@@ -304,6 +306,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       // F-58: after a logout (cookie psl_mock_session=out) every other read and write answers 401, as a signed-out session does.
       if (url.pathname.startsWith('/api/') && url.pathname !== SESSION_PATH && url.pathname !== LOGOUT_PATH && parseCookies(req.headers.cookie).psl_mock_session === 'out') return send(res, ...SIGNED_OUT_REPLY);
+      // F-62: the work list's own rows (live-work.mjs) answer their item read before F-85's handler, which owns every other integer id.
+      if (method === 'get' && /^\/api\/v1\/work\/\d+$/.test(url.pathname) && ownsLiveWorkItem(Number(url.pathname.split('/')[4]))) { const r = liveWorkItem({ id: Number(url.pathname.split('/')[4]) }); return send(res, r.status, r.body); }
       // F-85: live work item reads (integer ids only) and the case file upload (work-live.mjs); not in v7. v7 ids and v7 case routes fall through.
       if (WORK_LIVE_PATH.test(url.pathname) || CASE_FILES_PATH.test(url.pathname)) {
         const cookies = parseCookies(req.headers.cookie);
@@ -370,6 +374,11 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
           return send(res, ...roleDashboardRoute({ persona }));
         }
       }
+      // F-71: one recorded completion of a project (live, not in v7); money.mjs answers it.
+      if (method === 'get' && isMilestoneRequest(url)) return send(res, ...moneyRoute({ route: { statuses: ['401', '403', '404'] }, url, req, cookies: parseCookies(req.headers.cookie) }));
+      // F-113 (not in v7): the delivery overview and the two reads behind the closure reason (delivery-overview.mjs).
+      const delivery = method === 'get' ? deliveryRead({ pathname: url.pathname, idOf }) : null;
+      if (delivery) return send(res, ...delivery);
       // F-72 (SCR-08): the live document-review reads and decision (documents.mjs); not in v7.
       if ((method === 'get' || method === 'post') && isLiveDocumentPath(url.pathname)) {
         const cookies = parseCookies(req.headers.cookie);
@@ -401,7 +410,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (RESPONSE_OPERATIONS.includes(route.operationId) && !setupProof) {
         return send(res, ...responseRoute(route.operationId, { req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
       }
-      // F-26: the money tab of E-PROJECT-TAB and E-REPORT go to money.mjs (its own persona and scenario check); other tabs stay 501.
+      // F-26, F-71: the money tab of E-PROJECT-TAB goes to money.mjs (its own persona and scenario check); other tabs stay 501.
       if (isMoneyRequest(route.operationId, url)) return send(res, ...moneyRoute({ route, url, req, cookies: parseCookies(req.headers.cookie) }));
       if (!M1_OPERATIONS.includes(route.operationId)) return send(res, 501, NOT_MOCKED);
 
@@ -421,6 +430,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (ALERT_OPERATIONS.includes(route.operationId)) { const r = alerts.handle({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (ASSISTANT_OPERATIONS.includes(route.operationId)) return send(res, ...assistant.handle({ operationId: route.operationId, url, raw, persona, agents: me[persona].assistant_agents ?? [], demo }));
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
+      if (route.operationId === 'E-WORK-LIST' && LIVE_QUEUES.includes(url.searchParams.get('queue'))) { const r = liveWorkList({ url, persona }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist, extra: runs.rows(persona) }); return send(res, r.status, r.body); }
       if (CLIENT_OPERATIONS.includes(route.operationId)) { const r = clients({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECTS' || route.operationId === 'E-PROJECT') { const r = projects({ operationId: route.operationId, url, persona }); return send(res, r.status, r.body); }
@@ -432,6 +442,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-TEMPLATES' || route.operationId === 'E-TEMPLATE-VERSION') { const r = (route.operationId === 'E-TEMPLATES' ? templatesList : templateVersion)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-DELEGATIONS' || route.operationId === 'E-DELEGATION') { const r = (route.operationId === 'E-DELEGATIONS' ? delegationsList : saveDelegation)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-EVIDENCE-UPLOAD') { const r = uploadEvidence({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-WORK-ITEM' && /^\/api\/v1\/work\/\d+$/.test(url.pathname)) { const r = liveWorkItem({ id: Number(url.pathname.split('/')[4]) }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         // F-40 (UX-1-3): a handover item (W-37xx) answers only a persona who can see its project, as the Delivery tab does
         if (/^\/api\/v1\/work\/W-37\d\d(\/|$)/.test(url.pathname) && !caseVisible('P-0101', persona)) return send(res, 404, { code: 'not_found', message: 'We could not find that record.' });

@@ -1,0 +1,29 @@
+/* SCR-14 Verified outputs. Token variables only; the shared components are composed, and only the row layout and the
+   phone cards are added. Rows are a table from 720px (bp-phone), cards below. */
+
+.ver-page { display: flex; flex-direction: column; gap: var(--space-20px); min-width: 0; }
+.ver-header { display: flex; flex-direction: column; gap: var(--space-6px); }
+.ver-toolbar { min-width: 0; }
+
+.ver-tablewrap .psl-table { min-width: 900px; }
+.ver-tablewrap th { line-height: 1.3; padding-left: var(--space-4); padding-right: var(--space-4); }
+.ver-tablewrap td { line-height: 1.3; padding: var(--space-3) var(--space-4); vertical-align: middle; }
+a.ver-title, .ver-title { display: block; color: var(--ink); font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+a.ver-title:hover { text-decoration: underline; }
+.ver-open { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+.ver-note { margin: 0; max-width: 260px; font-size: var(--text-small-size); color: var(--ink-muted); }
+
+/* phone rows: separate outlined cards; the title link covers the card and Open output sits above it */
+.ver-cards { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-10px); }
+.ver-card { position: relative; font-size: var(--text-body-phone-size); line-height: 1.3; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); color: var(--ink); }
+.ver-card a.ver-title::after { content: ''; position: absolute; inset: 0; }
+.ver-card:hover a.ver-title { text-decoration: underline; }
+.ver-card .ver-open { position: relative; z-index: 1; }
+.ver-card .ver-open .psl-btn { min-height: 44px; }
+.ver-meta { font-size: var(--text-hint-size); color: var(--ink-muted); }
+
+@media (max-width: 719.98px) {
+  .ver-toolbar .psl-toolbar { flex-wrap: nowrap; gap: var(--space-2); }
+  .ver-toolbar .cmp-toolsearch { flex: 1 1 0; min-width: 0; max-width: none; }
+  .ver-page { gap: var(--space-10px); }
+}
