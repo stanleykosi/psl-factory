@@ -4921,3 +4921,12 @@
 {"at":"2026-11-24T14:13:35Z","feature":"F-119","round":2,"kind":"finding","action":"add","finding":"UI-2-2","by":"reviewer-ui","severity":"medium","owner":"design engineer","blocking":true,"role":"ui"}
 {"at":"2026-11-24T14:13:35Z","feature":"F-119","round":2,"kind":"transition","head":"f39d6dda8b09","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-24T14:13:35Z","feature":"F-119","round":3,"kind":"transition","head":"f39d6dda8b09","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-24T14:15:27Z","feature":"F-87","round":3,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":302.6,"commit":"9f9dc026b5e6"}
+{"at":"2026-11-24T14:15:46Z","feature":"F-87","round":3,"kind":"transition","head":"9f9dc026b5e6","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-24T14:15:49Z","feature":"F-88","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T14:15:49Z","feature":"F-88","round":2,"kind":"finding","action":"add","finding":"QA-2-2","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T14:15:49Z","feature":"F-88","round":2,"kind":"finding","action":"add","finding":"QA-2-3","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T14:15:49Z","feature":"F-88","round":2,"kind":"transition","head":"eacdc7045a45","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-24T14:17:21Z","feature":"F-71","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"ui-reviewer","commit":"cfc3c4623820","findings":{"UI-2-1":"medium","UI-2-2":"low","UI-2-3":"medium"},"written_at":"2026-11-24T14:16:23Z"}
+{"at":"2026-11-24T14:17:21Z","feature":"F-87","round":3,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"9f9dc026b5e6","written_at":"2026-11-24T14:16:53Z"}
+{"at":"2026-11-24T14:17:21Z","feature":"F-88","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"eacdc7045a45","findings":{"PMO-2-1":"low","PMO-2-2":"low","PMO-2-3":"low","PMO-2-4":"low"},"written_at":"2026-11-24T14:17:11Z"}

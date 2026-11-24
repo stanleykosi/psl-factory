@@ -314,6 +314,12 @@ Parts that 1.24.0 now supplies are switched on as the boards draw them (D-185), 
   2. Sign some and name the ones to rebuild as drawn.
   More may follow once the round-2 fidelity re-run reports: NGN against ₦, board sample values, and a visual waiver if the score stays under 90.
 
+- **F-71 · B34. The rest of the Money and Milestones fidelity gap (blocks F-71's merge with B33, finding UI-1-1).** The round-2 UI review passed the frontend with no build gaps left, but the fidelity tool still fails. Coverage is 36 to 83% and visual 79 to 83, against 100% and 90. Evidence is in `delivery/features/F-71/round-2/review-ui.md` and `round-2/fidelity/`.
+  1. (Recommended) Accept as sample content, not exceptions to list one by one: the board sample values and wording live data cannot carry (UI-2-1). These are the invoice status words, "Held · owner needed", stage names, source rows and "—" cells. They also include three copy differences the spec records: the lead sentence, "Not yet" against "Not completed", and "Done <date>" plus a Proof button.
+  2. (Recommended) Accept "NGN 3,000,000.00" (the currency code from the record, as the spec requires) where the boards draw "₦3,000,000" (UI-2-2).
+  3. (Recommended) Waive visual for the six SCR-12/SCR-38 runs (UI-2-3), as D-179 did for sign-in. The score stays under 90 because of accepted hides and spec-approved additions (the INVOICE and PAID columns, Recorded completions). The reviewer found no styling difference of the build's own.
+  Alternative: name a board to rebuild closer to the drawing.
+
 ## Lane C
 
 ### LC-Q1 · F-85, F-87 · Work item parts the live API does not give
