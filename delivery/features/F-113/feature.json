@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-113",
   "outcome": "The Delivery tab shows the project's six delivery lines from the live overview",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -112,18 +112,22 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA, round 2",
+      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+      "evidence_refs": [
+        "delivery/features/F-113/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance, round 2",
+      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+      "evidence_refs": [
+        "delivery/features/F-113/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
@@ -724,6 +728,121 @@
           "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+      "owner": "integration",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Evidence missing for the live started-row journey (AC1 on Django, AC3, AC7, AC8). The qa-seed project `4a228bcb-f762-4bc6-858e-74e9ab11ebd3` (\"Project delivery\") has no delivery dossier: `GET /projects/{id}/delivery/1/closure-checklist` and `/2/` return 404, and `POST /work` with `delivery-release/v1`, `dossier_id: 1` returns 422 `action_unavailable`. Seed command not run, for the merge batch: `manage.py seed_delivery_demo --username <qa-seed account>` (PGPORT=55433, PSL_ENV=development; `local-dev-environment` memory says it was refused before for want of delivered receipts, so it may need a prior seed such as `seed_demo`, `seed_standard_demo` or `seed_rfp_demo`). After it, start the lines through `POST /work` and open `/projects/{id}/delivery` on Next pointed at 8030 (build with `API_ORIGIN=http://127.0.0.1:8030`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T09:07:49Z",
+          "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The live line titles differ from the mock and the spec's table. Live `title` values are \"Delivery gates and release evidence\", \"Release observations and hypercare\", \"Support and Operations handover\", \"Project artifact archive\" and \"Project closure\" (Go-live acceptance matches). The page prints the API title as sent, which follows the spec (\"from title\"). The wording is longer than the board's \"Release gates\", \"Hypercare\", \"Handover to Support\" and so on. At 390 the longer titles still do not overflow. Confirm whether to show API titles or fixed board words. Not a regression.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T09:07:49Z",
+          "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carried from round 1 and unchanged: `effect_uncertain` uses the amber waiting tone (TECH-1-1). Accepted under D-195, so this is for the record only. I did not exercise it on screen because neither the mock nor the live data has that state.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T09:07:49Z",
+          "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` acceptance criterion 3 still reads \"Open goes to /work/{work_id}\" and \"click Open\". `spec.md` AC3 was reworded under D-195 to \"click the row title\". Expected: both records agree. Actual: the stale wording is in the feature record only. Update at the next record sync. Behavior and tests already match the reworded AC (`delivery-tab.test.tsx`, QA UI-1-4 check).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T09:09:09Z",
+          "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`git.changed_paths` in `feature.json` lists backend, contract and unrelated frontend files (for example `apps/**`, `contracts/psl-factory.openapi.json`, `frontend/src/api/live-schema.d.ts`). The cause is the coordinator's merge of origin/main (e6c24e70, commit 0517372f, `round-1/build.md` \"Coordinator: sync with main\"), not F-113 work. Expected at the D-193 pre-merge sync: `git diff --stat origin/main` shows only the F-113 files, with no change to `src/features/workspace/**` or `protected_paths` (AC15) and no change to `live-schema.d.ts` (AC16). I judged scope from the build records and could not run git in this role, so it is carried to that diff-only re-check.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T09:09:09Z",
+          "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -986,6 +1105,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-24T08:57:51Z",
+      "round": 2,
+      "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-24T09:08:03Z",
       "round": 2,
       "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
       "reason": null

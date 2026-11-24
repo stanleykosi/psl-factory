@@ -4701,3 +4701,18 @@
 {"at":"2026-11-24T08:54:10Z","feature":"F-64","round":2,"kind":"finding","action":"fix","finding":"UI-1-5","by":"builder"}
 {"at":"2026-11-24T08:56:39Z","feature":"F-113","round":2,"kind":"finding","action":"verify","finding":"UI-1-5","by":"reviewer-ui"}
 {"at":"2026-11-24T08:57:51Z","feature":"F-113","round":2,"kind":"transition","head":"6636f0eb7b4a","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-24T09:00:27Z","feature":"F-69","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","contract-change","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-24T09:00:33Z","feature":"F-69","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-24T09:00:34Z","feature":"F-121","round":0,"kind":"planned","risk":"high","surfaces":["ui","api","auth","contract-change","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-24T09:00:38Z","feature":"F-121","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-24T09:00:39Z","feature":"F-122","round":0,"kind":"planned","risk":"medium","surfaces":["ui","api","contract-change","external-messaging","product-decision"],"reviewers":["technical","ux","ui","security"]}
+{"at":"2026-11-24T09:00:41Z","feature":"F-122","round":0,"kind":"transition","from":"PLANNED","to":"READY"}
+{"at":"2026-11-24T09:07:49Z","feature":"F-113","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"6636f0eb7b4a","findings":{"QA-2-1":"medium","QA-2-2":"low","QA-2-3":"low"},"written_at":"2026-11-24T09:07:37Z"}
+{"at":"2026-11-24T09:07:49Z","feature":"F-113","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"qa","severity":"medium","owner":"integration","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T09:07:49Z","feature":"F-113","round":2,"kind":"finding","action":"add","finding":"QA-2-2","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T09:07:49Z","feature":"F-113","round":2,"kind":"finding","action":"add","finding":"QA-2-3","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T09:08:03Z","feature":"F-113","round":2,"kind":"transition","head":"6636f0eb7b4a","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-24T09:09:07Z","feature":"F-113","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"6636f0eb7b4a","findings":{"PMO-2-1":"low","PMO-2-2":"low"},"written_at":"2026-11-24T09:08:49Z"}
+{"at":"2026-11-24T09:09:09Z","feature":"F-113","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-24T09:09:09Z","feature":"F-113","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-24T09:09:54Z","feature":"F-113","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), accepted in batch, delegated under D-184","commit":"6636f0eb7b4a","written_at":"2026-11-24T09:09:40Z"}

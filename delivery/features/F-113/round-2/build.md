@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753
+COMMIT: 2b2936217bdaf5319c6f464ba7e129bd4ea26e6e
 BUILDER: builder
 LANE: full
 
@@ -38,3 +38,6 @@ Unchanged from round 1 except AC3: the started row's title link goes to `/work/2
 
 ## Blocked
 None. Open for the design engineer: sign the proposed exceptions and the two D-83 visual waivers in `delivery/features/F-113/fidelity-exceptions.json`.
+
+## Coordinator: D-193 sync with main
+Merged origin/main (ae0525fb: F-86, F-72) once before merge, as merge commit 2b293621. The one conflict was in `frontend/mock/server.mjs`: both sides kept, F-113's `deliveryRead` route and import plus F-72's live document-review route and its wider `documents.mjs` import. F-113's own code is unchanged. `delivery-tab` and `delivery-model` tests: 47 pass.
