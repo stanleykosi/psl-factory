@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-87",
   "outcome": "The work item can check what happened, resume or cancel, and pause or continue background work, live",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -184,7 +184,7 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -201,11 +201,25 @@
           ],
           "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:39:26Z",
+          "refs": [
+            "`PanelView` now keeps `ready` (the last good readback) separate from `failed`. A failed re-read draws the warning and \"Try again\" above the sections and leaves `Actions` mounted, and nothing resets `ready` to null. The new test (\"a line command that timed out stays locked when the panel re-read fails and Try again is pressed\") runs this sequence: line POST 500, panel GET 500, Go still disabled, Try again, panel fails again, Go still disabled with \"Check the page before trying again.\", panel reads again at the same revision, Go still disabled, and `slotPosts === 1`. On the old `PanelView` it fails because the form had been unmounted. The remount part the coordinator asked about does not hold. That is TECH-2-1."
+          ],
+          "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "descriptor fields win over inputs, tested"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`PanelView` now keeps `ready` (the last good readback) separate from `failed`. A failed re-read draws the warning and \"Try again\" above the sections and leaves `Actions` mounted, and nothing resets `ready` to null. The new test (\"a line command that timed out stays locked when the panel re-read fails and Try again is pressed\") runs this sequence: line POST 500, panel GET 500, Go still disabled, Try again, panel fails again, Go still disabled with \"Check the page before trying again.\", panel reads again at the same revision, Go still disabled, and `slotPosts === 1`. On the old `PanelView` it fails because the form had been unmounted. The remount part the coordinator asked about does not hold. That is TECH-2-1."
       ]
     },
     {
@@ -221,7 +235,7 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -238,11 +252,25 @@
           ],
           "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:39:26Z",
+          "refs": [
+            "`LineActionsProps.onAccessLost` is set to the page's `lose` (`PanelView` gets `onAccessLost={lose}`). The doc example passes it to `useWorkCommand`. The slot test checks `typeof props.onAccessLost === 'function'`, and the TECH-1-1 test's form uses it."
+          ],
+          "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`LineActionsProps.onAccessLost` is set to the page's `lose` (`PanelView` gets `onAccessLost={lose}`). The doc example passes it to `useWorkCommand`. The slot test checks `typeof props.onAccessLost === 'function'`, and the TECH-1-1 test's form uses it."
       ]
     },
     {
@@ -258,7 +286,7 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -275,11 +303,25 @@
           ],
           "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:39:26Z",
+          "refs": [
+            "`send()` throws `ApiError(0,'invalid','refused_before_sending',\u2026)` before any request when `isPanelUrl` fails. The test sends `https://evil.example/...`, `//evil.example/...`, `/api/v1/../admin` and `/other/x`, and none of them reaches the network. A small side effect: the `invalid` branch then re-reads the item, which is a harmless extra GET."
+          ],
+          "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`send()` throws `ApiError(0,'invalid','refused_before_sending',\u2026)` before any request when `isPanelUrl` fails. The test sends `https://evil.example/...`, `//evil.example/...`, `/api/v1/../admin` and `/other/x`, and none of them reaches the network. A small side effect: the `invalid` branch then re-reads the item, which is a harmless extra GET."
       ]
     },
     {
@@ -295,7 +337,7 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -312,11 +354,25 @@
           ],
           "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:39:26Z",
+          "refs": [
+            "The \"Sent. We couldn't reload\u2026\" notice is now `kind: 'error'`, so `ItemControls` draws it as a `problem` Callout and it stays while the controls are disabled. The deferred-POST test checks the kind."
+          ],
+          "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The \"Sent. We couldn't reload\u2026\" notice is now `kind: 'error'`, so `ItemControls` draws it as a `problem` Callout and it stays while the controls are disabled. The deferred-POST test checks the kind."
       ]
     },
     {
@@ -332,7 +388,7 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -349,11 +405,25 @@
           ],
           "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:39:26Z",
+          "refs": [
+            "The line `ctx` is memoized on `[item]`, so every read gives a new object and a successful re-read clears the unread lock. `setUnreadAt(latest.current)` uses a ref that an effect updates after each render, so a poll that lands mid-write no longer cancels the lock. The deferred-POST test checks the case: a poll rerender mid-write, then a failed re-read, and `busy` is still true. A poll set but not yet committed at the very moment `reload()` resolves would still slip through. That window is negligible."
+          ],
+          "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The line `ctx` is memoized on `[item]`, so every read gives a new object and a successful re-read clears the unread lock. `setUnreadAt(latest.current)` uses a ref that an effect updates after each render, so a poll that lands mid-write no longer cancels the lock. The deferred-POST test checks the case: a poll rerender mid-write, then a failed re-read, and `busy` is still true. A poll set but not yet committed at the very moment `reload()` resolves would still slip through. That window is negligible."
       ]
     },
     {
@@ -369,7 +439,7 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -386,11 +456,25 @@
           ],
           "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:39:26Z",
+          "refs": [
+            "Added tests: a poll mid-write with a deferred POST (criterion 9). A `w500` page test where Resume is disabled with \"Check the page before trying again.\" in the row and one POST is sent (criterion 15). An e2e test for 403 (\"You can\u2019t do this.\" plus the server message) followed by 422 (message and field), two writes (criteria 12 and 13)."
+          ],
+          "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Added tests: a poll mid-write with a deferred POST (criterion 9). A `w500` page test where Resume is disabled with \"Check the page before trying again.\" in the row and one POST is sent (criterion 15). An e2e test for 403 (\"You can\u2019t do this.\" plus the server message) followed by 422 (message and field), two writes (criteria 12 and 13)."
       ]
     },
     {
@@ -406,7 +490,7 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -423,11 +507,25 @@
           ],
           "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:39:26Z",
+          "refs": [
+            "With `action: null` the body deletes `action` after the spread. The test sends `{action:'evil', enabled:false}` and gets back the keys `['enabled','expected_revision']`. `useWriteLock.unlock` is removed, and a grep of every lane worktree finds no caller."
+          ],
+          "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "With `action: null` the body deletes `action` after the spread. The test sends `{action:'evil', enabled:false}` and gets back the keys `['enabled','expected_revision']`. `useWriteLock.unlock` is removed, and a grep of every lane worktree finds no caller."
       ]
     },
     {
@@ -443,7 +541,7 @@
         "delivery/features/F-87/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -460,11 +558,25 @@
           ],
           "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T13:39:26Z",
+          "refs": [
+            "/work/4121 with scenario w500 at 1440 and 390: Resume disabled, label \"Resume\", sentence beside it; no \"Working...\" (it shows only while the request is running)."
+          ],
+          "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "/work/4121 with scenario w500 at 1440 and 390: Resume disabled, label \"Resume\", sentence beside it; no \"Working...\" (it shows only while the request is running)."
       ]
     },
     {
@@ -502,6 +614,29 @@
       "fix_by": "builder",
       "fix_refs": [
         "decision rows capitalised"
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The press, uncertain and unread locks are lost when the person switches tabs. `LiveWorkItemLayoutFrame` sits in `app/work/[id]/(item)/layout.tsx`, so `useLiveWorkItem` and its `item` stay the same between Overview and History, with no new read. But `LiveWorkItemView` draws `tab === 'overview' ? <Overview \u2026/> : <History \u2026/>`, so History unmounts `ItemControls` and every `PanelView`/`Actions`, and with them each `useWorkCommand`/`useWriteLock` state (`locked`, `pending`, `unreadAt`). Steps to repeat: `w500` on Resume shows \"Check the page before trying again.\" and Resume is disabled. Open History, then Overview. Resume is enabled again at the same revision, and pressing it sends a second POST. If the tabs are switched while the write is still running, a second write can go out alongside the first. This breaks criterion 15 and the spec's uncertain rule (\"unlocks only when a re-read shows a different revision or the page is reloaded\"). The coordinator extended that rule to every line form, and in lanes B and D the line writes are the ones the work-item revision check protects least. Expected: hold the lock state (uncertain keys, pending write, unread mark) at the frame, for example a small provider in `LiveWorkItemView` that `useWorkCommand` uses when it is present and replaces with local state when it is not. Key it by work id, command id and revision. Then a tab switch keeps the locks and a real page reload clears them. The `useWorkCommand` signature and the `Actions` slot stay as they are. Add a page test: Resume gets a 500, open History, then Overview, Resume is still disabled with the sentence beside it, and there was one POST. Add the same test for a registered line `Actions`. | frontend/src/features/work-item/live/LiveWorkItemView.tsx:356-371 (tab switch), :213 and :271 (lock owners mounted under Overview); frontend/src/features/workspace/useWorkCommand.ts:78-83",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:39:26Z",
+          "head": "a960d20decf30c113e2a4a9eedcff80949ac3202"
+        }
       ]
     }
   ],
@@ -557,6 +692,61 @@
           "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
           "evidence_refs": [
             "delivery/features/F-87/round-1/review-ui.md"
+          ]
+        }
+      }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead), lighter panel (D-180), Opus for high risk",
+          "snapshot_ref": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+          "evidence_refs": [
+            "delivery/features/F-87/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-87/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+          "evidence_refs": [
+            "delivery/features/F-87/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "reviewer-ui",
+          "snapshot_ref": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+          "evidence_refs": [
+            "delivery/features/F-87/round-2/review-ui.md"
           ]
         }
       }
@@ -648,7 +838,7 @@
     }
   },
   "created_at": "2026-11-23T13:20:57Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -698,6 +888,22 @@
       "round": 2,
       "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T13:39:27Z",
+      "round": 2,
+      "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T13:39:28Z",
+      "round": 3,
+      "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+      "reason": null
     }
   ],
   "routing": {
@@ -713,10 +919,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 3,
-    "verdict": "PASS",
-    "commit": "a960d20decf30c113e2a4a9eedcff80949ac3202"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

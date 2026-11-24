@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-88",
   "outcome": "Log a received RFP and assign its accountable PM through the live API",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -96,11 +96,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead), lighter panel D-180",
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -126,18 +128,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux (lighter panel, D-180)",
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (lighter panel, D-180)",
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -154,7 +160,7 @@
         "delivery/features/F-88/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -171,11 +177,25 @@
           ],
           "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:39:08Z",
+          "refs": [
+            "`withOwnLines` and `OWN_LINES` are removed from LineChooser, StartWorkDrawer and lines/index.ts. The chooser and `direct` prefill read `state.data.items` only. The updated test expects the \"There are no lines you can start right now.\" empty state."
+          ],
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "506935c4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`withOwnLines` and `OWN_LINES` are removed from LineChooser, StartWorkDrawer and lines/index.ts. The chooser and `direct` prefill read `state.data.items` only. The updated test expects the \"There are no lines you can start right now.\" empty state."
       ]
     },
     {
@@ -191,7 +211,7 @@
         "delivery/features/F-88/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -208,11 +228,25 @@
           ],
           "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:39:08Z",
+          "refs": [
+            "The `notice` state, `setNotice(undefined)` and the Callout are removed, and the unused `Callout` import is dropped. A stale comment is left (see TECH-2-1)."
+          ],
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "506935c4"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The `notice` state, `setNotice(undefined)` and the Callout are removed, and the unused `Callout` import is dropped. A stale comment is left (see TECH-2-1)."
       ]
     },
     {
@@ -274,7 +308,7 @@
         "delivery/features/F-88/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -291,11 +325,25 @@
           ],
           "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T13:39:08Z",
+          "refs": [
+            "At 1440 and 390 the chooser shows one visible \"Lines you can start \u00b7 2\" count and no repeated visible heading; Log a received RFP is listed only because `/lines` serves it. The hidden legend repeat is UX-2-1."
+          ],
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "506935c4"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "At 1440 and 390 the chooser shows one visible \"Lines you can start \u00b7 2\" count and no repeated visible heading; Log a received RFP is listed only because `/lines` serves it. The hidden legend repeat is UX-2-1."
       ]
     },
     {
@@ -334,7 +382,7 @@
         "delivery/features/F-88/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -351,11 +399,25 @@
           ],
           "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:39:08Z",
+          "refs": [
+            "Assign PM drawer at 1440 and 390 shows the blue info callout (\"Only people allowed to prepare RFPs ... set by PSL in Setup.\") at the top and \"2 people can prepare RFPs here\" under Accountable PM (from nominees.length, AssignPmDrawer.tsx:223, 252)."
+          ],
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "506935c4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Assign PM drawer at 1440 and 390 shows the blue info callout (\"Only people allowed to prepare RFPs ... set by PSL in Setup.\") at the top and \"2 people can prepare RFPs here\" under Accountable PM (from nominees.length, AssignPmDrawer.tsx:223, 252)."
       ]
     },
     {
@@ -371,7 +433,7 @@
         "delivery/features/F-88/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -388,11 +450,25 @@
           ],
           "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:39:08Z",
+          "refs": [
+            "\"One of the roles PSL allows to assign RFPs\" shows under \"You are assigning as\" at both widths (AssignPmDrawer.tsx:265, 272); Proof block and Reason field present."
+          ],
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "506935c4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "\"One of the roles PSL allows to assign RFPs\" shows under \"You are assigning as\" at both widths (AssignPmDrawer.tsx:265, 272); Proof block and Reason field present."
       ]
     },
     {
@@ -408,7 +484,7 @@
         "delivery/features/F-88/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -425,11 +501,71 @@
           ],
           "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:39:08Z",
+          "refs": [
+            "Log RFP at 1440: eyebrow \"START WORK \u00b7 PRE-SALE\", info callout, labels Received / Submit to / Submission deadline (Unknown, Stated, Not stated), hints under RFP reference, Received and RFP document, and \"How the client wants it submitted (optional)\" as a four-way segment (Email, Client portal, By hand, Not stated). At 390 the callout, labels, hints and segments are the same and nothing overflows. The Submit to hint is present in the build; the \"Client\" label and missing note and deadline hints are the approved D-198 differences."
+          ],
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "506935c4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Log RFP at 1440: eyebrow \"START WORK \u00b7 PRE-SALE\", info callout, labels Received / Submit to / Submission deadline (Unknown, Stated, Not stated), hints under RFP reference, Received and RFP document, and \"How the client wants it submitted (optional)\" as a four-way segment (Email, Client portal, By hand, Not stated). At 390 the callout, labels, hints and segments are the same and nothing overflows. The Submit to hint is present in the build; the \"Client\" label and missing note and deadline hints are the approved D-198 differences."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/my-work/MyWork.tsx:69` still has the F-36 comment about the assign panel's `notice`, but the state it described is gone. Delete the comment in a later pass. It is harmless.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:39:08Z",
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The chooser splits the lines into runs around the unavailable ones, and each run is a radio group with the same hidden legend \"Lines you can start\", so assistive tech hears the same group name twice. Expected a distinct name per run, or one group. `frontend/src/features/start-work/LineChooser.tsx:137`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T13:39:08Z",
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df"
+        }
       ]
     }
   ],
@@ -628,6 +764,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-24T13:30:44Z",
+      "round": 2,
+      "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-24T13:39:29Z",
       "round": 2,
       "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
       "reason": null
