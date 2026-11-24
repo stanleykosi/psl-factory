@@ -8,7 +8,11 @@ import { Button, Callout, Checkbox, DateField, Select, TextArea, TextField } fro
 
 import { carriedDecisions, DECISION_TEXT_MAX, DECISIONS_MAX, localStamp, moreThanShown, NO_PROOFS, REFERENCE_MAX, saveBody, saveProblems, type MeetingDetail, type MeetingOptions, type SaveDraft } from './model';
 import { parseSummary, BOX_KEYS, BOX_LABELS, EMPTY_BOXES, SUMMARY_LIMIT, writeSummary, type BoxKey } from './summary';
-import type { Failure } from './useRetrospective';
+import { FailureNotice } from './FailureNotice';
+import type { Failure } from './failure';
+
+/** The failure fields this form has a control for. */
+const DRAWN = ['reference', 'occurredAt', 'boxes', 'evidence'];
 
 import './retrospective.css';
 
@@ -68,11 +72,24 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
         onSave(saveBody(draft, revision));
       }}
     >
+      <div className="retro__pair">
+      <DateField
+        time
+        label="When it was held"
+        value={draft.occurredAt}
+        onChange={(occurredAt) => set({ occurredAt })}
+        unavailable={(iso) => (iso > localStamp(now).slice(0, 10) ? "That day hasn't happened yet." : undefined)}
+        error={problems.occurredAt && draft.occurredAt !== '' ? problems.occurredAt : serverFields.occurredAt}
+      />
+
+      <TextField label="Reference" value={draft.reference} readOnly={!first} onChange={(e) => set({ reference: e.target.value })} hint={first ? undefined : 'Every version of a retrospective keeps its reference.'} error={serverFields.reference ?? (draft.reference.length > REFERENCE_MAX ? problems.reference : undefined)} />
+
+      </div>
       {draft.whole !== null ? (
-        <TextArea label="Retrospective" value={draft.whole} onChange={(e) => set({ whole: e.target.value })} error={problems.boxes ? undefined : serverFields.boxes} rows={6} />
+        <TextArea label="Retrospective" value={draft.whole} onChange={(e) => set({ whole: e.target.value })} error={problems.boxes ? undefined : serverFields.boxes} rows={6} fieldClassName="retro__box" />
       ) : (
         BOX_KEYS.map((key) => (
-          <TextArea key={key} label={BOX_LABELS[key]} value={draft.boxes[key]} onChange={(e) => setBox(key, e.target.value)} error={problems.boxLines[key] ?? (key === 'well' ? serverFields.boxes : undefined)} rows={3} />
+          <TextArea key={key} label={BOX_LABELS[key]} value={draft.boxes[key]} onChange={(e) => setBox(key, e.target.value)} error={problems.boxLines[key] ?? (key === 'well' ? serverFields.boxes : undefined)} rows={3} fieldClassName="retro__box" />
         ))
       )}
       {draft.other !== '' && (
@@ -101,17 +118,6 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
         ))}
       </fieldset>
 
-      <DateField
-        time
-        label="When it was held"
-        value={draft.occurredAt}
-        onChange={(occurredAt) => set({ occurredAt })}
-        unavailable={(iso) => (iso > localStamp(now).slice(0, 10) ? "That day hasn't happened yet." : undefined)}
-        error={problems.occurredAt && draft.occurredAt !== '' ? problems.occurredAt : serverFields.occurredAt}
-      />
-
-      <TextField label="Reference" value={draft.reference} readOnly={!first} onChange={(e) => set({ reference: e.target.value })} hint={first ? undefined : 'Every version of a retrospective keeps its reference.'} error={serverFields.reference ?? (draft.reference.length > REFERENCE_MAX ? problems.reference : undefined)} />
-
       <Select
         label="Notes file"
         placeholder={proofs.length === 0 ? 'No files to choose' : 'Choose the notes file'}
@@ -123,6 +129,32 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
         error={serverFields.evidence}
       />
       {options && moreThanShown(options) && <p className="retro__muted">More are available than shown.</p>}
+
+
+      <FailureNotice failure={failure} drawn={DRAWN}>
+        {failure?.kind === 'stale' && (
+          <>
+            {' '}
+            <Button kind="link" onClick={onReloadNotice}>
+              Reload
+            </Button>
+          </>
+        )}
+      </FailureNotice>
+      {unconfirmed && (
+        <Callout kind="warning">
+          <strong>{"We couldn't confirm it saved."}</strong> Nothing is sent again by itself.{' '}
+          <Button kind="link" disabled={busy} onClick={onCheckAgain}>
+            Check again
+          </Button>
+        </Callout>
+      )}
+
+      <div className="retro__actions">
+        <Button type="submit" kind="primary" size="lg" className="retro__save" busy={busy} busyLabel="Saving…" disabled={disabled} reason={reasonText}>
+          {first ? 'Save retrospective' : 'Save new version'}
+        </Button>
+      </div>
 
       <div className="retro__stack">
         <p className="retro__heading">Decisions</p>
@@ -163,33 +195,6 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
         </span>
       </div>
 
-      {failure && failure.kind !== 'unconfirmed' && failure.kind !== 'signed_out' && (
-        <Callout kind={failure.kind === 'stale' || failure.kind === 'csrf' || failure.kind === 'retry' || failure.kind === 'notsaved' ? 'warning' : 'problem'}>
-          {failure.message}
-          {failure.kind === 'stale' && (
-            <>
-              {' '}
-              <Button kind="link" onClick={onReloadNotice}>
-                Reload
-              </Button>
-            </>
-          )}
-        </Callout>
-      )}
-      {unconfirmed && (
-        <Callout kind="warning">
-          <strong>{"We couldn't confirm it saved."}</strong> Nothing is sent again by itself.{' '}
-          <Button kind="link" disabled={busy} onClick={onCheckAgain}>
-            Check again
-          </Button>
-        </Callout>
-      )}
-
-      <div className="retro__actions">
-        <Button type="submit" kind="primary" size="lg" busy={busy} busyLabel="Saving…" disabled={disabled} reason={reasonText}>
-          {first ? 'Save retrospective' : 'Save new version'}
-        </Button>
-      </div>
     </form>
   );
 }

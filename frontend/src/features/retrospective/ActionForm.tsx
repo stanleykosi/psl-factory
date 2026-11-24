@@ -4,10 +4,13 @@
 // itself, so the link operation is never called. An empty deadline is sent as null and read as "No deadline set".
 import { useState } from 'react';
 
-import { Button, Callout, DateField, Select, TextArea, TextField } from '@/components';
+import { Button, DateField, Select, TextArea, TextField } from '@/components';
 
 import { ACTION_DESCRIPTION_MAX, ACTION_REASON_MAX, actionBody, actionProblems, defaultActionReference, type ActionDraft, type MeetingOptions } from './model';
-import type { Failure } from './useRetrospective';
+import { FailureNotice } from './FailureNotice';
+import type { Failure } from './failure';
+
+const DRAWN = ['description', 'ownerId', 'dueAt', 'reason', 'evidence', 'reference'];
 
 export function ActionForm({ options, lessons, count, taken, busy, failure, revision, meetingId, onCreate }: {
   options: MeetingOptions;
@@ -50,12 +53,12 @@ export function ActionForm({ options, lessons, count, taken, busy, failure, revi
       }}
     >
       <TextArea label="What needs doing" value={draft.description} limit={ACTION_DESCRIPTION_MAX} onChange={(e) => set({ description: e.target.value })} rows={3} error={draft.description.trim() === '' || draft.description.length > ACTION_DESCRIPTION_MAX ? problems.description : server.description} />
-      <Select label="Owner" optional placeholder="No owner" value={draft.ownerId} onChange={(ownerId) => set({ ownerId })} options={[{ value: '', label: 'No owner' }, ...options.owners.map((o) => ({ value: String(o.id), label: o.label }))]} />
+      <Select label="Owner" optional placeholder="No owner" value={draft.ownerId} onChange={(ownerId) => set({ ownerId })} error={server.ownerId} options={[{ value: '', label: 'No owner' }, ...options.owners.map((o) => ({ value: String(o.id), label: o.label }))]} />
       <DateField time optional label="Deadline" value={draft.dueAt} onChange={(dueAt) => set({ dueAt })} hint="Leave empty for no deadline." error={server.dueAt} />
       <TextArea label="Why it is needed" value={draft.reason} limit={ACTION_REASON_MAX} onChange={(e) => set({ reason: e.target.value })} rows={2} error={draft.reason.length > ACTION_REASON_MAX ? problems.reason : server.reason} />
       <Select label="Supporting file" placeholder={options.proofs.length === 0 ? 'No files to choose' : 'Choose a file'} value={draft.evidenceId || undefined} onChange={(evidenceId) => set({ evidenceId })} options={options.proofs.map((p) => ({ value: String(p.id), label: p.label }))} disabled={options.proofs.length === 0} error={server.evidence} />
       <TextField label="Reference" value={draft.reference} onChange={(e) => set({ reference: e.target.value })} error={server.reference ?? (draft.reference.trim() !== '' ? problems.reference : undefined)} />
-      {failure && failure.kind !== 'invalid' && <Callout kind="problem">{failure.message}</Callout>}
+      <FailureNotice failure={failure} drawn={DRAWN} />
       <div className="retro__actions">
         <Button type="submit" busy={busy} busyLabel="Creating…" disabled={disabled} reason={busy ? undefined : firstProblem}>
           Create follow-up action

@@ -4,7 +4,7 @@ import { Callout, formatDate, Panel, Tag, type TagTone } from '@/components';
 import { STATUS_WORDS, stripChecks, type Check, type ClosureChecklist, type MeetingDetail } from './model';
 import type { Load, Used } from './useRetrospective';
 
-const TONE: Record<Check['status'], TagTone> = { current: 'person', recorded: 'done', closed: 'done', held: 'waiting', unknown: 'neutral', unavailable: 'neutral' };
+const TONE: Record<Check['status'], TagTone> = { current: 'done', recorded: 'done', closed: 'done', held: 'person', unknown: 'waiting', unavailable: 'neutral' };
 
 function UsedVersion({ check, used }: { check: Check; used: Used }) {
   const id = check.references[0];

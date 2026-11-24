@@ -120,6 +120,8 @@ export function retrospectiveRoute({ method, url, raw, token, expected }) {
     if (c.fail503) return [503, { code: 'unavailable', message: 'Not available right now.' }];
     if (body.revision !== c.revision) return [409, STALE];
     // 'Retrospective 2026-11-20' stands for a meeting saved elsewhere with that reference.
+    // 'Retrospective 2026-11-21': a 422 naming a field the page has no control for.
+    if (body.reference === 'Retrospective 2026-11-21') return [422, { code: 'invalid_input', message: 'Check the details and try again.', fields: [{ name: 'participant_ids', message: 'Pick people who are on the project.' }] }];
     const clash = c.meetings.find((m) => m.reference === body.reference && m.id !== body.meeting_id) || (body.meeting_id == null && body.reference === 'Retrospective 2026-11-20');
     if (clash) return [422, { code: 'invalid_input', message: 'Check the details and try again.', fields: [{ name: 'reference', message: 'Meeting reference exists; create a new revision' }] }];
     if (body.evidence_id && !c.options.proofs.some((p) => p.id === body.evidence_id)) return [422, { code: 'invalid_evidence', message: 'That file is not recorded for this project.', fields: [{ name: 'evidence_id', message: 'That file is not recorded for this project.' }] }];
@@ -137,6 +139,8 @@ export function retrospectiveRoute({ method, url, raw, token, expected }) {
     try { body = JSON.parse(raw); } catch { return [400, { code: 'bad_request', message: 'Unreadable.' }]; }
     log.push({ path: url.pathname, body });
     if (body.revision !== c.revision) return [409, STALE];
+    // 'Retro action 8': a 422 that names no field, only a message.
+    if (body.reference === 'Retro action 8') return [422, { code: 'invalid_input', message: 'The action could not be created.', fields: [] }];
     const all = c.meetings.flatMap((m) => m.actions);
     // 'Retro action 9' stands for an action of another meeting.
     if (all.some((a) => a.reference === body.reference) || body.reference === 'Retro action 9') return [422, { code: 'invalid_input', message: 'Action reference already exists', fields: [{ name: 'reference', message: 'Action reference already exists' }] }];

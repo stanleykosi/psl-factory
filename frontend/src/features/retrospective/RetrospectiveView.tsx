@@ -53,7 +53,7 @@ export function RetrospectivePage({ caseId }: { caseId: string }) {
       <div className="retro__crumb">
         <Breadcrumb items={[{ label: 'PROJECTS', href: '/projects' }, { label: (title ?? 'PROJECT').toUpperCase() }]} current="CLOSURE" />
       </div>
-      <PageTitle size={34}>Project retrospective</PageTitle>
+      <PageTitle size={34} phoneSize={22}>Project retrospective</PageTitle>
       {title && (
         <p className="retro__sub">
           {title} · needed before closure {r.project.status === 'ready' && r.project.data.sample && <SampleLabel />}
@@ -139,7 +139,7 @@ export function RetrospectivePage({ caseId }: { caseId: string }) {
           )}
 
           {form && (
-            <Panel head={empty ? 'Record the retrospective' : 'Save a new version'} headingLevel={2} bodyClassName="retro__stack">
+            <Panel aria-label={empty ? 'Record the retrospective' : 'Save a new version'} bodyClassName="retro__stack">
               {editing && detail && (
                 <p className="retro__muted">This starts from version {detail.version}. Saving adds a new version; the earlier one stays as it is.</p>
               )}

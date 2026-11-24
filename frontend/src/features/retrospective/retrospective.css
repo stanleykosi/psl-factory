@@ -37,3 +37,16 @@
 
 /* the crumb's links are underlined: colour alone does not set a link apart inside the text (WCAG 1.4.1) */
 .retro__crumb .psl-crumb a { text-decoration: underline; text-underline-offset: 2px; }
+
+/* the boards' fields: no resize grip (the box grows with its text); the pair of facts sits on one row */
+.retro__main textarea { resize: none; }
+.retro__pair { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.retro__pair > * { flex: 1 1 240px; min-width: 0; }
+/* Save is the board's 300 by 50 button straight after the notes file; full width on a phone */
+.retro__actions .retro__save { width: 100%; max-width: 300px; }
+@media (max-width: 719.98px) {
+  .retro__actions .retro__save { max-width: none; }
+  /* phone board: each box is its own bordered card with the label inside */
+  .retro__box { background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: var(--space-3); }
+  .retro__box .psl-input { border: 0; padding: 0; min-height: 0; }
+}

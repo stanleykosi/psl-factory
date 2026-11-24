@@ -264,6 +264,30 @@ test('a repeated action reference from the server shows under Reference', async 
   await expect(page.getByText('Action reference already exists').first()).toBeVisible();
 });
 
+test('a 422 naming a field with no control shows as a message above Save, not as "highlighted fields"', async ({ page }) => {
+  await page.goto(PAGE('2001'));
+  await ready(page);
+  await field(page, 'What went well').fill('x');
+  await choose(page, 'Notes file', 'Test plan v2');
+  await page.getByRole('textbox', { name: 'Reference' }).fill('Retrospective 2026-11-21');
+  await page.getByRole('button', { name: 'Save retrospective' }).click();
+  await expect(page.getByText('Pick people who are on the project.')).toBeVisible();
+  await expect(page.getByText('Check the highlighted fields.')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Save retrospective' })).toBeEnabled();
+});
+
+test('a 422 with only a message on the follow-up action shows that message', async ({ page }) => {
+  await page.goto(PAGE('2002'));
+  await ready(page);
+  await page.getByRole('button', { name: 'Make this a follow-up action' }).click();
+  await field(page, 'Why it is needed').fill('Because.');
+  await choose(page, 'Supporting file', 'Test plan v2');
+  await page.getByRole('textbox', { name: 'Reference' }).fill('Retro action 8');
+  await page.getByRole('button', { name: 'Create follow-up action' }).click();
+  await expect(page.getByText('The action could not be created.')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Create follow-up action' })).toBeEnabled();
+});
+
 test('a person who cannot record sees saved versions and nothing to press', async ({ page }) => {
   await page.goto(PAGE('2003'));
   await ready(page);

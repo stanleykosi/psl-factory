@@ -7,7 +7,10 @@ import { ApiError, networkError } from '@/api/errors';
 import type { ActionCreateBody, MeetingSaveBody } from '@/api/types';
 
 import type { ClosureChecklist, MeetingDetail, MeetingList, MeetingOptions } from './model';
+import { failureOf, type Failure } from './failure';
 import { meetingIdFromUrl } from './model';
+
+export type { Failure };
 
 export type Load<T> = { status: 'loading' } | { status: 'error'; error: ApiError } | { status: 'ready'; data: T };
 export type OptionsState = Load<MeetingOptions> | { status: 'forbidden' };
@@ -16,28 +19,6 @@ export type Selected = { meeting: number; version: number | null };
 export type Query = { dossier: number | null; meeting: number | null; version: number | null };
 
 const asError = (error: unknown) => (error instanceof ApiError ? error : networkError());
-
-/** What the person is told after a failed write, and which field it belongs to. */
-export type Failure = { kind: 'stale' | 'csrf' | 'forbidden' | 'gone' | 'retry' | 'invalid' | 'unconfirmed' | 'notsaved' | 'signed_out'; message: string; fields: Record<string, string> };
-
-const FIELD_OF: Record<string, string> = { reference: 'reference', occurred_at: 'occurredAt', summary: 'boxes', evidence_id: 'evidence', description: 'description', reason: 'reason', due_at: 'dueAt', owner_id: 'ownerId' };
-
-export function failureOf(error: ApiError): Failure {
-  const none = {};
-  if (error.kind === 'unauthenticated') return { kind: 'signed_out', message: 'You are signed out.', fields: none };
-  if (error.kind === 'stale') return { kind: 'stale', message: 'This changed while you were editing. Reload and try again.', fields: none };
-  if (error.kind === 'csrf') return { kind: 'csrf', message: 'Press Save again.', fields: none };
-  if (error.kind === 'forbidden') return { kind: 'forbidden', message: "You can't record a retrospective on this project.", fields: none };
-  if (error.kind === 'not_found') return { kind: 'gone', message: 'This record is unavailable.', fields: none };
-  if (error.kind === 'rate_limited') return { kind: 'retry', message: 'Try again shortly.', fields: none };
-  if (error.kind === 'invalid') {
-    const fields: Record<string, string> = {};
-    for (const f of error.fields) fields[FIELD_OF[f.name] ?? 'other'] = f.message;
-    if (error.code === 'invalid_evidence') fields.evidence = error.message;
-    return { kind: 'invalid', message: Object.keys(fields).length ? 'Check the highlighted fields.' : error.message, fields };
-  }
-  return { kind: 'unconfirmed', message: "We couldn't confirm it saved. Checking what was recorded.", fields: none };
-}
 
 /** Reads for one project's retrospective page, and its two writes. No polling; a write is one attempt. */
 export function useRetrospective(caseId: string, query: Query) {
@@ -190,12 +171,15 @@ export function useRetrospective(caseId: string, query: Query) {
       setSavedNote(null);
       const before = listRef.current?.items.find((row) => row.reference === body.reference)?.version ?? 0;
       let ok = false;
+      let posted = false;
       try {
         const saved = await call(liveApi.POST('/api/v1/projects/{case_id}/meetings', { params: { path, header: csrfHeader.header }, body }));
+        posted = true;
         await confirmSaved(saved.id, saved.version);
         ok = true;
       } catch (error) {
-        const failure = failureOf(asError(error));
+        // Once the POST has answered, a failed re-read is only "not confirmed yet", never a reason to press Save again.
+        const failure = posted ? failureOf(networkError()) : failureOf(asError(error));
         setSaveFailure(failure);
         if (failure.kind === 'stale') await loadList().catch(() => undefined);
         else if (failure.kind === 'unconfirmed') {
@@ -247,8 +231,12 @@ export function useRetrospective(caseId: string, query: Query) {
         ok = true;
       } catch (error) {
         const failure = failureOf(asError(error));
-        setActionFailure(failure.kind === 'unconfirmed' ? { ...failure, message: "We couldn't confirm it was created. Check the follow-up actions before trying again." } : failure);
-        if (failure.kind === 'stale') await loadList().catch(() => undefined);
+        setActionFailure(failure.kind === 'unconfirmed' ? { ...failure, kind: 'retry', message: "We couldn't confirm it was created. The follow-up actions below show what was recorded." } : failure);
+        // Re-read so the result is shown, and a retry is not met by a duplicate reference.
+        if (failure.kind === 'stale' || failure.kind === 'unconfirmed') {
+          await loadList().catch(() => undefined);
+          if (selected) await loadDetail(selected);
+        }
       }
       inFlight.current = false;
       setActionBusy(false);
