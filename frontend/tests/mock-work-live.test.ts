@@ -8,6 +8,8 @@ import { describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
 import { workLive } from '../mock/work-live.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { deliveryRead } from '../mock/delivery-overview.mjs';
 
 type Op = { responses: Record<string, { content?: { 'application/json': { schema: object } } }> };
 const contract = JSON.parse(readFileSync(join(__dirname, '../../contracts/psl-factory.openapi.json'), 'utf8')) as { paths: Record<string, Record<string, Op>> };
@@ -34,6 +36,18 @@ describe('the live work mock', () => {
       expect(valid(answer), JSON.stringify(valid.errors)).toBe(true);
     },
   );
+
+  it('every work_id the delivery mock serves answers 200 as a valid work item with the row\'s line, state and reference', () => {
+    const overview = deliveryRead({ pathname: '/api/v1/projects/P-0101/delivery-overview', idOf: (v: string) => v })[1] as { lines: { key: string; work_id: number | null; state: string | null; reference: string | null }[] };
+    const started = overview.lines.filter((l) => l.work_id !== null);
+    expect(started).toHaveLength(5);
+    for (const l of started) {
+      const [status, body] = get(`/api/v1/work/${l.work_id}`);
+      expect(status).toBe(200);
+      expect(work(body), JSON.stringify(work.errors)).toBe(true);
+      expect(body).toMatchObject({ line: l.key, state: l.state, reference: l.reference });
+    }
+  });
 
   it('history and the weekly report are valid answers', () => {
     const history = validator('/api/v1/work/{work_id}/history', 'get', '200');
