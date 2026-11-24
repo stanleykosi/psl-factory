@@ -102,9 +102,9 @@ PR bodies and commits must have **no AI co-author and no "Generated with" footer
 | F-60 invitation set-up | `fe-signin-account-setup-from-invitation`, no worktree | IMPLEMENTING, parked | Resume after lane A's current work. Its phone visual waiver was signed in D-202. |
 | F-68 1.24.0 fixtures | `fe-connect-1-main-green-api-1-24` | IMPLEMENTING | Superseded: main went green by itself. Close it the way the tool allows. |
 
-**Merged, but the record waits for the design engineer to confirm a delegated merge** (`merge-batch.md`, "Merged under delegation: confirm"): F-62 (#106), F-71 (#114) and F-88 (#110). Ask the design engineer to confirm them by name, then advance each to APPROVED, MERGED and DONE with their words.
+**Merged, but the record waits for the design engineer to confirm a delegated merge** (`merge-batch.md`, "Merged under delegation: confirm"): F-62 (#106), F-71 (#114), F-88 (#110) and F-113 (#109, record at MERGED). Ask the design engineer to confirm them by name, then advance each to APPROVED, MERGED and DONE with their words.
 
-**Done:** F-56, F-57, F-58, F-61, F-64, F-70, F-72, F-85, F-86, F-111, F-113 and F-125.
+**Done:** F-56, F-57, F-58, F-61, F-64, F-70, F-72, F-85, F-86, F-87, F-111 and F-125.
 
 **Blocked:** F-77 (Setup costing rule), waiting on PSL. F-114C (go-live document review), waiting on backend LD-6.
 
@@ -132,5 +132,5 @@ Other follow-ups:
 1. Read this file, `LANES.md` and D-180 to D-208 in `OVERNIGHT-DECISIONS.md`.
 2. Run `git status` in every lane worktree. The Claude lane sessions may have stopped mid-step, so commit and push any coherent work, or note what's half done.
 3. `git -C /Users/Hunchoo/psl-factory-main pull`, then run `feature.py ... next <id>` for each feature in section 7 to confirm its state.
-4. Ask the design engineer two things: whether D-207 applies to you, and to confirm the delegated merges of F-62, F-71 and F-88.
+4. Ask the design engineer two things: whether D-207 applies to you, and to confirm the delegated merges of F-62, F-71, F-88 and F-113.
 5. F-87 is already in. Land F-75 (#118), then carry on down the table, using the "Lane X, for Codex" resume lines in `merge-batch.md`.
