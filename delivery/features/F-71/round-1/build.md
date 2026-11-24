@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 802f311ad60583d2f04490b95baa55ea4b98bb77
+COMMIT: 3df5462d49c464d12d789486760215fb1df62304
 BUILDER: builder
 LANE: frontend
 
@@ -80,3 +80,8 @@ LANE: frontend
 
 ## Blocked
 None.
+
+## Coordinator sync after the build
+- 3df5462d merges origin/main 8692cf87 (PR #107, D-199: gates on GitHub Actions) into the builder's 802f311a. Clean merge; it brings `.github/workflows/frontend-checks.yml`, `delivery/checks.sh` (ci mode) and a hypercare test tweak. No F-71 file changed.
+- D-200: base_sha moved to 8692cf87 by the main coordinator after confirming F-71's own diff touches no protected path.
+- Gate attempt 5 (ci mode, GitHub Actions run on 3df5462d) PASS. Attempts 2 (npm died in the outage), 3 (timed out under machine load 111) and 4 (protected-path flag from main's checks.sh, cleared by D-200) were infrastructure failures, not code.

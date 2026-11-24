@@ -4738,3 +4738,10 @@
 {"at":"2026-11-24T09:55:55Z","feature":"F-113","round":3,"kind":"transition","head":"0c081045fa29","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
 {"at":"2026-11-24T09:57:41Z","feature":"F-64","round":2,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":1195.7,"commit":"ec939861a647"}
 {"at":"2026-11-24T09:58:09Z","feature":"F-60","round":1,"kind":"gate","verdict":"FAIL","attempt":2,"exit_code":1,"seconds":2.9,"commit":"558514bbc832","protected":["M delivery/checks.sh"]}
+{"at":"2026-11-24T13:28:36Z","feature":"F-119","round":1,"kind":"review","role":"ui","verdict":"CHANGES","reviewer":"reviewer-ui","commit":"3b782e399d96","findings":{"UI-1-1":"high","UI-1-2":"medium","UI-1-3":"low"},"written_at":"2026-11-24T09:58:55Z"}
+{"at":"2026-11-24T13:29:36Z","feature":"F-71","round":1,"kind":"gate","verdict":"PASS","attempt":5,"exit_code":0,"seconds":7.7,"commit":"3df5462d49c4"}
+{"at":"2026-11-24T13:29:41Z","feature":"F-87","round":2,"kind":"gate","verdict":"PASS","attempt":3,"exit_code":0,"seconds":5.8,"commit":"a960d20decf3"}
+{"at":"2026-11-24T13:29:51Z","feature":"F-87","round":2,"kind":"transition","head":"a960d20decf3","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-24T13:29:54Z","feature":"F-71","round":1,"kind":"transition","head":"3df5462d49c4","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-24T13:30:20Z","feature":"F-88","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":9.0,"commit":"eacdc7045a45"}
+{"at":"2026-11-24T13:30:44Z","feature":"F-88","round":2,"kind":"transition","head":"eacdc7045a45","from":"IMPLEMENTING","to":"IN_REVIEW"}
