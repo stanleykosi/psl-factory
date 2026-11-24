@@ -443,12 +443,11 @@ describe('access and errors (all tabs)', () => {
     expect(rowsOf()).toEqual(pm);
   });
 
-  it('documents lists the project\u2019s documents; only a row with a work_id opens its review', async () => {
+  it('documents lists the project\u2019s documents; no row links, as no tab row names its review (B-7)', async () => {
     await open('P-0101', 'documents');
     const rows = within(screen.getByRole('table', { name: 'Documents' })).getAllByRole('row').slice(1);
     expect(rows).toHaveLength(6);
-    const link = within(rows[0]).getByRole('link', { name: 'Statement of work' });
-    expect(link.getAttribute('href')).toBe(`/projects/${uuidOf('P-0101')}/documents/D-2901?v=2`);
+    expect(within(rows[0]).queryByRole('link')).toBeNull();
     expect(rows[0].textContent).toContain('v2');
     expect(rows[0].textContent).toContain('Awaiting PMO Lead review');
     expect(rows[0].textContent).toContain('TEST TEMPLATE');
@@ -456,6 +455,20 @@ describe('access and errors (all tabs)', () => {
     expect(rows[1].textContent).toContain('Costing COST-0140');
     expect(rows[2].textContent).toContain('Weekly sync minutes');
     expect(tabCalls().map((u) => u.pathname)).toEqual([`/api/v1/projects/${uuidOf('P-0101')}/documents`]);
+  });
+
+  it('a document row links to review only when its own api_url is this project\u2019s document-review path', async () => {
+    const id = uuidOf('P-0101');
+    const urls = [`/api/v1/projects/${id}/document-reviews/2901`, `/api/v1/projects/${uuidOf('P-0102')}/document-reviews/2901`, `//evil.example/api/v1/projects/${id}/document-reviews/2901`, `/api/v1/projects/${id}/documents/2901`, null];
+    respond = (url) => {
+      if (!url.pathname.endsWith('/documents')) return undefined;
+      const body = projectTab({ url, persona, cookies }).body as { documents: Record<string, unknown>[] };
+      return json(200, { ...body, documents: body.documents.slice(0, urls.length).map((row, i) => ({ ...row, api_url: urls[i] })) });
+    };
+    await open('P-0101', 'documents');
+    const rows = within(screen.getByRole('table', { name: 'Documents' })).getAllByRole('row').slice(1);
+    expect(within(rows[0]).getByRole('link', { name: 'Statement of work' }).getAttribute('href')).toBe(`/projects/${id}/documents/2901`);
+    for (const row of rows.slice(1)) expect(within(row).queryByRole('link')).toBeNull();
   });
 
   it('documents of a project with none says so', async () => {
