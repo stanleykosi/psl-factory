@@ -1,0 +1,20 @@
+VERDICT: PASS
+COMMIT: 286b41057cb2df45c6d577f7d2f4a203d8dd7fa5
+REVIEWER: ui-reviewer
+AUTHORITY: UI design reviewer
+
+## Summary
+- UI-1-1 fixed: Registers table is ISSUE, WHAT, SEVERITY, OWNER, STATE, AGE (AGE right-aligned last) at 1440; the tool no longer lists STATE or AGE as misplaced. No horizontal scroll at 1440 or 390; the Severity note shows on Issues only (not on Changes; the phone board has none either).
+- Fidelity tool with fidelity-exceptions.json, P-0101, one run per board and width. Coverage after exceptions is 100% on all four, nothing missing is unexcepted. Visual is below 90 on all four, and the file has no visual waivers, so the tool still reports FAIL on visual: SCR-11 desktop 81.1, SCR-11 mobile 76.6, SCR-29 desktop 86.2, SCR-29 mobile 78.0.
+- Nothing is in group (d). The visual gap is the frame (app nav, project header, tab counts, project tab strip) and sample data, groups (a) to (c); no table or row styling difference was found beyond the sample values and the exceptions below.
+- 15 of the 18 exception entries (10 D-182 hides, 5 pending) and all 5 extras carry D-182 hides or "pending design engineer (B35)" in approved_by. Per the rule they count as unexcepted until signed; they are not blocking for the frontend (UI-2-1 to UI-2-3).
+- Evidence: /private/tmp/claude-501/-Users-Hunchoo-psl-factory/4e9455a7-949a-43f4-9a55-a544c0864821/scratchpad/f75r2/ (shots/, fidelity/, logs); reports and side-by-sides copied to /Users/Hunchoo/psl-factory-main/delivery/features/F-75/round-2/fidelity/<board>-<width>/.
+
+## Findings
+- UI-2-1 | non-blocking | low | design engineer (sign-off, B35) | Unexcepted until signed, (a) D-182 hides, entries read "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (B35)": "PM · Tunde Bello", "Engineering (recorded by PM)", "Waiting on Engineering · Engineering (recorded by PM)", "Closed by QA and PM · PM · Tunde Bello", "Engineering (recorded by PM) · due 15 Nov", the four severity glyph texts "■■■", "■■□MEDIUM", "■■□", "■□□", the "OVERDUE" tags (SCR-29 mobile, two), and the five extras (Escalations, dashes on other registers, Critical tag, and so on). Two of these were approved in the spec; the exception entries are what is unsigned.
+- UI-2-2 | non-blocking | low | design engineer (sign-off, B35) | Unexcepted until signed, (a)/(b)/(c) entries marked "pending design engineer (B35)": button "Filter" (all four runs), text "Actions come from confirmed minutes. Changing an owner or due date is recorded with your name." (SCR-29 desktop), "No owner · due Unknown" (SCR-29 mobile), "Tunde Bello · PMO" (SCR-11 desktop), tab "Registers" (mobile, clipped in the strip), and the extras "As of line, phone register switch, AGE on phone cards" and "board sample rows and counts". Group (a) for Filter and the sentence; (b) for the sample rows and counts; (c) for the account menu and tab strip.
+- UI-2-3 | non-blocking | low | design engineer | Still seen by the tool and not excepted by a name entry, but not missing items: moved items "Table" (board inside a frame, page inside a section; same box within 4 to 79 px in height), SCR-29 desktop breadcrumb "PROJECTS / LAGOON HEALTH", "PROJECTS" and "PM Tunde Bello · Route A from RFP-0031" (c, frame); mobile tabs Milestones, Documents, Money (c, F-70 strip); SCR-29 mobile "OPEN" tags and "Tunde Bello · due 04 Nov" (b, sample words DONE/OVERDUE against live states). Extras: Delivery tab, Overview and Setup nav, bell, Demo controls, "As of" line (c, shell). The visual score 76.6 to 86.2 comes from these; the design engineer may add a visual waiver with the B35 answer.
+- UI-1-6 carried: phone register switch and age on phone cards are not on the mobile board (taste, for the design engineer; also in the extras above).
+
+## Verified
+- UI-1-1 | verified | 286b4105: fresh 1440 shot and DOM read show th order ISSUE, WHAT, SEVERITY, OWNER, STATE, AGE on Issues and Changes, AGE right-aligned last, matches the board; 390 shows cards with no overflow; tool lists no misplaced STATE or AGE.

@@ -331,6 +331,11 @@ Parts that 1.24.0 now supplies are switched on as the boards draw them (D-185), 
   3. (Recommended) Keep the phone Registers additions the spec adds and the phone board doesn't draw: the register switch row, and the age on each card. (UI-1-6)
   4. (Recommended) Waive visual for the SCR-11/SCR-29 runs if the score stays under 90 after the exceptions, as for F-71.
   Alternative to any item: name what to build as drawn.
+  - **Update after round 2 (head 286b4105, `delivery/features/F-75/round-2/review-ui.md`):** there are no frontend build gaps left. With the exceptions file, coverage is 100% on all four runs (SCR-11 and SCR-29, desktop and phone). Visual is 81.1, 76.6, 86.2 and 78.0. To sign:
+    - (i) the 10 entries marked "hide accepted … D-182; exception entry pending sign-off (B35)";
+    - (ii) the 5 entries marked "pending design engineer (B35)": Filter, the "Changing an owner…" sentence, "No owner · due Unknown", "Tunde Bello · PMO" and the phone "Registers" tab;
+    - (iii) a visual waiver for the four runs. The gap comes from the frame and sample data; the reviewer found no table or row styling difference of the build's own.
+    Items 1 to 4 above map onto these.
 
 ## Lane C
 

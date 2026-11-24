@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-75",
   "outcome": "Registers and Actions tabs read the live sectioned project tab",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -119,11 +119,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "technical-reviewer",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -149,18 +151,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "ux-reviewer",
+      "authority": "UX reviewer",
+      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "ui-reviewer",
+      "authority": "UI design reviewer",
+      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -177,7 +183,7 @@
         "delivery/features/F-75/round-1/review-technical.md"
       ],
       "raised_by": "technical reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -194,11 +200,25 @@
           ],
           "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "technical-reviewer",
+          "at": "2026-11-24T16:11:48Z",
+          "refs": [
+            "`git diff origin/main 286b4105 -- frontend/src/features/projects frontend/mock` touches no F-71 money or milestones logic beyond the three named spots. money.test.tsx, milestones.test.tsx and mock-live-money.test.ts pass."
+          ],
+          "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "merge with F-71 resolved at the three named spots"
+      ],
+      "verified_by": "technical-reviewer",
+      "verification_refs": [
+        "`git diff origin/main 286b4105 -- frontend/src/features/projects frontend/mock` touches no F-71 money or milestones logic beyond the three named spots. money.test.tsx, milestones.test.tsx and mock-live-money.test.ts pass."
       ]
     },
     {
@@ -260,7 +280,7 @@
         "delivery/features/F-75/round-1/review-ux.md"
       ],
       "raised_by": "ux-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -277,11 +297,25 @@
           ],
           "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "ux-reviewer",
+          "at": "2026-11-24T16:11:48Z",
+          "refs": [
+            "Focus after Show more lands on the first new row (1440) and first new card (390), not the frame or BODY."
+          ],
+          "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "focus on the first new row or card after Show more"
+      ],
+      "verified_by": "ux-reviewer",
+      "verification_refs": [
+        "Focus after Show more lands on the first new row (1440) and first new card (390), not the frame or BODY."
       ]
     },
     {
@@ -297,7 +331,7 @@
         "delivery/features/F-75/round-1/review-ux.md"
       ],
       "raised_by": "ux-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -314,11 +348,25 @@
           ],
           "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "ux-reviewer",
+          "at": "2026-11-24T16:11:48Z",
+          "refs": [
+            "Note present on Issues, absent on Changes, at 1440 and 390."
+          ],
+          "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "Severity note on Issues only"
+      ],
+      "verified_by": "ux-reviewer",
+      "verification_refs": [
+        "Note present on Issues, absent on Changes, at 1440 and 390."
       ]
     },
     {
@@ -357,7 +405,7 @@
         "delivery/features/F-75/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -374,11 +422,25 @@
           ],
           "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T16:11:48Z",
+          "refs": [
+            "286b4105: fresh 1440 shot and DOM read show th order ISSUE, WHAT, SEVERITY, OWNER, STATE, AGE on Issues and Changes, AGE right-aligned last, matches the board; 390 shows cards with no overflow; tool lists no misplaced STATE or AGE."
+          ],
+          "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "Registers columns in board order, AGE right-aligned"
+      ],
+      "verified_by": "ui-reviewer",
+      "verification_refs": [
+        "286b4105: fresh 1440 shot and DOM read show th order ISSUE, WHAT, SEVERITY, OWNER, STATE, AGE on Issues and Changes, AGE right-aligned last, matches the board; 390 shows cards with no overflow; tool lists no misplaced STATE or AGE."
       ]
     },
     {
@@ -493,6 +555,75 @@
           "by": "ui-reviewer",
           "at": "2026-11-24T15:39:01Z",
           "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "owner": "design engineer (sign-off, B35)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Unexcepted until signed, (a) D-182 hides, entries read \"hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (B35)\": \"PM \u00b7 Tunde Bello\", \"Engineering (recorded by PM)\", \"Waiting on Engineering \u00b7 Engineering (recorded by PM)\", \"Closed by QA and PM \u00b7 PM \u00b7 Tunde Bello\", \"Engineering (recorded by PM) \u00b7 due 15 Nov\", the four severity glyph texts \"\u25a0\u25a0\u25a0\", \"\u25a0\u25a0\u25a1MEDIUM\", \"\u25a0\u25a0\u25a1\", \"\u25a0\u25a1\u25a1\", the \"OVERDUE\" tags (SCR-29 mobile, two), and the five extras (Escalations, dashes on other registers, Critical tag, and so on). Two of these were approved in the spec; the exception entries are what is unsigned.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T16:11:48Z",
+          "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "owner": "design engineer (sign-off, B35)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Unexcepted until signed, (a)/(b)/(c) entries marked \"pending design engineer (B35)\": button \"Filter\" (all four runs), text \"Actions come from confirmed minutes. Changing an owner or due date is recorded with your name.\" (SCR-29 desktop), \"No owner \u00b7 due Unknown\" (SCR-29 mobile), \"Tunde Bello \u00b7 PMO\" (SCR-11 desktop), tab \"Registers\" (mobile, clipped in the strip), and the extras \"As of line, phone register switch, AGE on phone cards\" and \"board sample rows and counts\". Group (a) for Filter and the sentence; (b) for the sample rows and counts; (c) for the account menu and tab strip.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T16:11:48Z",
+          "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Still seen by the tool and not excepted by a name entry, but not missing items: moved items \"Table\" (board inside a frame, page inside a section; same box within 4 to 79 px in height), SCR-29 desktop breadcrumb \"PROJECTS / LAGOON HEALTH\", \"PROJECTS\" and \"PM Tunde Bello \u00b7 Route A from RFP-0031\" (c, frame); mobile tabs Milestones, Documents, Money (c, F-70 strip); SCR-29 mobile \"OPEN\" tags and \"Tunde Bello \u00b7 due 04 Nov\" (b, sample words DONE/OVERDUE against live states). Extras: Delivery tab, Overview and Setup nav, bell, Demo controls, \"As of\" line (c, shell). The visual score 76.6 to 86.2 comes from these; the design engineer may add a visual waiver with the B35 answer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T16:11:48Z",
+          "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5"
         }
       ]
     }
@@ -695,6 +826,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-24T16:01:22Z",
+      "round": 2,
+      "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-24T16:11:48Z",
       "round": 2,
       "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
       "reason": null
