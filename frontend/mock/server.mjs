@@ -59,6 +59,7 @@ import { isMilestoneRequest, isMoneyRequest, moneyRoute } from './money.mjs';
 import { isCompletionsPath, milestoneComplete, recordedRead, resetMilestoneComplete } from './milestone-complete.mjs';
 import { ALERT_PATH, createAlertsMock } from './alerts.mjs';
 import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, ASSISTANT_UPLOADS_PATH, createAssistantMock } from './assistant.mjs';
+import { ownsRetrospective, resetRetrospective, retrospectiveAdmin, retrospectiveRoute } from './retrospective.mjs';
 import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -300,6 +301,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetDelegations();
         alerts.reset();
         resetWorkspace();
+        resetRetrospective();
         resetWorkLive();
         resetIssues();
         resetClients();
@@ -313,6 +315,16 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       // F-58: after a logout (cookie psl_mock_session=out) every other read and write answers 401, as a signed-out session does.
       if (url.pathname.startsWith('/api/') && url.pathname !== SESSION_PATH && url.pathname !== LOGOUT_PATH && parseCookies(req.headers.cookie).psl_mock_session === 'out') return send(res, ...SIGNED_OUT_REPLY);
+      // F-119: the project retrospective's meetings, options, actions and closure checklist (retrospective.mjs).
+      if (url.pathname.startsWith('/__mock/retrospective/')) {
+        const r = retrospectiveAdmin({ method, url, raw });
+        if (r) return r[1] === null ? (res.writeHead(r[0]), res.end()) : send(res, ...r);
+      }
+      if (ownsRetrospective(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        return send(res, ...retrospectiveRoute({ method, url, raw, token: req.headers['x-csrftoken'], expected: me[persona].csrf_token }));
+      }
       // F-111: the issue follow-up reads (work 51xx and the project's issue reads); anything else falls through.
       if (method === 'get') {
         const cookies = parseCookies(req.headers.cookie);
