@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-111",
   "outcome": "The issue workspace shows a live project issue, read only (SCR-30 part 1)",
-  "state": "PR_OPEN",
+  "state": "AWAITING_USER_APPROVAL",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -127,7 +127,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "PMO delivery acceptance, round 2 (delivery acceptance only; client/product acceptance, merge and release keep their own authorities)",
-      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
+      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
       "evidence_refs": [
         "delivery/features/F-111/round-2/acceptance-pmo.md"
       ]
@@ -138,7 +138,7 @@
       "status": "passed",
       "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
       "authority": "D-187 (LD-Q2: every recommended spec option accepted), D-202 (\"Ship simpler for demo\"), D-203 (\"Sign all\", LD-Q7); D-184 (batch-approved board changes count as product acceptance)",
-      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
+      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
       "evidence_refs": [
         "delivery/features/F-111/round-2/acceptance-product.md"
       ]
@@ -1304,7 +1304,7 @@
       "finding UI-1-5 was accepted as a risk",
       "finding UI-1-6 was accepted as a risk"
     ],
-    "decided_for_head_sha": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
+    "decided_for_head_sha": "698c74e87d6b51a3b85829a455e34a1a883a3453",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1385,6 +1385,14 @@
       "at": "2026-11-24T15:51:18Z",
       "round": 2,
       "head": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-24T16:02:32Z",
+      "round": 2,
+      "head": "698c74e87d6b51a3b85829a455e34a1a883a3453",
       "reason": null
     }
   ],
