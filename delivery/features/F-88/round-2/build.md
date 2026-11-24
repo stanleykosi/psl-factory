@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328
+COMMIT: eacdc7045a458039ad42eb19ea5852cc411578df
 BUILDER: builder
 LANE: full
 
@@ -38,3 +38,6 @@ Unchanged from round 1 (all [x]); criterion 20 now reads: Start work lists the r
 - Full `npm test` through the lock on cbccc7a3: 158 files, 3772 tests passed.
 - `tsc --noEmit` and eslint clean on changed paths. No new fidelity run (the reviewer asked for one after fixes; I did not run it because the tool needs a rebuild through the lock; SCR-23 still has no URL).
 - Live proof stays mock-only (no organisations or grants set up). UX-1-2 (mock Unassigned badge says 2, list serves 13) is left: the badge comes from the v7 `/work` counts and tests expect 2; live `/work` has no counts.
+
+## Coordinator note (lane C, 24 Nov)
+Head moved from the builder's cbccc7a3 to eacdc704 only by the coordinator merging origin/main 8692cf87 (D-199 CI gates and other lanes' merges). One allow-list conflict in tests/next-config.test.ts: main's entries kept, received-bids.mjs added. Gated on GitHub Actions under D-199.

@@ -142,14 +142,28 @@
         "delivery/features/F-88/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T03:49:36Z",
           "head": "bdeee6852cdfbefbe883a6a5cd8f23b8d7faa3b1"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T09:24:03Z",
+          "refs": [
+            "506935c4"
+          ],
+          "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "506935c4"
       ]
     },
     {
@@ -165,14 +179,28 @@
         "delivery/features/F-88/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T03:49:36Z",
           "head": "bdeee6852cdfbefbe883a6a5cd8f23b8d7faa3b1"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T09:24:03Z",
+          "refs": [
+            "506935c4"
+          ],
+          "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "506935c4"
       ]
     },
     {
@@ -234,14 +262,28 @@
         "delivery/features/F-88/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T03:49:36Z",
           "head": "bdeee6852cdfbefbe883a6a5cd8f23b8d7faa3b1"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T09:24:03Z",
+          "refs": [
+            "506935c4"
+          ],
+          "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "506935c4"
       ]
     },
     {
@@ -280,14 +322,28 @@
         "delivery/features/F-88/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T03:49:36Z",
           "head": "bdeee6852cdfbefbe883a6a5cd8f23b8d7faa3b1"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T09:24:03Z",
+          "refs": [
+            "506935c4"
+          ],
+          "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "506935c4"
       ]
     },
     {
@@ -303,14 +359,28 @@
         "delivery/features/F-88/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T03:49:36Z",
           "head": "bdeee6852cdfbefbe883a6a5cd8f23b8d7faa3b1"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T09:24:03Z",
+          "refs": [
+            "506935c4"
+          ],
+          "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "506935c4"
       ]
     },
     {
@@ -326,14 +396,28 @@
         "delivery/features/F-88/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T03:49:36Z",
           "head": "bdeee6852cdfbefbe883a6a5cd8f23b8d7faa3b1"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T09:24:03Z",
+          "refs": [
+            "506935c4"
+          ],
+          "head": "cbccc7a3b7d6c6cc6a2879b6ac4d7801d6db0328",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "506935c4"
       ]
     }
   ],
@@ -416,7 +500,7 @@
     "base_branch": "main",
     "base_sha": "3b7df6cc589bebd8014502db6ce1eaaa8a01afde",
     "task_branch": "fe-connect-1-received-rfp-assign-pm",
-    "head_sha": "bdeee685f982b58e4a1acb7c1915ca2ce853e5f6",
+    "head_sha": "eacdc7045a458039ad42eb19ea5852cc411578df",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c2",
     "pr_url": null,
     "pr_number": null,
@@ -428,11 +512,26 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
+      ".github/workflows/frontend-checks.yml",
+      "delivery/checks.sh",
+      "frontend/e2e/document-review.spec.ts",
       "frontend/e2e/rfp-assign.spec.ts",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/documents/review-2901.json",
+      "frontend/mock/fixtures/documents/review-2901.publication.json",
       "frontend/mock/received-bids.mjs",
       "frontend/mock/server.mjs",
+      "frontend/mock/start-live.mjs",
+      "frontend/src/features/documents/DocumentParts.tsx",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/documents/ReviewControls.tsx",
+      "frontend/src/features/documents/document-review.css",
+      "frontend/src/features/documents/documentModel.ts",
+      "frontend/src/features/documents/useDocument.ts",
+      "frontend/src/features/documents/useReview.ts",
       "frontend/src/features/my-work/MyWork.tsx",
       "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/projects/DocumentsTab.tsx",
       "frontend/src/features/rfp/AssignPmDrawer.tsx",
       "frontend/src/features/rfp/UnassignedBids.tsx",
       "frontend/src/features/rfp/proposals.ts",
@@ -445,8 +544,13 @@
       "frontend/src/features/start-work/lines/receivedBid.tsx",
       "frontend/src/features/start-work/start-work.css",
       "frontend/tests/assign-pm.test.tsx",
+      "frontend/tests/document-review-model.test.ts",
+      "frontend/tests/document-review.test.tsx",
+      "frontend/tests/hypercare.test.tsx",
+      "frontend/tests/mock-live-document-review.test.ts",
       "frontend/tests/my-work.test.tsx",
       "frontend/tests/next-config.test.ts",
+      "frontend/tests/project-tabs.test.tsx",
       "frontend/tests/received-bid.test.tsx",
       "frontend/tests/rfp-assign.test.tsx",
       "frontend/tests/rfp-intake-mock.test.ts",

@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: cab10c70cdbf110a59387b6e5bd6c0fb0efa470f
+COMMIT: a960d20decf30c113e2a4a9eedcff80949ac3202
 BUILDER: builder
 LANE: full
 
@@ -38,3 +38,6 @@ Unchanged from round 1 (criteria 1, 2, 4 to 22, 33); criterion 9, 12, 13, 15 now
 
 ## Blocked
 Nothing blocks.
+
+## Coordinator note (lane C, 24 Nov)
+Head moved from the builder's cab10c70 to a960d20d only by the coordinator merging origin/main 8692cf87 (D-199 CI gates, plus other lanes' merges). The merge was clean. typecheck clean. Gated on GitHub Actions under D-199.
