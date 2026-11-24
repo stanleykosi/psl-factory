@@ -5199,3 +5199,15 @@
 {"at":"2026-11-24T15:56:43Z","feature":"F-111","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"698c74e87d6b","findings":{"UI-2-1":"","UI-2-2":"","UI-2-3":"low"},"written_at":"2026-11-24T15:56:39Z"}
 {"at":"2026-11-24T15:57:01Z","feature":"F-119","round":5,"kind":"transition","head":"53c24b19059e","reason":"D-206: UX-5-1 fix within round 5","from":"BLOCKED","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-24T15:57:02Z","feature":"F-119","round":5,"kind":"finding","action":"fix","finding":"UX-5-1","by":"builder"}
+{"at":"2026-11-24T15:57:54Z","feature":"F-111","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"698c74e87d6b","findings":{"UX-2-1":"low","UX-2-2":"low"},"written_at":"2026-11-24T15:56:56Z"}
+{"at":"2026-11-24T16:01:04Z","feature":"F-119B","round":0,"kind":"created","tasks":["FE-DELIVERY-CLOSURE"]}
+{"at":"2026-11-24T16:01:05Z","feature":"F-75","round":2,"kind":"finding","action":"fix","finding":"TECH-1-1","by":"builder"}
+{"at":"2026-11-24T16:01:05Z","feature":"F-75","round":2,"kind":"finding","action":"fix","finding":"UX-1-1","by":"builder"}
+{"at":"2026-11-24T16:01:05Z","feature":"F-75","round":2,"kind":"finding","action":"fix","finding":"UX-1-2","by":"builder"}
+{"at":"2026-11-24T16:01:05Z","feature":"F-75","round":2,"kind":"finding","action":"fix","finding":"UI-1-1","by":"builder"}
+{"at":"2026-11-24T16:01:05Z","feature":"F-75","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":236.1,"commit":"286b41057cb2"}
+{"at":"2026-11-24T16:01:22Z","feature":"F-75","round":2,"kind":"transition","head":"286b41057cb2","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-24T16:01:28Z","feature":"F-119","round":5,"kind":"transition","head":"9d9b149c0eee","reason":"rework budget used after round 5; superseded by F-119B (D-208)","from":"CHANGES_REQUESTED","to":"BLOCKED"}
+{"at":"2026-11-24T16:01:28Z","feature":"F-119","round":5,"kind":"transition","head":"9d9b149c0eee","reason":"superseded by F-119B under D-208 (design engineer: 'New follow-up record'); F-119's round 1-5 evidence, D-202 signatures and the D-206 fix (9d9b149c) carry into F-119B","from":"BLOCKED","to":"CLOSED"}
+{"at":"2026-11-24T16:01:34Z","feature":"F-111","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"698c74e87d6b","findings":{"PMO-2-1":"medium","PMO-2-2":"low"},"written_at":"2026-11-24T16:00:57Z"}
+{"at":"2026-11-24T16:01:34Z","feature":"F-111","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), accepted in batch, delegated under D-184","commit":"698c74e87d6b","written_at":"2026-11-24T16:00:30Z"}

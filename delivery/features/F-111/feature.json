@@ -109,7 +109,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead), round 2",
-      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
+      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-technical.md"
       ]
@@ -118,7 +118,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "integrated QA, round 2",
-      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
+      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-qa.md"
       ]
@@ -147,7 +147,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "UX reviewer",
-      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
+      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-ux.md"
       ]
@@ -156,7 +156,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer",
-      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
+      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-ui.md"
       ]
@@ -1247,7 +1247,7 @@
     "base_branch": "main",
     "base_sha": "90748de39df2315efb0b8b1abe72604bb551af0b",
     "task_branch": "fe-connect-1-issue-reads",
-    "head_sha": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
+    "head_sha": "698c74e87d6b51a3b85829a455e34a1a883a3453",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/116",
     "pr_number": 116,

@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-119",
   "outcome": "A person records the project retrospective as a saved version and sees where it stands in the closure checklist",
-  "state": "CHANGES_REQUESTED",
+  "state": "CLOSED",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -1540,9 +1540,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "closed",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": "superseded by F-119B under D-208 (design engineer: 'New follow-up record'); F-119's round 1-5 evidence, D-202 signatures and the D-206 fix (9d9b149c) carry into F-119B"
   },
   "release": {
     "status": "not_authorized",
@@ -1764,6 +1764,22 @@
       "round": 5,
       "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
       "reason": "D-206: UX-5-1 fix within round 5"
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "BLOCKED",
+      "at": "2026-11-24T16:01:28Z",
+      "round": 5,
+      "head": "9d9b149c0eee33789567d9006229314f1224d6d0",
+      "reason": "rework budget used after round 5; superseded by F-119B (D-208)"
+    },
+    {
+      "from": "BLOCKED",
+      "to": "CLOSED",
+      "at": "2026-11-24T16:01:28Z",
+      "round": 5,
+      "head": "9d9b149c0eee33789567d9006229314f1224d6d0",
+      "reason": "superseded by F-119B under D-208 (design engineer: 'New follow-up record'); F-119's round 1-5 evidence, D-202 signatures and the D-206 fix (9d9b149c) carry into F-119B"
     }
   ],
   "routing": {
