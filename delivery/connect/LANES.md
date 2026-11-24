@@ -52,6 +52,7 @@ Lane D takes the Finance line workspaces from lane B (SCR-32, 53, 54, 55, 56, 57
 
 ## Rules that never bend
 
+- Stop only processes whose PID the agent recorded when it started them, never by name or pattern (`pkill`, `killall`, `kill $(pgrep …)`). On 24 Nov a reviewer killed the design engineer's app mock (port 3001) by pattern.
 - Check `df -h /System/Volumes/Data` before you spawn any agent. Below 3 GB free, stop and tell the coordinator.
 - Never invent business rules, approvers, attempt counts or amounts. Unknown money stays unknown, never 0.
 - When a write needs an unanswered backend question (`backend-questions.md`), build it on the best reading of the contract and flag it in the spec and the PR, or hold that one write and list it. New backend questions go under "New from lanes" in `backend-questions.md`, with your lane letter, for example `LB-1`.
