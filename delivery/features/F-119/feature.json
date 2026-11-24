@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-119",
   "outcome": "A person records the project retrospective as a saved version and sees where it stands in the closure checklist",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -131,6 +131,18 @@
       "at": "2026-11-24T14:45:31Z",
       "seconds": 190.7,
       "evidence_ref": "delivery/features/F-119/round-4/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 5,
+      "attempt": 1,
+      "commit": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T15:03:06Z",
+      "seconds": 317.6,
+      "evidence_ref": "delivery/features/F-119/round-5/checks.md"
     }
   ],
   "reviews": {
@@ -1094,14 +1106,28 @@
         "delivery/features/F-119/round-4/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T14:50:27Z",
           "head": "ca44c3775de717cd923cfa569ad85c68460bc85f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T15:03:07Z",
+          "refs": [
+            "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
+          ],
+          "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
       ]
     },
     {
@@ -1117,14 +1143,28 @@
         "delivery/features/F-119/round-4/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T14:50:27Z",
           "head": "ca44c3775de717cd923cfa569ad85c68460bc85f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T15:03:07Z",
+          "refs": [
+            "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
+          ],
+          "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
       ]
     }
   ],
@@ -1372,7 +1412,7 @@
     "base_branch": "main",
     "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-delivery-closure-retrospective",
-    "head_sha": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+    "head_sha": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d2",
     "pr_url": null,
     "pr_number": null,
@@ -1550,6 +1590,14 @@
       "round": 5,
       "head": "ca44c3775de717cd923cfa569ad85c68460bc85f",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T15:06:17Z",
+      "round": 5,
+      "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+      "reason": null
     }
   ],
   "routing": {
@@ -1566,9 +1614,9 @@
   },
   "gate": {
     "round": 5,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
   },
   "blocked": null
 }

@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-111",
   "outcome": "The issue workspace shows a live project issue, read only (SCR-30 part 1)",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -115,11 +115,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA, round 2",
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -448,7 +450,7 @@
         "delivery/features/F-111/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -465,11 +467,25 @@
           ],
           "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-24T15:30:24Z",
+          "refs": [
+            "same as UI-1-2."
+          ],
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "same as UI-1-2"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "same as UI-1-2."
       ]
     },
     {
@@ -519,7 +535,7 @@
         "delivery/features/F-111/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -536,11 +552,25 @@
           ],
           "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-24T15:30:24Z",
+          "refs": [
+            "5103 shows \"This issue has no owner. Choose an owner for this issue.\" once; no NEXT section."
+          ],
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "no-owner sentence shown once on the page's sections"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "5103 shows \"This issue has no owner. Choose an owner for this issue.\" once; no NEXT section."
       ]
     },
     {
@@ -556,7 +586,7 @@
         "delivery/features/F-111/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -573,11 +603,27 @@
           ],
           "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "qa",
+          "at": "2026-11-24T15:30:24Z",
+          "refs": [
+            "timeline row \"Owner acknowledged",
+            "20 Nov 11:00\"; the separate acknowledgement line carries \"Owner replied by email\"."
+          ],
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "repeated status word and acknowledgement line dropped"
+      ],
+      "verified_by": "qa",
+      "verification_refs": [
+        "timeline row \"Owner acknowledged",
+        "20 Nov 11:00\"; the separate acknowledgement line carries \"Owner replied by email\"."
       ]
     },
     {
@@ -978,6 +1024,98 @@
           "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "A 404 on only the issue detail or only the messages read (after the follow-up read returned 200) replaces the whole panel with the frame's \"We couldn't load this part of the page. Try again\" box, losing the facts, and does not say \"This record is unavailable.\" (spec section states, AC12). Reproduced with browser interception of /projects/{case}/issues/233 and /messages returning 404 at 1440 and 390. The real 404 on /work/{id} (5106) is correct. Rare edge (the follow-up just answered), leaks nothing, and sits with the frame-level handling accepted under D-202.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T15:30:24Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Detail 429 and 503 read \"This is not available right now. Reload the page to try again.\" instead of \"Try again shortly\" with Try again; accepted under D-202 (reload wording), listed so it is on record.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T15:30:24Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The first 5105 load at 390 showed only the frame (no sections) after a 4 s wait during dev compile; a repeat at 6 s rendered fully. Treated as dev compile latency, not a defect.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T15:30:24Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-4",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Live evidence missing: the local 55433 database has no project issue. A synthetic issue (raised through the issues write, or a seed command such as a `seed_*` issues demo) is needed, then POST /work with line `pmo-issues/v1`, case_id 4a228bcb-f762-4bc6-858e-74e9ab11ebd3, case_revision, idempotency_key and intake.issue_id. I did not run any seed command or create an issue, as F-111 is read-only. List it for the merge batch.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T15:30:24Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1168,6 +1306,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-24T14:59:17Z",
+      "round": 2,
+      "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-24T15:30:24Z",
       "round": 2,
       "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
       "reason": null

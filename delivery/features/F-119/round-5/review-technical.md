@@ -1,0 +1,21 @@
+VERDICT: PASS
+COMMIT: 53c24b19059ece9c6d4e8a9bf3eb086a7cba1405
+REVIEWER: reviewer-technical
+AUTHORITY: technical reviewer (lead)
+
+## Summary
+- UX-4-2 holds: Save is rendered once, chosen by `usePhone()`, and the CSS `order` rules are gone. The form only mounts after data loads (`RetrospectiveView.tsx`, `{form && ...}`), so the form is never in the server HTML and there is no hydration mismatch or first-paint flicker.
+- UX-4-1 scope is safe: `html:has(.retro__savebar)` matches only while the retro page is mounted and below 720px. No other page renders that class.
+- The scroll-padding value (110px) is not measured against the bar. With the disabled-state reason it can reach about 126px, so a control scrolled into view can sit partly under the bar. Partial cover is within WCAG 2.4.11 (AA); the claim "scrolls clear" is stronger than the code proves. Non-blocking.
+- The new e2e tests are real but do not exercise the scroll path: both targets are likely above the bar at load, so `focus()` does not scroll. Non-blocking. The builder's 27/27 local run is the only run evidence; I did not run it.
+
+## Findings
+- TECH-5-1 | non-blocking | medium | frontend | `retrospective.css` sets `html:has(.retro__savebar) { scroll-padding-bottom: 110px }`, but the fixed bar is `padding 12 / 18`, a 2px border, a 50px Save and, when Save is disabled, a `.psl-reason` line (`Button.tsx:119-120`, rendered inside the bar). One reason line gives about 108px; two lines (the 90-character retro reason at 390px, see TECH-4-2) give about 126px. At 110px a control brought into view by focus can have its lower 16px under the bar. Expected: scroll padding at least the bar's worst case, e.g. 140px to match `.retro__page { padding-bottom: 140px }`, or measured in JS. Path: `retrospective.css:54`.
+- TECH-5-2 | non-blocking | low | frontend | `e2e/retrospective.spec.ts` "a focused control is never hidden under the bar" focuses the Ada Obi checkbox and the Lessons field at load, where they are likely above the bar, so no scroll happens and the `scroll-padding` rule is not exercised. The test would also pass without that rule. Expected: add a case that focuses a control below the fold (the last decision or Save after scrolling) and asserts its bottom is at or above the bar's top. Path: `e2e/retrospective.spec.ts:~412-428`. The fixed `waitForTimeout(200)` is also a timing dependency; prefer waiting for the focus state.
+- TECH-5-3 | non-blocking | low | frontend | `RetroForm.tsx:~196` switches between `<>{decisions}{saveBar}</>` and `<>{saveBar}{decisions}</>`, so both blocks remount when the viewport crosses 720px. Values survive because they are held in `draft`, but keyboard focus inside Decisions or on Save is lost on resize. Expected: accept as a known trade-off, or keep one stable order and use CSS for the bar only if the layout allows. Not a regression from the removed `order` rules.
+
+## Verified
+- UX-4-1 | verified | Read the rule and its scope: it is inside the `max-width: 719.98px` query, and `:has(.retro__savebar)` matches only on the retro page. The 110px value is a concern (TECH-5-1), not a failure of the fix. Test run not repeated by me; the builder reports the e2e file at 27/27.
+- UX-4-2 | verified | Read `RetroForm.tsx`: `saveBar` is built once and placed once in the ternary, so one `type="submit"` button exists. `usePhone` is `useSyncExternalStore` with `getServerSnapshot = false`, but the form is absent from SSR, so the false server value is never used for it. The first client render reads `matchMedia` directly, so there is no flicker. The `order` rules and `.retro__decisions` are gone (`git grep` finds none in the feature or the spec). The DOM-order test (`compareDocumentPosition`) and the desktop Tab test check the claimed order.
+- TECH-4-1 (round 4, Tab order vs screen order on desktop) | verified | On desktop Save now precedes Decisions in the DOM, matching the screen. On phone the fixed bar is last in the DOM and in Tab order, which matches its place at the foot of the screen. The round-4 concern is resolved.
+- TECH-4-2 (round 4, `.retro__page` 140px vs a long reason) | reopen as TECH-5-1 | The page allowance is still 140px. The scroll-padding (110px) is now the weaker number, so the same reason-length concern moves there.
