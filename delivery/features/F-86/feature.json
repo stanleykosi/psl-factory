@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-86",
   "outcome": "Start work reads the live lines, picks a project, and starts the weekly report",
-  "state": "AWAITING_USER_APPROVAL",
+  "state": "DONE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -664,9 +664,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -678,7 +678,7 @@
     "base_branch": "main",
     "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-connect-1-start-work-weekly",
-    "head_sha": "1407fbe72551058290b2303a86580eef05b945c2",
+    "head_sha": "bdeee685f982b58e4a1acb7c1915ca2ce853e5f6",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c2",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/103",
     "pr_number": 103,
@@ -691,12 +691,22 @@
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/hr.spec.ts",
+      "frontend/e2e/rfp-assign.spec.ts",
       "frontend/e2e/rfp-intake.spec.ts",
       "frontend/e2e/start-work-ppe-forecast.spec.ts",
       "frontend/e2e/start-work-proof.spec.ts",
       "frontend/e2e/start-work.spec.ts",
+      "frontend/mock/received-bids.mjs",
       "frontend/mock/server.mjs",
       "frontend/mock/start-live.mjs",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/rfp/AssignPmDrawer.tsx",
+      "frontend/src/features/rfp/UnassignedBids.tsx",
+      "frontend/src/features/rfp/proposals.ts",
+      "frontend/src/features/rfp/receivedBids.ts",
+      "frontend/src/features/rfp/rfp.css",
+      "frontend/src/features/rfp/useReceivedBidAssign.ts",
       "frontend/src/features/start-work/LineChooser.tsx",
       "frontend/src/features/start-work/LineForm.tsx",
       "frontend/src/features/start-work/ProjectPicker.tsx",
@@ -707,14 +717,20 @@
       "frontend/src/features/start-work/intake.ts",
       "frontend/src/features/start-work/labels.ts",
       "frontend/src/features/start-work/lines/index.ts",
+      "frontend/src/features/start-work/lines/receivedBid.tsx",
       "frontend/src/features/start-work/lines/weeklyReport.tsx",
       "frontend/src/features/start-work/start-work.css",
       "frontend/src/features/start-work/types.ts",
       "frontend/src/features/start-work/useStart.ts",
       "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/tests/assign-pm.test.tsx",
       "frontend/tests/assistant.test.tsx",
       "frontend/tests/issue-detail.test.tsx",
+      "frontend/tests/my-work.test.tsx",
       "frontend/tests/next-config.test.ts",
+      "frontend/tests/received-bid.test.tsx",
+      "frontend/tests/rfp-assign.test.tsx",
+      "frontend/tests/rfp-intake-mock.test.ts",
       "frontend/tests/rfp-intake.test.tsx",
       "frontend/tests/start-work-intake.test.ts",
       "frontend/tests/start-work-live.test.tsx",
@@ -849,6 +865,30 @@
       "at": "2026-11-23T23:49:46Z",
       "round": 2,
       "head": "1407fbe72551058290b2303a86580eef05b945c2",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-24T03:04:03Z",
+      "round": 2,
+      "head": "bdeee685f982b58e4a1acb7c1915ca2ce853e5f6",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-24T03:04:05Z",
+      "round": 2,
+      "head": "bdeee685f982b58e4a1acb7c1915ca2ce853e5f6",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-24T03:04:06Z",
+      "round": 2,
+      "head": "bdeee685f982b58e4a1acb7c1915ca2ce853e5f6",
       "reason": null
     }
   ],
