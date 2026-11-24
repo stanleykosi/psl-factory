@@ -12,3 +12,11 @@ export type TaskDecision = NonNullable<WorkTask['decision']>;
 export type ClaimResult = paths['/api/v1/tasks/{task_id}/claim']['post']['responses'][200]['content']['application/json'];
 export type DecideBody = paths['/api/v1/tasks/{task_id}/decision']['post']['requestBody']['content']['application/json'];
 export type DecideResult = paths['/api/v1/tasks/{task_id}/decision']['post']['responses'][200]['content']['application/json'];
+
+// F-85: the live work item (contract 1.22.0). The work item page and the line adapters read these, not the v7 WorkItem above.
+type LiveGet<P extends keyof livePaths> = livePaths[P] extends { get: { responses: { 200: { content: { 'application/json': infer B } } } } } ? B : never;
+export type LiveWorkItem = LiveGet<'/api/v1/work/{work_id}'>;
+export type LiveWorkTask = LiveWorkItem['tasks'][number];
+export type LiveWorkHistory = LiveGet<'/api/v1/work/{work_id}/history'>;
+export type LiveHistoryRow = LiveWorkHistory['items'][number];
+export type LiveWeeklyReport = LiveGet<'/api/v1/work/{work_id}/weekly-report'>;
