@@ -47,6 +47,7 @@ import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { resetStartLive, START_LIVE_PATH, START_LIVE_WORK, startLive, startLiveLog } from './start-live.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
+import { LIVE_QUEUES, liveWorkItem, liveWorkList, ownsLiveWorkItem } from './live-work.mjs';
 import { workList } from './work-list.mjs';
 import { liveDecideRoute, ownsLiveDecide, resetLiveDecide } from './live-decide.mjs';
 import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
@@ -311,6 +312,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         return send(res, ...liveDecideRoute({ method, url, raw, cookies, scenario: req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario, token: req.headers['x-csrftoken'], me: me[persona], persona }));
       }
+      // F-62: the work list's own rows (live-work.mjs) answer their item read before F-85's handler, which owns every other integer id.
+      if (method === 'get' && /^\/api\/v1\/work\/\d+$/.test(url.pathname) && ownsLiveWorkItem(Number(url.pathname.split('/')[4]))) { const r = liveWorkItem({ id: Number(url.pathname.split('/')[4]) }); return send(res, r.status, r.body); }
       // F-85: live work item reads (integer ids only) and the case file upload (work-live.mjs); not in v7. v7 ids and v7 case routes fall through.
       if (WORK_LIVE_PATH.test(url.pathname) || CASE_FILES_PATH.test(url.pathname)) {
         const cookies = parseCookies(req.headers.cookie);
@@ -420,6 +423,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (ALERT_OPERATIONS.includes(route.operationId)) { const r = alerts.handle({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (ASSISTANT_OPERATIONS.includes(route.operationId)) return send(res, ...assistant.handle({ operationId: route.operationId, url, raw, persona, agents: me[persona].assistant_agents ?? [], demo }));
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
+      if (route.operationId === 'E-WORK-LIST' && LIVE_QUEUES.includes(url.searchParams.get('queue'))) { const r = liveWorkList({ url, persona }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist, extra: runs.rows(persona) }); return send(res, r.status, r.body); }
       if (CLIENT_OPERATIONS.includes(route.operationId)) { const r = clients({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECTS' || route.operationId === 'E-PROJECT') { const r = projects({ operationId: route.operationId, url, persona }); return send(res, r.status, r.body); }
@@ -431,6 +435,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-TEMPLATES' || route.operationId === 'E-TEMPLATE-VERSION') { const r = (route.operationId === 'E-TEMPLATES' ? templatesList : templateVersion)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-DELEGATIONS' || route.operationId === 'E-DELEGATION') { const r = (route.operationId === 'E-DELEGATIONS' ? delegationsList : saveDelegation)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-EVIDENCE-UPLOAD') { const r = uploadEvidence({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-WORK-ITEM' && /^\/api\/v1\/work\/\d+$/.test(url.pathname)) { const r = liveWorkItem({ id: Number(url.pathname.split('/')[4]) }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         // F-40 (UX-1-3): a handover item (W-37xx) answers only a persona who can see its project, as the Delivery tab does
         if (/^\/api\/v1\/work\/W-37\d\d(\/|$)/.test(url.pathname) && !caseVisible('P-0101', persona)) return send(res, 404, { code: 'not_found', message: 'We could not find that record.' });
