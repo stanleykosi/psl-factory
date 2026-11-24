@@ -1,114 +1,89 @@
-// F-29: the document review model. The check words, the note rule, the version rule and the plain-text paragraphs.
 import { describe, expect, it } from 'vitest';
 
-import {
-  amountsTag,
-  checkStatus,
-  checksOf,
-  checkTag,
-  checkTone,
-  draftedByText,
-  firstFlag,
-  isDocument,
-  isLinkUrl,
-  noteProblem,
-  paragraphsOf,
-  parseVersion,
-  returnedByText,
-  sectionsOf,
-  type DocumentView,
-} from '@/features/documents/documentModel';
+import { documentHref, isDocument, isVersionId, noteProblem, paragraphsOf, publicationOf, reviewHrefOf, verdictsOf, type LiveDocument } from '@/features/documents/documentModel';
 
-const base = { document_id: 'D-1', version: '2', title: 'Statement of work', status: 'x', template: 't', body_url: 'https://files.example.test/a.pdf' } as DocumentView;
+const doc = (patch: Record<string, unknown> = {}) => ({ title: 'SOW', version: 2, revision: 7, audience: 'Client', current: true, decisions: ['approve', 'return'], django_url: '/x', preview: [{ field: 'Scope', text: 'x' }], ...patch });
 
-describe('checks: the four backend statuses and absent, never a word the backend did not send', () => {
-  it.each([
-    ['done', 'Matches COST-0140 v2', { text: 'Matches COST-0140 v2' }, 'done'],
-    ['done', undefined, { text: 'Done' }, 'done'],
-    ['held', 'Waiting for the costing', { text: 'Held', reason: 'Waiting for the costing' }, 'waiting'],
-    ['blocked', 'Costing is stopped', { text: 'Blocked', reason: 'Costing is stopped' }, 'person'],
-    ['unknown', 'Matches COST-0140 v2', { text: 'Unknown', reason: 'Matches COST-0140 v2' }, 'neutral'],
-    [undefined, 'Matches COST-0140 v2', { text: 'Unknown', reason: 'Matches COST-0140 v2' }, 'neutral'],
-    ['passed', undefined, { text: 'Unknown' }, 'neutral'],
-  ])('status %s with detail %s', (status, detail, tag, tone) => {
-    const check = { key: 'amounts', label: 'Amounts', status, detail };
-    expect(checkTag(check)).toEqual(tag);
-    expect(checkTone(check)).toBe(tone);
-  });
-
-  it('an unknown amounts check never reads Matches in the tag, and absent checks give no tag', () => {
-    const unknown = { ...base, checks: [{ key: 'amounts', label: 'Amounts', status: 'unknown', detail: 'Matches COST-0140 v2' }] } as DocumentView;
-    expect(amountsTag(unknown)).toEqual({ text: 'Amounts: Unknown', tone: 'neutral' });
-    expect(amountsTag(base)).toBeUndefined();
-    expect(checkStatus({})).toBe('unknown');
-  });
-
-  it('keeps the order sent and drops entries without a key or label', () => {
-    const doc = { ...base, checks: [{ key: 'b', label: 'B' }, { key: 'a' }, null, { label: 'no key' }, { key: 'c', label: 'C' }] } as unknown as DocumentView;
-    expect(checksOf(doc).map((c) => c.key)).toEqual(['b', 'c']);
+describe('isDocument', () => {
+  it('accepts the live preview and refuses a body that is not one', () => {
+    expect(isDocument(doc())).toBe(true);
+    expect(isDocument(doc({ preview: [] }))).toBe(true);
+    for (const bad of [null, [], 'x', {}, doc({ title: 1 }), doc({ version: '2' }), doc({ revision: 1.5 }), doc({ audience: null }), doc({ current: 'yes' }), doc({ decisions: 'approve' }), doc({ preview: [{ field: 'a' }] }), doc({ preview: null })]) {
+      expect(isDocument(bad)).toBe(false);
+    }
   });
 });
 
-describe('note rule: approve sends no note; return needs 1 to 2000 characters', () => {
-  it.each([
-    ['approve', '', null],
-    ['approve', 'x'.repeat(2001), 'Keep the note to 2000 characters or fewer.'],
-    ['return', '', 'Add a note to return it.'],
-    ['return', '   \n\t', 'Add a note to return it.'],
-    ['return', 'Fix section 4', null],
-    ['return', 'x'.repeat(2000), null],
-    ['return', 'x'.repeat(2001), 'Keep the note to 2000 characters or fewer.'],
-  ] as const)('%s with %j', (verdict, note, problem) => {
-    expect(noteProblem(verdict, note)).toBe(problem);
+describe('publicationOf', () => {
+  it('reads the status word and the findings, and nothing else', () => {
+    expect(publicationOf({ review_status: 'Approved', findings: ['a', ' ', 3], editable: [] })).toEqual({ review_status: 'Approved', findings: ['a'] });
+    expect(publicationOf({ review_status: null, findings: [] })).toEqual({ review_status: null, findings: [] });
+    for (const bad of [null, {}, { findings: 'a' }, { review_status: 3, findings: [] }]) expect(publicationOf(bad)).toBeNull();
   });
 });
 
-describe('version: the latest is never guessed', () => {
-  it.each([['1', '1'], ['2', '2'], ['12', '12']])('%s is read', (v, out) => expect(parseVersion(v)).toBe(out));
-  it.each([[null], [undefined], [''], ['latest'], ['0'], ['02'], ['2.5'], ['-1'], ['2 '], [' 2'], ['2;3'], ['１'], ['1234567890']])('%j is not a version', (v) => expect(parseVersion(v)).toBeNull());
-});
-
-describe('plain text', () => {
-  it('splits paragraphs on blank lines and keeps markup characters as text', () => {
-    expect(paragraphsOf('One <b>x</b>\n\nTwo <script>alert(1)</script>\n  \n\nThree')).toEqual(['One <b>x</b>', 'Two <script>alert(1)</script>', 'Three']);
-  });
-
-  it('reads sections, the first flag and a missing sections field', () => {
-    const doc = {
-      ...base,
-      sections: [
-        { key: 'a', heading: 'A', text: 'a' },
-        { key: 'b', heading: 'B', text: 'b', notes: [{ agent: 'tola', text: 'check' }] },
-        { key: 'bad' },
-      ],
-    } as unknown as DocumentView;
-    expect(sectionsOf(doc)).toHaveLength(2);
-    expect(firstFlag(sectionsOf(doc)!)).toEqual({ agent: 'Tola', number: 2, text: 'check' });
-    expect(sectionsOf(base)).toBeUndefined();
-    expect(sectionsOf({ ...base, sections: [] })).toEqual([]);
+describe('isVersionId', () => {
+  it('takes only a whole positive 64-bit number written plainly', () => {
+    for (const ok of ['1', '2901', '9223372036854775807', '1000000000000000000']) expect(isVersionId(ok), ok).toBe(true);
+    for (const bad of ['', 'abc', '0', '00', '02', '2.5', '-1', '+1', ' 1', '1 ', '1e3', '0x10', '２９０１', '9223372036854775808', '12345678901234567890', '1/2', '1?v=2', '1#x', '../1', '%31', 'latest']) expect(isVersionId(bad), bad).toBe(false);
   });
 });
 
-describe('sentences from the response only', () => {
-  it('drafted by and returned by leave out what is not sent', () => {
-    expect(draftedByText({ ...base, drafted_by: { agent: 'tola', from: ['the planning record', 'the approved costing'] } })).toBe('Drafted by Tola from the planning record and the approved costing.');
-    expect(draftedByText({ ...base, drafted_by: { agent: 'tola', from: ['a', 'b', 'c'] } })).toBe('Drafted by Tola from a, b and c.');
-    expect(draftedByText({ ...base, drafted_by: { agent: 'tola' } })).toBe('Drafted by Tola.');
-    expect(draftedByText(base)).toBeUndefined();
-    expect(returnedByText({ by: 'Kemi Adebayo', role: 'PMO Lead' })).toBe('Returned by Kemi Adebayo (PMO Lead)');
-    expect(returnedByText({ role: 'PMO Lead' })).toBe('Returned by PMO Lead');
-    expect(returnedByText({})).toBe('Returned');
-  });
-
-  it('a body without a document id, title and version is not a document', () => {
-    expect(isDocument(base)).toBe(true);
-    expect(isDocument({ title: 'x' })).toBe(false);
-    expect(isDocument(null)).toBe(false);
-    expect(isDocument([])).toBe(false);
+describe('verdictsOf', () => {
+  it('keeps only approve and return, in that order, never reject', () => {
+    expect(verdictsOf(doc({ decisions: ['return', 'reject', 'approve'] }) as LiveDocument)).toEqual(['approve', 'return']);
+    expect(verdictsOf(doc({ decisions: ['reject'] }) as LiveDocument)).toEqual([]);
+    expect(verdictsOf(doc({ decisions: [] }) as LiveDocument)).toEqual([]);
   });
 });
 
-describe('body_url is a link only for http(s) or a relative path', () => {
-  it.each(['https://files.example.test/a.pdf', 'http://files.example.test/a.pdf', '/files/a.pdf', 'files/a.pdf', 'HTTPS://X.TEST/a'])('%s is a link', (u) => expect(isLinkUrl(u)).toBe(true));
-  it.each(['javascript:alert(1)', ' JavaScript:alert(1)', 'data:text/html,x', 'vbscript:x', '//evil.test/a', '/\\evil.test/a', '\\\\evil.test\\a', 'file:///etc/passwd', 'ftp://x.test/a', '', '   ', null, undefined, 5])('%j is not', (u) => expect(isLinkUrl(u)).toBe(false));
+describe('noteProblem', () => {
+  it('is one rule for every verdict: 1 to 4000 characters, not blank', () => {
+    expect(noteProblem('')).toBe('Add a note to record your decision.');
+    expect(noteProblem(' \n\t')).toBe('Add a note to record your decision.');
+    expect(noteProblem('x'.repeat(4001))).toBe('Keep the note to 4000 characters or fewer.');
+    expect(noteProblem('x')).toBeNull();
+    expect(noteProblem('x'.repeat(4000))).toBeNull();
+  });
+});
+
+describe('paragraphsOf', () => {
+  it('splits on blank lines and leaves markup as characters', () => {
+    expect(paragraphsOf('a <b>x</b>\n\n  b  \n \nc')).toEqual(['a <b>x</b>', 'b', 'c']);
+    expect(paragraphsOf('')).toEqual([]);
+  });
+});
+
+describe('the Documents-tab link', () => {
+  const CASE = '00000000-0000-4000-8000-000000000101';
+  it('documentHref is the page of one version id', () => {
+    expect(documentHref(CASE, 2901)).toBe(`/projects/${CASE}/documents/2901`);
+    expect(documentHref('a b', '5')).toBe('/projects/a%20b/documents/5');
+  });
+
+  it('a row links only when its api_url is exactly this project’s document-review path', () => {
+    expect(reviewHrefOf(CASE, `/api/v1/projects/${CASE}/document-reviews/2901`)).toBe(`/projects/${CASE}/documents/2901`);
+    const refused: unknown[] = [
+      undefined,
+      null,
+      42,
+      '',
+      `/api/v1/projects/${CASE.replace('101', '102')}/document-reviews/2901`,
+      `/api/v1/projects/${CASE}/document-reviews/`,
+      `/api/v1/projects/${CASE}/document-reviews/abc`,
+      `/api/v1/projects/${CASE}/document-reviews/02`,
+      `/api/v1/projects/${CASE}/document-reviews/2901/publication`,
+      `/api/v1/projects/${CASE}/document-reviews/2901?x=1`,
+      `/api/v1/projects/${CASE}/document-reviews/2901#x`,
+      `/api/v1/projects/${CASE}/documents/2901`,
+      `/api/v1/projects/${CASE}/../x/document-reviews/2901`,
+      `/API/v1/projects/${CASE}/document-reviews/2901`,
+      ` /api/v1/projects/${CASE}/document-reviews/2901`,
+      `//evil.example/api/v1/projects/${CASE}/document-reviews/2901`,
+      `https://evil.example/api/v1/projects/${CASE}/document-reviews/2901`,
+      `javascript:alert(1)//api/v1/projects/${CASE}/document-reviews/2901`,
+      `/api/v1/projects/%2e%2e/document-reviews/2901`,
+    ];
+    for (const value of refused) expect(reviewHrefOf(CASE, value), String(value)).toBeUndefined();
+  });
 });

@@ -18,6 +18,7 @@
 // Assistant (F-24): the five assistant operations go to assistant.mjs, which also recognises a draft's E-WORK-START.
 // Delegation (F-27): E-DELEGATIONS and E-DELEGATION go to delegations.mjs (scenario and save cookies, overlay proposals).
 // Invoices (F-41): E-INVOICES answers from invoices.mjs (variant cookie psl_mock_invoices, q, status, paging, overlay proposals).
+// Document review (F-72): the live document-review reads and decision (documents.mjs, cookie psl_mock_docreview); the v7 E-DOCUMENT stays for the work item's document link.
 // Live demo (F-54, D-155): demo.mjs holds the switches and the answer delay; with the demo off nothing changes.
 import { readdirSync, readFileSync } from 'node:fs';
 import http from 'node:http';
@@ -30,7 +31,7 @@ import { delayMs, delayReply, demoOn } from './demo.mjs';
 import { addDemoProject } from './demo-projects.mjs';
 import { caseVisible, normaliseProjectPath, projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
-import { documentRead } from './documents.mjs';
+import { documentRead, isLiveDocumentPath, liveDocumentReview, resetDocumentReviews } from './documents.mjs';
 import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
 import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
@@ -293,6 +294,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetWorkspace();
         resetWorkLive();
         resetClients();
+        resetDocumentReviews();
         assistant.reset();
         runs.reset();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
@@ -357,6 +359,17 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
           if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
           return send(res, ...roleDashboardRoute({ persona }));
         }
+      }
+      // F-72 (SCR-08): the live document-review reads and decision (documents.mjs); not in v7.
+      if ((method === 'get' || method === 'post') && isLiveDocumentPath(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (scenario && SCENARIO_BODIES[scenario] && (method === 'post' || ['401', '403', '404'].includes(String(scenario)))) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        if (scenario === 'csrf_failed' && method === 'post') return send(res, 403, CSRF_FAILED);
+        if (method === 'post' && req.headers['x-csrftoken'] !== me[persona].csrf_token) return send(res, 403, CSRF_FAILED);
+        const r = liveDocumentReview({ method, url, raw, persona, cookies, canSee: caseVisible });
+        return send(res, r.status, r.body);
       }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
