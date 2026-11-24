@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 698c74e87d6b51a3b85829a455e34a1a883a3453
+COMMIT: 927f9e0b56c5b34eb9faefc54211f4666266ba06
 BUILDER: builder
 LANE: full
 
@@ -62,3 +62,5 @@ The design engineer, in chat, relayed by the main coordinator: LD-Q7 "Sign all".
 Merged origin/main f355d339 (#114 F-71, #111 F-64) as 30143e1a. There were two conflicts, both resolved by keeping both sides: `frontend/mock/server.mjs` (the F-111 issue routes before the F-64 live decide routes) and `frontend/tests/next-config.test.ts` (the allowlist is main's list plus `issues.mjs`, and the comment names F-111). No other F-111 file changed. Tests: next-config, issue-followup and mock-issues-live, 37 pass; the decide, money and milestones mock and page tests, 195 pass; tsc clean. D-200: base_sha 4fd055ce, no protected path.
 
 Then PR #116 went CONFLICTING after main gained #115 (checks.sh) and #112 (F-61), so I merged origin/main 90748de3 as 698c74e8. The one conflict was the next-config allowlist: main's list plus `issues.mjs`. next-config, issue-followup and mock-issues-live pass 37, and tsc is clean. D-200: base_sha 90748de3. The diff from the merge base has no protected path; main's checks.sh change comes in through the base, not this branch.
+
+Third sync: PR #116 conflicted after #110 (F-88) and #117 (allowlist one per line). Merged origin/main eb100065 as 927f9e0b. The allowlist is main's per-line list plus `issues.mjs` on its own line, and the comment names F-111. next-config, issue-followup and mock-issues-live pass 37, tsc is clean. D-200: base_sha eb100065, no protected path.

@@ -109,7 +109,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead), round 2",
-      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
+      "snapshot_ref": "927f9e0b56c5b34eb9faefc54211f4666266ba06",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-technical.md"
       ]
@@ -118,7 +118,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "integrated QA, round 2",
-      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
+      "snapshot_ref": "927f9e0b56c5b34eb9faefc54211f4666266ba06",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-qa.md"
       ]
@@ -127,7 +127,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "PMO delivery acceptance, round 2 (delivery acceptance only; client/product acceptance, merge and release keep their own authorities)",
-      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
+      "snapshot_ref": "927f9e0b56c5b34eb9faefc54211f4666266ba06",
       "evidence_refs": [
         "delivery/features/F-111/round-2/acceptance-pmo.md"
       ]
@@ -138,7 +138,7 @@
       "status": "passed",
       "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
       "authority": "D-187 (LD-Q2: every recommended spec option accepted), D-202 (\"Ship simpler for demo\"), D-203 (\"Sign all\", LD-Q7); D-184 (batch-approved board changes count as product acceptance)",
-      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
+      "snapshot_ref": "927f9e0b56c5b34eb9faefc54211f4666266ba06",
       "evidence_refs": [
         "delivery/features/F-111/round-2/acceptance-product.md"
       ]
@@ -147,7 +147,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "UX reviewer",
-      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
+      "snapshot_ref": "927f9e0b56c5b34eb9faefc54211f4666266ba06",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-ux.md"
       ]
@@ -156,7 +156,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer",
-      "snapshot_ref": "698c74e87d6b51a3b85829a455e34a1a883a3453",
+      "snapshot_ref": "927f9e0b56c5b34eb9faefc54211f4666266ba06",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-ui.md"
       ]
@@ -1245,9 +1245,9 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "90748de39df2315efb0b8b1abe72604bb551af0b",
+    "base_sha": "eb100065e9af366413e28783654d82280dcf3001",
     "task_branch": "fe-connect-1-issue-reads",
-    "head_sha": "698c74e87d6b51a3b85829a455e34a1a883a3453",
+    "head_sha": "927f9e0b56c5b34eb9faefc54211f4666266ba06",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/116",
     "pr_number": 116,
