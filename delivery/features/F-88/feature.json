@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-88",
   "outcome": "Log a received RFP and assign its accountable PM through the live API",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -114,20 +114,24 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery only; product acceptance, merge and release keep their own authorities)",
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-88/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
+      "authority": "D-182, D-183, D-187 and D-198 (batch answers); D-184 (batch-approved board changes count as product acceptance)",
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -638,6 +642,98 @@
           "head": "eacdc7045a458039ad42eb19ea5852cc411578df"
         }
       ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` `acceptance_criteria` still holds the superseded 1.22 text, including \"no Note field\", \"no What happens next\" and the 409 duplicate. `spec.md` (1.24.0, D-185) replaced it, and QA verified against the spec. Refresh the record's criteria before product acceptance so the client signs against the current text. `delivery/features/F-88/feature.json`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:18:40Z",
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`operation_ids` is empty and `baseline.architecture_manifest_sha256` is null. I mapped the five operations to the spec and QA evidence (organisations, POST received-bids, receipt read, assignments list, assignment read and POST, plus the `/cases/{case_id}/files` proof upload). I did not verify them against the architecture package mapping or the manifest digest. The spec and readiness both say the digest was not re-checked. The coordinator should record them before merge.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:18:40Z",
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Carried non-blocking findings are still OPEN in `feature.json`. These are TECH-1-3 (medium, integration: the Unassigned tab needs live `/work` counts, which are absent, so it is not drawn live until My work is connected), TECH-1-4 (no Playwright spec replaces the deleted `rfp-assign.spec.ts`, Playwright not run in review), UX-1-2 and QA-2-1 (badge 6 or 2 against 13 rows), TECH-2-1, UX-2-1 and QA-2-3 (hidden legend repeat), and QA-2-2 (empty client list seen only in unit tests). The round-2 technical review marks TECH-1-3 and TECH-1-4 as verified and carried forward, but the record shows OPEN. None of them blocks. The coordinator should either accept them in the PR record with a named authority or log follow-ups. TECH-1-3 matters most: SCR-24 is reachable live by URL only until My work serves counts.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:18:40Z",
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-4",
+      "round": 2,
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The parent package's status must not read \"live-connected\". The slice is mock-proven. A no-organisation 403 is the only live evidence, and a design-engineer answer is the authority for that limit. The PR text and any status line must say \"mock-proven, live success unproven\" and quote the answer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:18:40Z",
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -721,11 +817,11 @@
     "task_branch": "fe-connect-1-received-rfp-assign-pm",
     "head_sha": "eacdc7045a458039ad42eb19ea5852cc411578df",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c2",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/110",
+    "pr_number": 110,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -851,6 +947,14 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-24T14:15:49Z",
+      "round": 2,
+      "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-24T14:18:40Z",
       "round": 2,
       "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
       "reason": null
