@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753
+COMMIT: 0c081045fa29ad5d62d5ffed92916e21dbc68f13
 REVIEWER: reviewer-ui
 AUTHORITY: UI design reviewer
 
 ## Summary
+- D-193 sync-only re-check of 0c081045 (after the 2b293621 and 0c081045 merges of origin/main): `git diff --stat 6636f0eb 0c081045` lists 71 files. None of the Delivery tab's style or frame path changed. DeliveryTab.tsx, dlvov.css, deliveryModel.ts, useDeliveryOverview.ts, ProjectStates.tsx, the projects tab frame, the shell, the shared components and WorkItemStates.tsx are all unchanged. The changed CSS (document-review.css, start-work.css, work-item.css) is imported only by the Documents, Start work and Work item views. DocumentsTab.tsx and the (item) layout and page changes are outside the Delivery tab's render path. The fidelity result and both waivers carry over unchanged. No re-run and no re-review.
 - Fidelity (builder's single run, reports in round-2/fidelity/, not re-run; figures in report.json match build.md): SCR-43 desktop 1440 coverage 54.2% raw, 100% after exceptions, visual 75.4, moved 3, extra 7. SCR-43 mobile 390 coverage 50% raw, 100% after exceptions, visual 78.7, moved 1, extra 9. Both are below 90 and pass only under the D-83 waiver (visual >= 70). The exceptions and both waivers stay "pending design engineer"; I have not signed or approved them.
 - I read both side-by-sides. The row layout now matches the board at 1440: number box, underlined title link with reference beneath, tag at the right with the date beneath, 14px inset on both edges, no overlap. The panel head wording matches. The phone shows one compact line per row (title and tag), with reference and date beneath, no overflow. I found no fixable gap.
 - Each exception is a spec-hidden item (DC-3/D-182, Question 3 a/D-187, spec Conflicts) or a frame item (breadcrumb with fixture project, persona, Planning tab from live tabs[]). I found none that hides a fixable gap. The one to check is "PM TUNDE BELLO", filed as a frame item. It is a project-header element, so the design engineer should confirm that category when signing.

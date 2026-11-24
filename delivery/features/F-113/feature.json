@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-113",
   "outcome": "The Delivery tab shows the project's six delivery lines from the live overview",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -103,31 +103,25 @@
   ],
   "reviews": {
     "technical": {
-      "status": "passed",
-      "reviewer": "reviewer-technical",
-      "authority": "technical review lead, round 2",
-      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
-      "evidence_refs": [
-        "delivery/features/F-113/round-2/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "passed",
-      "reviewer": "qa",
-      "authority": "integrated QA, round 2",
-      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
-      "evidence_refs": [
-        "delivery/features/F-113/round-2/review-qa.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "pmo_acceptance": {
-      "status": "passed",
-      "reviewer": "pmo-acceptance",
-      "authority": "PMO delivery acceptance, round 2",
-      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
-      "evidence_refs": [
-        "delivery/features/F-113/round-2/acceptance-pmo.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "product_acceptance": {
       "required": true,
@@ -139,22 +133,18 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "reviewer-ux",
-      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
-      "evidence_refs": [
-        "delivery/features/F-113/round-2/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
-      "status": "passed",
-      "reviewer": "reviewer-ui",
-      "authority": "UI design reviewer",
-      "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
-      "evidence_refs": [
-        "delivery/features/F-113/round-2/review-ui.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     }
   },
   "findings": [
@@ -843,6 +833,29 @@
           "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753"
         }
       ]
+    },
+    {
+      "id": "UX-2-4",
+      "round": 2,
+      "snapshot_ref": "0c081045fa29ad5d62d5ffed92916e21dbc68f13",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "After the main sync (F-85), /work/{integer id} opens the live work item view. The Delivery rows link to /work/2501 to /work/2505, and the live mock (mock/work-live.mjs) serves only 4101 to 4108, so on the mock the row title opens a 404 'This record is unavailable.'",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T09:55:31Z",
+          "head": "0c081045fa29ad5d62d5ffed92916e21dbc68f13"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -900,6 +913,67 @@
           ]
         }
       }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical review lead, round 2",
+          "snapshot_ref": "0c081045fa29ad5d62d5ffed92916e21dbc68f13",
+          "evidence_refs": [
+            "delivery/features/F-113/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "passed",
+          "reviewer": "qa",
+          "authority": "integrated QA, round 2",
+          "snapshot_ref": "0c081045fa29ad5d62d5ffed92916e21dbc68f13",
+          "evidence_refs": [
+            "delivery/features/F-113/round-2/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "passed",
+          "reviewer": "pmo-acceptance",
+          "authority": "PMO delivery acceptance, round 2",
+          "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+          "evidence_refs": [
+            "delivery/features/F-113/round-2/acceptance-pmo.md"
+          ]
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-113/readiness.md",
+          "status": "passed",
+          "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
+          "authority": "D-187 (LD-Q2: every recommended spec option accepted) and D-195 (\"Sign all, keep amber\"); D-184 (batch-approved board changes count as product acceptance)",
+          "snapshot_ref": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+          "evidence_refs": [
+            "delivery/features/F-113/round-2/acceptance-product.md"
+          ]
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "0c081045fa29ad5d62d5ffed92916e21dbc68f13",
+          "evidence_refs": [
+            "delivery/features/F-113/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "0c081045fa29ad5d62d5ffed92916e21dbc68f13",
+          "evidence_refs": [
+            "delivery/features/F-113/round-2/review-ui.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -924,7 +998,7 @@
     "base_branch": "main",
     "base_sha": "8484668ac541f8583b72de6d496c811fbd75fc59",
     "task_branch": "fe-connect-1-delivery-overview",
-    "head_sha": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+    "head_sha": "0c081045fa29ad5d62d5ffed92916e21dbc68f13",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d",
     "pr_url": null,
     "pr_number": null,
@@ -936,6 +1010,7 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
+      ".github/workflows/frontend-checks.yml",
       "BUILD-BACKLOG.json",
       "BUILD-DECISIONS.md",
       "BUILD-LOG.md",
@@ -970,10 +1045,21 @@
       "apps/workflows/factory_views.py",
       "apps/workflows/migrations/0104_leadership_current_information.py",
       "contracts/psl-factory.openapi.json",
+      "delivery/checks.sh",
       "delivery/connect/backend-answers-2026-11-23.md",
       "delivery/connect/backend-answers.md",
+      "frontend/e2e/document-review.spec.ts",
+      "frontend/e2e/hr.spec.ts",
+      "frontend/e2e/rfp-intake.spec.ts",
+      "frontend/e2e/start-work-ppe-forecast.spec.ts",
+      "frontend/e2e/start-work-proof.spec.ts",
+      "frontend/e2e/start-work.spec.ts",
+      "frontend/e2e/work-item-live.spec.ts",
       "frontend/mock/delivery-overview.mjs",
       "frontend/mock/demo-projects.mjs",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/documents/review-2901.json",
+      "frontend/mock/fixtures/documents/review-2901.publication.json",
       "frontend/mock/fixtures/me.admin.json",
       "frontend/mock/fixtures/me.ceo.json",
       "frontend/mock/fixtures/me.finance_lead.json",
@@ -985,23 +1071,81 @@
       "frontend/mock/fixtures/projects/list.json",
       "frontend/mock/projects.mjs",
       "frontend/mock/server.mjs",
+      "frontend/mock/start-live.mjs",
+      "frontend/mock/work-live.mjs",
       "frontend/src/api/live-schema.d.ts",
+      "frontend/src/api/types.ts",
+      "frontend/src/app/work/[id]/(item)/history/page.tsx",
+      "frontend/src/app/work/[id]/(item)/layout.tsx",
+      "frontend/src/app/work/[id]/(item)/page.tsx",
       "frontend/src/features/assistant/AssistantFrame.tsx",
+      "frontend/src/features/documents/DocumentParts.tsx",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/documents/ReviewControls.tsx",
+      "frontend/src/features/documents/document-review.css",
+      "frontend/src/features/documents/documentModel.ts",
+      "frontend/src/features/documents/useDocument.ts",
+      "frontend/src/features/documents/useReview.ts",
       "frontend/src/features/projects/DeliveryTab.tsx",
+      "frontend/src/features/projects/DocumentsTab.tsx",
       "frontend/src/features/projects/ProjectJourney.tsx",
       "frontend/src/features/projects/deliveryModel.ts",
       "frontend/src/features/projects/dlvov.css",
       "frontend/src/features/projects/model.ts",
       "frontend/src/features/projects/useDeliveryOverview.ts",
       "frontend/src/features/sign-in/sign-in.css",
+      "frontend/src/features/start-work/LineChooser.tsx",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/ProjectPicker.tsx",
+      "frontend/src/features/start-work/RecordPicker.tsx",
+      "frontend/src/features/start-work/SourcePicker.tsx",
+      "frontend/src/features/start-work/StartUpload.tsx",
+      "frontend/src/features/start-work/StartWorkDrawer.tsx",
+      "frontend/src/features/start-work/intake.ts",
+      "frontend/src/features/start-work/labels.ts",
+      "frontend/src/features/start-work/lines/index.ts",
+      "frontend/src/features/start-work/lines/weeklyReport.tsx",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/src/features/start-work/types.ts",
+      "frontend/src/features/start-work/useStart.ts",
+      "frontend/src/features/start-work/useStartWork.ts",
+      "frontend/src/features/work-item/live/LiveWorkItemView.tsx",
+      "frontend/src/features/work-item/live/model.ts",
+      "frontend/src/features/work-item/live/useLiveHistory.ts",
+      "frontend/src/features/work-item/live/useLiveWorkItem.ts",
+      "frontend/src/features/work-item/work-item.css",
+      "frontend/src/features/workspace/EvidencePicker.tsx",
+      "frontend/src/features/workspace/adapter.ts",
+      "frontend/src/features/workspace/evidence.ts",
+      "frontend/src/features/workspace/weeklyReportAdapter.ts",
       "frontend/src/styles/shell.css",
+      "frontend/tests/assistant.test.tsx",
       "frontend/tests/delivery-model.test.ts",
       "frontend/tests/delivery-tab.test.tsx",
       "frontend/tests/destinations.ts",
+      "frontend/tests/document-review-model.test.ts",
+      "frontend/tests/document-review.test.tsx",
+      "frontend/tests/evidence.test.tsx",
+      "frontend/tests/hypercare.test.tsx",
+      "frontend/tests/issue-detail.test.tsx",
+      "frontend/tests/line-adapter.test.tsx",
+      "frontend/tests/live-work-item.test.tsx",
+      "frontend/tests/mock-live-document-review.test.ts",
       "frontend/tests/mock-live-projects.test.ts",
+      "frontend/tests/mock-work-live.test.ts",
+      "frontend/tests/next-config.test.ts",
+      "frontend/tests/project-tabs.test.tsx",
       "frontend/tests/projects-journey.test.tsx",
       "frontend/tests/projects-model.test.ts",
+      "frontend/tests/rfp-intake.test.tsx",
       "frontend/tests/shell-live.test.tsx",
+      "frontend/tests/start-work-intake.test.ts",
+      "frontend/tests/start-work-live.test.tsx",
+      "frontend/tests/start-work-ppe-forecast.test.tsx",
+      "frontend/tests/start-work-prefill.test.tsx",
+      "frontend/tests/start-work-proof.test.tsx",
+      "frontend/tests/start-work.test.tsx",
+      "frontend/tests/weekly.test.tsx",
       "handoffs/nextjs/README.md",
       "handoffs/nextjs/live-schema.d.ts",
       "handoffs/nextjs/psl-factory.openapi.json",
@@ -1050,7 +1194,7 @@
     }
   },
   "created_at": "2026-11-23T17:35:17Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -1116,6 +1260,22 @@
       "round": 2,
       "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
       "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T09:55:45Z",
+      "round": 2,
+      "head": "0c081045fa29ad5d62d5ffed92916e21dbc68f13",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T09:55:55Z",
+      "round": 3,
+      "head": "0c081045fa29ad5d62d5ffed92916e21dbc68f13",
+      "reason": null
     }
   ],
   "routing": {
@@ -1131,10 +1291,10 @@
     ]
   },
   "gate": {
-    "round": 2,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753"
+    "round": 3,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

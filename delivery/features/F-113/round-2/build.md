@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 2b2936217bdaf5319c6f464ba7e129bd4ea26e6e
+COMMIT: 0c081045fa29ad5d62d5ffed92916e21dbc68f13
 BUILDER: builder
 LANE: full
 
@@ -41,3 +41,5 @@ None. Open for the design engineer: sign the proposed exceptions and the two D-8
 
 ## Coordinator: D-193 sync with main
 Merged origin/main (ae0525fb: F-86, F-72) once before merge, as merge commit 2b293621. The one conflict was in `frontend/mock/server.mjs`: both sides kept, F-113's `deliveryRead` route and import plus F-72's live document-review route and its wider `documents.mjs` import. F-113's own code is unchanged. `delivery-tab` and `delivery-model` tests: 47 pass.
+
+Merged origin/main 8692cf87 (D-199 CI workflow, #107) as 0c081045, no conflicts and no F-113 file touched. The gate runs in ci mode.

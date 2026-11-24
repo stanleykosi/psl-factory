@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753
+COMMIT: 0c081045fa29ad5d62d5ffed92916e21dbc68f13
 REVIEWER: reviewer-technical
 AUTHORITY: technical review lead, round 2
 
 ## Summary
+- D-193 sync-only re-check of 0c081045: read the `frontend/mock/server.mjs` diff 6636f0eb..0c081045 hunk by hunk. The `deliveryRead` import and its call (F-113, before the F-72 block) and the F-72 `isLiveDocumentPath`/`liveDocumentReview` route both survive, and `deliveryRead` returns null for other paths so they fall through. The other hunks are F-85/F-86 (work-live, start-live, liveStart flag, reset calls) and the F-72 `documentRead` import. `git diff --stat 6636f0eb 0c081045` against the F-113 list in round-2/build.md: `DeliveryTab.tsx`, `dlvov.css`, `delivery.css`, `delivery-tab.test.tsx`, `delivery-overview.mjs` and `delivery/features/F-113/` are unchanged. The range changes only `server.mjs` and `DocumentsTab.tsx` (F-72, from ae0525fb), and `checks.sh`, `frontend-checks.yml` and `hypercare.test.tsx` (main, D-199). One out-of-scope note: the D-199 merge changes a `hypercare.test.tsx` assertion to a `waitFor`; it is not F-113 and not blocking. The Notes gate line refers to 6636f0eb; the ci-mode result is added by the coordinator. No F-113 code re-reviewed.
 - Round 2 changes only the row layout and copy: own `dlvov__*` class names in `dlvov.css`, the title is the link to `/work/{work_id}` (the separate "Open" link is gone), explicit grid areas, and the closure reason separator. The data path, state mapping, request count and write-free rule are untouched.
 - Round 1 PASS holds. The title link keeps the spec's link rules: it is built from `work_id`, it is absent when `work_id` is null, and each started row has exactly one link. AC3 now means clicking the title; the spec's "Open" wording needs a one-word change (see Notes).
 - The two F-113 delivery test files pass on this head (47 tests), including the updated link test and the reason-separator test.
