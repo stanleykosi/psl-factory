@@ -5,7 +5,7 @@
 // never two at once, and nothing more after a 401. Marking read changes the held list only.
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { call, liveApi } from '@/api/client';
+import { readInboxFirstPage } from '@/api/alerts';
 import { ApiError, networkError } from '@/api/errors';
 
 import type { Alert, DailySummary } from './types';
@@ -42,7 +42,7 @@ export function useAlertsFeed(enabled: boolean): AlertsFeed {
     inFlight.current = true;
     setLoading(true);
     try {
-      const list = await call(liveApi.GET('/api/v1/notifications'));
+      const list = await readInboxFirstPage();
       // A body without an items list is not an alerts list: shown as a load error, never as "no alerts".
       if (!Array.isArray(list?.items)) throw networkError();
       loadedAt.current = Date.now();

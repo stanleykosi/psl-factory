@@ -3,7 +3,7 @@
 import NextLink from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { call, liveApi } from '@/api/client';
+import { readInbox } from '@/api/alerts';
 import { ApiError, networkError } from '@/api/errors';
 import { Button, EmptyState, formatTime, Link, Loading, PageTitle, Skeleton, Tag, useIsPhone, VisuallyHidden } from '@/components';
 import { SignedOutState } from '@/shell/FrameStates';
@@ -19,7 +19,7 @@ type ListState = { status: 'loading' } | ({ status: 'ready' } & Loaded) | { stat
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
 const fetchPage = async (page: number) => {
-  const list = await call(liveApi.GET('/api/v1/notifications', { params: { query: { page } } }));
+  const list = await readInbox(page);
   // A body without an items list is not an alerts list: shown as a load error, never as "no alerts".
   if (!Array.isArray(list?.items) || typeof list.unread !== 'number') throw networkError();
   return list;

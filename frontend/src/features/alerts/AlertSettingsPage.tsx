@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { call, csrfHeader, liveApi } from '@/api/client';
+import { readAlertPreferences, saveAlertPreferences } from '@/api/alerts';
 import { ApiError, networkError } from '@/api/errors';
 import { Button, Callout, ErrorState, Link, PageTitle, useIsPhone, formatDateTime } from '@/components';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
 import { AlertSwitch } from './AlertSwitch';
-import type { AlertPrefs, SavedPrefs } from './types';
+import type { AlertPrefs } from './types';
 import { buildPrefsBody, CHANNEL_WORDS, DELIVERY_STATE_WORDS, deliveryTime, draftFrom, prefsChanged, type Draft } from './model';
 import './alerts.css';
 
@@ -23,7 +23,6 @@ type PageState = { status: 'loading' } | { status: 'error'; code: string } | { s
 type Notice = { kind: 'stale' } | { kind: 'invalid'; message: string } | { kind: 'problem' };
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
-const readPrefs = () => call(liveApi.GET('/api/v1/me/alert-preferences'));
 
 /** A body without a revision, both switches and a receipts list is not a settings page: it gets the error card. */
 function pageFrom(data: AlertPrefs): PageState {
@@ -52,7 +51,7 @@ export function AlertSettingsPage() {
     setNotice(null);
     setSaved(false);
     try {
-      setPage(pageFrom(await readPrefs()));
+      setPage(pageFrom(await readAlertPreferences()));
     } catch (error) {
       failed(error);
     }
@@ -76,7 +75,7 @@ export function AlertSettingsPage() {
     setNotice(null);
     setSaved(false);
     try {
-      const data: SavedPrefs & Partial<AlertPrefs> = await call(liveApi.POST('/api/v1/me/alert-preferences', { params: csrfHeader, body: buildPrefsBody(page.prefs, page.draft) }));
+      const data = await saveAlertPreferences(buildPrefsBody(page.prefs, page.draft));
       // The held revision, switches and readiness are the response's; the receipts stay unless it carries them.
       const next = pageFrom({ ...data, recent_deliveries: data.recent_deliveries ?? page.prefs.recent_deliveries });
       setPage(next);

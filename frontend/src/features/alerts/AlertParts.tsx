@@ -5,7 +5,7 @@
 import { useRouter } from 'next/navigation';
 import { useCallback, useRef, useState, type MouseEvent } from 'react';
 
-import { call, csrfHeader, liveApi } from '@/api/client';
+import { markAlertRead } from '@/api/alerts';
 import { ApiError } from '@/api/errors';
 import { AgentAvatar, agentKey, Button, ErrorState, formatClock, VisuallyHidden } from '@/components';
 
@@ -83,7 +83,7 @@ export function useAlertActions({ onRead, onGone, onSignedOut }: Handlers) {
       if (alert.read || sent.current.has(alert.id)) return undefined;
       sent.current.add(alert.id);
       try {
-        await call(liveApi.POST('/api/v1/notifications/{notification_id}/read', { params: { ...csrfHeader, path: { notification_id: alert.id } }, body: {} }));
+        await markAlertRead(alert.id);
       } catch (caught) {
         sent.current.delete(alert.id);
         const e = caught instanceof ApiError ? caught : undefined;

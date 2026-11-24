@@ -84,14 +84,14 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 export function summaryLine(summary: Partial<DailySummary> | undefined): string | undefined {
   if (!summary) return undefined;
   const date = /^\d{4}-(\d{2})-(\d{2})$/.exec(summary.date ?? '');
-  const month = date ? MONTHS[Number(date[1]) - 1] : undefined;
+  const month = date ? MONTHS[parseInt(date[1], 10) - 1] : undefined;
   const counts = [
     typeof summary.actions_open === 'number' && `${summary.actions_open} need you`,
     typeof summary.unread_updates_today === 'number' && `${summary.unread_updates_today} new ${summary.unread_updates_today === 1 ? 'update' : 'updates'}`,
     typeof summary.unread_without_timestamp === 'number' && `${summary.unread_without_timestamp} older unread`,
   ].filter(Boolean);
   if (counts.length === 0) return undefined;
-  return `Today${date && month ? `, ${Number(date[2])} ${month}` : ''}: ${counts.join(', ')}.`;
+  return `Today${date && month ? `, ${parseInt(date[2], 10)} ${month}` : ''}: ${counts.join(', ')}.`;
 }
 
 /** The loaded-alerts line: "12 loaded, 7 unread". The API gives no total of alerts, so none is claimed. */
