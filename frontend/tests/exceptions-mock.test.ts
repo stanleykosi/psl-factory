@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { join } from 'node:path';
@@ -8,27 +8,18 @@ import addFormats from 'ajv-formats';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
-import { OPENAPI_PATH, startMockServer } from '../mock/server.mjs';
-// @ts-expect-error plain ESM module without type declarations
-import { contractBody } from '../mock/exceptions.mjs';
+import { startMockServer } from '../mock/server.mjs';
 
-// E-EXCEPTIONS in the contract mock (F-06): personas, paging, the empty cookie and the row/item match.
-type Row = { work_id: string; what: string; title: string; ref?: string; doing: string; since: string };
-type Page = { items: Row[]; next_cursor?: string; as_of: string; open_count?: number };
+// The live work list in the contract mock (F-62): GET /api/v1/work for queue=verified and queue=exceptions, and
+// GET /api/v1/work/{id}. Every other queue keeps the v7 shape.
+type Row = { id: number; title: string; line: string; state: string; owner: string | null; sample: boolean };
+type Body = { items: Row[]; page: number; next_page: number | null; as_of: string; limited: boolean; lines: { key: string }[]; evaluated: number; deferred: unknown[]; payroll_questions: unknown[]; code?: string };
 
-const fixtures = join(__dirname, '..', 'mock', 'fixtures');
-const read = (name: string) => JSON.parse(readFileSync(join(fixtures, name), 'utf8'));
-const fixture = read('E-EXCEPTIONS.json') as Page;
-const boardFixture = read('E-EXCEPTIONS.board.json') as Page;
-
-const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'));
-const responses = openapi.paths['/api/v1/exceptions'].get.responses;
-const ajv = new Ajv2020({ allErrors: true, strict: true });
+const contract = JSON.parse(readFileSync(join(__dirname, '../../contracts/psl-factory.openapi.json'), 'utf8'));
+const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
-const validate200 = ajv.compile(responses['200'].content['application/json'].schema);
-const validate403 = ajv.compile(responses['403'].content['application/json'].schema);
-/** Valid against the contract once the proposal fields (open_count, row ref) are removed. */
-const valid200 = (body: unknown) => validate200(contractBody(body));
+const schemaOf = (path: string) => ({ ...contract.paths[path].get.responses['200'].content['application/json'].schema, components: contract.components });
+const validateList = ajv.compile(schemaOf('/api/v1/work'));
 
 let server: Server;
 let base: string;
@@ -38,109 +29,86 @@ beforeAll(async () => {
 });
 afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
-async function get(query = '', cookie = 'psl_mock_persona=finance_lead') {
-  const response = await fetch(`${base}/api/v1/exceptions${query}`, { headers: { Cookie: cookie } });
-  return { status: response.status, body: (await response.json()) as Page & { code?: string } };
+async function get(path: string, persona = 'finance_lead') {
+  const response = await fetch(`${base}${path}`, { headers: { Cookie: `psl_mock_persona=${persona}` } });
+  return { status: response.status, body: (await response.json()) as Body };
 }
+const ids = (body: Body) => body.items.map((r) => r.id);
 
-describe('mock E-EXCEPTIONS', () => {
-  it('the fixture is a valid 200 body with 25 rows, newest first, covering every kind', () => {
-    expect(valid200(fixture), ajv.errorsText(validate200.errors)).toBe(true);
-    expect(fixture.items).toHaveLength(25);
-    expect(fixture.items[0]).toMatchObject({ work_id: 'W-1005', what: 'effect_uncertain', title: 'Kora Logistics · Milestone 1 invoice' });
-    expect(fixture.items.slice(1).map((r) => r.work_id)).toEqual(Array.from({ length: 24 }, (_, i) => `W-${1501 + i}`));
-    const since = fixture.items.map((r) => r.since);
-    expect(since).toEqual([...since].sort().reverse());
-    const kinds = fixture.items.map((r) => r.what);
-    expect(kinds.filter((k) => k === 'effect_uncertain').length).toBeGreaterThanOrEqual(2);
-    for (const kind of ['owner_needed', 'setup_needed', 'blocked', 'followup_needed']) expect(kinds).toContain(kind);
-    const lagosDay = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { timeZone: 'Africa/Lagos' });
-    expect(fixture.items.some((r) => lagosDay(r.since) !== lagosDay(fixture.as_of))).toBe(true);
+describe('mock live work list', () => {
+  for (const queue of ['verified', 'exceptions']) {
+    it(`${queue}: three pages of 8, 8, 4 in a fixed order, each valid against the live contract`, async () => {
+      const seen: number[] = [];
+      let page = 1;
+      for (;;) {
+        const { status, body } = await get(`/api/v1/work?queue=${queue}&page=${page}`);
+        expect(status).toBe(200);
+        expect(validateList(body), ajv.errorsText(validateList.errors)).toBe(true);
+        expect(body.page).toBe(page);
+        seen.push(...ids(body));
+        if (body.next_page === null) break;
+        page = body.next_page;
+      }
+      expect(page).toBe(3);
+      expect(seen).toHaveLength(20);
+      expect(new Set(seen).size).toBe(20);
+    });
+  }
+
+  it('a narrowed list can have an empty middle page: line filter leaves page 2 empty with next_page 3', async () => {
+    const line = encodeURIComponent('finance-ledger/v1');
+    const first = await get(`/api/v1/work?queue=verified&line=${line}&page=1`);
+    const second = await get(`/api/v1/work?queue=verified&line=${line}&page=2`);
+    const third = await get(`/api/v1/work?queue=verified&line=${line}&page=3`);
+    expect(first.body.items.length).toBeGreaterThan(0);
+    expect(second.body).toMatchObject({ items: [], next_page: 3 });
+    expect(third.body.items.length).toBeGreaterThan(0);
+    expect(third.body.next_page).toBeNull();
+    expect(first.body.items.every((r) => r.line === 'finance-ledger/v1')).toBe(true);
   });
 
-  it('pages of 10 follow the cursors through all 25 rows once, in file order', async () => {
-    const seen: string[] = [];
-    let page = await get('?limit=10');
-    expect(page.body.items).toHaveLength(10);
-    expect(page.body.next_cursor).toBe('o:10');
-    for (;;) {
-      expect(page.status).toBe(200);
-      expect(valid200(page.body), ajv.errorsText(validate200.errors)).toBe(true);
-      expect(page.body.open_count).toBe(25);
-      seen.push(...page.body.items.map((r) => r.work_id));
-      if (!page.body.next_cursor) break;
-      page = await get(`?limit=10&cursor=${encodeURIComponent(page.body.next_cursor)}`);
+  it('search narrows by q; exceptions page 1 is limited with a deferred item, verified is not; null owners and samples exist', async () => {
+    const exceptions = await get('/api/v1/work?queue=exceptions');
+    expect(exceptions.body).toMatchObject({ limited: true, deferred: [{ id: 390 }] });
+    const verified = await get('/api/v1/work?queue=verified');
+    expect(verified.body).toMatchObject({ limited: false, deferred: [] });
+    expect(verified.body.items.some((r) => r.sample)).toBe(true);
+    expect(exceptions.body.items.some((r) => r.owner === null)).toBe(true);
+    const found = await get('/api/v1/work?queue=verified&q=marina');
+    expect(found.body.items.length).toBeGreaterThan(0);
+    expect(found.body.items.every((r) => r.title.includes('Marina Bank'))).toBe(true);
+    expect(exceptions.body.items.map((r) => r.state)).toEqual(expect.arrayContaining(['awaiting_reconciliation', 'effect_uncertain', 'action_needed']));
+  });
+
+  it('persona none sees empty lists; pm and hr are refused exceptions with 403 queue_not_open but may read verified', async () => {
+    for (const queue of ['verified', 'exceptions']) {
+      const none = await get(`/api/v1/work?queue=${queue}`, 'none');
+      expect(none.body).toMatchObject({ items: [], next_page: null });
+      expect(validateList(none.body)).toBe(true);
     }
-    expect(seen).toEqual(fixture.items.map((r) => r.work_id));
+    expect((await get('/api/v1/work?queue=exceptions', 'pm')).status).toBe(403);
+    expect((await get('/api/v1/work?queue=exceptions', 'pm')).body.code).toBe('queue_not_open');
+    expect((await get('/api/v1/work?queue=verified', 'pm')).status).toBe(200);
   });
 
-  it('treats any other limit as 20 and a malformed or out-of-range cursor as the first page', async () => {
-    const odd = await get('?limit=7');
-    expect(odd.body.items).toHaveLength(20);
-    expect(odd.body.next_cursor).toBe('o:20');
-    for (const cursor of ['nonsense', 'o:99']) {
-      const first = await get(`?limit=10&cursor=${cursor}`);
-      expect(first.body.items[0].work_id).toBe('W-1005');
-    }
-    const last = await get('?limit=20&cursor=o:20');
-    expect(last.body.items.map((r) => r.work_id)).toEqual(fixture.items.slice(20).map((r) => r.work_id));
-    expect(last.body).not.toHaveProperty('next_cursor');
+  it('an unreadable page or empty parameter is a 400', async () => {
+    for (const query of ['page=0', 'page=abc', 'q=', 'line=']) expect((await get(`/api/v1/work?queue=verified&${query}`)).status).toBe(400);
   });
 
-  it('answers pm 403, none an empty list, and the empty cookie an empty list', async () => {
-    const pm = await get('', 'psl_mock_persona=pm');
-    expect(pm).toEqual({ status: 403, body: { code: 'forbidden', message: 'Only Leads can see all exceptions.' } });
-    expect(validate403(pm.body)).toBe(true);
-    const none = await get('', 'psl_mock_persona=none');
-    expect(none).toEqual({ status: 200, body: { items: [], as_of: fixture.as_of, open_count: 0 } });
-    const empty = await get('', 'psl_mock_persona=finance_lead; psl_mock_exceptions=empty');
-    expect(empty).toEqual({ status: 200, body: { items: [], as_of: fixture.as_of, open_count: 0 } });
-    expect(valid200(empty.body)).toBe(true);
+  it('the live shape is returned only for verified and exceptions; queue=done still answers the v7 shape', async () => {
+    const done = await get('/api/v1/work?queue=done');
+    expect(done.status).toBe(200);
+    expect(done.body).toHaveProperty('counts');
+    expect(done.body).not.toHaveProperty('next_page');
+    expect(done.body).not.toHaveProperty('evaluated');
+    expect(await get('/api/v1/work?queue=verified')).toHaveProperty('body.evaluated');
   });
 
-  it('proposal: q searches title, reference, doing and who acts; what keeps one kind; open_count counts every match', async () => {
-    const kora = await get('?q=kora');
-    const koraRows = fixture.items.filter((r) => r.title.toLowerCase().includes('kora') || r.doing.toLowerCase().includes('kora'));
-    expect(kora.body.items.map((r) => r.work_id)).toEqual(koraRows.map((r) => r.work_id));
-    expect(kora.body.open_count).toBe(koraRows.length);
-    expect((await get('?q=INV-0405')).body.items.map((r) => r.work_id)).toEqual(['W-1005']);
-    const blocked = await get('?limit=10&what=blocked');
-    expect(blocked.body.items.every((r) => r.what === 'blocked')).toBe(true);
-    expect(blocked.body.open_count).toBe(fixture.items.filter((r) => r.what === 'blocked').length);
-    const paged = await get('?limit=10&what=followup_needed');
-    expect(paged.body.open_count).toBe(fixture.items.filter((r) => r.what === 'followup_needed').length);
-    expect((await get('?what=nonsense')).body.items).toHaveLength(20);
-    expect(valid200(blocked.body)).toBe(true);
-  });
-
-  it('the board cookie serves the four rows drawn on the SCR-10 phone board', async () => {
-    const board = await get('', 'psl_mock_persona=finance_lead; psl_mock_exceptions=board');
-    expect(board.body).toEqual({ ...boardFixture, open_count: 4 });
-    expect(board.body.items.map((r) => r.title)).toEqual([
-      'Lagoon Health · M2 invoice',
-      'Harmattan Bank · go-live report',
-      'Lagoon Health · M3 invoice',
-      'Ojo Foods · ordering app plan',
-    ]);
-    expect(valid200(board.body)).toBe(true);
-  });
-
-  it('rows match their work items', () => {
-    const states: Record<string, string[]> = {
-      owner_needed: ['owner_needed'],
-      setup_needed: ['setup_needed'],
-      followup_needed: ['followup_needed'],
-      effect_uncertain: ['effect_uncertain', 'awaiting_reconciliation'],
-      blocked: ['action_needed'],
-    };
-    for (const row of [...fixture.items, ...boardFixture.items]) {
-      const file = join('work', `${row.work_id}.json`);
-      expect(existsSync(join(fixtures, file)), file).toBe(true);
-      const item = read(file) as { title: string; reference: string; state: string; sample: boolean; tasks: { you_can_act: boolean }[] };
-      expect(item.title, row.work_id).toBe(row.title);
-      expect(row.ref, row.work_id).toBe(item.reference);
-      expect(states[row.what], row.work_id).toContain(item.state);
-      expect(item.tasks.some((t) => t.you_can_act), row.work_id).toBe(false);
-    }
+  it('GET /work/{id}: 412 has an output file, 413 has none, an unknown id is 404', async () => {
+    const withOutput = await get('/api/v1/work/412');
+    expect(withOutput.status).toBe(200);
+    expect(withOutput.body).toMatchObject({ id: 412, output_url: '/outputs/412.pdf' });
+    expect((await get('/api/v1/work/413')).body).toMatchObject({ id: 413, output_url: null });
+    expect((await get('/api/v1/work/9999')).status).toBe(404);
   });
 });

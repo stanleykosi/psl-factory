@@ -447,6 +447,45 @@ describe('paging (D-PAGING r2)', () => {
   });
 });
 
+describe('live rows (F-125)', () => {
+  const liveRow = { id: 'work-1', kind: 'weekly_report', title: 'Weekly report' };
+  const live = (items: unknown[]) => () => json(200, { items, next_cursor: null, as_of: '2026-11-23T09:00:00Z' });
+
+  it('shows the error card for live-shaped rows without throwing', async () => {
+    work = live([liveRow]);
+    await open();
+    await until(() => expect(screen.getByRole('alert').textContent).toContain('We couldn’t load your queue'));
+    expect(rows()).toHaveLength(0);
+  });
+
+  it('a v7 row among live-shaped ones still fails the whole response', async () => {
+    const v7 = mockResponse(new URL('http://x/api/v1/work?queue=needs_me&limit=10'));
+    work = live([(await v7.json()).items[0], liveRow]);
+    await open();
+    await until(() => expect(screen.getByRole('alert').textContent).toContain('We couldn’t load your queue'));
+    expect(rows()).toHaveLength(0);
+  });
+
+  it('a live-shaped Show more keeps the rows and offers a retry', async () => {
+    await open();
+    work = live([liveRow]);
+    fireEvent.click(screen.getByRole('button', { name: 'Show 10 more' }));
+    await until(() => expect(screen.getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
+    expect(rows()).toHaveLength(10);
+  });
+
+  it('a live-shaped refresh keeps the rows and says it could not refresh', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date'] });
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'visible' });
+    await open();
+    work = live([liveRow]);
+    await act(() => vi.advanceTimersByTimeAsync(15_000));
+    await until(() => expect(document.querySelector('.my-work__updated[role="status"]')!.textContent).toContain('Couldn’t refresh'));
+    expect(rows()).toHaveLength(10);
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+});
+
 describe('URL restore', () => {
   it('sends exactly the values in the URL and stores nothing', async () => {
     const cookie = document.cookie;
