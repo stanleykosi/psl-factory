@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-87",
   "outcome": "The work item can check what happened, resume or cancel, and pause or continue background work, live",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -147,27 +147,33 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "qa",
+      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "evidence_refs": [
+        "delivery/features/F-87/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "pmo-acceptance",
+      "authority": "pmo",
+      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "evidence_refs": [
+        "delivery/features/F-87/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-87/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
+      "authority": "D-182 and D-183 (batch answers); D-184 (batch-approved board changes count as product acceptance)",
+      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "evidence_refs": [
+        "delivery/features/F-87/round-3/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -730,6 +736,29 @@
           "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1"
         }
       ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "owner": "pmo",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Criterion 21 (live 202 on \"Check what happened\", plus no row when nothing is listed) has no passing live evidence on 9f9dc026. QA signed in as qa-seed on Django 8020. Items 1, 2 and 4 list only `background` and `cancel`, so reconcile and Resume could not be pressed. Cancel was not pressed live. The 403, 409, 422, timeout and 5xx paths were checked on the mock only. Expected: a live record per criterion 21, or an acceptance by a named authority. For the CEO demo path (D-201), Pause and Continue are live-proved with a re-read, and Cancel's dialog opens live and \"Keep it\" sends nothing. Check what happened and Resume would be shown to the CEO with no live proof. Recommended route: (a) the lane C coordinator gets one live work item that lists `reconcile` (and one that lists `resume`) from the backend seed owner, QA presses them and records the 202 or 200 JSON, then PMO re-accepts; or (b) the design engineer, who owns acceptance for the demo path, records in readiness.md or BUILD-DECISIONS that criterion 21 is accepted as mock-only for the demo with these controls not shown live. I cannot grant (b) myself. | delivery/features/F-87/round-3/review-qa.md (Summary, last bullet; Notes, Live detail)",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:44:27Z",
+          "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -868,8 +897,8 @@
     "task_branch": "fe-connect-1-work-item-controls",
     "head_sha": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/113",
+    "pr_number": 113,
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "not_run",
@@ -1009,6 +1038,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-24T14:25:52Z",
+      "round": 3,
+      "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-24T14:43:08Z",
       "round": 3,
       "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
       "reason": null

@@ -1,0 +1,23 @@
+VERDICT: PASS
+COMMIT: 9f9dc026b5e62762de288ca468aa8a4380a649f1
+REVIEWER: qa
+AUTHORITY: qa
+
+## Summary
+- Mock (dev server on 4980, mock on 4981), Chromium at 1440 and 390, items 4120 to 4123, 4110 and 4111: every journey in the brief behaved as specified, with no horizontal overflow at either width. A throwaway Playwright script (outside the repo) captured the exact request bodies.
+- Writes sent: Check what happened `{"action":"reconcile","expected_revision":5}`; Resume and Cancel to `/control` with revision 3 (Cancel only after "Cancel this work", "Keep it" sent nothing); Pause and Continue `{"expected_revision":7,"enabled":false|true}` with no action key. 4123 (adopt_profile, release_invoice listed) and 4111 draw no row. 4110 (null revision) draws both buttons disabled with the version-missing sentence and sends nothing when forced.
+- Error paths on Resume: 403 "You can't do this. {server message}"; csrf "Press the button again."; 409 shows the changed-while-working text and the next press carries revision 5; 422 shows the server message; 429 and 503 "Try again shortly."; 500 and dropped connection show "We couldn't confirm that this happened. Check the page before trying again." The 500 locks Resume (one POST); the drop unlocks because the re-read shows a new revision. A 500 on Check what happened leaves it enabled.
+- Uncertain lock: with the re-read aborted after a 500 (banner "We couldn't refresh this item"), Resume stayed disabled with "Check the page before trying again."; History then browser Back left it disabled, and a forced press sent no second POST (1 POST in total). Same at 1440 and 390. This confirms the TECH-2-1 fix in a real browser.
+- Live (Django 8020, Postgres 55433, Next 4980, signed in as qa-seed): items 1, 2 and 4 each offer Cancel, Pause background work and Continue background work, no Resume and no reconcile. On item 1 I pressed Pause (202) and Continue (202); each was followed by a re-read. Not proved live: "Check what happened" and Resume (no item lists them), the 403, 409, 422, timeout and 5xx paths live, and Cancel (not pressed, per instruction).
+
+## Findings
+None.
+
+## Verified
+- TECH-2-1 | verified | Mock 4121 with `w500`, re-read of `GET /api/v1/work/4121` aborted: Resume disabled with "Check the page before trying again."; History link `/work/4121/history` (list present), then browser Back: Resume still `[disabled]`, forced click sent no request, 1 POST in total, at 1440 and 390. The mock `wdrop` run (re-read succeeds, revision moves) correctly unlocks Resume.
+
+## Notes
+- Evidence detail. Mock: 4120 shows "Checked. This item is now: Awaiting reconciliation." (default) or "Ready to continue." (`ready`). 4121 Cancel shows "Done. This item is now: Cancelled." The mock keeps listing Resume and Cancel after it cancels, a mock limitation and not the page. Every success notice appears twice in the live-region text, which is the toast plus its status region, not two requests.
+- Live detail. Before: item 1 `state ready, revision 1, case_revision 14, actions ["background"], available_control ["cancel"]`. Pause answered 202 `{"work_id":1,"state":"ready","revision":1}`, then the page re-read at once (Django log: POST then GET /api/v1/work/1). Continue answered 202 with the same body, then a re-read. The revision stays 1 on a background change, so the page's next press is still correct. I opened the Cancel dialog live and pressed "Keep it", sending nothing. I did not seed or migrate.
+- Processes started and stopped by recorded PID: dev.mjs 83469 (mock and Next), Django 94363, dev.mjs 94364. Ports 4980, 4981, 8020 and 4010 (dev.mjs's default mock) are free now. The qa-seed password was read only by the local script and never printed or stored, and nothing under `.runtime/demo-*` was read.
+- Screenshots are in the session scratchpad `shots/`, not committed.
