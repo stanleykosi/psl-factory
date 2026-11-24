@@ -607,3 +607,10 @@ The weekly Claude limit was at 76%, and the design engineer wants a demo this we
   Synthetic policy is activated only in the local `psl_demo` database. Nothing touches Railway or production (D-196 is unchanged).
 - **Order:** finish the eight nearly-done features (F-75, F-78, F-119B, F-103, F-91, F-63, F-65, F-60), then the backend demo changes, then a demo walk on `app-live`.
 - **Amendment (same evening):** the D-193 re-checks after a main sync still happen, as cheap diff-only re-checks by each lens's own reviewer agent (Haiku or Sonnet). The coordinator may not re-point a reviewer's file at a new head without that reviewer checking it; the permission check refused that, correctly, as undermining oversight.
+
+## D-210 (24 Nov 2026): build and merge now, review later
+The design engineer: "so i think we shouldnt do any reviews, lets just build and merge for now. leave all reviews to that end. that should reduce the usage a lot. we can do reviews from next week or i do them manually".
+- Until further notice there are no review agents (technical, security, UX, UI, QA, PMO or approver) and no fidelity runs. Each feature gets a builder (Sonnet), then the GitHub Actions checks (lint, typecheck, unit tests, build, Django check), then a squash merge to main by the coordinator.
+- **Checked first (read-only, D-196):** the Railway services (psl-production-api, psl-design-api and their workers) have no GitHub source connected. They deploy only by hand, so a merge to main does not reach production or design-acceptance.
+- Every feature merged this way is listed in `delivery/connect/review-later.md` with its PR, merge sha and what it changed. Its feature record stays at its current state, marked "merged under D-210, review pending", because the tool won't record MERGED without reviews. Nobody records reviews that didn't happen.
+- Database-related changes (migrations, data migrations, policy activation) and anything on Railway still go to the design engineer (D-207). Backend demo changes run under D-209.
