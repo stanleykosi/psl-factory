@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-61",
   "outcome": "Alerts list, drawer and alert settings on the live API",
-  "state": "PR_OPEN",
+  "state": "AWAITING_USER_APPROVAL",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -84,7 +84,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "reviewer-technical",
-      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "snapshot_ref": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
       "evidence_refs": [
         "delivery/features/F-61/round-1/review-technical.md"
       ]
@@ -93,7 +93,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "integrated QA",
-      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "snapshot_ref": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
       "evidence_refs": [
         "delivery/features/F-61/round-1/review-qa.md"
       ]
@@ -102,7 +102,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "PMO delivery acceptance",
-      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "snapshot_ref": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
       "evidence_refs": [
         "delivery/features/F-61/round-1/acceptance-pmo.md"
       ]
@@ -113,7 +113,7 @@
       "status": "passed",
       "reviewer": "design engineer (hunchoweb), recorded by the lane A coordinator",
       "authority": "accepted in batch, delegated under D-184 (the design engineer's batch answers D-182, D-187 and D-202)",
-      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "snapshot_ref": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
       "evidence_refs": [
         "delivery/features/F-61/round-1/acceptance-product.md"
       ]
@@ -122,7 +122,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "reviewer-ux",
-      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "snapshot_ref": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
       "evidence_refs": [
         "delivery/features/F-61/round-1/review-ux.md"
       ]
@@ -131,7 +131,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer (lighter panel, D-180)",
-      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "snapshot_ref": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
       "evidence_refs": [
         "delivery/features/F-61/round-1/review-ui.md"
       ]
@@ -140,7 +140,7 @@
       "status": "passed",
       "reviewer": "reviewer-security",
       "authority": "security reviewer, round 1 (lighter panel, D-180)",
-      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "snapshot_ref": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
       "evidence_refs": [
         "delivery/features/F-61/round-1/review-security.md"
       ]
@@ -353,6 +353,29 @@
           "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
         }
       ]
+    },
+    {
+      "id": "PMO-1-3",
+      "round": 1,
+      "snapshot_ref": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "QA-1-2 (alerts-bell e2e) fails on main 4a88c26b and on the F-61 head the same way for main-owned reasons, and passes on the F-61 branch. It is not F-61's. Expected: the coordinator records the main failure against its own feature or a deferral, and QA-1-2 is closed as not-F-61 or accepted by a named authority. The e2e is also not in the CI gate, so the bell has no gated e2e until it is fixed. Actual: QA-1-2 is OPEN. Path: delivery/features/F-61/feature.json.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:41:36Z",
+          "head": "dab5f01825066cb85627bf0f427f27ef29e7d3ef"
+        }
+      ]
     }
   ],
   "prior_review_records": [],
@@ -378,13 +401,13 @@
     "base_branch": "main",
     "base_sha": "4a88c26b2aa399ff54f9ec6cedad65ae075ebbb8",
     "task_branch": "fe-alerts-live-alerts-and-settings",
-    "head_sha": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+    "head_sha": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a2",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/112",
     "pr_number": 112,
     "pr_author": "hunchoweb",
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -452,12 +475,20 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-61/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'external-messaging' always needs a human",
+      "42 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -514,6 +545,14 @@
       "at": "2026-11-24T14:35:52Z",
       "round": 1,
       "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-24T14:41:50Z",
+      "round": 1,
+      "head": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
       "reason": null
     }
   ],

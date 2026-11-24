@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 5f61b03c833db545052bd88a34ed1a1ac62eb608
+COMMIT: dab5f01825066cb85627bf0f427f27ef29e7d3ef
 REVIEWER: reviewer-security
 AUTHORITY: security reviewer, round 1 (lighter panel, D-180)
 
@@ -15,3 +15,15 @@ None.
 
 ## Notes
 - An unknown receipt state from the server would render an empty word. This is non-blocking and the types forbid it.
+
+## Pre-merge re-confirm (dab5f018)
+
+Scope checked: `git diff --stat 5f61b03c dab5f018` lists 15 files (+650/-23), all in `frontend/` (mock server, work-live and delivery-overview mocks, DeliveryTab, deliveryModel, useDeliveryOverview, dlvov.css, model.ts, ProjectJourney.tsx, and tests). Nothing under the alert-link, CSRF or preference-write paths changed.
+
+- Alert links: no alert or notification link code changed. The only new `href` values are internal `/work/<id>` links built from `encodeURIComponent` on the work id, unchanged from the reviewed round.
+- CSRF writes: no write route was added or altered. The mock change adds only a `get` branch for `deliveryRead`. The test `calls.every((c) => c.method === 'GET')` confirms the delivery overview issues only GET requests.
+- Preference writes: none touched.
+- `ledger-source.test.tsx` change is a test-only `waitFor` on an existing notice. No production code.
+- `work-live.mjs` adds sample fixtures (ids 2501 to 2505), mock-only.
+
+Verdict: PASS. The reviewed round-1 PASS stands for the security lens at dab5f018. No new findings.

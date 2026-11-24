@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 5f61b03c833db545052bd88a34ed1a1ac62eb608
+COMMIT: dab5f01825066cb85627bf0f427f27ef29e7d3ef
 REVIEWER: reviewer-technical
 AUTHORITY: reviewer-technical
 
@@ -16,3 +16,16 @@ AUTHORITY: reviewer-technical
 
 ## Verified
 None.
+
+## Pre-merge re-confirm (dab5f018)
+
+Scope checked: `git diff --stat 5f61b03c dab5f018` (15 files, all F-113 or main-sync work: `frontend/mock/delivery-overview.mjs`, `frontend/mock/server.mjs`, `frontend/mock/work-live.mjs`, `frontend/src/features/projects/*`, `frontend/tests/delivery-*`, `frontend/tests/mock-work-live.test.ts`, `frontend/tests/projects-*`, `frontend/tests/ledger-source.test.tsx`). None of the 15 files is in F-61's scope.
+
+- `frontend/src/features/alerts/*`: unchanged (no entries in the diff).
+- `frontend/src/api/alerts.ts`: unchanged.
+- F-61 tests (`alerts-*.test.*`, `frontend/e2e/alerts*.spec.ts`): unchanged.
+- F-61 mock block (`frontend/mock/alerts.mjs`, its fixtures, and the alerts route in `frontend/mock/server.mjs`): unchanged. The `server.mjs` hunks add only the F-113 delivery import and route, placed before the F-72 block.
+
+The `work-live` mock and its test changed, but those belong to F-113 (ids 2501 to 2505), not F-61.
+
+Verdict: PASS, unchanged from 5f61b03c. The two non-blocking findings (TECH-1-1, TECH-1-2) still stand as written and are not affected by this change.

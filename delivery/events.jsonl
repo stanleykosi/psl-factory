@@ -5024,3 +5024,16 @@
 {"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"medium","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"transition","head":"cfc3c4623820","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-24T14:41:36Z","feature":"F-61","round":1,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"dab5f0182506","findings":{"TECH-1-1":"medium","TECH-1-2":"low"},"written_at":"2026-11-24T14:38:31Z"}
+{"at":"2026-11-24T14:41:36Z","feature":"F-61","round":1,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"dab5f0182506","findings":{"QA-1-1":"medium","QA-1-2":"medium","QA-1-3":"low","QA-1-4":"low","QA-1-5":"low"},"written_at":"2026-11-24T14:40:23Z"}
+{"at":"2026-11-24T14:41:36Z","feature":"F-61","round":1,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"dab5f0182506","findings":{"PMO-1-1":"low","PMO-1-2":"low","PMO-1-3":"low"},"written_at":"2026-11-24T14:38:29Z"}
+{"at":"2026-11-24T14:41:36Z","feature":"F-61","round":1,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), recorded by the lane A coordinator","commit":"dab5f0182506","written_at":"2026-11-24T14:38:25Z"}
+{"at":"2026-11-24T14:41:36Z","feature":"F-61","round":1,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"dab5f0182506","written_at":"2026-11-24T14:38:42Z"}
+{"at":"2026-11-24T14:41:36Z","feature":"F-61","round":1,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"dab5f0182506","written_at":"2026-11-24T14:38:43Z"}
+{"at":"2026-11-24T14:41:36Z","feature":"F-61","round":1,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"dab5f0182506","written_at":"2026-11-24T14:38:26Z"}
+{"at":"2026-11-24T14:41:36Z","feature":"F-61","round":1,"kind":"finding","action":"add","finding":"PMO-1-3","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-24T14:41:36Z","feature":"F-61","round":1,"kind":"decision","decision":"BLOCKED","head":"dab5f0182506","reasons":["CI is 'not_run', not 'passed'"]}
+{"at":"2026-11-24T14:41:36Z","feature":"F-61","round":1,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
+{"at":"2026-11-24T14:41:49Z","feature":"F-61","round":1,"kind":"fields","fields":{"git.ci_status":"passed"}}
+{"at":"2026-11-24T14:41:49Z","feature":"F-61","round":1,"kind":"decision","decision":"HUMAN_APPROVAL","head":"dab5f0182506","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","surface 'external-messaging' always needs a human","42 changed files exceed the auto-merge limit of 15","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
+{"at":"2026-11-24T14:41:50Z","feature":"F-61","round":1,"kind":"transition","head":"dab5f0182506","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}

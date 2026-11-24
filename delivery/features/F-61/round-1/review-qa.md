@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 5f61b03c833db545052bd88a34ed1a1ac62eb608
+COMMIT: dab5f01825066cb85627bf0f427f27ef29e7d3ef
 REVIEWER: qa
 AUTHORITY: integrated QA
 
@@ -38,3 +38,6 @@ AUTHORITY: integrated QA
 
 ## Verified
 None (round 1, no fixes to verify).
+
+## Pre-merge re-confirm (dab5f018)
+VERDICT: PASS. Diff 5f61b03c..dab5f018 is the main merge only (15 files: delivery overview/tab, mock work-live, ledger-source test wait). It touches no alerts file. Alerts tests run singly from frontend: alerts-bell 42, alerts-mock 11, alerts-model 20, alerts-settings 18, alerts 25, all passed. Earlier QA result stands.

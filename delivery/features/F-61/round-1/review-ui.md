@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 5f61b03c833db545052bd88a34ed1a1ac62eb608
+COMMIT: dab5f01825066cb85627bf0f427f27ef29e7d3ef
 REVIEWER: reviewer-ui
 AUTHORITY: UI design reviewer (lighter panel, D-180)
 
@@ -16,3 +16,14 @@ None.
 - Rows with no agent show a plain grey circle where the board has an avatar. This is acceptable, but a neutral initial or icon would look more finished.
 - On desktop settings, the Recent deliveries box is narrower than the switch card above it. Matching the full width would line up better.
 - The disabled Save button is grey, where the board shows blue. This is the disabled state; the enabled state should be blue, which I could not confirm without the running app.
+
+## Pre-merge re-confirm (dab5f018)
+VERDICT: PASS (unchanged from 5f61b03c)
+
+- Diff reviewed: `git diff --stat 5f61b03c dab5f018` lists 15 frontend files, 650 insertions and 23 deletions. All are under `frontend/mock`, `frontend/src/features/projects` (Delivery tab and its model, hook and CSS), or tests.
+- The alerts screens (`features/alerts`, `app/notifications`, `app/settings/alerts`) and the shared components, shell and tokens have no changes in this range.
+- No alerts file imports a changed module. The one textual match (`features/alerts/model.ts`) is an API path mapping string, not a dependency.
+- `ProjectJourney.tsx` now passes `caseId` to `DeliveryTab`, and `model.ts` changes tab ordering only for the project tab bar. Neither touches alerts styling.
+- `ledger-source.test.tsx` changed a test wait only and has no visual effect.
+- The Delivery tab's new `dlvov.css` uses existing tokens and has no hard-coded colours. It is scoped to `.dlvov__*` classes.
+- Conclusion: no style, layout or component used by the alerts screens changed. The prior review's findings and waivers stand.
