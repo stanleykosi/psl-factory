@@ -36,7 +36,7 @@ const SCENARIO_ERRORS = {
 export const signedOut = ({ cookies, scenario }) => cookies[SESSION_COOKIE] === 'out' || String(scenario) === '401';
 
 /** The token a write must carry now, as GET /session last gave it. */
-function currentToken({ cookies, scenario, me }) {
+export function currentToken({ cookies, scenario, me }) {
   if (cookies[SESSION_COOKIE] === 'out') return LOGGED_OUT_TOKEN;
   return String(scenario) === '401' ? SIGNED_OUT_TOKEN : me.csrf_token;
 }
