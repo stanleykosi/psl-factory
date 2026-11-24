@@ -5070,3 +5070,10 @@
 {"at":"2026-11-24T14:51:20Z","feature":"F-71","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"f29087ed4c45","written_at":"2026-11-24T14:49:19Z"}
 {"at":"2026-11-24T14:51:20Z","feature":"F-71","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"ui-reviewer","commit":"f29087ed4c45","findings":{"UI-2-1":"medium","UI-2-2":"low","UI-2-3":"medium"},"written_at":"2026-11-24T14:51:19Z"}
 {"at":"2026-11-24T14:51:20Z","feature":"F-71","round":2,"kind":"transition","head":"f29087ed4c45","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-24T14:52:51Z","feature":"F-71","round":2,"kind":"decision","decision":"BLOCKED","head":"f29087ed4c45","reasons":["CI is 'not_run', not 'passed'"]}
+{"at":"2026-11-24T14:52:51Z","feature":"F-71","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"AUTO_MERGE"}}
+{"at":"2026-11-24T14:53:09Z","feature":"F-71","round":2,"kind":"fields","fields":{"git.ci_status":"passed"}}
+{"at":"2026-11-24T14:53:10Z","feature":"F-71","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"f29087ed4c45","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","47 changed files exceed the auto-merge limit of 15"]}
+{"at":"2026-11-24T14:53:23Z","feature":"F-71","round":2,"kind":"transition","head":"f29087ed4c45","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-24T14:53:24Z","feature":"F-71","round":2,"kind":"fields","fields":{"git.human_approval":"delegated under D-180 (board changes accepted in batch, D-182/D-185; exceptions and waivers signed, D-202; delegation D-184)"}}
+{"at":"2026-11-24T14:53:45Z","feature":"F-71","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"811465d841db6da9fbbeb6b8953df2816cf62295"}}
