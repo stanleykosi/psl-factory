@@ -26,7 +26,7 @@ vi.mock('next/navigation', () => ({
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 const TOKEN = 'mock-csrf-pm';
 let scenario: string | undefined;
-let persona = 'pm';
+let persona = 'finance_lead';
 let fetchStub: ReturnType<typeof vi.fn<(request: Request) => Promise<Response>>>;
 let makeFile: (name: string, type?: string, size?: number) => File;
 const requests = () => fetchStub.mock.calls.map(([r]) => r);
@@ -38,7 +38,7 @@ beforeEach(async () => {
   resetStartLive();
   resetReceivedBids();
   scenario = undefined;
-  persona = 'pm';
+  persona = 'finance_lead';
   nav.push.mockReset();
   setCsrfToken(TOKEN);
   fetchStub = vi.fn(async (request: Request) => {
@@ -238,7 +238,7 @@ describe('uncertain results and replay (AC4, AC6)', () => {
     const send = async () => {
       const request = new Request('http://x/api/v1/received-bids', { method: 'POST', body: logFormData(input) });
       const rawBytes = new Uint8Array(await request.clone().arrayBuffer());
-      return receivedBids({ method: 'post', url: new URL(request.url), raw: '', rawBytes, contentType: request.headers.get('content-type'), scenario: undefined, csrfOk: true, persona: 'pm' })[1];
+      return receivedBids({ method: 'post', url: new URL(request.url), raw: '', rawBytes, contentType: request.headers.get('content-type'), scenario: undefined, csrfOk: true, persona: 'finance_lead' })[1];
     };
     const first = await send();
     expect(await send()).toEqual(first);

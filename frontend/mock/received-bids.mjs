@@ -241,6 +241,8 @@ export function receivedBids({ method, url, raw, rawBytes, contentType, scenario
     return send(200, { items: persona === 'none' ? [] : ORGS });
   }
   if (path === '' && method === 'post') return logBid({ rawBytes, contentType, scenario, csrfOk });
+  // The v7 mock's rule for the Unassigned queue (only Leads), kept so its wrong-role board still reads the same.
+  if ((path === '/assignments' || path.endsWith('/assignment')) && persona === 'pm') return send(403, { code: 'forbidden', message: 'Only Leads can see unassigned work.' });
   if (path === '/assignments') {
     const open = BIDS.filter((b) => !assigned.has(b.case_id));
     const from = Number.parseInt(url.searchParams.get('cursor') ?? '0', 10);

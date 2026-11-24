@@ -41,7 +41,7 @@ beforeEach(async () => {
     if (/\/cases\/[^/]+\/files$/.test(url.pathname)) return json(200, { upload_id: 7001, name: 'proof.pdf', size: 12, sha256: 'a'.repeat(64), download_url: '/x' });
     if (gate && url.pathname.endsWith('/assignments')) await gate;
     const raw = request.method === 'GET' ? '' : await request.clone().text();
-    const [status, body] = receivedBids({ method: request.method.toLowerCase(), url, raw, rawBytes: new Uint8Array(), contentType: null, scenario, csrfOk: request.headers.get('x-csrftoken') === TOKEN, persona: 'pm' });
+    const [status, body] = receivedBids({ method: request.method.toLowerCase(), url, raw, rawBytes: new Uint8Array(), contentType: null, scenario, csrfOk: request.headers.get('x-csrftoken') === TOKEN, persona: 'finance_lead' });
     return json(status, body);
   });
   vi.stubGlobal('fetch', fetchStub);
@@ -309,7 +309,7 @@ describe('assigning (AC10, AC11, AC12, AC13, AC19)', () => {
   });
 
   it('the pure rule: each of the four is required, a listed proof or a checked upload, and a reason over 4000 is refused', () => {
-    const data = JSON.parse(JSON.stringify(receivedBids({ method: 'get', url: new URL(`http://x/api/v1/received-bids/${CASE}/assignment`), scenario: undefined, csrfOk: true, persona: 'pm' })[1]));
+    const data = JSON.parse(JSON.stringify(receivedBids({ method: 'get', url: new URL(`http://x/api/v1/received-bids/${CASE}/assignment`), scenario: undefined, csrfOk: true, persona: 'finance_lead' })[1]));
     const empty = { candidate: undefined, role: undefined, route: undefined, evidence: undefined, upload: null, checked: false, reason: '' };
     expect(Object.keys(assignProblems(data, empty))).toEqual(['candidate', 'role', 'proof', 'reason']);
     expect(Object.keys(assignProblems(data, { ...empty, candidate: '301', role: 'Head of PMO', route: 'listed', evidence: '901', reason: ' ' }))).toEqual(['reason']);
