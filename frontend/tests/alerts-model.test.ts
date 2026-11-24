@@ -191,7 +191,10 @@ describe('settings save body', () => {
   });
 
   it('words the four receipt states; uncertain reads "Not confirmed"', () => {
-    expect(['queued', 'uncertain', 'delivered', 'held'].map((state) => deliveryWord(state as 'queued'))).toEqual(['Queued', 'Not confirmed', 'Delivered', 'Held']);
+    const states = ['queued', 'uncertain', 'delivered', 'held'] as const;
+    expect(states.map(deliveryWord)).toEqual(['Queued', 'Not confirmed', 'Delivered', 'Held']);
+    // "Delivered" only for the server state `delivered`, never for the others
+    for (const state of states) expect(/deliver/i.test(deliveryWord(state)), state).toBe(state === 'delivered');
   });
 
   it('times a receipt by delivery, else by creation', () => {
