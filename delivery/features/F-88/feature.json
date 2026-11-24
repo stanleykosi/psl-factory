@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-88",
   "outcome": "Log a received RFP and assign its accountable PM through the live API",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -105,11 +105,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA (lighter D-180 panel)",
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -567,6 +569,75 @@
           "head": "eacdc7045a458039ad42eb19ea5852cc411578df"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The mock's Unassigned badge on My work reads 6 (v7 `/work` counts) while the list below serves 13 RFPs over two pages. Already known and left by the builder (UX-1-2, build.md); live `/work` has no counts. Check the badge once the live counts exist. `frontend/mock/received-bids.mjs`, `MyWork`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T14:15:49Z",
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The persona with no organisations (mock `none`) cannot reach Start work in the browser (My work never loads for it), so the empty client list (\"You can't log a received RFP for any organisation yet.\" with a disabled submit) was not seen in the page. The `rb_orgs_denied` 403 variant was seen (see below). The empty state is covered only by the unit tests. `frontend/tests/received-bid.test.tsx`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T14:15:49Z",
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Start work chooser has the visible heading \"Lines you can start\" once, but two visually hidden legends repeat \"Lines you can start\" for screen readers (one per group). Not a visual repeat, so UX-1-1 stands as fixed; a screen-reader user hears the phrase three times. `frontend/src/features/start-work/LineChooser.tsx`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-88/round-2/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T14:15:49Z",
+          "head": "eacdc7045a458039ad42eb19ea5852cc411578df"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -772,6 +843,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-24T13:39:29Z",
+      "round": 2,
+      "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-24T14:15:49Z",
       "round": 2,
       "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
       "reason": null

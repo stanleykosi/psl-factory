@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-87",
   "outcome": "The work item can check what happened, resume or cancel, and pause or continue background work, live",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -122,6 +122,18 @@
       "at": "2026-11-24T13:29:41Z",
       "seconds": 5.8,
       "evidence_ref": "delivery/features/F-87/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T14:15:27Z",
+      "seconds": 302.6,
+      "evidence_ref": "delivery/features/F-87/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -629,14 +641,28 @@
         "delivery/features/F-87/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T13:39:26Z",
           "head": "a960d20decf30c113e2a4a9eedcff80949ac3202"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:03:28Z",
+          "refs": [
+            "2ce45be7e1fe607e261c2ed8af5836f061f4b228"
+          ],
+          "head": "2ce45be7e1fe607e261c2ed8af5836f061f4b228",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "2ce45be7e1fe607e261c2ed8af5836f061f4b228"
       ]
     }
   ],
@@ -772,9 +798,9 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
+    "base_sha": "4a88c26b2aa399ff54f9ec6cedad65ae075ebbb8",
     "task_branch": "fe-connect-1-work-item-controls",
-    "head_sha": "a960d20decf30c113e2a4a9eedcff80949ac3202",
+    "head_sha": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c",
     "pr_url": null,
     "pr_number": null,
@@ -904,6 +930,14 @@
       "round": 3,
       "head": "a960d20decf30c113e2a4a9eedcff80949ac3202",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T14:15:46Z",
+      "round": 3,
+      "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "reason": null
     }
   ],
   "routing": {
@@ -920,9 +954,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "9f9dc026b5e62762de288ca468aa8a4380a649f1"
   },
   "blocked": null
 }
