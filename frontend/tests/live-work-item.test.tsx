@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 // F-85: /work/[id] and /work/[id]/history on the live API (GET /work/{id}, /history). Fixtures come from the mock itself.
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { LiveWorkItemView } from '@/features/work-item/live/LiveWorkItemView';
@@ -62,7 +62,7 @@ describe('overview on the live item', () => {
     expect(document.querySelector('.work-state')?.textContent).toBe('Processing');
     expect(screen.getByText(/The agent is drafting the update/)).toBeTruthy();
     expect(screen.getByText('Drafting the weekly update')).toBeTruthy();
-    expect(document.querySelector('.psl-track, .work-facts, .work-agent, .work-agentsec')).toBeNull();
+    expect(document.querySelector('.work-agentsec, .psl-steps')).toBeNull();
     expect(screen.queryByText(/not available/i)).toBeNull();
     expect(screen.queryByRole('button', { name: /resume|cancel|check what happened|release|start|correct/i })).toBeNull();
     expect(writes()).toHaveLength(0);
@@ -72,7 +72,7 @@ describe('overview on the live item', () => {
     open('4104');
     await heading();
     expect(screen.queryByText(/With /)).toBeNull();
-    expect(screen.queryByText(/unassigned/i)).toBeNull();
+    expect(document.querySelector('.work-sub')?.textContent).not.toMatch(/unassigned/i);
     expect(screen.getByText(/A policy value is missing/)).toBeTruthy();
   });
 
@@ -236,9 +236,12 @@ describe('history (AC12 to AC14)', () => {
     expect(screen.getAllByText(/^Evidence \d+$/)).toHaveLength(1);
   });
 
-  it('exactly 30 rows says "Showing the latest 30 changes."', async () => {
-    open('4108', 'history');
+  it('a first page with older events says "Showing the latest 30 changes."; a last page says all', async () => {
+    open('4101', 'history');
     expect(await screen.findByText(/Showing the latest 30 changes\./, {}, { timeout: 8000 })).toBeTruthy();
+    cleanup();
+    open('4108', 'history');
+    expect(await screen.findByText(/Showing all changes\./, {}, { timeout: 8000 })).toBeTruthy();
   });
 
   it('empty says "No changes recorded yet."', async () => {
@@ -274,10 +277,44 @@ describe('the mappers', () => {
     expect(decisionHref(4103, task[0])).toBe('/work/4103/decide?task=9101');
     expect(decisionHref(4103, task[1])).toBeNull();
     expect(decisionHref(4103, { ...task[1], can_claim: true })).toBe('/work/4103/decide?task=9102');
-    expect(historyLine({ at: 'a', station: 'zz_odd', status: 'weird', actor_kind: 'worker', entry_id: 1 })).toEqual({ at: 'a', station: 'Zz odd', status: 'Weird', actor: null, reason: null, evidenceId: null });
+    expect(historyLine({ at: 'a', station: 'zz_odd', status: 'weird', actor_kind: 'worker', entry_id: 1 })).toEqual({ at: 'a', station: 'Zz odd', status: 'Weird', actorKind: 'worker', entryId: 1, actor: null, reason: null, evidenceId: null });
     expect(historyLine({ at: 'a', station: 's', status: 't', actor_kind: 'person', entry_id: 2, evidence_id: null }).evidenceId).toBeNull();
-    expect(historyCaption(30)).toBe('Showing the latest 30 changes.');
-    expect(historyCaption(29)).toBe('Showing all changes.');
+    expect(historyCaption(30, true)).toBe('Showing the latest 30 changes.');
+    expect(historyCaption(30, false)).toBe('Showing all changes.');
+  });
+});
+
+describe('F-85 carried fixes', () => {
+  it('safeHref allows http(s) and same-site paths only', () => {
+    expect(safeHref('/api/v1/work/4101/output')).toBe('/api/v1/work/4101/output');
+    expect(safeHref('https://files.example/a.pdf')).toBe('https://files.example/a.pdf');
+    expect(safeHref('http://files.example/a.pdf')).toBe('http://files.example/a.pdf');
+    for (const bad of ['javascript:alert(1)', 'JaVaScRiPt:alert(1)', ' javascript:alert(1)', 'data:text/html,x', 'vbscript:x', 'file:///etc/passwd', '//evil.example/x', '/\\evil.example/x', 'relative/path', 'mailto:a@b.c', '', null, undefined]) {
+      expect(safeHref(bad)).toBeNull();
+    }
+  });
+
+  it('an output_url that is not http(s) or a site path draws no link', async () => {
+    const base = mock('/api/v1/work/4101').body as LiveWorkItem;
+    answer = (url) => (url.pathname === '/api/v1/work/4101' ? { status: 200, body: { ...base, output_url: 'javascript:alert(1)' } } : mock(url.pathname + url.search));
+    open('4101');
+    await heading();
+    expect(screen.queryByRole('link', { name: 'Open the output' })).toBeNull();
+  });
+
+  it('lineName gives the live lines their plain names and any other key as words, without the version', () => {
+    expect(lineName('pmo-weekly-report/v1')).toBe('Weekly client report');
+    expect(lineName('pmo-finance/v1')).toBe('Invoice');
+    expect(lineName('weekly_report')).toBe('Weekly report');
+    expect(lineName('some-new-line/v2')).toBe('Some new line');
+  });
+
+  it('the breadcrumb names the line in plain words, never the key', async () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: false, media: q, addEventListener: () => {}, removeEventListener: () => {} }));
+    open('4102');
+    await heading();
+    expect(screen.getByRole('navigation', { name: 'Breadcrumb' }).textContent).toBe('My work / Weekly report / Work 4102');
+    expect(document.body.textContent).not.toMatch(/weekly_report|WEEKLY_REPORT/);
   });
 });
 
