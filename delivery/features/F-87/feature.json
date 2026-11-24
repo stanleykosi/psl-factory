@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-87",
   "outcome": "The work item can check what happened, resume or cancel, and pause or continue background work, live",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "AWAITING_USER_APPROVAL",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -150,7 +150,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "qa",
-      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "snapshot_ref": "f296a554242b27ef690d2ec359765ff2669b5377",
       "evidence_refs": [
         "delivery/features/F-87/round-3/review-qa.md"
       ]
@@ -955,12 +955,21 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-87/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'high' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "19 changed files exceed the auto-merge limit of 15",
+      "finding PMO-3-1 was accepted as a risk",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "f296a554242b27ef690d2ec359765ff2669b5377",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -1057,6 +1066,22 @@
       "at": "2026-11-24T14:43:08Z",
       "round": 3,
       "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-24T19:33:26Z",
+      "round": 3,
+      "head": "f296a554242b27ef690d2ec359765ff2669b5377",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-24T19:34:00Z",
+      "round": 3,
+      "head": "f296a554242b27ef690d2ec359765ff2669b5377",
       "reason": null
     }
   ],

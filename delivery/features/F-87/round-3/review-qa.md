@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 9f9dc026b5e62762de288ca468aa8a4380a649f1
+COMMIT: f296a554242b27ef690d2ec359765ff2669b5377
 REVIEWER: qa
 AUTHORITY: qa
 
 ## Summary
+- Merge-delta re-confirmation on f296a554 (9f9dc026 plus a clean merge of main eb100065), D-193. The full browser pass below was done on 9f9dc026 and carries forward by this assessment: the merge touched other features (F-71, F-64, #115, F-61, F-88, #117) and no F-87 file changed meaning, as the F-87 suites below show. Re-run on f296a554 from frontend/: vitest work-commands and line-adapter, 2 files, 56 passed; live-work-item, mock-work-live and next-config, 3 files, 56 passed; Playwright e2e/work-item-controls.spec.ts, 18 of 18 passed at 1440 and 390 (the logged 'socket hang up' proxy lines are the intended dropped-connection scenario). I started no server by hand; Playwright started and stopped its own, and 4980 and 4981 are free. No live run on the merge head: the 9f9dc026 Pause and Continue proof stands, and the rest is accepted risk under D-203.
 - Mock (dev server on 4980, mock on 4981), Chromium at 1440 and 390, items 4120 to 4123, 4110 and 4111: every journey in the brief behaved as specified, with no horizontal overflow at either width. A throwaway Playwright script (outside the repo) captured the exact request bodies.
 - Writes sent: Check what happened `{"action":"reconcile","expected_revision":5}`; Resume and Cancel to `/control` with revision 3 (Cancel only after "Cancel this work", "Keep it" sent nothing); Pause and Continue `{"expected_revision":7,"enabled":false|true}` with no action key. 4123 (adopt_profile, release_invoice listed) and 4111 draw no row. 4110 (null revision) draws both buttons disabled with the version-missing sentence and sends nothing when forced.
 - Error paths on Resume: 403 "You can't do this. {server message}"; csrf "Press the button again."; 409 shows the changed-while-working text and the next press carries revision 5; 422 shows the server message; 429 and 503 "Try again shortly."; 500 and dropped connection show "We couldn't confirm that this happened. Check the page before trying again." The 500 locks Resume (one POST); the drop unlocks because the re-read shows a new revision. A 500 on Check what happened leaves it enabled.
@@ -14,7 +15,7 @@ AUTHORITY: qa
 None.
 
 ## Verified
-- TECH-2-1 | verified | Mock 4121 with `w500`, re-read of `GET /api/v1/work/4121` aborted: Resume disabled with "Check the page before trying again."; History link `/work/4121/history` (list present), then browser Back: Resume still `[disabled]`, forced click sent no request, 1 POST in total, at 1440 and 390. The mock `wdrop` run (re-read succeeds, revision moves) correctly unlocks Resume.
+- TECH-2-1 | verified | (re-confirmed on f296a554: the History-and-back lock tests in work-commands pass, and the dropped-connection and lock e2e pass.) Original evidence on 9f9dc026: Mock 4121 with `w500`, re-read of `GET /api/v1/work/4121` aborted: Resume disabled with "Check the page before trying again."; History link `/work/4121/history` (list present), then browser Back: Resume still `[disabled]`, forced click sent no request, 1 POST in total, at 1440 and 390. The mock `wdrop` run (re-read succeeds, revision moves) correctly unlocks Resume.
 
 ## Notes
 - Evidence detail. Mock: 4120 shows "Checked. This item is now: Awaiting reconciliation." (default) or "Ready to continue." (`ready`). 4121 Cancel shows "Done. This item is now: Cancelled." The mock keeps listing Resume and Cancel after it cancels, a mock limitation and not the page. Every success notice appears twice in the live-region text, which is the toast plus its status region, not two requests.
