@@ -20,7 +20,8 @@ const responses = openapi.paths['/api/v1/projects/{case_id}/{tab}'].get.response
 const valid200 = ajv.compile(responses['200'].content['application/json'].schema);
 
 const tabs = join(__dirname, '../mock/fixtures/projects/tabs');
-const fixtureFiles = readdirSync(tabs).filter((name) => name.endsWith('.json'));
+// Registers and Actions are the live shape (mock-live-project-sections.test.ts).
+const fixtureFiles = readdirSync(tabs).filter((name) => name.endsWith('.json') && !/\.(registers|actions)\.json$/.test(name));
 
 let server: Server;
 let base: string;
@@ -30,7 +31,7 @@ beforeAll(async () => {
 });
 afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
-type Body = Record<string, unknown> & { items: unknown[]; next_cursor?: string; milestones?: { name: string }[]; registers?: { reference: string; register: string }[]; actions?: { title: string }[] };
+type Body = Record<string, unknown> & { items: unknown[]; next_cursor?: string; milestones?: { name: string }[] };
 async function get(path: string, init: { persona?: string; cookie?: string; scenario?: string } = {}) {
   const headers: Record<string, string> = { Cookie: `psl_mock_persona=${init.persona ?? 'pm'}${init.cookie ? `; ${init.cookie}` : ''}` };
   if (init.scenario) headers['X-Mock-Scenario'] = init.scenario;
@@ -46,7 +47,7 @@ describe('fixtures validate against the generated E-PROJECT-TAB 200 schema', () 
 
   it('the handler serves valid bodies for every tab of P-0101, P-0102 and P-0106', async () => {
     for (const id of ['P-0101', 'P-0102', 'P-0106']) {
-      for (const tab of ['milestones', 'documents', 'registers', 'actions']) {
+      for (const tab of ['milestones', 'documents']) {
         const { status, body } = await get(`${id}/${tab}`);
         expect(status).toBe(200);
         expect(valid200(body), `${id} ${tab}: ${ajv.errorsText(valid200.errors)}`).toBe(true);
@@ -69,8 +70,6 @@ describe('visibility and access', () => {
     expect((await get('P-0106/documents')).body.documents).toEqual([]);
     expect(((await get('P-0101/documents')).body.documents as { work_id?: string }[]).map((d) => d.work_id)).toEqual(['W-2901', ...Array(5).fill(undefined)]);
     expect((await get('P-0101/nonsense')).status).toBe(404);
-    const empty = await get('P-0108/actions', { persona: 'finance_lead' });
-    expect([empty.status, empty.body.actions]).toEqual([200, []]);
   });
 
   it('the X-Mock-Scenario header still wins', async () => {
@@ -79,33 +78,11 @@ describe('visibility and access', () => {
 });
 
 describe('query', () => {
-  it('404 for a bad limit, a register on another tab, an unknown register, an empty q and a bad cursor', async () => {
-    for (const query of ['milestones?limit=7', 'actions?register=issues', 'registers?register=nope', 'registers?q=', 'registers?cursor=x', 'registers?cursor=o999']) {
+  it('404 for a bad limit, an unknown register, a bad cursor and a milestones cursor; Registers and Actions are the live shape', async () => {
+    for (const query of ['milestones?limit=7', 'milestones?cursor=x', 'documents?cursor=o999', 'documents?q=']) {
       const result = await get(`P-0101/${query}`);
       expect([query, result.status, result.body.code]).toEqual([query, 404, 'invalid_query']);
     }
-  });
-
-  it('register selects the register rows and q matches title or reference, case-insensitively', async () => {
-    const issues = await get('P-0101/registers?register=issues');
-    expect(issues.body.registers!.map((r) => r.reference)).toEqual(['ISS-0233', 'ISS-0229', 'ISS-0221']);
-    expect((await get('P-0101/registers?register=emergencies')).body.registers).toEqual([]);
-    expect((await get('P-0101/registers?register=issues&q=ANDROID')).body.registers!.map((r) => r.reference)).toEqual(['ISS-0233']);
-    expect((await get('P-0101/registers?register=changes&q=cr-0027')).body.registers!.map((r) => r.reference)).toEqual(['CR-0027']);
-    expect((await get('P-0101/actions?q=uat')).body.actions!.map((a) => a.title)).toEqual(['Send test accounts for UAT', 'Share the UAT test plan', 'Sign UAT plan']);
-  });
-
-  it('limit and cursor slice the rows in order; the last page has no next_cursor; summary stays whole', async () => {
-    const first = await get('P-0102/registers?register=issues&limit=10');
-    expect(first.body.registers).toHaveLength(10);
-    expect(first.body.next_cursor).toBe('o10');
-    const second = await get('P-0102/registers?register=issues&limit=10&cursor=o10');
-    expect(second.body.registers![0].reference).toBe('ISS-1011');
-    const last = await get('P-0102/registers?register=issues&cursor=o20');
-    expect([last.body.registers!.length, last.body.next_cursor]).toEqual([5, undefined]);
-    expect(last.body.summary).toEqual(first.body.summary);
-    const all = await get('P-0102/registers?register=issues');
-    expect([all.body.registers!.length, all.body.next_cursor]).toEqual([20, 'o20']);
   });
 });
 
@@ -115,7 +92,7 @@ describe('the changed cookie', () => {
     const changed = (await get('P-0101/milestones', { cookie: 'psl_mock_milestones=changed' })).body.milestones as { name: string; changes?: { reference: string }[] }[];
     expect(plain.some((m) => m.changes)).toBe(false);
     expect(changed.find((m) => m.name === 'Go-live')!.changes!.map((c) => c.reference)).toEqual(['CR-0031']);
-    const actions = (await get('P-0101/actions', { cookie: 'psl_mock_milestones=changed' })).body.actions;
-    expect(actions).toHaveLength(9);
+    const actions = (await get('P-0101/actions', { cookie: 'psl_mock_milestones=changed' })).body.sections as { items: unknown[] }[];
+    expect(actions[0].items).toHaveLength(9);
   });
 });

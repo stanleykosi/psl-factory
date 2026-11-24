@@ -1,19 +1,20 @@
 'use client';
 
 // Pieces the three project tabs share: the states of a tab read (loading, signed out, no access, error), the footer
-// with "Show more", an amount, an owner and a row link. Nothing is computed here; values come from tabsModel.
+// with "Show more", an amount and a row link. Nothing is computed here; values come from tabsModel.
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import type { ApiError } from '@/api/errors';
 import { EmptyState, usePagedRows, Unknown, When, type PageSize } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
-import { amountText, ownerText, workHref, type Amount, type ListTab, type Owner, type TabRows } from './tabsModel';
+import { amountText, workHref, type Amount, type ListTab, type TabRows } from './tabsModel';
 import type { TabState } from './useProjectTab';
 
 /** What a tab shows until it has rows: null when ready. 403 and 404 look the same and leave no row text behind. */
-export function tabStateView(state: TabState<ListTab>, { retry, signInPath }: { retry: () => void; signInPath: string }): ReactNode {
+export function tabStateView(state: { status: 'loading' } | { status: 'ready' } | { status: 'error'; error: ApiError }, { retry, signInPath }: { retry: () => void; signInPath: string }): ReactNode {
   if (state.status === 'ready') return null;
   if (state.status === 'loading') return <LoadingState />;
   const { error } = state;
@@ -56,12 +57,6 @@ export function RowLink({ workId, className, children }: { workId: unknown; clas
 export function AmountValue({ value }: { value: Amount | undefined }) {
   const text = amountText(value);
   return text === undefined ? <Unknown /> : <>{text}</>;
-}
-
-/** The owner as the boards write it; "No owner" in signal ink when the row has none. */
-export function OwnerValue({ owner }: { owner: Owner | undefined }) {
-  const text = ownerText(owner);
-  return text === undefined ? <span className="ptabs__noowner">No owner</span> : <>{text}</>;
 }
 
 export const NONE = <>—</>;

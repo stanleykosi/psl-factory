@@ -381,10 +381,16 @@ describe('D-164: a won demo RFP creates a project', () => {
       expect((await get('/api/v1/projects/P-9001', persona)).body).toEqual(page.body);
       expect(page.body.items).toEqual([expect.objectContaining({ state: 'Verified', id: 9001 })]);
       expect(page.body.facts.engagement).toBeNull();
-      for (const tab of ['milestones', 'documents', 'registers', 'actions', 'money']) {
+      for (const tab of ['milestones', 'documents', 'money']) {
         const read = await get(`/api/v1/projects/P-9001/${tab}`, persona);
         check('E-PROJECT-TAB', 200, read.body);
         expect(read.body.items, `${persona} ${tab}`).toEqual([]);
+      }
+      // F-75: Registers and Actions are the live shape; the new project has the sections and no rows
+      for (const tab of ['registers', 'actions']) {
+        const read = await get(`/api/v1/projects/P-9001/${tab}`, persona);
+        checkLive('/api/v1/projects/{case_id}/{tab}', read.body);
+        expect(read.body.sections.flatMap((s: { items: unknown[] }) => s.items), `${persona} ${tab}`).toEqual([]);
       }
     }
     expect((await get('/api/v1/projects/P-9001', 'hr')).status).toBe(404);

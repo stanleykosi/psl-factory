@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { setImmediate as realImmediate } from 'node:timers';
 
-import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { useMemo, useSyncExternalStore } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -224,150 +224,6 @@ describe('Milestones (SCR-38)', () => {
   });
 });
 
-describe('Registers (SCR-11)', () => {
-  it('Issues by default: tabs with counts, search without Filter, rows, footer; one read with register=issues', async () => {
-    await open('P-0101', 'registers');
-    expect(tabCalls()).toHaveLength(1);
-    expect(tabCalls()[0].search).toBe('?limit=10&register=issues');
-    const tabs = within(screen.getByRole('tablist', { name: 'Register' })).getAllByRole('tab');
-    expect(tabs.map((t) => t.textContent)).toEqual(['Issues 3', 'Changes 2', 'Emergencies 0', 'RFPs 1']);
-    expect(tabs.map((t) => t.getAttribute('href'))).toEqual(['/projects/P-0101/registers', '/projects/P-0101/registers?register=changes', '/projects/P-0101/registers?register=emergencies', '/projects/P-0101/registers?register=rfps']);
-    expect(tabs[0].getAttribute('aria-selected')).toBe('true');
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('3 ISSUES');
-    expect(screen.queryByRole('button', { name: /filter/i })).toBeNull();
-    expect(screen.getByRole('searchbox', { name: 'Search' }).getAttribute('placeholder')).toBe('Search issues by title or reference');
-    expect([...document.querySelectorAll('thead th')].map((th) => th.textContent)).toEqual(['ISSUE', 'WHAT', 'SEVERITY', 'OWNER', 'STATE', 'AGE']);
-    expect(rowsOf()).toEqual([
-      ['ISS-0233', 'Login fails on older Android phones', '■■■High', 'PM · Tunde Bello', 'Fix in testing', '2d'],
-      ['ISS-0229', 'Report totals round differently', '■■□Medium', 'Engineering (recorded by PM)', 'Waiting on Engineering', '4d'],
-      ['ISS-0221', 'Slow search on patient list', '■□□Low', 'PM · Tunde Bello', 'Closed by QA and PM', 'Unknown'],
-    ]);
-    expect(text()).toContain('Severity is set by the PM. Closing an issue needs QA and the PM; there is no separate approval.');
-    // only a row with a work_id opens its work item
-    expect(screen.getByRole('link', { name: 'Login fails on older Android phones' }).getAttribute('href')).toBe('/work/W-2411');
-    expect(screen.queryByRole('link', { name: 'Report totals round differently' })).toBeNull();
-  });
-
-  it('an unknown ?register= reads as Issues; ?register=changes requests changes and selects it', async () => {
-    await open('P-0101', 'registers', 'register=x');
-    expect(tabCalls()[0].searchParams.get('register')).toBe('issues');
-    cleanup();
-    calls = [];
-    await open('P-0101', 'registers', 'register=changes');
-    expect(tabCalls()[0].searchParams.get('register')).toBe('changes');
-    expect(screen.getByRole('tab', { name: /^Changes/ }).getAttribute('aria-selected')).toBe('true');
-    expect(rowsOf().map((r) => r[0])).toEqual(['CR-0031', 'CR-0027']);
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('2 CHANGES');
-  });
-
-  it('arrow keys, Home and End move along the register tabs', async () => {
-    await open('P-0101', 'registers');
-    const tabs = within(screen.getByRole('tablist', { name: 'Register' })).getAllByRole('tab');
-    tabs[0].focus();
-    fireEvent.keyDown(tabs[0], { key: 'ArrowRight' });
-    await waitFor(() => expect(document.activeElement).toBe(tabs[1]));
-    fireEvent.keyDown(tabs[1], { key: 'End' });
-    await waitFor(() => expect(document.activeElement).toBe(tabs[3]));
-    fireEvent.keyDown(tabs[3], { key: 'Home' });
-    await waitFor(() => expect(document.activeElement).toBe(tabs[0]));
-  });
-
-  it('search writes ?q= after the pause, requests q, and clearing removes it', async () => {
-    await open('P-0101', 'registers');
-    const box = screen.getByRole('searchbox', { name: 'Search' });
-    fireEvent.change(box, { target: { value: 'android' } });
-    await until(() => expect(nav.replaced).toEqual(['/projects/P-0101/registers?q=android']));
-    await until(() => expect(tabCalls().at(-1)!.searchParams.get('q')).toBe('android'));
-    await until(() => expect(rowsOf().map((r) => r[0])).toEqual(['ISS-0233']));
-    expect(tabCalls().at(-1)!.searchParams.has('cursor')).toBe(false);
-    fireEvent.change(box, { target: { value: '' } });
-    await until(() => expect(nav.replaced.at(-1)).toBe('/projects/P-0101/registers'));
-    await until(() => expect(tabCalls().at(-1)!.searchParams.has('q')).toBe(false));
-  });
-
-  it('empty register and no-match sentences; Clear search clears q', async () => {
-    await open('P-0101', 'registers', 'register=emergencies');
-    expect(text()).toContain('No emergencies on this project yet.');
-    cleanup();
-    await open('P-0101', 'registers', 'q=zzz');
-    expect(text()).toContain('No issues match “zzz”.');
-    fireEvent.click(document.querySelector<HTMLElement>('.psl-empty button')!);
-    expect(nav.replaced.at(-1)).toBe('/projects/P-0101/registers');
-  });
-
-  it('P-0102 pages by cursor: 10 rows, Show more appends the next, focus is kept, no cursor in the URL', async () => {
-    vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
-    await open('P-0102', 'registers');
-    expect(rowsOf()).toHaveLength(10);
-    expect(text()).toContain('10 showing');
-    expect(rowsOf()[1][1]).toContain('SAMPLE DATA');
-    expect(rowsOf()[3][3]).toBe('No owner');
-    expect(rowsOf()[4][4]).toBe('—');
-    expect(rowsOf()[5][5]).toBe('Unknown');
-    const more = screen.getByRole('button', { name: 'Show more' });
-    more.focus();
-    fireEvent.click(more);
-    await until(() => expect(rowsOf()).toHaveLength(20));
-    expect(tabCalls().at(-1)!.searchParams.get('cursor')).toBe('o10');
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
-    await until(() => expect(rowsOf()).toHaveLength(25));
-    const second = tabCalls().at(-1)!;
-    expect(second.searchParams.get('cursor')).toBe('o20');
-    expect(second.searchParams.get('register')).toBe('issues');
-    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
-    await waitFor(() => expect(document.activeElement).not.toBe(document.body));
-    expect(nav.replaced).toEqual([]);
-  });
-
-  it('phone: register tabs as a strip and one card per row', async () => {
-    phone();
-    await open('P-0101', 'registers');
-    expect(screen.getByRole('tablist', { name: 'Register' }).className).toContain('psl-tabs--strip');
-    expect(screen.getByRole('searchbox', { name: 'Search' }).getAttribute('placeholder')).toBe('Search issues');
-    expect(cardsOf()[0]).toBe('ISS-0233■■■HighLogin fails on older Android phonesFix in testing · PM · Tunde Bello');
-    expect(cardsOf()).toHaveLength(3);
-  });
-});
-
-describe('Actions (SCR-29)', () => {
-  it('P-0101: the header counts, nine rows, owners, due dates, state tags and the footer', async () => {
-    await open('P-0101', 'actions');
-    expect(tabCalls()[0].search).toBe('?limit=10');
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('9 ACTIONS · 3 OVERDUE · 1 WITHOUT OWNER');
-    expect(screen.getByRole('searchbox', { name: 'Search' }).getAttribute('placeholder')).toBe('Search actions');
-    expect(screen.queryByRole('button', { name: /filter/i })).toBeNull();
-    const rows = rowsOf();
-    expect(rows).toHaveLength(9);
-    expect(rows[0]).toEqual(['Send test accounts for UATFrom Weekly sync · 10 Nov', 'Client · Lagoon Health', '13 Nov', 'OPEN']);
-    expect(rows[1].slice(1)).toEqual(['Engineering (recorded by PM)', '15 Nov', 'OPEN']);
-    expect(rows[2].slice(1)).toEqual(['No owner', 'Unknown', 'OPEN']);
-    expect(rows[3].slice(1)).toEqual(['Tunde Bello', '04 Nov', 'OVERDUE']);
-    expect(rows[6].slice(1)).toEqual(['Client · Lagoon Health', '01 Nov', 'DONE']);
-    expect(text()).toContain('Actions come from confirmed minutes.');
-    expect(text()).not.toContain('recorded with your name');
-    expect(screen.getByRole('link', { name: 'Assess the SMS reminders change' }).getAttribute('href')).toBe('/work/W-1006');
-    expect(screen.queryByRole('link', { name: 'Send test accounts for UAT' })).toBeNull();
-  });
-
-  it('P-0102: no meeting and no due date read as nothing and Unknown', async () => {
-    await open('P-0102', 'actions');
-    expect(rowsOf()[0]).toEqual(['Collect the bank sign-off', 'Amina Yusuf', 'Unknown', 'OPEN']);
-  });
-
-  it('phone cards: title with its state tag, then owner and due', async () => {
-    phone();
-    await open('P-0101', 'actions');
-    expect(cardsOf()[0]).toBe('Send test accounts for UATOPENClient · Lagoon Health · due 13 Nov');
-    expect(cardsOf()[2]).toBe('Assess the SMS reminders changeOPENNo owner · due Unknown');
-  });
-
-  it('P-0106: the empty sentence and no count text', async () => {
-    await open('P-0106', 'actions');
-    expect(text()).toContain('No actions on this project yet.');
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('');
-  });
-});
-
 describe('access and errors (all tabs)', () => {
   it('P-0103: the tab answers 403; the header and tab bar stay and no fixture text is shown', async () => {
     await open('P-0103', 'milestones');
@@ -375,22 +231,6 @@ describe('access and errors (all tabs)', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'No access to this tab' })).toBeTruthy();
     expect(text()).not.toMatch(/Kick-off|INV-|₦/);
     expect(screen.getByRole('tablist', { name: 'Project' })).toBeTruthy();
-  });
-
-  it('a 404 on the tab shows the same state', async () => {
-    respond = (url) => (url.pathname.endsWith('/actions') ? json(404, { code: 'not_found', message: 'x' }) : undefined);
-    await open('P-0101', 'actions');
-    expect(screen.getByRole('heading', { level: 2, name: 'No access to this tab' })).toBeTruthy();
-    expect(text()).not.toContain('Send test accounts');
-  });
-
-  it('a 403 after a successful page (search) removes the earlier rows', async () => {
-    await open('P-0101', 'actions');
-    expect(rowsOf()).toHaveLength(9);
-    respond = (url) => (url.searchParams.has('q') ? json(403, { code: 'forbidden', message: 'x' }) : undefined);
-    fireEvent.change(screen.getByRole('searchbox', { name: 'Search' }), { target: { value: 'sms' } });
-    await until(() => expect(screen.getByRole('heading', { level: 2, name: 'No access to this tab' })).toBeTruthy());
-    expect(text()).not.toMatch(/Send test accounts|Weekly sync/);
   });
 
   it('P-0099: F-07 no-access page and no tab request', async () => {
@@ -402,12 +242,6 @@ describe('access and errors (all tabs)', () => {
     );
     await until(() => expect(screen.getByRole('heading', { name: /can.t open this project/ })).toBeTruthy());
     expect(tabCalls()).toHaveLength(0);
-  });
-
-  it('a 401 on the tab signs in back to the tab with its query', async () => {
-    respond = (url) => (url.pathname.endsWith('/registers') ? json(401, { code: 'not_signed_in', message: 'x' }) : undefined);
-    await open('P-0101', 'registers', 'register=changes&q=sms');
-    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fprojects%2FP-0101%2Fregisters%3Fregister%3Dchanges%26q%3Dsms');
   });
 
   it('a 500 and a network failure show the error card; Retry sends exactly one new request', async () => {
