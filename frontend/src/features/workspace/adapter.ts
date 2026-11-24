@@ -36,7 +36,7 @@ import type { Section } from './labels';
 export type PanelRef = { key: string; url: string };
 
 /** What every adapter reads from: the loaded live work item. Revisions may be null (unknown); `state` is the item's served state. */
-export type LineContext = { workId: number; caseId: string; revision: number | null; caseRevision: number | null; state: LiveWorkItem['state'] };
+export type LineContext = { workId: number; caseId: string; revision: number | null; caseRevision: number | null; state?: LiveWorkItem['state'] };
 
 /** What a line's `Actions` receives. `reload()` re-reads the panel and the work item; it resolves to the new item, or null when the read failed. */
 export type LineActionsProps<Readback = unknown> = {
@@ -52,7 +52,7 @@ export type LineAdapter<Readback = unknown> = {
   /** The panels[].key it handles, e.g. 'weekly-report'. */
   key: string;
   /** GET ref.url through liveApi and call(); throws ApiError. `ctx` is the loaded item (an adapter that does not need it ignores it). */
-  read(ref: PanelRef, ctx: LineContext): Promise<Readback>;
+  read(ref: PanelRef, ctx?: LineContext): Promise<Readback>;
   sections(readback: Readback, ctx: LineContext): Section[];
   /** Commands are described, not sent. */
   commands?(readback: Readback, ctx: LineContext): CommandDescriptor[];

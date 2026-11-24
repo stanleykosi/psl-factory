@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 // D-151: what a just-finished action did is a toast (useToast), never a success Callout. A success callout is only for the
 // lasting state of a record. Each allowed file says why; a new one needs a reason here.
 const ALLOWED: Record<string, string> = {
-  'src/features/decide/DecideStates.tsx': 'the next-step card on the decided page: a lasting statement about what follows for the record, not the result of the press (that is the "Your decision was recorded." toast)',
+  'src/features/decide-v7/DecideStates.tsx': 'the next-step card on the decided page: a lasting statement about what follows for the record, not the result of the press (that is the "Your decision was recorded." toast)',
 };
 const SUCCESS = /kind="success"|kind=\{[^}]*'success'|callout--success|callout--\$\{[^}]*success/;
 

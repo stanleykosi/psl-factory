@@ -1,312 +1,189 @@
 {
-  "items": [
-    {
-      "action_id": "A-0001",
-      "title": "Send test accounts for UAT",
-      "state": "open",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-10"
-      },
-      "owner": {
-        "name": "Lagoon Health",
-        "role": "Client",
-        "outside_party": true
-      },
-      "due": {
-        "date": "2026-11-13",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0002",
-      "title": "Finish the Android login fix",
-      "state": "open",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-10"
-      },
-      "owner": {
-        "name": "Engineering",
-        "recorded_by_pm": true
-      },
-      "due": {
-        "date": "2026-11-15",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0003",
-      "title": "Assess the SMS reminders change",
-      "state": "open",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-10"
-      },
-      "due": {
-        "unknown": true
-      },
-      "work_id": "W-1006"
-    },
-    {
-      "action_id": "A-0004",
-      "title": "Share the UAT test plan",
-      "state": "overdue",
-      "from": {
-        "meeting": "UAT walkthrough",
-        "at": "2026-11-03"
-      },
-      "owner": {
-        "name": "Tunde Bello"
-      },
-      "due": {
-        "date": "2026-11-04",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0005",
-      "title": "Confirm data migration window",
-      "state": "overdue",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-03"
-      },
-      "owner": {
-        "name": "Lagoon Health",
-        "role": "Client",
-        "outside_party": true
-      },
-      "due": {
-        "date": "2026-11-06",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0006",
-      "title": "Book go-live call",
-      "state": "overdue",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-03"
-      },
-      "owner": {
-        "name": "Tunde Bello"
-      },
-      "due": {
-        "date": "2026-11-07",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0007",
-      "title": "Sign UAT plan",
-      "state": "done",
-      "from": {
-        "meeting": "Kick-off",
-        "at": "2026-10-27"
-      },
-      "owner": {
-        "name": "Lagoon Health",
-        "role": "Client",
-        "outside_party": true
-      },
-      "due": {
-        "date": "2026-11-01",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0008",
-      "title": "Review the hypercare rota",
-      "state": "open",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-10"
-      },
-      "owner": {
-        "name": "Tunde Bello"
-      },
-      "due": {
-        "date": "2026-11-20",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0009",
-      "title": "Send the release notes draft",
-      "state": "open",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-10"
-      },
-      "owner": {
-        "name": "Engineering",
-        "recorded_by_pm": true
-      },
-      "due": {
-        "date": "2026-11-18",
-        "unknown": false
-      }
-    }
-  ],
   "as_of": "2026-11-12T15:40:00Z",
-  "actions": [
+  "sections": [
     {
-      "action_id": "A-0001",
-      "title": "Send test accounts for UAT",
-      "state": "open",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-10"
-      },
-      "owner": {
-        "name": "Lagoon Health",
-        "role": "Client",
-        "outside_party": true
-      },
-      "due": {
-        "date": "2026-11-13",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0002",
-      "title": "Finish the Android login fix",
-      "state": "open",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-10"
-      },
-      "owner": {
-        "name": "Engineering",
-        "recorded_by_pm": true
-      },
-      "due": {
-        "date": "2026-11-15",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0003",
-      "title": "Assess the SMS reminders change",
-      "state": "open",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-10"
-      },
-      "due": {
-        "unknown": true
-      },
-      "work_id": "W-1006"
-    },
-    {
-      "action_id": "A-0004",
-      "title": "Share the UAT test plan",
-      "state": "overdue",
-      "from": {
-        "meeting": "UAT walkthrough",
-        "at": "2026-11-03"
-      },
-      "owner": {
-        "name": "Tunde Bello"
-      },
-      "due": {
-        "date": "2026-11-04",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0005",
-      "title": "Confirm data migration window",
-      "state": "overdue",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-03"
-      },
-      "owner": {
-        "name": "Lagoon Health",
-        "role": "Client",
-        "outside_party": true
-      },
-      "due": {
-        "date": "2026-11-06",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0006",
-      "title": "Book go-live call",
-      "state": "overdue",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-03"
-      },
-      "owner": {
-        "name": "Tunde Bello"
-      },
-      "due": {
-        "date": "2026-11-07",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0007",
-      "title": "Sign UAT plan",
-      "state": "done",
-      "from": {
-        "meeting": "Kick-off",
-        "at": "2026-10-27"
-      },
-      "owner": {
-        "name": "Lagoon Health",
-        "role": "Client",
-        "outside_party": true
-      },
-      "due": {
-        "date": "2026-11-01",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0008",
-      "title": "Review the hypercare rota",
-      "state": "open",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-10"
-      },
-      "owner": {
-        "name": "Tunde Bello"
-      },
-      "due": {
-        "date": "2026-11-20",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0009",
-      "title": "Send the release notes draft",
-      "state": "open",
-      "from": {
-        "meeting": "Weekly sync",
-        "at": "2026-11-10"
-      },
-      "owner": {
-        "name": "Engineering",
-        "recorded_by_pm": true
-      },
-      "due": {
-        "date": "2026-11-18",
-        "unknown": false
-      }
+      "key": "meetings",
+      "title": "Project actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/actions",
+      "items": [
+        {
+          "title": "Send test accounts for UAT",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Lagoon Health",
+          "at": null,
+          "due": "2026-11-13T00:00:00Z",
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/actions/#1",
+          "record_id": 1,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/actions/1",
+          "reference": "ACT-0001",
+          "age_days": null,
+          "origin_meeting": {
+            "id": 4,
+            "reference": "Weekly sync",
+            "at": "2026-11-10T09:00:00Z"
+          }
+        },
+        {
+          "title": "Finish the Android login fix",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Engineering",
+          "at": null,
+          "due": "2026-11-15T00:00:00Z",
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/actions/#2",
+          "record_id": 2,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/actions/2",
+          "reference": "ACT-0002",
+          "age_days": null,
+          "origin_meeting": {
+            "id": 4,
+            "reference": "Weekly sync",
+            "at": "2026-11-10T09:00:00Z"
+          }
+        },
+        {
+          "title": "Assess the SMS reminders change",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Owner needed",
+          "at": null,
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/actions/#3",
+          "record_id": 3,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/actions/3",
+          "reference": "ACT-0003",
+          "age_days": null,
+          "origin_meeting": {
+            "id": 4,
+            "reference": "Weekly sync",
+            "at": "2026-11-10T09:00:00Z"
+          }
+        },
+        {
+          "title": "Share the UAT test plan",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Tunde Bello",
+          "at": null,
+          "due": "2026-11-04T00:00:00Z",
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/actions/#4",
+          "record_id": 4,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/actions/4",
+          "reference": "ACT-0004",
+          "age_days": null,
+          "origin_meeting": {
+            "id": 3,
+            "reference": "UAT walkthrough",
+            "at": "2026-11-03T09:00:00Z"
+          }
+        },
+        {
+          "title": "Confirm data migration window",
+          "state": "In progress",
+          "state_code": "in_progress",
+          "detail": "Lagoon Health",
+          "at": null,
+          "due": "2026-11-06T00:00:00Z",
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/actions/#5",
+          "record_id": 5,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/actions/5",
+          "reference": "ACT-0005",
+          "age_days": null,
+          "origin_meeting": {
+            "id": 2,
+            "reference": "Weekly sync",
+            "at": "2026-11-03T09:00:00Z"
+          }
+        },
+        {
+          "title": "Book go-live call",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Tunde Bello",
+          "at": null,
+          "due": "2026-11-20T00:00:00Z",
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/actions/#6",
+          "record_id": 6,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/actions/6",
+          "reference": "ACT-0006",
+          "age_days": null,
+          "origin_meeting": null
+        },
+        {
+          "title": "Sign UAT plan",
+          "state": "Completed",
+          "state_code": "completed",
+          "detail": "Lagoon Health",
+          "at": null,
+          "due": "2026-11-01T00:00:00Z",
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/actions/#7",
+          "record_id": 7,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/actions/7",
+          "reference": "ACT-0007",
+          "age_days": null,
+          "origin_meeting": {
+            "id": 1,
+            "reference": "Kick-off",
+            "at": "2026-10-27T09:00:00Z"
+          }
+        },
+        {
+          "title": "Review the hypercare rota",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Tunde Bello",
+          "at": null,
+          "due": "2026-11-20T00:00:00Z",
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/actions/#8",
+          "record_id": 8,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/actions/8",
+          "reference": "ACT-0008",
+          "age_days": null,
+          "origin_meeting": {
+            "id": 4,
+            "reference": "Weekly sync",
+            "at": "2026-11-10T09:00:00Z"
+          }
+        },
+        {
+          "title": "Send the release notes draft",
+          "state": "Paused",
+          "state_code": "paused",
+          "detail": "Engineering",
+          "at": null,
+          "due": "2026-11-18T00:00:00Z",
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/actions/#9",
+          "record_id": 9,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/actions/9",
+          "reference": "ACT-0009",
+          "age_days": null,
+          "origin_meeting": {
+            "id": 4,
+            "reference": "Weekly sync",
+            "at": "2026-11-10T09:00:00Z"
+          }
+        }
+      ]
     }
-  ],
-  "summary": {
-    "actions": {
-      "total": 9,
-      "overdue": 3,
-      "without_owner": 1
-    }
-  }
+  ]
 }

@@ -23,7 +23,7 @@
 .ptabs__noaccess { max-width: 720px; }
 
 /* under the rows: Show more, the time the figures are as of, the rule the page restates */
-.ptabs__asof, .ptabs__note { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
+.ptabs__asof, .ptabs__note, .ptabs__line { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
 
 /* phone cards */
 .ptabs__cards { display: flex; flex-direction: column; gap: var(--space-3); }
@@ -80,3 +80,14 @@ a.delivery__title { color: var(--ink); }
   .delivery__title, .delivery__agent a { display: inline-flex; align-items: center; min-height: 44px; }
   .delivery__body { flex-direction: column; align-items: stretch; }
 }
+
+/* Unknown as the board draws it (bold brown text, no tint), the same as on the Money tab */
+.ptabs__ms .psl-unknown, .ptabs__card .psl-unknown { padding: 0; background: none; font-family: inherit; font-size: inherit; font-weight: 600; }
+
+/* SCR-38 (F-71): the Proof button and its answer, and the Recorded completions list under the table */
+.ptabs__proof { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); margin-top: var(--space-6px); }
+.ptabs__proofbody { display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-small-size); font-weight: 400; }
+.ptabs__completions { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+.ptabs__subhead { margin: 0; font-size: var(--text-body-size); font-weight: 700; }
+.ptabs__completionlist { list-style: none; margin: 0; padding: 0; align-self: stretch; display: flex; flex-direction: column; gap: var(--space-3); }
+.ptabs__completion { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }

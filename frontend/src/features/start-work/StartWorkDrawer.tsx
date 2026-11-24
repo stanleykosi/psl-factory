@@ -11,7 +11,7 @@ import { Callout, Loading } from '@/components';
 import { DrawerFrame } from './DrawerFrame';
 import { isStartable, LineChooser } from './LineChooser';
 import { LineDrawer } from './LineForm';
-import { lineFormFor } from './lines';
+import { lineFormFor, ownLineFor } from './lines';
 import type { Line } from './types';
 import { useLines } from './useStartWork';
 
@@ -69,6 +69,10 @@ export function StartWorkDrawer({ onClose, prefill, onStarted: started, onConfli
     } else view = { kind: 'chooser' };
   }
 
+  const own = view.kind === 'line' ? ownLineFor(view.line.key) : undefined;
+  if (view.kind === 'line' && own) {
+    return <own.Own key={own.key} onBack={() => setStep({ kind: 'chooser' })} onClose={onClose} pathname={pathname} />;
+  }
   const form = view.kind === 'line' ? lineFormFor(view.line.key) : undefined;
   if (view.kind === 'line' && form) {
     return (

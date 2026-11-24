@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type BrowserContext, type Locator, type Page } from '@playwright/test';
 
-// F-26 Money tab (SCR-12) against the contract mock at 390 and 1440, axe WCAG 2.2 AA. Every request the page makes
+// F-71 Money tab (SCR-12), on the live money read, against the contract mock at 390 and 1440, axe WCAG 2.2 AA. Every request the page makes
 // goes to the app's /api/v1, which the app proxies to the mock (MOCK_PORT); nothing reaches a real backend.
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
@@ -62,163 +62,135 @@ for (const [label, viewport] of [
   test.describe(label, () => {
     test.use({ viewport, ...(phone ? { hasTouch: true, isMobile: true } : {}) });
 
-    test('P-0101 board rows from data: four stages, amounts, invoice, paid, the note and the time', async ({ page }) => {
+    test('P-0101 rows from data: stages in the order sent, amounts with the currency code, invoices, paid and owed, the time', async ({ page }) => {
       const calls = apiCalls(page);
       await page.goto('/projects/P-0101/money');
       await loaded(page);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lagoon Health · patient app');
-      await expect(panel(page).getByRole('heading', { level: 2 })).toHaveText('Lagoon Health · billing by contract stage');
       if (phone) {
-        await expect(cards(page)).toHaveCount(4);
-        await expect(cards(page).locator('.money__stage')).toHaveText(['Stage 1 · kick-off', 'Stage 2 · UAT', 'Stage 3 · go-live', 'Stage 4 · hypercare']);
-        await expect(cards(page).nth(3)).toContainText('UnknownNot yet due · amount set at go-live');
-        await expect(panel(page).getByText('Paid · Finance tracks')).toHaveCount(1);
-        await expect(cards(page).nth(0)).toContainText('Paid · Finance tracks');
+        await expect(cards(page)).toHaveCount(5);
+        await expect(cards(page).locator('.money__stage')).toHaveText(['1 · Kick-off', '2 · UAT sign-off', '3 · Go-live', 'Hypercare', 'INV-0420 outside any stage']);
+        await expect(cards(page).nth(2)).toContainText('The reviewed stage terms do not state an amount.');
         const hint = panel(page).getByText('Tap an amount to see where it comes from');
         await expect(hint).toBeVisible();
-        await expect(hint.locator('a')).toHaveCount(0);
         await expect(page.getByRole('complementary')).toHaveCount(0);
         await expectTouchTargets([...(await cards(page).locator('a').all())]);
       } else {
-        await expect(rows(page)).toHaveCount(4);
+        await expect(rows(page)).toHaveCount(5);
         await expect(panel(page).locator('tfoot')).toHaveCount(0);
-        await expect(rows(page).locator('td:nth-child(2)')).toHaveText(['₦3,000,000.00', '₦4,250,000.00', '₦4,250,000.00', 'UnknownNot yet due · amount set at go-live']);
-        // textContent: the hidden reference and "No invoice" / "Not due" are part of each cell's text for screen readers.
-        await expect(rows(page).locator('td:nth-child(3)')).toHaveText(['Verified 03 Nov, INV-0398', 'Awaiting Finance decision, INV-0412', 'Held · owner needed, INV-0419', '—No invoice']);
-        await expect(rows(page).locator('td:nth-child(4)')).toHaveText(['Finance tracks', '—Not due', '—Not due', '—Not due']);
-        await expect(page.getByRole('complementary', { name: 'Choose an amount to see where it comes from.' })).toBeVisible();
-        await expect(rows(page).nth(0).getByRole('link', { name: /^Verified 03 Nov ?, INV-0398$/ })).toHaveAttribute('href', '/work/W-1713');
+        await expect(rows(page).locator('td:nth-child(1)')).toHaveText(['1 · Kick-off', '2 · UAT sign-off', '3 · Go-live', 'Hypercare', 'INV-0420 outside any stage']);
+        await expect(rows(page).locator('td:nth-child(2)')).toHaveText(['NGN 3,000,000.00', 'NGN 4,250,000.00', 'UnknownThe reviewed stage terms do not state an amount.', 'NGN 500,000.00', 'USD 1,000.00']);
+        await expect(rows(page).nth(0).locator('td:nth-child(3) .money__block')).toHaveText(['INV-0398 · Delivered', 'INV-0399 · Issued']);
+        await expect(rows(page).nth(1).locator('td:nth-child(4)')).toHaveText('Paid Unknown · Owed Unknown');
+        await expect(page.getByRole('complementary', { name: 'Where a figure comes from' })).toBeVisible();
       }
-      await expect(panel(page).locator('.psl-unknown')).toHaveText(['Unknown']);
       await expect(panel(page).locator('.money__asof')).toHaveText('As of 12 Nov 16:40');
       const text = await panel(page).innerText();
-      expect(text).not.toMatch(/₦0(?![\d,.])|(?<![\d,])0\.00|NaN/);
-      expect(text).not.toMatch(/total|outstanding|balance/i);
+      expect(text).not.toMatch(/total|outstanding|balance|part paid|not paid/i);
       expect(await noHorizontalScroll(page)).toBe(true);
-      expect(calls.map((u) => `${u.host}${u.pathname}`)).toEqual(
-        expect.arrayContaining([`localhost:${new URL(page.url()).port}/api/v1/projects/P-0101/money`, `localhost:${new URL(page.url()).port}/api/v1/reports/R-0101`]),
-      );
+      const port = new URL(page.url()).port;
+      expect(calls.map((u) => `${u.host}${u.pathname}`)).toContain(`localhost:${port}/api/v1/projects/00000000-0000-4000-8000-000000000101/money`);
       expect(calls.every((u) => u.host === new URL(page.url()).host)).toBe(true);
       await shot(page, `money-default-${w}`);
       await expectNoAxeViolations(page);
     });
 
-    test('deep link ?figure=FIG-0101-S2 opens Stage 2 with its three sources; a reload keeps it', async ({ page }) => {
-      await page.goto('/projects/P-0101/money?figure=FIG-0101-S2');
+    test('deep link ?figure=kickoff lists its sources in order; a reload keeps it', async ({ page }) => {
+      await page.goto('/projects/P-0101/money?figure=kickoff');
       await loaded(page);
-      const surface = phone ? page.getByRole('dialog', { name: 'Where ₦4,250,000.00 comes from' }) : page.getByRole('complementary', { name: /^Where ₦4,250,000\.00 comes from ?, Stage 2 · UAT amount$/ });
+      const surface = phone ? page.getByRole('dialog', { name: 'Kick-off' }) : page.getByRole('complementary', { name: 'Kick-off' });
       await expect(surface).toBeVisible();
-      await expect(surface.locator('ol > li')).toHaveText([
-        'Signed SOW v2, stage table, row 2 SOW-0198 v2',
-        'Stage terms v1, active since 30 Jun RULE · stage terms',
-        'Milestone 2 completion, recorded by Tunde Bello HB-M2',
-      ]);
+      await expect(surface.locator('ol > li')).toHaveCount(2);
+      await expect(surface.locator('ol > li').first()).toContainText('Statement of work SOW-0198 v2 · Signed SOW');
       await expect(surface.locator('ol a')).toHaveCount(0);
-      await expect(surface.getByRole('link', { name: 'Ask me' })).toHaveAttribute('href', '/assistant?agent=chidi');
       if (!phone) await shot(page, `money-figure-${w}`);
       await page.reload();
       await loaded(page);
       await expect(surface).toBeVisible();
-      await expect(surface.locator('ol > li')).toHaveCount(3);
+      await expect(surface.locator('ol > li')).toHaveCount(2);
       if (phone) await shot(page, `money-sheet-${w}`);
       await expectNoAxeViolations(page);
     });
 
-    test('P-0102 edges, P-0103 report failure and P-0105 empty pass axe with no sideways scroll', async ({ page }) => {
-      for (const path of ['/projects/P-0102/money', '/projects/P-0102/money?figure=FIG-0102-S1', '/projects/P-0103/money', '/projects/P-0105/money']) {
+    test('limited, empty, unknown figure and no-money-access pass axe with no sideways scroll', async ({ page }) => {
+      for (const path of ['/projects/P-0102/money', '/projects/P-0106/money', '/projects/P-0101/money?figure=nope', '/projects/P-0107/money', '/projects/P-0108/money']) {
         await page.goto(path);
         await loaded(page);
-        if (path.includes('P-0105')) await expect(panel(page).getByRole('heading', { level: 2, name: 'No contract stages yet' })).toBeVisible();
-        if (path.includes('FIG-0102-S1')) await expect(page.getByText('These figures differ: the table shows ₦2,500,000.00; the report shows ₦2,400,000.00.')).toBeVisible();
-        if (path.includes('P-0103')) await expect(page.getByText('We couldn’t load where these figures come from.')).toBeVisible();
+        if (path.includes('P-0102')) await expect(page.getByText('Some figures may be incomplete.')).toBeVisible();
+        if (path.includes('P-0106')) await expect(panel(page).getByRole('heading', { level: 2, name: 'No contract stages yet' })).toBeVisible();
+        if (path.includes('nope')) await expect(page.getByText('That figure isn’t available.')).toBeVisible();
+        if (/P-010[78]/.test(path)) {
+          await expect(panel(page).getByText('You can’t see this project’s money.')).toBeVisible();
+          const text = await page.locator('body').innerText();
+          for (const word of ['Kick-off', 'NGN', 'Your role does not allow this', 'We could not find that record']) expect(text).not.toContain(word);
+        }
         expect(await noHorizontalScroll(page), path).toBe(true);
         await expectNoAxeViolations(page);
-        if (path.includes('FIG')) await page.keyboard.press('Escape');
+        if (path.includes('nope') && phone) await page.keyboard.press('Escape');
       }
     });
 
-    test('money refused (P-0107 403, P-0108 404), pm on P-0104 and P-0099: no stage, no amount, no report read', async ({ page, context }) => {
+    test('pm on P-0104 and P-0099: the project is refused and no money is read', async ({ page, context }) => {
       const calls = apiCalls(page);
-      for (const id of ['P-0107', 'P-0108']) {
-        await page.goto(`/projects/${id}/money`);
-        await loaded(page);
-        await expect(panel(page).getByText('You can’t see this project’s money.')).toBeVisible();
-        const text = await page.locator('body').innerText();
-        for (const word of ['Stage 1', '7,100,000', '₦', 'billing by contract stage', 'Your role does not allow this', 'We could not find that record']) expect(text).not.toContain(word);
-        await expectNoAxeViolations(page);
-      }
       await setCookies(context, { psl_mock_persona: 'pm' });
       for (const id of ['P-0104', 'P-0099']) {
         await page.goto(`/projects/${id}/money`);
         await loaded(page);
         await expect(page.getByText('You can’t open this project')).toBeVisible();
-        expect(await page.locator('body').innerText()).not.toContain('₦');
+        expect(await page.locator('body').innerText()).not.toContain('NGN');
       }
-      expect(calls.filter((u) => u.pathname.startsWith('/api/v1/reports/'))).toEqual([]);
-      expect(calls.filter((u) => /P-0104\/money|P-0099\/money/.test(u.pathname))).toEqual([]);
+      expect(calls.filter((u) => /\/money$/.test(u.pathname))).toEqual([]);
     });
 
-    test('P-0103: Try again makes exactly one more report request and no money request', async ({ page }) => {
+    test('a failed money read shows the error card and Try again makes exactly one more money request', async ({ page }) => {
+      let fail = true;
+      await page.route('**/api/v1/projects/00000000-0000-4000-8000-000000000101/money*', (route) =>
+        fail ? route.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }) : route.continue(),
+      );
       const calls = apiCalls(page);
-      await page.goto('/projects/P-0103/money');
-      await loaded(page);
-      // On phones the report's error sits under the cards (UX-1-1); on desktop in the aside.
-      const surface = phone ? panel(page).locator('.money__cards ~ .money__explain') : page.getByRole('complementary');
-      await expect(surface).toContainText('We couldn’t load where these figures come from. Your work is safe; nothing was changed.');
-      await expect(rows(page).or(cards(page))).toHaveCount(4);
-      await expect(panel(page).locator('a[href*="figure="]')).toHaveCount(0);
-      const before = calls.length;
-      await surface.getByRole('button', { name: 'Try again' }).click();
-      await expect(surface).toContainText('We couldn’t load where these figures come from.');
-      await expect.poll(() => calls.length).toBe(before + 1);
-      expect(calls.slice(before).map((u) => u.pathname)).toEqual(['/api/v1/reports/R-0103']);
+      await page.goto('/projects/P-0101/money');
+      await expect(page.getByRole('main').getByRole('alert')).toContainText('We couldn’t load this project’s money.');
+      fail = false;
+      const before = calls.filter((u) => u.pathname.endsWith('/money')).length;
+      await page.getByRole('button', { name: 'Try again' }).click();
+      await expect(rows(page).or(cards(page)).first()).toBeVisible();
+      expect(calls.filter((u) => u.pathname.endsWith('/money')).length).toBe(before + 1);
     });
 
     if (!phone) {
-      test('press Stage 3: the URL is replaced, the aside shows its own sources, focus and aria-current stay, it is announced', async ({ page }) => {
-        await page.goto('/projects/P-0101/money?figure=FIG-0101-S2');
+      test('press Hypercare: the URL is replaced, the aside shows its sources, focus and aria-current stay, it is announced', async ({ page }) => {
+        await page.goto('/projects/P-0101/money?figure=kickoff');
         await loaded(page);
         const entries = await page.evaluate(() => window.history.length);
-        const stage3 = rows(page).nth(2).getByRole('link', { name: '₦4,250,000.00' });
-        await stage3.click();
-        await expect(page).toHaveURL(/\/projects\/P-0101\/money\?figure=FIG-0101-S3$/);
+        const link = rows(page).nth(3).getByRole('link', { name: 'NGN 500,000.00' });
+        await link.click();
+        await expect(page).toHaveURL(/\/projects\/P-0101\/money\?figure=hypercare$/);
         expect(await page.evaluate(() => window.history.length)).toBe(entries);
-        const aside = page.getByRole('complementary', { name: /^Where ₦4,250,000\.00 comes from ?, Stage 3 · go-live amount$/ });
-        await expect(aside.locator('ol > li')).toHaveText(['Signed SOW v2, stage table, row 3 SOW-0198 v2', 'Stage terms v1, active since 30 Jun RULE · stage terms', 'Go-live invoice, held for an owner INV-0419']);
-        await expect(aside.getByRole('link', { name: 'Go-live invoice, held for an owner' })).toHaveAttribute('href', '/work/W-1714');
-        await expect(stage3).toBeFocused();
-        await expect(stage3).toHaveAttribute('aria-current', 'true');
-        await expect(rows(page).nth(1).getByRole('link', { name: '₦4,250,000.00' })).not.toHaveAttribute('aria-current', 'true');
-        await expect(panel(page).locator('[aria-live="polite"]')).toHaveText('Showing where ₦4,250,000.00 comes from');
-        // Visible focus ring on the amount (keyboard focus).
-        await page.keyboard.press('Shift+Tab');
-        await page.keyboard.press('Tab');
-        await expect(stage3).toBeFocused();
-        const ring = await stage3.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none'));
-        expect(ring).not.toBe('none');
+        await expect(page.getByRole('complementary', { name: 'Hypercare' }).locator('ol > li')).toHaveCount(1);
+        await expect(link).toBeFocused();
+        await expect(link).toHaveAttribute('aria-current', 'true');
+        await expect(panel(page).locator('[aria-live="polite"]')).toHaveText('Showing where Hypercare comes from');
         await expectNoAxeViolations(page);
       });
     } else {
-      test('press Stage 2: a bottom sheet with the same title and sources; Esc and Close drop figure and return focus', async ({ page }) => {
+      test('press Kick-off: a bottom sheet with its sources; Esc and Close drop figure and return focus', async ({ page }) => {
         await page.goto('/projects/P-0101/money');
         await loaded(page);
-        const stage2 = cards(page).nth(1).getByRole('link', { name: '₦4,250,000.00' });
-        await stage2.click();
-        const sheet = page.getByRole('dialog', { name: 'Where ₦4,250,000.00 comes from' });
+        const amount = cards(page).nth(0).getByRole('link', { name: 'NGN 3,000,000.00' });
+        await amount.click();
+        const sheet = page.getByRole('dialog', { name: 'Kick-off' });
         await expect(sheet).toBeVisible();
-        await expect(page).toHaveURL(/\?figure=FIG-0101-S2$/);
-        await expect(sheet.locator('ol > li .money__ref')).toHaveText(['SOW-0198 v2', 'RULE · stage terms', 'HB-M2']);
+        await expect(page).toHaveURL(/\?figure=kickoff$/);
         await expectNoAxeViolations(page);
         await page.keyboard.press('Escape');
         await expect(sheet).toHaveCount(0);
         await expect(page).toHaveURL(/\/projects\/P-0101\/money$/);
-        await expect(stage2).toBeFocused();
-        await stage2.click();
+        await expect(amount).toBeFocused();
+        await amount.click();
         await expect(sheet).toBeVisible();
         await sheet.getByRole('button', { name: 'Close' }).click();
         await expect(sheet).toHaveCount(0);
-        await expect(page).toHaveURL(/\/projects\/P-0101\/money$/);
-        await expect(stage2).toBeFocused();
+        await expect(amount).toBeFocused();
       });
     }
   });

@@ -184,8 +184,12 @@ describe('draft, from data (AC 3, 6, 7)', () => {
     };
     walk(join(__dirname, '../src'));
     const text = (path: string) => readFileSync(path, 'utf8');
+    // Narrow exception (D-182, F-61 Q6): the alerts receipt labels show "Delivered" only for the server's receipt state `delivered`
+    // (tests/alerts-model.test.ts asserts it never shows for queued, uncertain or held). No other file may.
+    const DELIVERED_ALLOWED = ['features/alerts/model.ts'];
     for (const pattern of [/procurement@|submit by|TL-SUB|all [34] approvals|Approve and submit/, /Delivered|delivery confirmed|verified as sent/]) {
-      expect(files.filter((f) => pattern.test(text(f))).map((f) => f.replace(/.*src\//, '')), String(pattern)).toEqual([]);
+      const allowed = pattern.test('Delivered') ? DELIVERED_ALLOWED : [];
+      expect(files.filter((f) => pattern.test(text(f))).map((f) => f.replace(/.*src\//, '')).filter((f) => !allowed.includes(f)), String(pattern)).toEqual([]);
     }
     const mine = ['features/rfp/RfpFrame.tsx', 'features/work-item/WorkItemView.tsx', 'features/workspace/InlineDecide.tsx'].map((f) => text(join(__dirname, '../src', f)));
     for (const src of mine) {

@@ -317,3 +317,37 @@ describe('F-85 carried fixes', () => {
     expect(document.body.textContent).not.toMatch(/weekly_report|WEEKLY_REPORT/);
   });
 });
+
+describe('F-85 carried fixes', () => {
+  it('safeHref allows http(s) and same-site paths only', () => {
+    expect(safeHref('/api/v1/work/4101/output')).toBe('/api/v1/work/4101/output');
+    expect(safeHref('https://files.example/a.pdf')).toBe('https://files.example/a.pdf');
+    expect(safeHref('http://files.example/a.pdf')).toBe('http://files.example/a.pdf');
+    for (const bad of ['javascript:alert(1)', 'JaVaScRiPt:alert(1)', ' javascript:alert(1)', 'data:text/html,x', 'vbscript:x', 'file:///etc/passwd', '//evil.example/x', '/\\evil.example/x', 'relative/path', 'mailto:a@b.c', '', null, undefined]) {
+      expect(safeHref(bad)).toBeNull();
+    }
+  });
+
+  it('an output_url that is not http(s) or a site path draws no link', async () => {
+    const base = mock('/api/v1/work/4101').body as LiveWorkItem;
+    answer = (url) => (url.pathname === '/api/v1/work/4101' ? { status: 200, body: { ...base, output_url: 'javascript:alert(1)' } } : mock(url.pathname + url.search));
+    open('4101');
+    await heading();
+    expect(screen.queryByRole('link', { name: 'Open the output' })).toBeNull();
+  });
+
+  it('lineName gives the live lines their plain names and any other key as words, without the version', () => {
+    expect(lineName('pmo-weekly-report/v1')).toBe('Weekly client report');
+    expect(lineName('pmo-finance/v1')).toBe('Invoice');
+    expect(lineName('weekly_report')).toBe('Weekly report');
+    expect(lineName('some-new-line/v2')).toBe('Some new line');
+  });
+
+  it('the breadcrumb names the line in plain words, never the key', async () => {
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: false, media: q, addEventListener: () => {}, removeEventListener: () => {} }));
+    open('4102');
+    await heading();
+    expect(screen.getByRole('navigation', { name: 'Breadcrumb' }).textContent).toBe('My work / Weekly report / Work 4102');
+    expect(document.body.textContent).not.toMatch(/weekly_report|WEEKLY_REPORT/);
+  });
+});
