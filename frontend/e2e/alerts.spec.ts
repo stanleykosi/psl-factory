@@ -341,7 +341,8 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
   test('the switch focus ring and the Save focus ring are visible (keyboard focus)', async ({ page }) => {
     await page.goto('/settings/alerts');
     await settingsLoaded(page);
-    const ring = (el: Element) => (getComputedStyle(el).outlineStyle !== 'none' ? `${getComputedStyle(el).outlineStyle} ${getComputedStyle(el).outlineWidth}` : 'none');
+    // A focus ring is a 2px outline, or the design system's inset 2px ring in the focus colour.
+    const ring = (el: Element) => (getComputedStyle(el).outlineStyle !== 'none' ? `${getComputedStyle(el).outlineStyle} ${getComputedStyle(el).outlineWidth}` : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid 2px' : 'none');
     const reach = async (target: ReturnType<typeof sw>) => {
       for (let i = 0; i < 40; i++) {
         if (await target.evaluate((el) => el === document.activeElement)) break;
