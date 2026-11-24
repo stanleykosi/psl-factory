@@ -5271,3 +5271,15 @@
 {"at":"2026-11-24T16:11:48Z","feature":"F-75","round":2,"kind":"finding","action":"add","finding":"UI-2-2","by":"ui-reviewer","severity":"low","owner":"design engineer (sign-off, B35)","blocking":false,"role":"ui"}
 {"at":"2026-11-24T16:11:48Z","feature":"F-75","round":2,"kind":"finding","action":"add","finding":"UI-2-3","by":"ui-reviewer","severity":"low","owner":"design engineer","blocking":false,"role":"ui"}
 {"at":"2026-11-24T16:11:48Z","feature":"F-75","round":2,"kind":"transition","head":"286b41057cb2","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-24T16:23:33Z","feature":"F-78","round":2,"kind":"finding","action":"fix","finding":"TECH-1-1","by":"builder"}
+{"at":"2026-11-24T16:23:33Z","feature":"F-78","round":2,"kind":"finding","action":"fix","finding":"TECH-1-2","by":"builder"}
+{"at":"2026-11-24T16:23:33Z","feature":"F-78","round":2,"kind":"finding","action":"fix","finding":"TECH-1-3","by":"builder"}
+{"at":"2026-11-24T16:23:33Z","feature":"F-78","round":2,"kind":"finding","action":"fix","finding":"TECH-1-4","by":"builder"}
+{"at":"2026-11-24T16:23:33Z","feature":"F-78","round":2,"kind":"finding","action":"fix","finding":"TECH-1-5","by":"builder"}
+{"at":"2026-11-24T16:23:33Z","feature":"F-78","round":2,"kind":"finding","action":"fix","finding":"TECH-1-8","by":"builder"}
+{"at":"2026-11-24T16:23:33Z","feature":"F-78","round":2,"kind":"finding","action":"fix","finding":"UI-1-1","by":"builder"}
+{"at":"2026-11-24T16:23:33Z","feature":"F-78","round":2,"kind":"finding","action":"fix","finding":"UI-1-2","by":"builder"}
+{"at":"2026-11-24T16:23:33Z","feature":"F-78","round":2,"kind":"finding","action":"fix","finding":"UI-1-3","by":"builder"}
+{"at":"2026-11-24T16:23:33Z","feature":"F-78","round":2,"kind":"finding","action":"fix","finding":"SEC-1-2","by":"builder"}
+{"at":"2026-11-24T16:23:33Z","feature":"F-78","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":278.4,"commit":"ca4abee2fb0b"}
+{"at":"2026-11-24T16:23:42Z","feature":"F-78","round":2,"kind":"transition","head":"ca4abee2fb0b","from":"IMPLEMENTING","to":"IN_REVIEW"}

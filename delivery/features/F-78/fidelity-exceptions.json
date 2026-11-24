@@ -1,0 +1,159 @@
+{
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "The milestone is recorded as complete, with your name and the proof.",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: the board's invoice text (\"Chidi drafts the stage 2 invoice from the SOW terms… Finance reviews it; a Finance Lead approves it…\") claims a draft that D-187 forbids; the page shows the fixed \"What happens next\" wording instead (spec Conflicts with the boards 1, B32 option 1: \"replace with the fixed \\\"What happens next\\\" wording … Completing a milestone is not invoicing it\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Chidi drafts the stage 2 invoice from the SOW terms. The amount comes from the contract, not from this form.",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: the board's invoice text (\"Chidi drafts the stage 2 invoice from the SOW terms… Finance reviews it; a Finance Lead approves it…\") claims a draft that D-187 forbids; the page shows the fixed \"What happens next\" wording instead (spec Conflicts with the boards 1, B32 option 1: \"replace with the fixed \\\"What happens next\\\" wording … Completing a milestone is not invoicing it\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Finance reviews it; a Finance Lead approves it before anything goes to the client.",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: the board's invoice text (\"Chidi drafts the stage 2 invoice from the SOW terms… Finance reviews it; a Finance Lead approves it…\") claims a draft that D-187 forbids; the page shows the fixed \"What happens next\" wording instead (spec Conflicts with the boards 1, B32 option 1: \"replace with the fixed \\\"What happens next\\\" wording … Completing a milestone is not invoicing it\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Completing a milestone is not invoicing it. PMO completes milestones; Finance handles invoices.",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: the board's invoice text (\"Chidi drafts the stage 2 invoice from the SOW terms… Finance reviews it; a Finance Lead approves it…\") claims a draft that D-187 forbids; the page shows the fixed \"What happens next\" wording instead (spec Conflicts with the boards 1, B32 option 1: \"replace with the fixed \\\"What happens next\\\" wording … Completing a milestone is not invoicing it\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Next: Chidi drafts the invoice from the SOW terms for Finance to review.",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: the board's invoice text (\"Chidi drafts the stage 2 invoice from the SOW terms… Finance reviews it; a Finance Lead approves it…\") claims a draft that D-187 forbids; the page shows the fixed \"What happens next\" wording instead (spec Conflicts with the boards 1, B32 option 1: \"replace with the fixed \\\"What happens next\\\" wording … Completing a milestone is not invoicing it\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Client UAT sign-off · recorded on REL-0077",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: the board's one fixed evidence row is replaced by the radio list of proofs on record and the private PDF picker (spec Conflicts 2, B32 option 1: \"a radio list of existing proofs by `label`, an optional private PDF zone only when `can_attach_pdf`\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "lagoon-uat-signoff.pdf",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: the board's one fixed evidence row is replaced by the radio list of proofs on record and the private PDF picker (spec Conflicts 2, B32 option 1: \"a radio list of existing proofs by `label`, an optional private PDF zone only when `can_attach_pdf`\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Uploaded · 240 KB",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: the board's one fixed evidence row is replaced by the radio list of proofs on record and the private PDF picker (spec Conflicts 2, B32 option 1: \"a radio list of existing proofs by `label`, an optional private PDF zone only when `can_attach_pdf`\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Client UAT sign-off",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: the board's one fixed evidence row is replaced by the radio list of proofs on record and the private PDF picker (spec Conflicts 2, B32 option 1: \"a radio list of existing proofs by `label`, an optional private PDF zone only when `can_attach_pdf`\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Recorded by Tunde Bello on 11 Nov with proof",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Hidden: the recorder name and REL id are not in the options read, the write or the re-read; the page says \"with the proof you chose\" (spec Conflicts 3, B32 option 1: \"show the `label` only … show no recorder name or REL id\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Recorded on REL-0077 with proof",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Hidden: the recorder name and REL id are not in the options read, the write or the re-read; the page says \"with the proof you chose\" (spec Conflicts 3, B32 option 1: \"show the `label` only … show no recorder name or REL id\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Milestone 2 · UAT sign-off",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: before recording only the name is shown; after the re-read \"Completed <completed_at>\"; no stage number or SOW version (spec Conflicts 4, B32 option 1: \"before recording show only the name; after the re-read show \\\"Completed <completed_at>\\\"\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "heading",
+      "name": "Milestone 2 · UAT sign-off",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: before recording only the name is shown; after the re-read \"Completed <completed_at>\"; no stage number or SOW version (spec Conflicts 4, B32 option 1: \"before recording show only the name; after the re-read show \\\"Completed <completed_at>\\\"\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "From the signed SOW v2, stage 2",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: before recording only the name is shown; after the re-read \"Completed <completed_at>\"; no stage number or SOW version (spec Conflicts 4, B32 option 1: \"before recording show only the name; after the re-read show \\\"Completed <completed_at>\\\"\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Lagoon Health · from signed SOW v2, stage 2",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: before recording only the name is shown; after the re-read \"Completed <completed_at>\"; no stage number or SOW version (spec Conflicts 4, B32 option 1: \"before recording show only the name; after the re-read show \\\"Completed <completed_at>\\\"\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "11 Nov 2026",
+      "category": "spec conflict (B32 option 1)",
+      "reason": "Changed: before recording only the name is shown; after the re-read \"Completed <completed_at>\"; no stage number or SOW version (spec Conflicts 4, B32 option 1: \"before recording show only the name; after the re-read show \\\"Completed <completed_at>\\\"\").",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Tunde Bello · PMO",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "HB-M2",
+      "category": "board sample content",
+      "reason": "Board sample case reference chip; no live field carries it.",
+      "approved_by": "pending design engineer (questions-batch B36)"
+    },
+    {
+      "role": "text",
+      "name": "LAGOON HEALTH / MILESTONES",
+      "category": "frame (breadcrumb)",
+      "reason": "Present as the breadcrumb links \"<project name>\" and \"Milestones\" (monospace, blue) from the shared Breadcrumb; the design engineer decides whether the style is an exception.",
+      "approved_by": "pending design engineer (questions-batch B36)"
+    },
+    {
+      "role": "link",
+      "name": "← Lagoon Health",
+      "category": "frame (phone back link)",
+      "reason": "The phone back link is the shell's (usePhoneBack, label \"Milestones\"), not the project name.",
+      "approved_by": "pending design engineer (questions-batch B36)"
+    }
+  ],
+  "extras_not_gating": [
+    {
+      "what": "Shell extras on desktop: nav link \"Overview\", buttons \"Alerts, 1 unread\" and \"Account menu: Kemi Adebayo · PMO Lead\", side panel \"Demo controls\" and button \"Demo\"; Start work and More ways to start are buttons, not links (frame, owned by the shell).",
+      "approved_by": "pending design engineer (questions-batch B36)"
+    },
+    {
+      "what": "Shell extras on phone: button \"Alerts, 1 unread\" and side panel \"Demo controls\".",
+      "approved_by": "pending design engineer (questions-batch B36)"
+    },
+    {
+      "what": "Disabled grey \"Mark complete\" until a proof and the confirmation are chosen; the board draws every input filled (state difference).",
+      "approved_by": "pending design engineer (questions-batch B36)"
+    }
+  ],
+  "visual_waivers": []
+}
