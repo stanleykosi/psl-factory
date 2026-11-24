@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 3b8d10de03c23bf581a9b941189eb38a74b22681
+COMMIT: b9d61964c993dcbd1f19dc563e14ce6dabe10ccd
 REVIEWER: reviewer-technical
 AUTHORITY: reviewer-technical
 
@@ -35,3 +35,6 @@ Verdict: pass. Findings: none new.
 - Lane C's handler is unchanged. `git diff 3b7df6cc 7b8bad85 -- frontend/mock/work-live.mjs frontend/mock/start-live.mjs` is empty. The only change in 7b8bad85 is 3 lines in `mock/live-work.mjs` and 4 in `mock/server.mjs`.
 - F-62 owns only its own ids. `ownsLiveWorkItem` matches only the verified rows (401 to 420) and exception rows (301 to 320) from `verifiedRows` and `exceptionRows`. The route is limited to GET and `/api/v1/work/<digits>`. Every other integer id falls through to F-85's handler.
 - The unknown-id 404 holds. An id outside those two lists is not claimed by F-62, so lane C's 404 for unknown ids and for 4106 still applies. `tests/mock-work-live.test.ts` is untouched.
+
+## Pre-merge re-confirm (b9d61964)
+Diff-only against accepted head 7b8bad85: the only change is merge commit b9d61964 (main 8692cf87: CI workflow, F-72, test fixes). `git diff 7b8bad85 b9d61964` touches nothing in src/features/work-list, verified, exceptions or the my-work link. The changes in mock/server.mjs (F-72 document-review route, reset hook, import) and tests/next-config.test.ts (extra allowed F-72 files) are additive and leave F-62's lines intact. GitHub Actions `checks` passed on b9d61964. Verdict: PASS, no new findings.

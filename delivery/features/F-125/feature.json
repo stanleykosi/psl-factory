@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-125",
   "outcome": "/my-work shows its existing error state on live rows instead of crashing",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -71,7 +71,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead), light panel (D-180)",
-      "snapshot_ref": "215361f5",
+      "snapshot_ref": "215361f5a3cf78d8fde907d7c12ec055c9e3dbf7",
       "evidence_refs": [
         "delivery/features/F-125/round-1/review-technical.md"
       ]
@@ -80,7 +80,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "qa",
-      "snapshot_ref": "215361f5",
+      "snapshot_ref": "215361f5a3cf78d8fde907d7c12ec055c9e3dbf7",
       "evidence_refs": [
         "delivery/features/F-125/round-1/review-qa.md"
       ]
@@ -89,7 +89,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "PMO delivery acceptance (D-180 lighter panel). Delivery acceptance only; merge and release keep their own authorities. Product acceptance is not required (readiness).",
-      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "snapshot_ref": "215361f5a3cf78d8fde907d7c12ec055c9e3dbf7",
       "evidence_refs": [
         "delivery/features/F-125/round-1/acceptance-pmo.md"
       ]
@@ -116,7 +116,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer",
-      "snapshot_ref": "215361f5",
+      "snapshot_ref": "215361f5a3cf78d8fde907d7c12ec055c9e3dbf7",
       "evidence_refs": [
         "delivery/features/F-125/round-1/review-ui.md"
       ]
@@ -179,9 +179,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -191,7 +191,7 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
+    "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-connect-1-my-work-live-guard",
     "head_sha": "215361f5a3cf78d8fde907d7c12ec055c9e3dbf7",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a4",
@@ -201,64 +201,13 @@
     "designated_approver": null,
     "ci_status": "passed",
     "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "merge_status": "merged",
+    "merge_sha": "f875e594e73028004cff6f2746857becdfeca986",
     "merge_policy": "not_configured",
     "changed_paths": [
-      ".github/workflows/frontend-checks.yml",
-      "delivery/checks.sh",
-      "frontend/e2e/document-review.spec.ts",
-      "frontend/e2e/hr.spec.ts",
-      "frontend/e2e/rfp-intake.spec.ts",
-      "frontend/e2e/start-work-ppe-forecast.spec.ts",
-      "frontend/e2e/start-work-proof.spec.ts",
-      "frontend/e2e/start-work.spec.ts",
-      "frontend/mock/documents.mjs",
-      "frontend/mock/fixtures/documents/review-2901.json",
-      "frontend/mock/fixtures/documents/review-2901.publication.json",
-      "frontend/mock/server.mjs",
-      "frontend/mock/start-live.mjs",
-      "frontend/src/features/documents/DocumentParts.tsx",
-      "frontend/src/features/documents/DocumentReview.tsx",
-      "frontend/src/features/documents/ReviewControls.tsx",
-      "frontend/src/features/documents/document-review.css",
-      "frontend/src/features/documents/documentModel.ts",
-      "frontend/src/features/documents/useDocument.ts",
-      "frontend/src/features/documents/useReview.ts",
       "frontend/src/features/my-work/MyWork.tsx",
       "frontend/src/features/my-work/model.ts",
-      "frontend/src/features/projects/DocumentsTab.tsx",
-      "frontend/src/features/start-work/LineChooser.tsx",
-      "frontend/src/features/start-work/LineForm.tsx",
-      "frontend/src/features/start-work/ProjectPicker.tsx",
-      "frontend/src/features/start-work/RecordPicker.tsx",
-      "frontend/src/features/start-work/SourcePicker.tsx",
-      "frontend/src/features/start-work/StartUpload.tsx",
-      "frontend/src/features/start-work/StartWorkDrawer.tsx",
-      "frontend/src/features/start-work/intake.ts",
-      "frontend/src/features/start-work/labels.ts",
-      "frontend/src/features/start-work/lines/index.ts",
-      "frontend/src/features/start-work/lines/weeklyReport.tsx",
-      "frontend/src/features/start-work/start-work.css",
-      "frontend/src/features/start-work/types.ts",
-      "frontend/src/features/start-work/useStart.ts",
-      "frontend/src/features/start-work/useStartWork.ts",
-      "frontend/tests/assistant.test.tsx",
-      "frontend/tests/document-review-model.test.ts",
-      "frontend/tests/document-review.test.tsx",
-      "frontend/tests/hypercare.test.tsx",
-      "frontend/tests/issue-detail.test.tsx",
-      "frontend/tests/mock-live-document-review.test.ts",
-      "frontend/tests/my-work.test.tsx",
-      "frontend/tests/next-config.test.ts",
-      "frontend/tests/project-tabs.test.tsx",
-      "frontend/tests/rfp-intake.test.tsx",
-      "frontend/tests/start-work-intake.test.ts",
-      "frontend/tests/start-work-live.test.tsx",
-      "frontend/tests/start-work-ppe-forecast.test.tsx",
-      "frontend/tests/start-work-prefill.test.tsx",
-      "frontend/tests/start-work-proof.test.tsx",
-      "frontend/tests/start-work.test.tsx"
+      "frontend/tests/my-work.test.tsx"
     ]
   },
   "parallel_execution": {
@@ -279,16 +228,20 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
-    "merged_by": null,
+    "approver_recommendation": "AUTO_MERGE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-125/decision.md"
+    ],
+    "script_decision": "AUTO_MERGE",
+    "script_reasons": [
+      "all gates passed on the current head and no policy rule needs a human"
+    ],
+    "decided_for_head_sha": "215361f5a3cf78d8fde907d7c12ec055c9e3dbf7",
+    "merged_by": "hunchoweb (lane A coordinator under D-180)",
     "pre_merge_sync": {
-      "base_sha": null,
-      "checks_rerun": "not_run"
+      "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
+      "checks_rerun": "passed"
     }
   },
   "created_at": "2026-11-23T22:24:03Z",
@@ -341,6 +294,22 @@
       "at": "2026-11-24T08:53:22Z",
       "round": 1,
       "head": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "MERGED",
+      "at": "2026-11-24T13:44:48Z",
+      "round": 1,
+      "head": "215361f5a3cf78d8fde907d7c12ec055c9e3dbf7",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-24T13:44:49Z",
+      "round": 1,
+      "head": "215361f5a3cf78d8fde907d7c12ec055c9e3dbf7",
       "reason": null
     }
   ],

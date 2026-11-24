@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 6730a7e7829fa8be3efcd2021a24b86c46df375d
+COMMIT: b9d61964c993dcbd1f19dc563e14ce6dabe10ccd
 REVIEWER: qa
 AUTHORITY: integrated QA (lighter panel, D-180)
 
@@ -15,3 +15,6 @@ AUTHORITY: integrated QA (lighter panel, D-180)
 
 ## Verified
 - QA-1-1 | verified | Signed in as live-none, live-lead and live-multi on 6730a7e7 (API and /sign-in page); live GET /work?queue=verified and queue=exceptions returned 200 with the empty shape, and /verified and /exceptions rendered their empty, search and 390 states.
+
+## Pre-merge re-confirm (b9d61964)
+Diff 7b8bad85..b9d61964 (merge of main 8692cf87) touches 21 files: document review (F-72), mock documents, CI workflow, checks.sh. No F-62 verified/exceptions file changed. Run singly from frontend: tests/exceptions-mock.test.ts 8/8, tests/verified.test.tsx 18/18, tests/exceptions.test.tsx 16/16 passed. GitHub Actions checks passed. No live stack rerun (diff-only). Verdict: PASS holds.
