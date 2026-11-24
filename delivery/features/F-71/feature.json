@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-71",
   "outcome": "Money and Milestones tabs on the live project API",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -128,6 +128,18 @@
       "at": "2026-11-24T13:29:36Z",
       "seconds": 7.7,
       "evidence_ref": "delivery/features/F-71/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T14:01:36Z",
+      "seconds": 296.4,
+      "evidence_ref": "delivery/features/F-71/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -380,14 +392,28 @@
         "delivery/features/F-71/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T13:48:49Z",
           "head": "3df5462d49c464d12d789486760215fb1df62304"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:01:36Z",
+          "refs": [
+            "cfc3c462"
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cfc3c462"
       ]
     },
     {
@@ -403,14 +429,28 @@
         "delivery/features/F-71/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T13:48:49Z",
           "head": "3df5462d49c464d12d789486760215fb1df62304"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:01:36Z",
+          "refs": [
+            "cfc3c462"
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cfc3c462"
       ]
     },
     {
@@ -426,14 +466,28 @@
         "delivery/features/F-71/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T13:48:49Z",
           "head": "3df5462d49c464d12d789486760215fb1df62304"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:01:36Z",
+          "refs": [
+            "cfc3c462"
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cfc3c462"
       ]
     },
     {
@@ -449,14 +503,28 @@
         "delivery/features/F-71/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "ui-reviewer",
           "at": "2026-11-24T13:48:49Z",
           "head": "3df5462d49c464d12d789486760215fb1df62304"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:01:36Z",
+          "refs": [
+            "not code"
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "not code"
       ]
     },
     {
@@ -472,14 +540,28 @@
         "delivery/features/F-71/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "ui-reviewer",
           "at": "2026-11-24T13:48:49Z",
           "head": "3df5462d49c464d12d789486760215fb1df62304"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:01:36Z",
+          "refs": [
+            "cfc3c462"
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cfc3c462"
       ]
     },
     {
@@ -495,14 +577,28 @@
         "delivery/features/F-71/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "ui-reviewer",
           "at": "2026-11-24T13:48:49Z",
           "head": "3df5462d49c464d12d789486760215fb1df62304"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:01:36Z",
+          "refs": [
+            "cfc3c462"
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cfc3c462"
       ]
     },
     {
@@ -518,14 +614,28 @@
         "delivery/features/F-71/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "ui-reviewer",
           "at": "2026-11-24T13:48:49Z",
           "head": "3df5462d49c464d12d789486760215fb1df62304"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:01:36Z",
+          "refs": [
+            "cfc3c462"
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cfc3c462"
       ]
     },
     {
@@ -631,7 +741,7 @@
     "base_branch": "main",
     "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-connect-1-money-milestones-tabs",
-    "head_sha": "3df5462d49c464d12d789486760215fb1df62304",
+    "head_sha": "cfc3c462382095787d1edf2bbda089f7140d28cc",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b",
     "pr_url": null,
     "pr_number": null,
@@ -765,6 +875,14 @@
       "round": 2,
       "head": "3df5462d49c464d12d789486760215fb1df62304",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T14:01:52Z",
+      "round": 2,
+      "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "reason": null
     }
   ],
   "routing": {
@@ -781,9 +899,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "cfc3c462382095787d1edf2bbda089f7140d28cc"
   },
   "blocked": null
 }

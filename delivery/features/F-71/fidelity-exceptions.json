@@ -1,0 +1,64 @@
+{
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "Chidi · Finance agent I can explain any figure here. Ask me",
+      "reason": "Hidden: the agent card with \"Ask me about any figure here\"; a figure key is not a conversation parameter (spec Conflicts 3, B-20, D-182).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "text",
+      "name": "Chidi",
+      "reason": "Hidden: the agent card with \"Ask me about any figure here\"; a figure key is not a conversation parameter (spec Conflicts 3, B-20, D-182).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "link",
+      "name": "Ask me",
+      "reason": "Hidden: the agent card with \"Ask me about any figure here\"; a figure key is not a conversation parameter (spec Conflicts 3, B-20, D-182).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "text",
+      "name": "REPORT · LAGOON HEALTH · PROJECT MONEY",
+      "reason": "Hidden: the report title heading (E-REPORT title) (spec Conflicts 3, D-182).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "text",
+      "name": "INV-0398 · verified",
+      "reason": "Changed: shown as the invoice reference plus the invoice's own status text, not one composed status (spec Conflicts 4, D-182).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "text",
+      "name": "INV-0412 · awaiting Finance decision",
+      "reason": "Changed: shown as the invoice reference plus the invoice's own status text, not one composed status (spec Conflicts 4, D-182).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "text",
+      "name": "Part paid · ₦500,000.00 owed",
+      "reason": "Hidden: the explicit paid status word and the owed amount worked per stage; shown as \"Paid <amount> · Owed <amount>\" from the money read (spec Conflicts 1 and 11, D-182).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "text",
+      "name": "₦4,250,000.00 + the change · change amount Unknown until a SOW amendment is signed",
+      "reason": "Hidden: the amount_note under the contract amount; only missing_reason shows, and only when the amount is null (spec Conflicts 5, D-182).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "link",
+      "name": "Mark milestone 3 complete",
+      "reason": "Hidden: the milestone-level \"Mark milestone N complete\" button stays out (SCR-19) (spec Conflicts 6, D-182).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "link",
+      "name": "CR-0031 · SMS reminders",
+      "reason": "Changed: change text shows as \"<reference> · <note>\" text, not a link to a work item; live has no work item link (spec Conflicts 7, D-182).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    }
+  ]
+}
