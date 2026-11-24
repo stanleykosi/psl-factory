@@ -12,7 +12,7 @@ import { SignedOutState } from '@/shell/FrameStates';
 
 import { DrawerFrame, useWide } from './DrawerFrame';
 import { UNAVAILABLE_LINK, UNAVAILABLE_NOTE } from './labels';
-import { lineFormFor } from './lines';
+import { lineFormFor, ownLineFor } from './lines';
 import type { Line } from './types';
 import type { LinesState } from './useStartWork';
 
@@ -45,8 +45,8 @@ function LoadingLines() {
 }
 
 
-/** Startable: the contract lets the API start it and a form is registered for it. */
-export const isStartable = (line: Line) => line.can_submit_via_api && lineFormFor(line.key) !== undefined;
+/** Startable: the contract lets the API start it and a form is registered for it, or the line owns its own submit (F-88). */
+export const isStartable = (line: Line) => ownLineFor(line.key) !== undefined || (line.can_submit_via_api && lineFormFor(line.key) !== undefined);
 
 function Unavailable({ line, wide }: { line: Line; wide: boolean }) {
   return (

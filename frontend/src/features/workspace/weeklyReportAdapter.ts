@@ -3,7 +3,7 @@
 import type { LiveWeeklyReport } from '@/api/types';
 import { formatDayTime } from '@/components';
 
-import { makeCommand, readPanel, registerLineAdapter, type LineAdapter } from './adapter';
+import { makeCommand, readPanel, type LineAdapter } from './adapter';
 import type { Item, Section } from './labels';
 
 export const NOT_RECORDED = 'Not recorded';
@@ -81,5 +81,3 @@ export const weeklyReportAdapter: LineAdapter<LiveWeeklyReport> = {
     }),
   ],
 };
-
-registerLineAdapter(weeklyReportAdapter as LineAdapter);

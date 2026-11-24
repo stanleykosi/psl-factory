@@ -63,6 +63,12 @@ export const KINDS: Record<WorkItem['kind'], { words: string; family: Family }> 
   started: { words: 'STARTED', family: 'neutral' },
 };
 
+/** A v7 row has a known `kind`; a live row may not, and `KindTag` would throw on it. */
+export const isV7Row = (item: unknown): boolean => {
+  const kind = (item as { kind?: unknown } | null)?.kind;
+  return typeof kind === 'string' && Object.hasOwn(KINDS, kind);
+};
+
 /** Waiting-on filter words (D-WORKLIST-FILTERS proposal; the categories are an engineering proposal). */
 export const WAITING_ON: Record<WaitingOn, string> = {
   me: 'Me',
@@ -82,7 +88,7 @@ export const AGENT_AVATAR: Record<Agent, { src: string; alt: string }> = {
   zainab: { src: '/agents/zainab.png', alt: 'Zainab · HR agent' },
 };
 
-/** `assign` (F-36): the work item whose "Assign accountable PM" panel is open over the list; not part of the list's own request. */
+/** `assign` (F-88): the received RFP's case whose "Assign accountable PM" drawer is open over the Unassigned list; not part of the list's own request. */
 export type View = { queue: Queue; q?: string; line?: string; project?: string; state?: WorkState; waiting?: WaitingOn; limit: Limit; assign?: string };
 
 /** Reads the view from the URL; invalid values fall back to the defaults. */
@@ -97,7 +103,7 @@ export function parseView(params: URLSearchParams): View {
   const waiting = rawWaiting && Object.hasOwn(WAITING_ON, rawWaiting) ? (rawWaiting as WaitingOn) : undefined;
   const limit = LIMITS.find((n) => String(n) === params.get('limit')) ?? DEFAULT_LIMIT;
   const rawAssign = params.get('assign');
-  const assign = queue === 'unassigned' && rawAssign && /^W-\d+$/.test(rawAssign) ? rawAssign : undefined;
+  const assign = queue === 'unassigned' && rawAssign && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawAssign) ? rawAssign : undefined;
   return { queue, q, line, project, state, waiting, limit, assign };
 }
 

@@ -143,14 +143,18 @@ describe('ceo projects', () => {
 });
 
 describe('ceo overview', () => {
-  it('is populated: totals, lines with stations, and a note on each line', async () => {
+  it('is populated: lines with open work, and counts with stations for them', async () => {
     const overview = (await get('/api/v1/overview')).body;
-    expect(Object.values(overview.totals).every((n) => typeof n === 'number')).toBe(true);
-    expect(overview.totals.in_progress).toBeGreaterThan(0);
     expect(overview.lines.length).toBeGreaterThanOrEqual(4);
-    for (const line of overview.lines) expect(line.stations.length, line.line).toBeGreaterThan(0);
+    for (const line of overview.lines) expect(line.total, line.key).toBeGreaterThan(0);
+    const counts = (await get('/api/v1/work/counts')).body;
+    expect(counts.lines.length).toBeGreaterThan(0);
+    for (const line of counts.lines) expect(line.stations.length, line.key).toBe(5);
   });
 });
+
+/** The work id an alert opens, from its live api_url (/api/v1/work/<id>). */
+const workOf = (alert: any) => String(alert.api_url).split('/').pop() as string;
 
 describe('ceo alerts', () => {
   it('lists four or more alerts that open the CEO’s items, with the unread count', async () => {
@@ -158,11 +162,11 @@ describe('ceo alerts', () => {
     expect(list.items.length).toBeGreaterThanOrEqual(4);
     for (const alert of list.items) {
       expect(alert.agent).toBe('tola');
-      expect((await get(`/api/v1/work/${alert.work_id}`)).body.id).toBe(alert.work_id);
+      expect((await get(`/api/v1/work/${workOf(alert)}`)).body.id).toBe(workOf(alert));
     }
-    expect(list.items.map((a: any) => a.work_id)).toEqual(expect.arrayContaining(['W-5001', 'W-5003', 'W-5004', 'W-5005']));
-    expect(list.unread_count).toBe(list.items.filter((a: any) => !a.read).length);
-    expect(list.unread_count).toBeGreaterThanOrEqual(4);
+    expect(list.items.map(workOf)).toEqual(expect.arrayContaining(['W-5001', 'W-5003', 'W-5004', 'W-5005']));
+    expect(list.unread).toBe(list.items.filter((a: any) => !a.read).length);
+    expect(list.unread).toBeGreaterThanOrEqual(4);
   });
 
   it('marks one read, and the other personas keep their own alerts', async () => {

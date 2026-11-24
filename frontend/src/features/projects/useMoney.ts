@@ -2,58 +2,71 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { api, call } from '@/api/client';
+import { call, liveApi } from '@/api/client';
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
 
-import { isReport, moneyViewOf, type MoneyView, type Report } from './moneyModel';
+import { isMoney, type Money, type MoneyItem } from './moneyModel';
 
-export type MoneyState = { status: 'loading' } | { status: 'error'; error: ApiError } | { status: 'ready'; view: MoneyView };
-/** `none`: the money read named no report, so nothing is requested and no amount links anywhere. */
-export type ReportState = { status: 'none' } | { status: 'loading' } | { status: 'error'; error: ApiError } | { status: 'ready'; report: Report };
+export type MoneyState = { status: 'loading' } | { status: 'error'; error: ApiError } | { status: 'ready'; money: Money };
+/** `idle`: no figure chosen. `missing`: the backend has no such figure (404), which is not an error. */
+export type FigureState =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'missing' }
+  | { status: 'error'; error: ApiError }
+  | { status: 'ready'; item: MoneyItem };
 
 const unexpected = () => new ApiError(200, 'server', 'unexpected_response', UNEXPECTED_MESSAGE);
-const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
+export const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
 
-/** One E-PROJECT-TAB money read per opened tab, then one E-REPORT read when it names a report. Each has its own
- *  Try again; a late answer for an earlier case or an earlier try is ignored. No polling, no automatic retry. */
-export function useMoney(caseId: string) {
+/** One GET /projects/{case_id}/money read; a body that fails the guard is an unexpected response. */
+export async function readMoney(caseId: string, figure?: string): Promise<Money> {
+  const data = await call(liveApi.GET('/api/v1/projects/{case_id}/money', { params: { path: { case_id: caseId }, query: figure === undefined ? {} : { figure } } }));
+  if (!isMoney(data)) throw unexpected();
+  return data;
+}
+
+/**
+ * One money read per opened tab, and one `?figure=<key>` read per chosen figure. Each has its own Try again; a late answer
+ * for an earlier case or an earlier try is ignored. No polling, no automatic retry.
+ */
+export function useMoney(caseId: string, figureKey?: string) {
   const [money, setMoney] = useState<MoneyState>({ status: 'loading' });
-  const [report, setReport] = useState<ReportState>({ status: 'none' });
+  const [figure, setFigure] = useState<FigureState>({ status: 'idle' });
   const moneySeq = useRef(0);
-  const reportSeq = useRef(0);
-
-  const loadReport = useCallback(async (reportId: string) => {
-    const mine = ++reportSeq.current;
-    setReport({ status: 'loading' });
-    try {
-      const data = await call(api.GET('/api/v1/reports/{report_id}', { params: { path: { report_id: reportId } } }));
-      if (mine !== reportSeq.current) return;
-      if (!isReport(data)) throw unexpected();
-      setReport({ status: 'ready', report: data });
-    } catch (error) {
-      if (mine !== reportSeq.current) return;
-      setReport({ status: 'error', error: asApiError(error) });
-    }
-  }, []);
+  const figureSeq = useRef(0);
 
   const loadMoney = useCallback(async () => {
     const mine = ++moneySeq.current;
-    // A report still on its way belongs to the earlier read.
-    reportSeq.current++;
     setMoney({ status: 'loading' });
-    setReport({ status: 'none' });
     try {
-      const data = await call(api.GET('/api/v1/projects/{case_id}/{tab}', { params: { path: { case_id: caseId, tab: 'money' } } }));
+      const data = await readMoney(caseId);
       if (mine !== moneySeq.current) return;
-      const view = moneyViewOf(data);
-      if (!view) throw unexpected();
-      setMoney({ status: 'ready', view });
-      if (view.reportId) void loadReport(view.reportId);
+      setMoney({ status: 'ready', money: data });
     } catch (error) {
       if (mine !== moneySeq.current) return;
       setMoney({ status: 'error', error: asApiError(error) });
     }
-  }, [caseId, loadReport]);
+  }, [caseId]);
+
+  const loadFigure = useCallback(async () => {
+    const mine = ++figureSeq.current;
+    if (figureKey === undefined) {
+      setFigure({ status: 'idle' });
+      return;
+    }
+    setFigure({ status: 'loading' });
+    try {
+      const data = await readMoney(caseId, figureKey);
+      if (mine !== figureSeq.current) return;
+      const item = data.items.find((i) => i.key === figureKey);
+      setFigure(item ? { status: 'ready', item } : { status: 'missing' });
+    } catch (error) {
+      if (mine !== figureSeq.current) return;
+      const e = asApiError(error);
+      setFigure(e.kind === 'not_found' ? { status: 'missing' } : { status: 'error', error: e });
+    }
+  }, [caseId, figureKey]);
 
   useEffect(() => {
     // The effect only starts the request.
@@ -61,9 +74,10 @@ export function useMoney(caseId: string) {
     void loadMoney();
   }, [loadMoney]);
 
-  const retryReport = useCallback(() => {
-    if (money.status === 'ready' && money.view.reportId) void loadReport(money.view.reportId);
-  }, [money, loadReport]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadFigure();
+  }, [loadFigure]);
 
-  return { money, report, retryMoney: loadMoney, retryReport };
+  return { money, figure, retryMoney: loadMoney, retryFigure: loadFigure };
 }

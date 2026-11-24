@@ -13,11 +13,12 @@
 // <id>.<verdict>.json (the decided item) as an in-memory override; POST /__mock/reset clears the overrides.
 // Projects: E-PROJECTS and E-PROJECT answer from projects.mjs in the live shape (persona rows, status, q, cursor, page; UUID ids, P-nnnn accepted too; P-0099 is the no-access id).
 // Project tabs (F-25): E-PROJECT-TAB answers from project-tabs.mjs (milestones, registers, actions; documents 501; money goes to money.mjs, F-26).
-// Overview: E-OVERVIEW serves fixtures/overview/<v>.json when cookie psl_mock_overview names a variant.
-// Alerts (F-12): the four alert operations go to alerts.mjs; as typed by the v7 contract.
+// Overview: the live GET /overview and GET /work/counts (overview.mjs) serve a variant when cookie psl_mock_overview names one.
+// Alerts (F-12, F-61): the four alert paths go to alerts.mjs, in the live 1.24.0 shapes (not the v7 operations).
 // Assistant (F-24): the five assistant operations go to assistant.mjs, which also recognises a draft's E-WORK-START.
 // Delegation (F-27): E-DELEGATIONS and E-DELEGATION go to delegations.mjs (scenario and save cookies, overlay proposals).
 // Invoices (F-41): E-INVOICES answers from invoices.mjs (variant cookie psl_mock_invoices, q, status, paging, overlay proposals).
+// Live decision desk (F-64): live-decide.mjs answers the integer-id task and work routes of SCR-03 in the live shapes.
 // Document review (F-72): the live document-review reads and decision (documents.mjs, cookie psl_mock_docreview); the v7 E-DOCUMENT stays for the work item's document link.
 // Live demo (F-54, D-155): demo.mjs holds the switches and the answer delay; with the demo off nothing changes.
 import { readdirSync, readFileSync } from 'node:fs';
@@ -29,36 +30,43 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { delayMs, delayReply, demoOn } from './demo.mjs';
 import { addDemoProject } from './demo-projects.mjs';
-import { caseVisible, normaliseProjectPath, projects } from './projects.mjs';
+import { caseVisible, idOf, normaliseProjectPath, projects } from './projects.mjs';
 import { projectTab } from './project-tabs.mjs';
+import { deliveryRead } from './delivery-overview.mjs';
 import { documentRead, isLiveDocumentPath, liveDocumentReview, resetDocumentReviews } from './documents.mjs';
 import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
 import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
 import { monthEnd } from './finance.mjs';
 import { invoices } from './invoices.mjs';
-import { overview } from './overview.mjs';
-import { STATION_ITEMS_PATH, stationItems, withDemoRuns } from './station-items.mjs';
+import { COUNTS_PATH, floorRead, OVERVIEW_PATH } from './overview.mjs';
 import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { createLineRuns } from './line-runs.mjs';
 import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
+import { RECEIVED_BIDS_PATH, receivedBids, receivedBidsLog, resetReceivedBids } from './received-bids.mjs';
 import { resetStartLive, START_LIVE_PATH, START_LIVE_WORK, startLive, startLiveLog } from './start-live.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
+import { LIVE_QUEUES, liveWorkItem, liveWorkList, ownsLiveWorkItem } from './live-work.mjs';
 import { workList } from './work-list.mjs';
+import { FORECAST_PATH, forecastLive } from './forecast-live.mjs';
+import { issuesLog, issuesRoute, resetIssues } from './issues.mjs';
+import { liveDecideRoute, ownsLiveDecide, resetLiveDecide } from './live-decide.mjs';
 import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
 import { INVITATION_PATHS, invitationRoute, resetInvitations } from './invitations.mjs';
 import { currentToken, LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
-import { isMoneyRequest, moneyRoute } from './money.mjs';
-import { ALERT_OPERATIONS, createAlertsMock } from './alerts.mjs';
+import { isMilestoneRequest, isMoneyRequest, moneyRoute } from './money.mjs';
+import { isCompletionsPath, milestoneComplete, recordedRead, resetMilestoneComplete } from './milestone-complete.mjs';
+import { ALERT_PATH, createAlertsMock } from './alerts.mjs';
 import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, ASSISTANT_UPLOADS_PATH, createAssistantMock } from './assistant.mjs';
+import { ownsRetrospective, resetRetrospective, retrospectiveAdmin, retrospectiveRoute } from './retrospective.mjs';
 import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-PROJECT-TAB', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DELEGATIONS', 'E-DELEGATION', 'E-INVOICES', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS, 'E-DOCUMENT'];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-PROJECT-TAB', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DELEGATIONS', 'E-DELEGATION', 'E-INVOICES', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS, 'E-DOCUMENT'];
 export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin', 'pmo_lead', 'hr', 'hr_lead'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
@@ -256,7 +264,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
   const startWork = createStartWorkMock(openapi);
   // work_id -> the item served instead of its fixture; in memory only, cleared on restart and by /__mock/reset.
   const overrides = new Map();
-  const alerts = createAlertsMock({ openapi });
+  const alerts = createAlertsMock();
   const assistant = createAssistantMock({ openapi });
   // D-155: the live demo's line runs; they exist only after a start made with the demo on.
   // D-164: a demo RFP that is verified (won) creates the client's project and tells whoever started it.
@@ -287,29 +295,86 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         overrides.clear();
         startWork.reset();
         resetStartLive();
+        resetReceivedBids();
         resetResponses();
         resetSetup();
         resetTemplates();
         resetDelegations();
         alerts.reset();
         resetWorkspace();
+        resetRetrospective();
         resetWorkLive();
         resetInvitations();
+        resetIssues();
         resetClients();
         resetDocumentReviews();
+        resetMilestoneComplete();
         assistant.reset();
         runs.reset();
+        resetLiveDecide();
         res.writeHead(204, { 'Cache-Control': 'no-store' });
         return res.end();
       }
       // F-58: after a logout (cookie psl_mock_session=out) every other read and write answers 401, as a signed-out session does.
       if (url.pathname.startsWith('/api/') && url.pathname !== SESSION_PATH && url.pathname !== LOGOUT_PATH && !INVITATION_PATHS.includes(url.pathname) && parseCookies(req.headers.cookie).psl_mock_session === 'out') return send(res, ...SIGNED_OUT_REPLY);
+      // F-103: the cash forecast reads (ids 4301 to 4308); every other id falls through to work-live.mjs.
+      if (FORECAST_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        const [status, body, headers] = forecastLive({ method, url, scenario, persona });
+        if (Buffer.isBuffer(body)) {
+          res.writeHead(status, { 'Cache-Control': 'no-store', ...headers });
+          return res.end(body);
+        }
+        return send(res, status, body);
+      }
+      // F-119: the project retrospective's meetings, options, actions and closure checklist (retrospective.mjs).
+      if (url.pathname.startsWith('/__mock/retrospective/')) {
+        const r = retrospectiveAdmin({ method, url, raw });
+        if (r) return r[1] === null ? (res.writeHead(r[0]), res.end()) : send(res, ...r);
+      }
+      if (ownsRetrospective(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        return send(res, ...retrospectiveRoute({ method, url, raw, token: req.headers['x-csrftoken'], expected: me[persona].csrf_token }));
+      }
+      // F-111: the issue follow-up reads (work 51xx and the project's issue reads); anything else falls through.
+      if (method === 'get') {
+        const cookies = parseCookies(req.headers.cookie);
+        const reply = issuesRoute({ method, url, scenario: req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario, persona: PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA });
+        if (reply) return send(res, ...reply);
+      }
+      if (method === 'get' && url.pathname === '/__mock/issues-log') return send(res, 200, issuesLog());
+      // F-64: the live decision desk (live-decide.mjs): integer work and task ids, the live shapes. Not in v7.
+      if (ownsLiveDecide(method, url)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        return send(res, ...liveDecideRoute({ method, url, raw, cookies, scenario: req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario, token: req.headers['x-csrftoken'], me: me[persona], persona }));
+      }
+      // F-62: the work list's own rows (live-work.mjs) answer their item read before F-85's handler, which owns every other integer id.
+      if (method === 'get' && /^\/api\/v1\/work\/\d+$/.test(url.pathname) && ownsLiveWorkItem(Number(url.pathname.split('/')[4]))) { const r = liveWorkItem({ id: Number(url.pathname.split('/')[4]) }); return send(res, r.status, r.body); }
       // F-85: live work item reads (integer ids only) and the case file upload (work-live.mjs); not in v7. v7 ids and v7 case routes fall through.
       if (WORK_LIVE_PATH.test(url.pathname) || CASE_FILES_PATH.test(url.pathname)) {
         const cookies = parseCookies(req.headers.cookie);
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
-        return send(res, ...workLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
+        const reply = workLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes });
+        // a dropped connection: the write ran, the answer never arrives
+        if (reply[0] === 'drop') return req.socket.destroy();
+        return send(res, ...reply);
+      }
+      // F-61: the alert reads and writes in the live shapes. A scenario status answers every one of them; a write needs the persona's CSRF token.
+      if (ALERT_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        if (scenario === 'csrf_failed' && WRITE_METHODS.has(method)) return send(res, 403, CSRF_FAILED);
+        if (WRITE_METHODS.has(method) && req.headers['x-csrftoken'] !== me[persona].csrf_token) return send(res, 403, CSRF_FAILED);
+        if (demoOn(cookies)) runs.tick();
+        const [status, body] = alerts.handle({ method, url, raw, persona, cookies });
+        return send(res, status, body);
       }
       // F-86: the live Start work reads and the weekly start (start-live.mjs). The v7 routes of the same paths stay for the v7 contract tests (start without liveStart).
       if (method === 'get' && url.pathname === '/__mock/start-live-log') return send(res, 200, startLiveLog());
@@ -320,6 +385,14 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
           const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
           return send(res, ...startLive({ method, url, raw, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona }));
         }
+      }
+      // F-88: the live received RFP (received-bids.mjs); the v7 contract has none of these routes.
+      if (method === 'get' && url.pathname === '/__mock/received-bids-log') return send(res, 200, receivedBidsLog());
+      if (liveStart && RECEIVED_BIDS_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        return send(res, ...receivedBids({ method, url, raw, rawBytes, contentType: req.headers['content-type'], scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona }));
       }
       if (method === 'get' && url.pathname === '/__mock/work-live-log') return send(res, 200, workLiveLog());
       if (method === 'get' && url.pathname === WORKSPACE_LOG_PATH) return send(res, 200, workspaceLog());
@@ -337,12 +410,12 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         res.writeHead(200, { 'Content-Type': file.type, 'Cache-Control': 'no-store' });
         return res.end(file.bytes);
       }
-      // D-162 (proposal G-OVERVIEW-STATION, not in v7): the work at one station of the factory floor.
-      if (method === 'get' && url.pathname === STATION_ITEMS_PATH) {
+      // F-65 (API 1.24.0, not in v7): the factory floor's two reads (overview.mjs).
+      if (method === 'get' && (url.pathname === OVERVIEW_PATH || url.pathname === COUNTS_PATH)) {
         const cookies = parseCookies(req.headers.cookie);
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
         if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
-        return send(res, ...stationItems({ url, cookies, floorRuns: demoOn(cookies) ? runs.floor() : [] }));
+        return send(res, ...floorRead({ pathname: url.pathname, cookies }));
       }
       // F-60: invitation preview and accept (invitations.mjs); unauthenticated, but the current token is required.
       if (method === 'post' && INVITATION_PATHS.includes(url.pathname)) {
@@ -369,6 +442,23 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
           return send(res, ...roleDashboardRoute({ persona }));
         }
       }
+      // F-78 (SCR-19, not in v7): the completion options read and the write (milestone-complete.mjs), and a completion recorded there.
+      if ((method === 'get' || method === 'post') && isCompletionsPath(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (scenario && SCENARIO_BODIES[scenario] && (method === 'post' || ['401', '403', '404'].includes(String(scenario)))) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        if (method === 'post' && req.headers['x-csrftoken'] !== me[persona].csrf_token) return send(res, 403, CSRF_FAILED);
+        const r = milestoneComplete({ method, url, raw, persona, cookies, canSee: caseVisible });
+        return send(res, r.status, r.body);
+      }
+      const recordedHere = method === 'get' ? recordedRead(url.pathname, parseCookies(req.headers.cookie)) : undefined;
+      if (recordedHere) return send(res, recordedHere.status, recordedHere.body);
+      // F-71: one recorded completion of a project (live, not in v7); money.mjs answers it.
+      if (method === 'get' && isMilestoneRequest(url)) return send(res, ...moneyRoute({ route: { statuses: ['401', '403', '404'] }, url, req, cookies: parseCookies(req.headers.cookie) }));
+      // F-113 (not in v7): the delivery overview and the two reads behind the closure reason (delivery-overview.mjs).
+      const delivery = method === 'get' ? deliveryRead({ pathname: url.pathname, idOf }) : null;
+      if (delivery) return send(res, ...delivery);
       // F-72 (SCR-08): the live document-review reads and decision (documents.mjs); not in v7.
       if ((method === 'get' || method === 'post') && isLiveDocumentPath(url.pathname)) {
         const cookies = parseCookies(req.headers.cookie);
@@ -400,7 +490,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (RESPONSE_OPERATIONS.includes(route.operationId) && !setupProof) {
         return send(res, ...responseRoute(route.operationId, { req, url, raw, cookies: parseCookies(req.headers.cookie), me, work, overrides }));
       }
-      // F-26: the money tab of E-PROJECT-TAB and E-REPORT go to money.mjs (its own persona and scenario check); other tabs stay 501.
+      // F-26, F-71: the money tab of E-PROJECT-TAB goes to money.mjs (its own persona and scenario check); other tabs stay 501.
       if (isMoneyRequest(route.operationId, url)) return send(res, ...moneyRoute({ route, url, req, cookies: parseCookies(req.headers.cookie) }));
       if (!M1_OPERATIONS.includes(route.operationId)) return send(res, 501, NOT_MOCKED);
 
@@ -417,9 +507,9 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       const demo = demoOn(cookies);
       if (demo) runs.tick();
-      if (ALERT_OPERATIONS.includes(route.operationId)) { const r = alerts.handle({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (ASSISTANT_OPERATIONS.includes(route.operationId)) return send(res, ...assistant.handle({ operationId: route.operationId, url, raw, persona, agents: me[persona].assistant_agents ?? [], demo }));
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
+      if (route.operationId === 'E-WORK-LIST' && LIVE_QUEUES.includes(url.searchParams.get('queue'))) { const r = liveWorkList({ url, persona }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist, extra: runs.rows(persona) }); return send(res, r.status, r.body); }
       if (CLIENT_OPERATIONS.includes(route.operationId)) { const r = clients({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECTS' || route.operationId === 'E-PROJECT') { const r = projects({ operationId: route.operationId, url, persona }); return send(res, r.status, r.body); }
@@ -431,6 +521,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-TEMPLATES' || route.operationId === 'E-TEMPLATE-VERSION') { const r = (route.operationId === 'E-TEMPLATES' ? templatesList : templateVersion)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-DELEGATIONS' || route.operationId === 'E-DELEGATION') { const r = (route.operationId === 'E-DELEGATIONS' ? delegationsList : saveDelegation)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-EVIDENCE-UPLOAD') { const r = uploadEvidence({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-WORK-ITEM' && /^\/api\/v1\/work\/\d+$/.test(url.pathname)) { const r = liveWorkItem({ id: Number(url.pathname.split('/')[4]) }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-ITEM' || route.operationId === 'E-WORK-HISTORY') {
         // F-40 (UX-1-3): a handover item (W-37xx) answers only a persona who can see its project, as the Delivery tab does
         if (/^\/api\/v1\/work\/W-37\d\d(\/|$)/.test(url.pathname) && !caseVisible('P-0101', persona)) return send(res, 404, { code: 'not_found', message: 'We could not find that record.' });
@@ -450,7 +541,6 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const reply = startWork.handle(route.operationId, { url, raw, persona, cookies });
         return send(res, ...(demo && route.operationId === 'E-WORK-START' ? demoStart(runs, reply, raw, persona, startWork.clientLabel) : reply));
       }
-      if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, demo ? withDemoRuns(r.body, runs.floor()) : r.body); }
       // F-29: the statement of work D-2901 (documents.mjs); every other document falls through to F-23's rule below.
       if (route.operationId === 'E-DOCUMENT') { const r = documentRead({ url, persona, cookies, work, overrides }); if (r) return send(res, r.status, r.body); }
       // F-23: the one document the minutes fixtures name (D-2304 v1); any other document stays unmocked, as before.

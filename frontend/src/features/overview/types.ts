@@ -1,6 +1,6 @@
-import type { paths } from '@/api/schema';
+import type { paths } from '@/api/live-schema';
 
-type Contract = paths['/api/v1/overview']['get']['responses'][200]['content']['application/json'];
-export type Overview = Contract;
-export type OverviewLine = Contract['lines'][number];
-export type OverviewStation = OverviewLine['stations'][number];
+export type Overview = paths['/api/v1/overview']['get']['responses'][200]['content']['application/json'];
+export type OverviewLine = Overview['lines'][number];
+export type WorkCounts = paths['/api/v1/work/counts']['get']['responses'][200]['content']['application/json'];
+export type CountsLine = WorkCounts['lines'][number];

@@ -1,169 +1,246 @@
 'use client';
 
-// SCR-38 Milestones: contract amount, completion, invoice and paid as separate facts, read from E-PROJECT-TAB. A change
-// sits beside the milestone it changes; its amount is shown next to the contract amount and never added to it.
+// SCR-38 Milestones: the contract stages of /money (amount, completion, invoice and paid as separate facts), then the
+// recorded completions of /milestones as their own list. A change sits beside the stage it changes; its amount is shown
+// next to the contract amount and never added to it. A stage is tied to a completion only through `milestone_id`.
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { ShowMore, Table, Tag, Unknown, useIsPhone, type Column } from '@/components';
+import { Button, buttonClass, Callout, Table, Tag, useIsPhone, VisuallyHidden, When, type Column } from '@/components';
+import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
+import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
-import { AmountValue, AsOf, NONE, TabEmpty, RowLink, useTabPaging, tabStateView } from './TabParts';
-import {
-  completionText,
-  hasChanges,
-  invoiceWord,
-  paidWord,
-  workHref,
-  type Change,
-  type MilestoneRow,
-  type Paid,
-} from './tabsModel';
-import { useFocusAfterMore } from './useFocusAfterMore';
-import { useProjectTab } from './useProjectTab';
+import { InvoiceCell, PaidCell, Value } from './MoneyCells';
+import { changeText, completedText, completeHref, completionFor, completionText, contractAmount, contractStages, dueText, hasChanges, holdText, recordedByText, type CompletionRow } from './milestonesModel';
+import { stageLabel, type MoneyItem } from './moneyModel';
+import { AsOf, NONE, TabEmpty } from './TabParts';
+import { useMilestones, type ProofState } from './useMilestones';
 
-const VIEW = { register: 'issues' } as const;
+const NO_FINANCE = 'Contract amounts, invoices and payments aren’t available to your role.';
 
-/** "₦4,250,000.00 + the change · change amount Unknown": both values as sent, never a sum. */
-function AmountCell({ row }: { row: MilestoneRow }) {
+/** What a row needs: the proofs read on press, and (F-78) the link to SCR-19 when the server's own read allows a completion. */
+type Proofs = { proofs: Record<string, ProofState>; press: (slot: string, id: number) => void; completeHref: (label: string) => string | undefined };
+
+/** "Proof" for one recorded completion: a toggle. Opening it reads that completion once and shows the answer under the button; pressing again hides it. */
+function Proof({ slot, id, label, proofs }: { slot: string; id: number; label: string; proofs: Proofs }) {
+  const phone = useIsPhone();
+  const [open, setOpen] = useState(false);
+  const state = open ? proofs.proofs[slot] : undefined;
   return (
-    <>
-      <AmountValue value={row.contract_amount} />
-      {(row.changes ?? []).map((change, i) => (
-        <span key={`${change.reference}-${i}`}>
-          {' + the change · change amount '}
-          <AmountValue value={change.amount} />
+    <span className="ptabs__proof">
+      <Button kind="secondary" size={phone ? 'md' : 'sm'} aria-expanded={open} busy={state?.status === 'loading'} busyLabel="Loading…" onClick={() => {
+          if (!open) proofs.press(slot, id);
+          setOpen(!open);
+        }}>
+        Proof<VisuallyHidden> for {label}</VisuallyHidden>
+      </Button>
+      {state?.status === 'ready' && (
+        <span className="ptabs__proofbody" role="status">
+          <strong>{state.completion.name}</strong>
+          <span>{completedText(state.completion)}</span>
+          <span>Proof version {state.completion.proof_version}</span>
         </span>
-      ))}
-    </>
-  );
-}
-
-function InvoiceCell({ invoice }: { invoice: MilestoneRow['invoice'] }) {
-  if (!invoice) return NONE;
-  const word = invoiceWord(invoice.state);
-  return (
-    <>
-      <RowLink workId={invoice.work_id}>{invoice.reference}</RowLink>
-      {' · '}
-      {word ?? <Unknown />}
-    </>
-  );
-}
-
-/** Paid is Finance's own fact: absent is "—", unknown is the Unknown tag, and the invoice is never read for it. */
-function PaidCell({ paid }: { paid: Paid | undefined }) {
-  if (!paid) return NONE;
-  const word = paidWord(paid);
-  return (
-    <>
-      {word ?? <Unknown />}
-      {paid.owed && (
-        <>
-          {' · '}
-          <AmountValue value={paid.owed} /> owed
-        </>
       )}
-    </>
+      {state?.status === 'refused' && (
+        <span className="ptabs__proofbody" role="status">
+          Proof isn&rsquo;t available to your role.
+        </span>
+      )}
+      {state?.status === 'error' && (
+        <span className="ptabs__proofbody" role="alert">
+          We couldn&rsquo;t load the proof.
+          <Button kind="link" onClick={() => proofs.press(slot, id)}>
+            Try again
+          </Button>
+        </span>
+      )}
+    </span>
   );
 }
 
-function ChangeLink({ change }: { change: Change }) {
-  return <RowLink workId={change.work_id}>{[change.reference, change.title].filter(Boolean).join(' · ')}</RowLink>;
-}
-
-function ChangesCell({ changes }: { changes: Change[] | undefined }) {
-  if (!changes?.length) return NONE;
+/** "NGN 4,250,000.00 + the change · change amount Unknown": both values as sent, never a sum. */
+function AmountCell({ item }: { item: MoneyItem }) {
   return (
     <>
-      {changes.map((change, i) => (
-        <span key={`${change.reference}-${i}`} className="ptabs__block">
-          <ChangeLink change={change} />
+      <Value text={contractAmount(item)} />
+      {contractAmount(item) === undefined && item.missing_reason && <span className="ptabs__block ptabs__hint">{item.missing_reason}</span>}
+      {item.changes.map((change) => (
+        <span key={change.link_id}>
+          {' + the change · change amount '}
+          <Value text={undefined} />
         </span>
       ))}
     </>
   );
 }
 
-const rowKey = (row: MilestoneRow) => `${row.position}-${row.name}`;
-
-function columns(withChanges: boolean): Column<MilestoneRow>[] {
-  const base: Column<MilestoneRow>[] = [
-    { key: 'name', header: 'MILESTONE', cell: (row) => `${row.position} · ${row.name}` },
-    { key: 'amount', header: 'CONTRACT AMOUNT', cell: (row) => <AmountCell row={row} /> },
-    { key: 'completion', header: 'COMPLETION', cell: (row) => completionText(row) },
-    { key: 'invoice', header: 'INVOICE', cell: (row) => <InvoiceCell invoice={row.invoice} /> },
-    { key: 'paid', header: 'PAID', cell: (row) => <PaidCell paid={row.paid} /> },
-  ];
-  return withChanges ? [...base, { key: 'changes', header: 'CHANGES', cell: (row) => <ChangesCell changes={row.changes} /> }] : base;
+/** Done or not, the due date, who recorded it (only through `milestone_id`), and Proof where a completion is linked. */
+function CompletionCell({ item, rows, proofs }: { item: MoneyItem; rows: CompletionRow[]; proofs: Proofs }) {
+  const phone = useIsPhone();
+  const href = item.completed_at === null ? proofs.completeHref(item.label) : undefined;
+  const match = completionFor(item, rows);
+  const by = match ? recordedByText(match) : undefined;
+  const due = dueText(item);
+  return (
+    <>
+      <span className="ptabs__block">{completionText(item)}</span>
+      {due && <span className="ptabs__block ptabs__hint">{due}</span>}
+      {by && <span className="ptabs__block ptabs__hint">{by}</span>}
+      {href && (
+        <Link className={buttonClass('secondary', phone ? 'md' : 'sm')} href={href}>
+          Mark complete<VisuallyHidden> for {item.label}</VisuallyHidden>
+        </Link>
+      )}
+      {item.completed_at !== null && item.milestone_id !== null && <Proof slot={`stage-${item.key}`} id={item.milestone_id} label={item.label} proofs={proofs} />}
+    </>
+  );
 }
 
-/** SCR-38 phone: one card per milestone in the order returned. */
-function MilestoneCards({ rows }: { rows: MilestoneRow[] }) {
+function ChangesCell({ item }: { item: MoneyItem }) {
+  if (item.changes.length === 0) return NONE;
+  return (
+    <>
+      {item.changes.map((change) => (
+        <span key={change.link_id} className="ptabs__block">
+          {changeText(change)}
+        </span>
+      ))}
+    </>
+  );
+}
+
+function columns(items: MoneyItem[], rows: CompletionRow[], proofs: Proofs): Column<MoneyItem>[] {
+  const base: Column<MoneyItem>[] = [
+    { key: 'name', header: 'MILESTONE', cell: (item) => stageLabel(item) },
+    { key: 'amount', header: 'CONTRACT AMOUNT', cell: (item) => <AmountCell item={item} /> },
+    { key: 'completion', header: 'COMPLETION', cell: (item) => <CompletionCell item={item} rows={rows} proofs={proofs} /> },
+    { key: 'invoice', header: 'INVOICE', cell: (item) => <InvoiceCell item={item} /> },
+    { key: 'paid', header: 'PAID', cell: (item) => <PaidCell item={item} /> },
+  ];
+  return hasChanges(items) ? [...base, { key: 'changes', header: 'CHANGES', cell: (item) => <ChangesCell item={item} /> }] : base;
+}
+
+/** SCR-38 phone: one card per stage in the order returned. */
+function MilestoneCards({ items, rows, proofs }: { items: MoneyItem[]; rows: CompletionRow[]; proofs: Proofs }) {
   return (
     <div role="list" className="ptabs__cards">
-      {rows.map((row) => (
-        <div key={rowKey(row)} role="listitem" className="ptabs__card">
-          <strong>
-            {row.position} · {row.name}
-          </strong>
+      {items.map((item) => (
+        <div key={item.key} role="listitem" className="ptabs__card">
+          <strong>{stageLabel(item)}</strong>
           <span className="ptabs__cardmain">
-            <AmountCell row={row} /> · {completionText(row)}
+            <AmountCell item={item} />
+          </span>
+          <span className="ptabs__cardmain">
+            <CompletionCell item={item} rows={rows} proofs={proofs} />
           </span>
           <span className="ptabs__cardnote">
-            <InvoiceCell invoice={row.invoice} />
+            <InvoiceCell item={item} />
           </span>
           <span className="ptabs__cardnote">
-            Paid: <PaidCell paid={row.paid} />
+            <PaidCell item={item} />
           </span>
-          {(row.changes ?? []).map((change, i) => {
-            const href = workHref(change.work_id);
-            const tag = (
-              <Tag tone="waiting" className="ptabs__changed">
-                CHANGED · {change.reference}
-              </Tag>
-            );
-            return href ? (
-              <Link key={`${change.reference}-${i}`} href={href} className="ptabs__changelink">
-                {tag}
-              </Link>
-            ) : (
-              <span key={`${change.reference}-${i}`}>{tag}</span>
-            );
-          })}
+          {item.changes.map((change) => (
+            <Tag key={change.link_id} tone="waiting" className="ptabs__changed">
+              CHANGED · {change.reference}
+            </Tag>
+          ))}
         </div>
       ))}
     </div>
   );
 }
 
+/** One recorded completion: what was completed, its state, when, and who recorded it. */
+function CompletionItem({ row, proofs }: { row: CompletionRow; proofs: Proofs }) {
+  return (
+    <li tabIndex={-1} className="ptabs__completion">
+      <strong>{row.title}</strong>
+      <span>{row.state}</span>
+      {row.at && <When value={row.at} show="daytime" />}
+      <span className="ptabs__hint">{recordedByText(row) ?? 'Recorded by: not shown'}</span>
+      <Proof slot={`done-${row.record_id}`} id={row.record_id} label={row.title} proofs={proofs} />
+    </li>
+  );
+}
+
 export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: string }) {
   const phone = useIsPhone();
-  const { state, more, showMore, retry } = useProjectTab(caseId, 'milestones', VIEW);
-  const { rows: pagedRows, paging } = useTabPaging(state, more, showMore, '');
-  const rowsRef = useRef<HTMLDivElement>(null);
-  useFocusAfterMore(rowsRef, pagedRows.length);
-  const shown = tabStateView(state, { retry, signInPath: pathname });
-  if (state.status !== 'ready') return <>{shown}</>;
+  const { money, completions, more, proofs, entry, retryMoney, retryCompletions, showMore, readProof } = useMilestones(caseId);
+  const listRef = useRef<HTMLUListElement>(null);
+  const count = completions.status === 'ready' ? completions.rows.length : 0;
+  const before = useRef(count);
+  useEffect(() => {
+    // After Show more, when its button went with the last page, focus moves to the first new completion.
+    const previous = before.current;
+    before.current = count;
+    if (count <= previous || previous === 0) return;
+    const active = document.activeElement;
+    if (active && active !== document.body && active.isConnected) return;
+    (listRef.current?.children[previous] as HTMLElement | undefined)?.focus();
+  }, [count]);
+  const proof: Proofs = { proofs, press: (slot, id) => void readProof(slot, id), completeHref: (label) => (entry?.can_complete ? completeHref(caseId, label) : undefined) };
+  const hold = entry && !entry.can_complete && entry.hold !== null ? holdText(entry) : undefined;
 
-  const rows = pagedRows;
+  if (money.status === 'loading' || completions.status === 'loading') return <LoadingState />;
+  const signedOut = (money.status === 'error' && money.error.kind === 'unauthenticated') || (completions.status === 'error' && completions.error.kind === 'unauthenticated');
+  if (signedOut) return <SignedOutState pathname={pathname} />;
+
+  const refusedMoney = money.status === 'error' && (money.error.kind === 'forbidden' || money.error.kind === 'not_found');
+  const refusedCompletions = completions.status === 'error' && (completions.error.kind === 'forbidden' || completions.error.kind === 'not_found');
+  const rows = completions.status === 'ready' ? completions.rows : [];
+  const stages = money.status === 'ready' ? contractStages(money.money.items) : [];
+  const asOf = money.status === 'ready' ? money.money.as_of : completions.status === 'ready' ? completions.asOf : undefined;
+
   return (
     <>
-      <div ref={rowsRef} className="ptabs__rows">
-        {rows.length === 0 ? (
-          <TabEmpty>No milestones on this project yet.</TabEmpty>
-        ) : phone ? (
-          <>
-            <MilestoneCards rows={rows} />
-            <ShowMore solo {...paging} />
-          </>
-        ) : (
-          <Table className="ptabs__table" tableClassName={hasChanges(rows) ? 'ptabs__ms ptabs__ms--6' : 'ptabs__ms ptabs__ms--5'} caption="Milestones" columns={columns(hasChanges(rows))} rows={rows} rowKey={rowKey} empty="No milestones on this project yet." paging={paging} />
-        )}
+      {money.status === 'ready' && money.money.limited && <Callout kind="warning">Some figures may be incomplete.</Callout>}
+      <div className="ptabs__rows">
+        {money.status === 'ready' && stages.length > 0 && <h2 className="cmp-sr">Contract milestones</h2>}
+        {money.status === 'ready' && stages.length > 0 && hold && <p className="ptabs__line">{hold}</p>}
+        {money.status === 'ready' &&
+          (stages.length === 0 ? (
+            <TabEmpty>No milestones on this project yet.</TabEmpty>
+          ) : phone ? (
+            <MilestoneCards items={stages} rows={rows} proofs={proof} />
+          ) : (
+            <Table className="ptabs__table" tableClassName={hasChanges(stages) ? 'ptabs__ms ptabs__ms--6' : 'ptabs__ms ptabs__ms--5'} caption="Milestones" columns={columns(stages, rows, proof)} rows={stages} rowKey={(item) => item.key} empty="No milestones on this project yet." />
+          ))}
+        {refusedMoney && <p className="ptabs__line">{NO_FINANCE}</p>}
+        {money.status === 'error' && !refusedMoney && <WorkErrorCard message="We couldn’t load this project’s milestones. Your work is safe; nothing was changed." error={money.error} onRetry={() => void retryMoney()} />}
       </div>
-      {rows.length > 0 && <AsOf value={state.asOf} />}
-      <p className="ptabs__note">
-        Milestones and amounts come from the signed SOW. Completing a milestone is the PM&rsquo;s fact; invoicing and payment are Finance&rsquo;s, and each is shown separately.
-      </p>
+      {completions.status === 'ready' && (
+        <section className="ptabs__completions" aria-labelledby="ptabs-completions">
+          <h2 id="ptabs-completions" className="ptabs__subhead">
+            Recorded completions
+          </h2>
+          {rows.length === 0 ? (
+            <p className="ptabs__line">No completions recorded yet.</p>
+          ) : (
+            <ul ref={listRef} className="ptabs__completionlist">
+              {rows.map((row) => (
+                <CompletionItem key={row.record_id} row={row} proofs={proof} />
+              ))}
+            </ul>
+          )}
+          {more === 'error' && (
+            <p className="ptabs__line" role="alert">
+              We couldn&rsquo;t load more. Choose Show more to try again.
+            </p>
+          )}
+          {completions.hasMore && (
+            <Button kind="secondary" size="sm" busy={more === 'loading'} busyLabel="Loading…" onClick={() => void showMore()}>
+              Show more
+            </Button>
+          )}
+        </section>
+      )}
+      {completions.status === 'error' && !refusedCompletions && <WorkErrorCard message="We couldn’t load the recorded completions. Your work is safe; nothing was changed." error={completions.error} onRetry={() => void retryCompletions()} />}
+      {asOf !== undefined && <AsOf value={asOf} />}
+      {money.status === 'ready' && (
+        <p className="ptabs__note">
+          Milestones and amounts come from the signed SOW. Completing a milestone is the PM&rsquo;s fact; invoicing and payment are Finance&rsquo;s, and each is shown separately.
+        </p>
+      )}
     </>
   );
 }

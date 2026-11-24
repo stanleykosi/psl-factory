@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { join } from 'node:path';
@@ -7,48 +7,23 @@ import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 
-import type { AlertPrefs } from '@/features/alerts/types';
-import { buildPrefsBody, draftFrom } from '@/features/alerts/model';
-
 // @ts-expect-error plain ESM module without type declarations
-import { OPENAPI_PATH, startMockServer } from '../mock/server.mjs';
+import { PERSONAS, startMockServer } from '../mock/server.mjs';
 
-const root = join(__dirname, '..');
-const readJson = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
-type Op = { operationId: string; requestBody?: { content: { 'application/json': { schema: object } } }; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
-type Spec = { paths: Record<string, Record<string, Op>> };
-const v7 = readJson(OPENAPI_PATH) as Spec;
-
+// The alerts mock against the live contract (1.24.0): every served body validates, for every persona and scenario.
+type Op = { requestBody?: { content: { 'application/json': { schema: object } } }; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
+const contract = JSON.parse(readFileSync(join(__dirname, '../../contracts/psl-factory.openapi.json'), 'utf8')) as { paths: Record<string, Record<string, Op>> };
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
-const find = (spec: Spec, id: string) => Object.values(spec.paths).flatMap((ops) => Object.values(ops)).find((op) => op?.operationId === id)!;
-const response = (spec: Spec, id: string) => find(spec, id).responses['200'].content['application/json'].schema;
-function expectValid(schema: object, body: unknown, label: string) {
-  const validate = ajv.compile(schema);
-  expect(validate(body), `${label}: ${ajv.errorsText(validate.errors)}`).toBe(true);
-}
+const ok = (path: string, method: string) => ajv.compile(contract.paths[path][method].responses['200'].content['application/json'].schema);
+const validList = ok('/api/v1/notifications', 'get');
+const validRead = ok('/api/v1/notifications/{notification_id}/read', 'post');
+const validPrefs = ok('/api/v1/me/alert-preferences', 'get');
+const validSaved = ok('/api/v1/me/alert-preferences', 'post');
+const validSave = ajv.compile(contract.paths['/api/v1/me/alert-preferences'].post.requestBody!.content['application/json'].schema);
 
-describe('the alerts fixtures match the v7 contract', () => {
-  const fixtures = join(root, 'mock/fixtures');
-  const alertFiles = readdirSync(join(fixtures, 'alerts')).map((name) => `alerts/${name}`);
-
-  it('every alerts fixture and the four default fixtures validate against the v7 200 schema', () => {
-    expect(alertFiles.length).toBeGreaterThanOrEqual(9);
-    for (const name of [...alertFiles, 'E-NOTIFICATIONS.json', 'E-ALERT-PREFS-READ.json']) {
-      expectValid(response(v7, name.includes('notifications') || name.startsWith('E-NOTIFICATIONS') ? 'E-NOTIFICATIONS' : 'E-ALERT-PREFS-READ'), readJson(join(fixtures, name)), name);
-    }
-    expectValid(response(v7, 'E-NOTIFICATION-READ'), readJson(join(fixtures, 'E-NOTIFICATION-READ.json')), 'E-NOTIFICATION-READ');
-    expectValid(response(v7, 'E-ALERT-PREFS'), readJson(join(fixtures, 'E-ALERT-PREFS.json')), 'E-ALERT-PREFS');
-  });
-
-  it('the PUT bodies the UI builds validate against the v7 request schema', () => {
-    const putSchema = find(v7, 'E-ALERT-PREFS').requestBody!.content['application/json'].schema;
-    for (const name of alertFiles.filter((n) => n.includes('prefs') && !n.includes('invalid'))) {
-      const body = readJson(join(fixtures, name)) as AlertPrefs;
-      for (const phone of [false, true]) expectValid(putSchema, buildPrefsBody(body, draftFrom(body), phone), `${name} PUT`);
-    }
-  });
-});
+type Item = { id: string; read: boolean; group: string; at: string | null; agent: string | null; api_url: string | null };
+type List = { items: Item[]; as_of: string; page: number; next_page: number | null; unread: number; daily_summary: Record<string, unknown> };
 
 let server: Server;
 let origin: string;
@@ -69,154 +44,112 @@ async function api(path: string, init: Init = {}) {
   if (method !== 'GET' && init.csrf !== null) headers['X-CSRFToken'] = init.csrf ?? `mock-csrf-${persona}`;
   if (init.body !== undefined) headers['Content-Type'] = 'application/json';
   const res = await fetch(origin + path, { method, headers, body: init.body === undefined ? undefined : JSON.stringify(init.body) });
-  return { status: res.status, body: (await res.json()) as Record<string, unknown> & { items: { id: string; read: boolean }[] } };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the served bodies are checked against the contract schemas below
+  return { status: res.status, body: (await res.json()) as any };
 }
-const ids = (body: { items: { id: string }[] }) => body.items.map((item) => item.id);
-const prefsPut = (body: unknown, init: Init = {}) => api('/api/v1/me/alert-preferences', { ...init, method: 'PUT', body });
-const boardBody = () => buildPrefsBody(readJson(join(root, 'mock/fixtures/E-ALERT-PREFS-READ.json')), draftFrom(readJson(join(root, 'mock/fixtures/E-ALERT-PREFS-READ.json'))), false);
+const list = (init: Init = {}, page = '') => api(`/api/v1/notifications${page}`, init);
+const save = (body: unknown, init: Init = {}) => api('/api/v1/me/alert-preferences', { ...init, method: 'POST', body });
+const read = (id: string, init: Init = {}) => api(`/api/v1/notifications/${encodeURIComponent(id)}/read`, { ...init, method: 'POST', body: {} });
 
-describe('E-NOTIFICATIONS on the mock', () => {
-  it('board: four rows in order, total 4, unread 1, dated today in Lagos', async () => {
-    const { status, body } = await api('/api/v1/notifications');
-    expect(status).toBe(200);
-    expect(ids(body)).toEqual(['N-0001', 'N-0002', 'N-0003', 'N-0004']);
-    expect([body.total, body.unread_count]).toEqual([4, 1]);
-    const lagos = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Lagos' });
-    expect(lagos.format(new Date(body.as_of as string))).toBe(lagos.format(new Date()));
-    expectValid(response(v7, 'E-NOTIFICATIONS'), body, 'board');
-  });
-
-  it('filters by q (text or reference), agent and unread; total is the filtered count, unread_count is all', async () => {
-    expect(ids((await api('/api/v1/notifications?q=PAYROLL')).body)).toEqual(['N-0003']);
-    expect(ids((await api('/api/v1/notifications?q=inv-lh')).body)).toEqual(['N-0001']);
-    const chidi = (await api('/api/v1/notifications?agent=chidi')).body;
-    expect([ids(chidi), chidi.total, chidi.unread_count]).toEqual([['N-0001', 'N-0004'], 2, 1]);
-    expect(ids((await api('/api/v1/notifications?unread=true')).body)).toEqual(['N-0001']);
-    expect(ids((await api('/api/v1/notifications?unread=false')).body)).toEqual(['N-0002', 'N-0003', 'N-0004']);
-  });
-
-  it('answers 404 invalid_query to a bad limit, cursor, empty q or unknown agent', async () => {
-    for (const query of ['limit=7', 'cursor=nonsense', 'q=', 'agent=kemi']) {
-      expect(await api(`/api/v1/notifications?${query}`), query).toEqual({ status: 404, body: { code: 'invalid_query', message: 'We could not read that list request.' } });
+describe('GET /notifications', () => {
+  it('validates for every persona and scenario, with a count that matches the items', async () => {
+    for (const persona of PERSONAS as string[]) {
+      for (const scenario of [undefined, 'empty', 'many']) {
+        const res = await list({ persona, scenario });
+        expect(res.status).toBe(200);
+        const valid = validList(res.body);
+        expect(valid, `${persona}/${scenario}: ${ajv.errorsText(validList.errors)}`).toBe(true);
+        const body = res.body as List;
+        if (body.next_page === null) expect(body.unread).toBe(body.items.filter((item) => !item.read).length);
+      }
     }
   });
 
-  it('many: 20, then 5 with no next cursor', async () => {
-    const first = (await api('/api/v1/notifications', { scenario: 'many' })).body;
-    expect([first.items.length, first.next_cursor, first.total]).toEqual([20, 'o20', 25]);
-    const rest = (await api('/api/v1/notifications?cursor=o20', { scenario: 'many' })).body;
-    expect(rest.items.length).toBe(5);
-    expect(rest).not.toHaveProperty('next_cursor');
+  it('the board has needs-you and information, with and without agent, time and link', async () => {
+    const { items, daily_summary } = (await list()).body as List;
+    expect(new Set(items.map((i) => i.group))).toEqual(new Set(['action', 'update']));
+    expect(items.some((i) => i.agent === null && i.at === null && i.api_url === null)).toBe(true);
+    expect(items.some((i) => i.agent && i.at && i.api_url)).toBe(true);
+    expect(daily_summary).toMatchObject({ scope: 'current_inbox', actions_open: items.filter((i) => i.group === 'action' && !i.read).length });
   });
 
-  it('empty and bare', async () => {
-    expect((await api('/api/v1/notifications', { scenario: 'empty' })).body).toMatchObject({ items: [], total: 0, unread_count: 0 });
-    const bare = (await api('/api/v1/notifications?q=payroll', { scenario: 'bare' })).body;
-    expect(ids(bare)).toEqual(['N-0001', 'N-0002', 'N-0003', 'N-0004']);
-    expect(bare).not.toHaveProperty('total');
-    expect(bare).not.toHaveProperty('unread_count');
-    expectValid(response(v7, 'E-NOTIFICATIONS'), bare, 'bare (v7)');
-    expect((await api('/api/v1/me/alert-preferences', { scenario: 'bare' })).status).toBe(404);
-    expect((await api('/api/v1/notifications/N-0001/read', { scenario: 'bare', method: 'POST' })).status).toBe(404);
-  });
-});
-
-describe('own records only (wrong user)', () => {
-  it("pm's list never contains an id from finance_lead's list", async () => {
-    const mine = ids((await api('/api/v1/notifications')).body);
-    const theirs = ids((await api('/api/v1/notifications', { persona: 'pm' })).body);
-    expect(theirs).toEqual(['N-0101', 'N-0102']);
-    expect(theirs.filter((id) => mine.includes(id))).toEqual([]);
+  it('pages 25 at a time: three pages for 60, next_page null on the last, unread for all pages', async () => {
+    const pages = [await list({ scenario: 'many' }), await list({ scenario: 'many' }, '?page=2'), await list({ scenario: 'many' }, '?page=3')];
+    expect(pages.map((p) => [p.body.page, p.body.items.length, p.body.next_page])).toEqual([[1, 25, 2], [2, 25, 3], [3, 10, null]]);
+    expect(new Set(pages.flatMap((p) => p.body.items.map((i: Item) => i.id))).size).toBe(60);
+    expect(pages.map((p) => p.body.unread)).toEqual([40, 40, 40]);
   });
 
-  it("pm marking N-0002 answers 404 and finance_lead's N-0002 stays as it was", async () => {
-    expect(await api('/api/v1/notifications/N-0001/read', { persona: 'pm', method: 'POST' })).toEqual({ status: 404, body: { code: 'not_found', message: 'We could not find that record.' } });
-    expect((await api('/api/v1/notifications/N-0002/read', { persona: 'pm', method: 'POST' })).status).toBe(404);
-    const list = (await api('/api/v1/notifications')).body;
-    expect(list.items.map((i) => i.read)).toEqual([false, true, true, true]);
+  it('refuses page 0, a non-number and 10001 with 422; a page past the last is an empty 200; unknown parameters are ignored', async () => {
+    for (const bad of ['?page=abc', '?page=0', '?page=10001']) expect((await list({}, bad)).status, bad).toBe(422);
+    const past = await list({}, '?page=9');
+    expect([past.status, past.body.items, past.body.next_page]).toEqual([200, [], null]);
+    expect(validList(past.body), ajv.errorsText(validList.errors)).toBe(true);
+    expect((await list({}, '?q=lagoon&agent=tola&unread=true')).body.items.length).toBe(6);
   });
 
-  it("pm's preferences carry pm's masked number, never finance_lead's", async () => {
-    const pm = (await api('/api/v1/me/alert-preferences', { persona: 'pm' })).body;
-    expect(pm.whatsapp).toEqual({ masked_number: '+234 805 *** 1180', verified: true });
-    expect(JSON.stringify(pm)).not.toContain('4412');
+  it('a scenario status answers every alert path', async () => {
+    const res = await fetch(`${origin}/api/v1/notifications`, { headers: { Cookie: 'psl_mock_persona=finance_lead; psl_mock_scenario=401' } });
+    expect(res.status).toBe(401);
   });
 });
 
-describe('E-NOTIFICATION-READ on the mock', () => {
-  it('marks the own alert read; a repeat answers the same 200', async () => {
-    const first = await api('/api/v1/notifications/N-0001/read', { method: 'POST' });
-    expect(first).toEqual({ status: 200, body: { id: 'N-0001', read: true, unread_count: 0 } });
-    expectValid(response(v7, 'E-NOTIFICATION-READ'), first.body, 'read');
-    expect(await api('/api/v1/notifications/N-0001/read', { method: 'POST' })).toEqual(first);
-    expect((await api('/api/v1/notifications?unread=true')).body.items).toEqual([]);
+describe('POST /notifications/{id}/read', () => {
+  it('marks one read, answers {id, read} and lowers the unread total by one', async () => {
+    const before = (await list()).body as List;
+    const target = before.items.find((i) => !i.read)!;
+    const res = await read(target.id);
+    expect(res.status).toBe(200);
+    expect(validRead(res.body), ajv.errorsText(validRead.errors)).toBe(true);
+    expect(res.body).toEqual({ id: target.id, read: true });
+    expect(((await list()).body as List).unread).toBe(before.unread - 1);
+    expect((await read(target.id)).status).toBe(200);
+  });
+
+  it('refuses a request without the CSRF token, an unknown id, a body that is not {}, and keeps personas apart', async () => {
+    const target = ((await list()).body as List).items[0];
+    expect((await read(target.id, { csrf: null })).status).toBe(403);
+    expect((await read('nope')).status).toBe(404);
+    expect((await api(`/api/v1/notifications/${target.id}/read`, { method: 'POST', body: { x: 1 } })).status).toBe(422);
+    expect((await read(target.id, { persona: 'pm' })).status).toBe(404);
+  });
+
+  it('readfail answers 500 and gone answers 404 and nothing changes', async () => {
+    const target = ((await list({ scenario: 'readfail' })).body as List).items[0];
+    expect((await read(target.id, { scenario: 'readfail' })).status).toBe(500);
+    expect((await read(target.id, { scenario: 'gone' })).status).toBe(404);
+    expect(((await list({ scenario: 'readfail' })).body as List).items[0].read).toBe(false);
   });
 });
 
-describe('CSRF on both writes', () => {
-  const CSRF_FAILED = { status: 403, body: { code: 'csrf_failed', message: 'Your session check failed. Reload and try again.' } };
-  it('a mark-read or PUT without X-CSRFToken, or with another persona token, answers 403 csrf_failed', async () => {
-    expect(await api('/api/v1/notifications/N-0001/read', { method: 'POST', csrf: null })).toEqual(CSRF_FAILED);
-    expect(await api('/api/v1/notifications/N-0101/read', { persona: 'pm', method: 'POST', csrf: 'mock-csrf-finance_lead' })).toEqual(CSRF_FAILED);
-    expect(await prefsPut(boardBody(), { csrf: null })).toEqual(CSRF_FAILED);
-    expect(await prefsPut(boardBody(), { persona: 'pm', csrf: 'mock-csrf-finance_lead' })).toEqual(CSRF_FAILED);
-    expect((await api('/api/v1/notifications')).body.items[0].read).toBe(false);
-  });
-});
-
-describe('E-ALERT-PREFS on the mock', () => {
-  it('a save applies the sent fields and returns revision + 1; a stale revision then answers 409', async () => {
-    const body = boardBody();
-    body.events = body.events!.map((e) => (e.key === 'work_stuck' ? { ...e, email: false } : e));
-    body.digest_at = '09:00';
-    const saved = await prefsPut(body);
+describe('alert preferences', () => {
+  it('reads and saves in the live shapes; the save answers without receipts and bumps the revision', async () => {
+    const held = await api('/api/v1/me/alert-preferences');
+    expect(validPrefs(held.body), ajv.errorsText(validPrefs.errors)).toBe(true);
+    expect(held.body.recent_deliveries.map((d: { state: string }) => d.state)).toEqual(['delivered', 'uncertain', 'queued', 'held']);
+    const body = { revision: held.body.revision, email_requested: false, whatsapp_requested: true };
+    expect(validSave(body)).toBe(true);
+    const saved = await save(body);
     expect(saved.status).toBe(200);
-    expect(saved.body.revision).toBe(4);
-    expect((saved.body.digest_at as { value: string }).value).toBe('09:00');
-    expectValid(response(v7, 'E-ALERT-PREFS'), saved.body, 'saved');
-    expect((await api('/api/v1/me/alert-preferences')).body).toEqual(saved.body);
-    expect((await prefsPut(body)).status).toBe(409);
-    expect((await prefsPut({ ...body, expected_revision: 4 })).body.revision).toBe(5);
+    expect(validSaved(saved.body), ajv.errorsText(validSaved.errors)).toBe(true);
+    expect(saved.body).toMatchObject({ revision: held.body.revision + 1, email_requested: false, whatsapp_requested: true });
+    expect(saved.body.recent_deliveries).toBeUndefined();
+    expect((await save(body)).status).toBe(409);
   });
 
-  it('without expected_revision (a v6 body) the save is accepted', async () => {
-    expect((await prefsPut({ channel: 'email', frequency: 'daily' })).status).toBe(200);
+  it('refuses extra or missing fields with 422, a missing token with 403', async () => {
+    expect((await save({ revision: 3, email_requested: true })).status).toBe(422);
+    expect((await save({ revision: 3, email_requested: true, whatsapp_requested: true, channel: 'both' })).status).toBe(422);
+    expect((await save({ revision: 3, email_requested: 'yes', whatsapp_requested: true })).status).toBe(422);
+    expect((await save({ revision: 3, email_requested: true, whatsapp_requested: true }, { csrf: null })).status).toBe(403);
   });
 
-  it('422 names the field: schema, unknown event, option not offered', async () => {
-    const msg = (fields: string) => ({ status: 422, body: { code: 'invalid', message: `Check these fields: ${fields}.` } });
-    expect(await prefsPut({ ...boardBody(), channel: 'sms' })).toEqual(msg('channel'));
-    expect(await prefsPut({ ...boardBody(), label: 'x' })).toEqual(msg('label'));
-    expect(await prefsPut({ ...boardBody(), events: [{ key: 'nope', email: true }] })).toEqual(msg('events'));
-    expect(await prefsPut({ ...boardBody(), digest_at: '10:00', quiet_hours: 'all' })).toEqual(msg('digest_at, quiet_hours'));
-  });
-
-  it('stale: the first PUT answers 409 and moves the record to revision 4 with "Work I started is stuck" email off', async () => {
-    expect((await prefsPut(boardBody(), { scenario: 'stale' })).status).toBe(409);
-    const now = (await api('/api/v1/me/alert-preferences', { scenario: 'stale' })).body as unknown as AlertPrefs;
-    expect(now.revision).toBe(4);
-    expect(now.events.find((e) => e.key === 'work_stuck')!.email).toBe(false);
-    expect((await prefsPut({ ...boardBody(), expected_revision: 4 }, { scenario: 'stale' })).status).toBe(200);
-  });
-
-  it('invalid: GET returns channel "sms" and echoing it is a 422 on channel', async () => {
-    const read = (await api('/api/v1/me/alert-preferences', { scenario: 'invalid' })).body as unknown as AlertPrefs;
-    expect(read.channel).toBe('sms');
-    expect((await prefsPut(buildPrefsBody(read, draftFrom(read), false), { scenario: 'invalid' })).body.message).toBe('Check these fields: channel.');
-  });
-
-  it('locked: the locked event goes back as read; a changed value is a 422 on events', async () => {
-    const read = (await api('/api/v1/me/alert-preferences', { scenario: 'locked' })).body as unknown as AlertPrefs;
-    expect(read.events.at(-1)).toMatchObject({ key: 'payroll_problems', locked_reason: 'Only HR can receive payroll alerts outside the app' });
-    const body = buildPrefsBody(read, draftFrom(read), false);
-    expect((await prefsPut(body, { scenario: 'locked' })).status).toBe(200);
-    const changed = { ...body, expected_revision: 4, events: body.events!.map((e) => (e.key === 'payroll_problems' ? { ...e, email: true } : e)) };
-    expect((await prefsPut(changed, { scenario: 'locked' })).body.message).toBe('Check these fields: events.');
-  });
-
-  it('phone: four events, the phone board wording', async () => {
-    const read = (await api('/api/v1/me/alert-preferences', { scenario: 'phone' })).body as unknown as AlertPrefs;
-    expect(read.events.map((e) => e.timing_label)).toEqual(['Straight away', 'Straight away', 'Straight away', 'Daily digest']);
-    expect(read.quiet_hours!.options[0].label).toBe('20:00 to 07:00 and weekends');
+  it('scenario stale answers the first save with 409 after another person saved; invalid answers 422', async () => {
+    const body = { revision: 3, email_requested: true, whatsapp_requested: true };
+    expect((await save(body, { scenario: 'stale' })).status).toBe(409);
+    const held = (await api('/api/v1/me/alert-preferences', { scenario: 'stale' })).body;
+    expect([held.revision, held.email_requested]).toEqual([4, false]);
+    expect((await save({ ...body, revision: 4 }, { scenario: 'stale' })).status).toBe(200);
+    expect((await save(body, { scenario: 'invalid' })).status).toBe(422);
   });
 });

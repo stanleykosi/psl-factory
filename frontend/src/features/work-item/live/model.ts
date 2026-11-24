@@ -1,6 +1,7 @@
 // F-85: the live work item (GET /work/{id}) and its history, as the page draws them. Presentation only: nothing here
 // decides access or business state. A null revision stays null (unknown, never 0).
-import type { LiveHistoryRow, LiveWorkItem, LiveWorkTask } from '@/api/types';
+import type { LiveHistoryRow, LiveTracking, LiveWorkItem, LiveWorkTask } from '@/api/types';
+import type { FactName, FactValue, Station, StationStatus } from '@/components';
 
 export const HISTORY_KINDS = ['worker', 'decision', 'evidence'] as const;
 export type LiveHistoryKind = (typeof HISTORY_KINDS)[number] | 'all';
@@ -36,7 +37,16 @@ export function words(raw: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-export type HistoryLine = { at: string; station: string; status: string; actor: string | null; reason: string | null; evidenceId: number | null };
+export type HistoryLine = {
+  at: string;
+  station: string;
+  status: string;
+  actorKind: LiveHistoryRow['actor_kind'];
+  entryId: number;
+  actor: string | null;
+  reason: string | null;
+  evidenceId: number | null;
+};
 
 /** One history row: unknown stations and statuses stay as text, a missing actor or reason is null, a null evidence id gives no link. */
 export function historyLine(row: LiveHistoryRow): HistoryLine {
@@ -44,13 +54,110 @@ export function historyLine(row: LiveHistoryRow): HistoryLine {
     at: row.at,
     station: words(row.station),
     status: words(row.status),
+    actorKind: row.actor_kind,
+    entryId: row.entry_id,
     actor: row.actor ? row.actor : null,
     reason: row.reason ? row.reason : null,
     evidenceId: row.evidence_id ?? null,
   };
 }
 
-export const HISTORY_LIMIT = 30;
+/** Older events appended to the rows already shown; a row whose entry id is already there is not drawn twice. */
+export function mergeHistory(shown: LiveHistoryRow[], older: LiveHistoryRow[]): LiveHistoryRow[] {
+  const seen = new Set(shown.map((row) => row.entry_id));
+  return [...shown, ...older.filter((row) => !seen.has(row.entry_id))];
+}
 
-/** "Showing the latest 30 changes." only when exactly 30 rows came back; else everything the API has. */
-export const historyCaption = (count: number) => (count === HISTORY_LIMIT ? `Showing the latest ${HISTORY_LIMIT} changes.` : 'Showing all changes.');
+/** "Showing the latest N changes." while older events remain; "Showing all changes." once the cursor is null. */
+export const historyCaption = (count: number, more: boolean) => (more ? `Showing the latest ${count} changes.` : 'Showing all changes.');
+
+const STOPPED_STATES = new Set<LiveWorkItem['state']>(['action_needed', 'owner_needed', 'setup_needed', 'effect_uncertain', 'awaiting_reconciliation', 'followup_needed', 'cancelled']);
+
+/** The station track from the tracking read: the API's names and holders in position order. The colour of the current station is chosen
+ *  from its key and the item state (the API gives the holder's name, not whether it is a person or an agent). Nothing else is written in. */
+export function stationsOf(tracking: LiveTracking, item: LiveWorkItem): Station[] {
+  return [...tracking.stations]
+    .sort((a, b) => a.position - b.position)
+    .map((station): Station => {
+      let status: StationStatus;
+      let text: string;
+      if (station.status === 'recorded') {
+        status = station.key === 'verified' ? 'verified' : 'done';
+        text = station.owner ?? 'Not recorded';
+      } else if (station.status === 'current') {
+        if (STOPPED_STATES.has(item.state)) status = 'stopped';
+        else if (station.key === 'intake' || station.key === 'decision') status = 'person';
+        else if (station.key === 'execution' && item.current_activity?.watching === true) status = 'agent';
+        else status = 'waiting';
+        text = station.owner ?? 'Unassigned';
+      } else if (station.status === 'pending') {
+        status = 'todo';
+        text = station.owner ?? 'Unassigned';
+      } else {
+        status = 'todo';
+        text = 'Unknown';
+      }
+      return { name: station.name, status, text };
+    });
+}
+
+/** The six facts: true is earned, false is not yet, null is Unknown. Only Verified carries a time (verified_at). */
+export function factsOf(tracking: LiveTracking): Partial<Record<FactName, FactValue>> {
+  const of = (value: boolean | null): FactValue => (value === null ? { status: 'unknown' } : { status: value ? 'earned' : 'not_yet' });
+  const { facts } = tracking;
+  const verified = of(facts.verified);
+  return {
+    drafted: of(facts.drafted),
+    reviewed: of(facts.reviewed),
+    approved: of(facts.approved),
+    sent: of(facts.sent),
+    receipt_recorded: of(facts.receipt),
+    verified: verified.status === 'earned' ? { ...verified, at: tracking.verified_at } : verified,
+  };
+}
+
+/** A link target the page may draw: an http(s) address or a path on this site. Anything else (javascript:, data:, //host) gets no link. */
+export function safeHref(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (/^\/(?![/\\])/.test(url)) return url;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:' ? url : null;
+  } catch {
+    return null;
+  }
+}
+
+const LINE_NAMES: Record<string, string> = {
+  'pmo-issues': 'Issue follow-up',
+  'finance-ledger': 'Ledger review',
+  engagement: 'Engagement',
+  'pmo-minutes': 'Meeting minutes',
+  'pmo-escalation': 'Escalation',
+  'pmo-weekly-report': 'Weekly client report',
+  'pmo-leadership-report': 'Leadership report',
+  'finance-schedules': 'Income schedule',
+  'finance-ppe': 'Asset schedule',
+  'finance-forecast': 'Cash forecast',
+  'finance-bu': 'BU aggregate',
+  'finance-payroll': 'Payroll',
+  'pmo-emergency': 'Emergency change',
+  'pmo-change': 'Change request',
+  'rfp-response': 'RFP response',
+  'finance-accounts': 'Management accounts',
+  planning: 'Project plan',
+  commercial: 'Commercial submission',
+  'delivery-release': 'Release',
+  'delivery-hypercare': 'Hypercare',
+  'delivery-go-live': 'Go-live acceptance',
+  'delivery-archive': 'Archive',
+  'delivery-handover': 'Handover to Support',
+  'delivery-closure': 'Project closure',
+  'pmo-finance': 'Invoice',
+};
+
+/** The line's plain name for the breadcrumb: a known line by its name, any other key with its version dropped and read as words. Never the key itself. */
+export function lineName(key: string): string {
+  const base = key.replace(/\/v\d+$/, '');
+  return LINE_NAMES[base] ?? words(base.replace(/-/g, ' '));
+}

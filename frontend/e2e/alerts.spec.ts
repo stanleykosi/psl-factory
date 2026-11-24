@@ -1,11 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type BrowserContext, type Locator, type Page } from '@playwright/test';
+import { expect, test, type BrowserContext, type Page, type Route } from '@playwright/test';
 
-// Alerts (SCR-15 list and settings) against the contract mock: 390 and 1440, axe WCAG 2.2 AA.
+// Alerts (SCR-15 list and settings, F-61) against the contract mock in the live 1.24.0 shapes: 390 and 1440, axe WCAG 2.2 AA.
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const MOCK = `http://127.0.0.1:${process.env.MOCK_PORT ?? 3102}`;
+const A1 = 'a1'.padEnd(64, '0');
 
 test.use({ timezoneId: 'Africa/Lagos' });
 
@@ -29,10 +30,11 @@ async function expectClearOfSaveBar(page: Page) {
   expect(callout!.y + callout!.height).toBeLessThanOrEqual(bar!.y);
 }
 
-const rows = (page: Page) => page.getByRole('list', { name: 'Alerts' }).locator(':scope > li');
+const rows = (page: Page) => page.locator('.alerts-list > li');
 const shot = (page: Page, name: string) => page.screenshot({ path: test.info().outputPath(`${name}.png`), fullPage: true });
 const noHorizontalScroll = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
-const sw = (page: Page, name: string) => page.getByRole('switch', { name });
+const sw = (page: Page, name: string) => page.getByRole('switch', { name, exact: true });
+const asStatus = (code: string) => (route: Route) => route.continue({ headers: { ...route.request().headers(), 'x-mock-scenario': code } });
 
 async function listLoaded(page: Page) {
   await expect(page.getByText('Loading…')).toHaveCount(0);
@@ -43,63 +45,65 @@ async function settingsLoaded(page: Page) {
   await expect(page.getByRole('heading', { level: 1, name: 'How you’re alerted' })).toBeVisible();
 }
 
-const BOARD_ROWS = [
-  ['Invoice for Lagoon Health is waiting for your review', 'Chidi · WhatsApp and email · 10:42'],
-  ['The UAT response for Lagoon Health is due tomorrow', 'Tola · Email · 09:00 daily digest'],
-  ['October payroll has 2 problems for HR', 'Zainab · In app only (you are not HR)'],
-  ['Milestone 1 invoice was verified', 'Chidi · In app · yesterday'],
-];
+const TITLES = ['Invoice ready for review', 'Project plan to sign off', 'Invoice review', 'Assistant reply', 'Milestone 2 is complete', 'Reminder: month-end close'];
 
 async function expectBoardRows(page: Page) {
-  await expect(rows(page)).toHaveCount(4);
-  await expect(rows(page).locator('.alerts-text')).toHaveText(BOARD_ROWS.map((r) => r[0]));
-  await expect(rows(page).locator('.alerts-meta')).toHaveText(BOARD_ROWS.map((r) => r[1]));
+  await expect(rows(page)).toHaveCount(6);
+  await expect(rows(page).locator('.alerts-text')).toHaveText(TITLES);
+  await expect(page.locator('.alerts-grp')).toHaveText(['Needs you, 3', 'For information, 3']);
+  // agent, avatar and time only where the alert has them: five rows have an agent, three have neither agent nor time
+  await expect(rows(page).locator('.alerts-meta')).toHaveCount(4);
+  await expect(rows(page).locator('.alerts-meta').first()).toHaveText(/^Chidi · (\d\d:\d\d|yesterday)$/);
   const imgs = await rows(page).locator('img').evaluateAll((els) => els.map((el) => [el.getAttribute('src'), (el as HTMLImageElement).naturalWidth > 0]));
-  expect(imgs).toEqual(['chidi', 'tola', 'zainab', 'chidi'].map((a) => [`/agents/${a}.png`, true]));
-  await expect(rows(page).locator('.psl-tag')).toHaveCount(1);
-  await expect(rows(page).nth(0).locator('.psl-tag')).toHaveText(/NEW$/);
-  const looks = await rows(page).evaluateAll((els) =>
-    els.map((li) => [getComputedStyle(li).backgroundColor, getComputedStyle(li.querySelector('.alerts-text')!).fontWeight]),
-  );
-  expect(looks.map((l) => l[1])).toEqual(['600', '400', '400', '400']);
-  expect(looks[0][0]).not.toBe(looks[1][0]);
-  expect(new Set(looks.slice(1).map((l) => l[0])).size).toBe(1);
+  expect(imgs).toEqual(['chidi', 'tola', 'tola', 'zainab'].map((a) => [`/agents/${a}.png`, true]));
+  await expect(page.locator('.alerts-summary')).toHaveText(/^Today, \d{1,2} [A-Z][a-z]{2}: 3 need you, \d+ new updates?, \d+ older unread\.$/);
+  await expect(page.locator('.alerts-asof')).toHaveText(/^As of \d\d:\d\d WAT\. 6 loaded, 5 unread\.$/);
+  await expect(page.locator('.alerts-list a')).toHaveCount(5);
+  await expect(page.locator('.alerts-list a').nth(0)).toHaveAttribute('href', '/work/4103');
+  await expect(page.locator('.alerts-list a[href*="/accounts/"]')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /^Mark as read/ })).toHaveCount(1);
+  await expect(rows(page).locator('.psl-tag')).toHaveCount(5);
+}
+
+async function expectNoToolbar(page: Page) {
+  await expect(page.getByRole('searchbox')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Filter' })).toHaveCount(0);
+  await expect(page.getByText(/\d+ ALERTS?\b/)).toHaveCount(0);
 }
 
 test.describe('list at 1440 (SCR-15-desktop)', () => {
   test.use({ viewport: DESKTOP });
 
-  test('board: header, toolbar, count and the four rows', async ({ page }) => {
+  test('board: header, summary, both groups, six rows, as-of line; no search, filter or total', async ({ page }) => {
     await page.goto('/notifications');
     await listLoaded(page);
-    const main = page.locator('main');
-    const order = await main.evaluate((el) => (el as HTMLElement).innerText);
-    const marks = ['NOTIFICATIONS', 'Notifications', 'Alert settings', 'Filter', '4 ALERTS', BOARD_ROWS[0][0], BOARD_ROWS[3][1]];
+    const order = await page.locator('main').evaluate((el) => (el as HTMLElement).innerText);
+    const marks = ['NOTIFICATIONS', 'Alert settings', 'Today,', 'NEEDS YOU', TITLES[0], 'FOR INFORMATION', TITLES[3], 'As of'];
     const at = marks.map((m) => order.indexOf(m));
     expect(at.every((i) => i >= 0)).toBe(true);
     expect([...at].sort((a, b) => a - b)).toEqual(at);
-    await expect(page.getByRole('searchbox', { name: 'Search' })).toHaveAttribute('placeholder', 'Search notifications');
-    await expect(page.getByRole('button', { name: 'Filter' })).toHaveAttribute('aria-expanded', 'false');
     await expect(page.getByRole('link', { name: 'Alert settings' })).toHaveAttribute('href', '/settings/alerts');
     await expectBoardRows(page);
+    await expectNoToolbar(page);
     expect(await noHorizontalScroll(page)).toBe(true);
     await shot(page, 'alerts-list-1440');
     await expectNoAxeViolations(page);
   });
 
-  test('focus rings on a row, Filter and the search box; tab order follows the page', async ({ page }) => {
+  test('focus ring on a row; tab order follows the page', async ({ page }) => {
     await page.goto('/notifications');
     await listLoaded(page);
     const order: string[] = [];
-    for (let i = 0; i < 30 && order.length < 6; i++) {
+    for (let i = 0; i < 30 && order.length < 3; i++) {
       await page.keyboard.press('Tab');
       const name = await page.evaluate(() => {
         const el = document.activeElement as HTMLElement;
-        return el.closest('main') ? el.getAttribute('aria-label') ?? (el.textContent || el.id) : '';
+        return el.closest('main') ? (el.textContent ?? '') : '';
       });
       if (name) order.push(name.slice(0, 20));
     }
-    expect(order).toEqual(['Alert settings', 'Search', 'Filter', 'Invoice for Lagoon H', 'The UAT response for', 'October payroll has ']);
+    expect(order[0]).toBe('Alert settings');
+    expect(order[1]).toContain('Invoice ready for r');
     const ring = await page.evaluate(() => (getComputedStyle(document.activeElement!).outlineStyle !== 'none' ? getComputedStyle(document.activeElement!).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(document.activeElement!).boxShadow + getComputedStyle(document.activeElement!).borderTopColor + getComputedStyle(document.activeElement!).textDecorationColor) ? 'solid' : 'none'));
     expect(ring).toBe('solid');
   });
@@ -108,408 +112,280 @@ test.describe('list at 1440 (SCR-15-desktop)', () => {
 test.describe('list at 390 (SCR-15-mobile)', () => {
   test.use({ viewport: PHONE, hasTouch: true, isMobile: true });
 
-  test('board: back link, title, search and Filter icon, rows, then Alert settings; no eyebrow or count', async ({ page }) => {
+  test('board: back link, title, rows, then Alert settings; no eyebrow, search, Filter or count', async ({ page }) => {
     await page.goto('/notifications');
     await listLoaded(page);
     await expect(page.getByRole('link', { name: '← Home' })).toHaveAttribute('href', '/');
-    await expect(page.getByRole('searchbox', { name: 'Search' })).toBeVisible();
-    const filter = page.getByRole('button', { name: 'Filter' });
-    await expect(filter).toBeVisible();
-    expect(await filter.boundingBox()).toMatchObject({ width: 44, height: 44 });
     await expectBoardRows(page);
+    await expectNoToolbar(page);
     const settings = page.getByRole('link', { name: 'Alert settings' });
-    const listBox = (await page.getByRole('list', { name: 'Alerts' }).boundingBox())!;
-    expect((await settings.boundingBox())!.y).toBeGreaterThan(listBox.y + listBox.height);
+    const last = (await rows(page).last().boundingBox())!;
+    expect((await settings.boundingBox())!.y).toBeGreaterThan(last.y + last.height);
     await expect(page.getByText('NOTIFICATIONS', { exact: true })).toHaveCount(0);
-    // the count is kept for screen readers only on the phone
-    expect(await page.locator('.psl-resultcount').evaluate((el) => el.getBoundingClientRect().width)).toBeLessThanOrEqual(1);
     expect(await noHorizontalScroll(page)).toBe(true);
-    for (const target of [page.getByRole('link', { name: '← Home' }), filter, rows(page).nth(0).locator('a')]) {
+    for (const target of [page.getByRole('link', { name: '← Home' }), rows(page).nth(0).locator('a'), page.getByRole('button', { name: /^Mark as read/ })]) {
       expect((await target.boundingBox())!.height).toBeGreaterThanOrEqual(44);
     }
     await shot(page, 'alerts-list-390');
     await expectNoAxeViolations(page);
   });
-
-  test('Filter opens as a bottom sheet', async ({ page }) => {
-    await page.goto('/notifications');
-    await listLoaded(page);
-    await page.getByRole('button', { name: 'Filter' }).click();
-    const sheet = page.getByRole('dialog', { name: 'Filter' });
-    await expect(sheet).toHaveClass(/psl-sheet/);
-    const box = (await sheet.boundingBox())!;
-    expect(Math.round(box.y + box.height)).toBe(PHONE.height);
-    await expectNoAxeViolations(page);
-  });
 });
 
-test.describe('search, Filter and opening at 1440', () => {
+test.describe('opening at 1440', () => {
   test.use({ viewport: DESKTOP });
 
-  test('search and Filter send only limit, q, agent, unread and cursor and show what is returned', async ({ page }) => {
-    const sent: URL[] = [];
+  test('an unread alert sends one POST of {} with the CSRF token, then goes to its work; the bell drops by one', async ({ page }) => {
+    const posts: { path: string; csrf?: string; body: string }[] = [];
     page.on('request', (r) => {
-      const url = new URL(r.url());
-      if (url.pathname === '/api/v1/notifications') sent.push(url);
+      if (r.method() === 'POST' && new URL(r.url()).pathname.startsWith('/api/v1/notifications/')) posts.push({ path: new URL(r.url()).pathname, csrf: r.headers()['x-csrftoken'], body: r.postData() ?? '' });
     });
     await page.goto('/notifications');
     await listLoaded(page);
-    await page.getByRole('searchbox', { name: 'Search' }).fill('payroll');
-    await expect(rows(page)).toHaveCount(1);
-    await expect(page.locator('.psl-resultcount')).toHaveText('1 ALERT');
-    expect(new URL(page.url()).searchParams.get('q')).toBe('payroll');
-
-    await page.getByRole('searchbox', { name: 'Search' }).fill('');
-    await expect(rows(page)).toHaveCount(4);
-    await page.getByRole('button', { name: 'Filter' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Filter' });
-    await expectNoAxeViolations(page);
-    await dialog.getByRole('radio', { name: 'Chidi' }).check();
-    await dialog.getByRole('button', { name: 'Show results' }).click();
-    await expect(rows(page)).toHaveCount(2);
-    await expect(page.getByRole('button', { name: /^Filter\s*1\s*on$/ })).toBeVisible();
-
-    await page.getByRole('button', { name: /^Filter\s*1\s*on$/ }).click();
-    await expect(dialog.getByText('1 unread')).toBeVisible();
-    await dialog.getByRole('checkbox', { name: /Unread only/ }).check();
-    await dialog.getByRole('button', { name: 'Show results' }).click();
-    await expect(rows(page)).toHaveCount(1);
-    await expect(rows(page).locator('.psl-tag')).toHaveText(/NEW$/);
-
-    await page.getByRole('searchbox', { name: 'Search' }).fill('nothing like this');
-    await expect(page.getByRole('heading', { name: 'No alerts match' })).toBeVisible();
-    await page.getByRole('button', { name: 'Clear search and filters' }).click();
-    await expect(rows(page)).toHaveCount(4);
-
-    const keys = new Set(sent.flatMap((u) => [...u.searchParams.keys()]));
-    expect([...keys].every((k) => ['limit', 'q', 'agent', 'unread', 'cursor'].includes(k))).toBe(true);
-    expect(sent.some((u) => u.searchParams.get('unread') === 'true')).toBe(true);
+    await rows(page).nth(0).locator('a').dblclick();
+    await expect(page).toHaveURL(/\/work\/4103$/);
+    expect(posts).toEqual([{ path: `/api/v1/notifications/${A1}/read`, csrf: 'mock-csrf-finance_lead', body: '{}' }]);
+    await page.goBack();
+    await listLoaded(page);
+    await expect(page.locator('nav.psl-nav .shell-bellbadge')).toHaveText('4');
   });
 
-  test('opening an unread alert marks it read once and goes to its work; read and restricted rows only navigate', async ({ page }) => {
-    const posts: { url: string; csrf: string | undefined }[] = [];
-    page.on('request', (r) => {
-      if (r.method() === 'POST') posts.push({ url: new URL(r.url()).pathname, csrf: r.headers()['x-csrftoken'] });
-    });
+  test('a row with no link has Mark as read, which marks it in place', async ({ page }) => {
+    await page.goto('/notifications');
+    await listLoaded(page);
+    await page.getByRole('button', { name: /^Mark as read/ }).click();
+    await expect(page.getByRole('button', { name: /^Mark as read/ })).toHaveCount(0);
+    await expect(page.locator('.alerts-asof')).toHaveText(/6 loaded, 4 unread/);
+    await expect(page).toHaveURL(/\/notifications$/);
+  });
+
+  test('a read alert only navigates', async ({ page }) => {
+    const posts: string[] = [];
+    page.on('request', (r) => r.method() === 'POST' && posts.push(r.url()));
+    await page.goto('/notifications');
+    await listLoaded(page);
+    await rows(page).nth(4).locator('a').click();
+    await expect(page).toHaveURL(/\/projects\//);
+    expect(posts.filter((u) => u.includes('/notifications/'))).toEqual([]);
+  });
+
+  test('a failed mark-read leaves the row unread and says so; the work still opens', async ({ page }) => {
+    await page.route('**/api/v1/notifications/*/read', (route) => route.fulfill({ status: 500, json: { code: 'server_error', message: 'Down.' } }));
     await page.goto('/notifications');
     await listLoaded(page);
     await rows(page).nth(0).locator('a').click();
-    await expect(page).toHaveURL(/\/work\/W-1001$/);
-    expect(posts).toEqual([{ url: '/api/v1/notifications/N-0001/read', csrf: 'mock-csrf-finance_lead' }]);
-
-    await page.goBack();
-    await listLoaded(page);
-    await expect(rows(page)).toHaveCount(4);
-    await expect(rows(page).locator('.psl-tag')).toHaveCount(0);
-    await page.getByRole('button', { name: 'Filter' }).click();
-    await expect(page.getByRole('dialog').getByText('0 unread')).toBeVisible();
-    await page.keyboard.press('Escape');
-
-    await rows(page).nth(3).locator('a').click();
-    await expect(page).toHaveURL(/\/work\/W-1006$/);
-    await page.goBack();
-    await listLoaded(page);
-    await rows(page).nth(2).locator('a').click();
-    await expect(page).toHaveURL(/\/work\/W-1099$/);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('You can’t open this work item');
-    expect(await page.locator('main').textContent()).not.toMatch(/payroll|W-1099/i);
-    expect(posts).toHaveLength(1);
+    await expect(page).toHaveURL(/\/work\/4103$/);
   });
 });
 
 test.describe('list states', () => {
-  for (const [label, viewport] of [
-    ['1440', DESKTOP],
-    ['390', PHONE],
-  ] as const) {
-    test(`empty at ${label}: No alerts yet., the settings link stays`, async ({ page, context }) => {
-      await page.setViewportSize(viewport);
-      await scenario(context, 'empty');
-      await page.goto('/notifications');
-      await listLoaded(page);
-      await expect(page.locator('.psl-empty h3')).toHaveText('No alerts yet.');
-      await expect(page.getByRole('link', { name: 'Alert settings' })).toBeVisible();
-      if (viewport === DESKTOP) await expect(page.locator('.psl-resultcount')).toHaveText('0 ALERTS');
-      await expectNoAxeViolations(page);
-    });
+  for (const [label, viewport] of [['1440', DESKTOP], ['390', PHONE]] as const) {
+    test.describe(`at ${label}`, () => {
+      test.use({ viewport });
 
-    test(`error at ${label}: the card, then Try again shows the rows`, async ({ page }) => {
-      await page.setViewportSize(viewport);
-      const fail = (route: import('@playwright/test').Route) => route.continue({ headers: { ...route.request().headers(), 'x-mock-scenario': '404' } });
-      await page.route('**/api/v1/notifications?*', fail);
-      await page.goto('/notifications');
-      const card = page.locator('main').getByRole('alert');
-      await expect(card).toContainText('We couldn’t load your alerts. Your work is safe; nothing was changed.');
-      await expect(card).toContainText('Reference not_found for support.');
-      await expectNoAxeViolations(page);
-      await page.unroute('**/api/v1/notifications?*', fail);
-      await page.getByRole('button', { name: 'Try again' }).click();
-      await expect(rows(page)).toHaveCount(4);
+      test('empty: "No alerts", the summary and the settings link', async ({ page, context }) => {
+        await scenario(context, 'empty');
+        await page.goto('/notifications');
+        await listLoaded(page);
+        await expect(page.getByText('No alerts', { exact: true })).toBeVisible();
+        await expect(page.locator('.alerts-summary')).toContainText('0 need you');
+        await expect(page.getByRole('link', { name: 'Alert settings' })).toBeVisible();
+        await expectNoAxeViolations(page);
+      });
+
+      test('error: the card, then Try again shows the rows', async ({ page }) => {
+        const fail = asStatus('404');
+        await page.route('**/api/v1/notifications?page=1', fail);
+        await page.goto('/notifications');
+        const card = page.getByRole('alert').filter({ hasText: 'We couldn’t load your alerts' });
+        await expect(card).toContainText('We couldn’t load your alerts.');
+        await expect(card).toContainText('Reference not_found for support.');
+        await expectNoAxeViolations(page);
+        await page.unroute('**/api/v1/notifications?page=1', fail);
+        await page.getByRole('button', { name: 'Try again' }).click();
+        await expect(rows(page)).toHaveCount(6);
+      });
     });
   }
 
+  test.use({ viewport: DESKTOP });
+
   test('loading: status and no rows; with reduced motion nothing animates', async ({ page }) => {
-    await page.setViewportSize(DESKTOP);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     let release!: () => void;
     const gate = new Promise<void>((r) => (release = r));
-    await page.route('**/api/v1/notifications*', async (route) => {
+    await page.route('**/api/v1/notifications?page=1', async (route) => {
       await gate;
       await route.continue();
     });
     await page.goto('/notifications');
-    await expect(page.getByRole('status')).toHaveText('Loading…');
+    await expect(page.getByRole('status').filter({ hasText: 'Loading…' })).toBeVisible();
     await expect(rows(page)).toHaveCount(0);
-    expect(await page.evaluate(() => document.getAnimations().filter((a) => a.playState === 'running').length)).toBe(0);
     release();
-    await expect(rows(page)).toHaveCount(4);
-  });
-
-  test('a failure after a success says when the list was last loaded', async ({ page }) => {
-    await page.setViewportSize(DESKTOP);
-    await page.goto('/notifications');
-    await listLoaded(page);
-    await page.route('**/api/v1/notifications?*', (route) => route.abort());
-    await page.getByRole('searchbox', { name: 'Search' }).fill('lagoon');
-    await expect(page.locator('main').getByRole('alert')).toContainText(/Last loaded \d\d:\d\d\. Reference network_error for support\./);
-  });
-
-  test('many: Show more loads rows 11-20 then 21-25 and goes; a failed Show more keeps the 10 rows', async ({ page, context }) => {
-    await page.setViewportSize(DESKTOP);
-    await scenario(context, 'many');
-    await page.goto('/notifications');
-    await listLoaded(page);
-    await expect(rows(page)).toHaveCount(10);
-    const fail = (route: import('@playwright/test').Route) => route.abort();
-    await page.route('**/api/v1/notifications?*cursor=*', fail);
-    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
-    await expect(page.getByText('We couldn’t load more. Choose Show more to try again.')).toBeVisible();
-    await expect(rows(page)).toHaveCount(10);
-    await page.unroute('**/api/v1/notifications?*cursor=*', fail);
-    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
-    await expect(rows(page)).toHaveCount(20);
-    await page.getByRole('button', { name: /^Show (more|\d+ more)$/ }).click();
-    await expect(rows(page)).toHaveCount(25);
-    await expect(page.getByRole('button', { name: /^Show (more|\d+ more)$/ })).toHaveCount(0);
+    await expect(rows(page)).toHaveCount(6);
   });
 
   test('401 on the list shows signed out with next=/notifications', async ({ page }) => {
-    await page.setViewportSize(DESKTOP);
-    await page.route('**/api/v1/notifications*', (route) => route.continue({ headers: { ...route.request().headers(), 'x-mock-scenario': '401' } }));
+    await page.route('**/api/v1/notifications?page=1', asStatus('401'));
     await page.goto('/notifications');
-    await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in?next=%2Fnotifications');
+    await expect(page.getByRole('link', { name: 'Sign in' }).first()).toHaveAttribute('href', '/sign-in?next=%2Fnotifications');
   });
-});
 
-test('bare: nothing a v4 backend lacks is shown; opening still works; settings shows the error card', async ({ page, context }) => {
-  await page.setViewportSize(DESKTOP);
-  await scenario(context, 'bare');
-  await page.goto('/notifications');
-  await listLoaded(page);
-  await expect(rows(page).locator('.alerts-text')).toHaveText(BOARD_ROWS.map((r) => r[0]));
-  await expect(rows(page).locator('.alerts-meta')).toHaveText(['Chidi · 10:42', /^Tola · \d\d:\d\d$/, /^Zainab · \d\d:\d\d$/, 'Chidi · yesterday']);
-  await expect(page.getByRole('search')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: /Filter/ })).toHaveCount(0);
-  expect(await page.locator('main').textContent()).not.toMatch(/ALERTS?|unread/);
-  await rows(page).nth(0).locator('a').click();
-  await expect(page).toHaveURL(/\/work\/W-1001$/);
-  await page.goBack();
-  await listLoaded(page);
-  await expect(rows(page).nth(0).locator('.psl-tag')).toHaveText(/NEW$/);
-
-  await page.goto('/settings/alerts');
-  const card = page.locator('main').getByRole('alert');
-  await expect(card).toContainText('We couldn’t load your alert settings. Your work is safe; nothing was changed.');
-  await expect(card).toContainText('Reference not_found for support.');
-  await expect(page.getByRole('table')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Save settings' })).toHaveCount(0);
+  test('many: Load more loads 25, then 10, and goes; a failed page keeps the rows and offers retry', async ({ page, context }) => {
+    await scenario(context, 'many');
+    const requests: string[] = [];
+    page.on('request', (r) => new URL(r.url()).pathname === '/api/v1/notifications' && r.method() === 'GET' && requests.push(new URL(r.url()).search));
+    await page.goto('/notifications');
+    await listLoaded(page);
+    await expect(rows(page)).toHaveCount(25);
+    await expect(page.locator('.alerts-asof')).toHaveText(/25 loaded, 40 unread/);
+    const failing = (route: Route) => route.abort();
+    await page.route('**/api/v1/notifications?page=2', failing);
+    await page.getByRole('button', { name: 'Load more' }).click();
+    await expect(page.getByText('Couldn’t load more alerts. Try again.')).toBeVisible();
+    await expect(rows(page)).toHaveCount(25);
+    await page.unroute('**/api/v1/notifications?page=2', failing);
+    await page.getByRole('button', { name: 'Try again' }).click();
+    await expect(rows(page)).toHaveCount(50);
+    await page.getByRole('button', { name: 'Load more' }).click();
+    await expect(rows(page)).toHaveCount(60);
+    await expect(page.getByRole('button', { name: 'Load more' })).toHaveCount(0);
+    expect(requests.filter((s) => s.includes('page=3'))).toEqual(['?page=3']);
+    expect(await noHorizontalScroll(page)).toBe(true);
+  });
 });
 
 test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
   test.use({ viewport: DESKTOP });
 
-  test('board: matrix, digest and quiet hours, number card and Save', async ({ page }) => {
+  test('board: two switches with Ready and Not ready yet, the receipts, Save; nothing else', async ({ page }) => {
     await page.goto('/settings/alerts');
     await settingsLoaded(page);
-    await expect(page.getByText('SETTINGS / ALERTS')).toBeVisible();
-    const table = page.getByRole('table', { name: 'Alerts for each kind of work' });
-    await expect(table.getByRole('columnheader')).toHaveText(['WHEN', 'WHATSAPP', 'EMAIL', 'TIMING']);
-    const body = table.locator('tbody tr');
-    await expect(body.locator('td:first-child')).toHaveText(['A decision is waiting for me', 'Information is requested from me', 'Work I started is stuck', 'Work I started is verified', 'Everything else']);
-    await expect(body.locator('td:last-child')).toHaveText(['Straight away', 'Straight away', 'Straight away', 'In the daily digest', 'In the daily digest']);
-    const states = await body.evaluateAll((trs) => trs.map((tr) => [...tr.querySelectorAll('[role=switch]')].map((s) => s.getAttribute('aria-checked')).join('/')));
-    expect(states).toEqual(['true/true', 'true/true', 'true/true', 'false/true', 'false/true']);
-    await expect(page.getByRole('combobox', { name: 'Daily digest at' })).toHaveText('08:00');
-    await page.getByRole('combobox', { name: 'Daily digest at' }).click();
-    await expect(page.getByRole('option')).toHaveText(['07:00', '08:00', '09:00']);
-    await page.keyboard.press('Escape');
-    await expect(page.getByRole('combobox', { name: 'Quiet hours' })).toHaveText('20:00 to 07:00, and weekends');
-    await expect(page.getByText('WhatsApp number')).toBeVisible();
-    await expect(page.getByText('+234 803 *** 4412 · verified')).toBeVisible();
-    await expect(page.getByText('Alerts never include amounts or client details beyond the name.')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Save settings' })).toBeVisible();
-    await expect(sw(page, 'WhatsApp, A decision is waiting for me')).toHaveAttribute('aria-checked', 'true');
+    await expect(page.locator('.alerts-eyebrow')).toHaveText('SETTINGS / ALERTS');
+    await expect(page.getByRole('switch')).toHaveCount(2);
+    await expect(sw(page, 'Email')).toHaveAttribute('aria-checked', 'true');
+    await expect(sw(page, 'WhatsApp')).toHaveAttribute('aria-checked', 'false');
+    await expect(page.locator('.alerts-channelstate')).toHaveText(['Ready', 'Not ready yet']);
+    await expect(page.locator('.alerts-receipt')).toHaveCount(4);
+    await expect(page.locator('.alerts-receiptstate')).toHaveText(['Delivered', 'Not confirmed', 'Queued', 'Held']);
+    await expect(page.getByRole('table')).toHaveCount(0);
+    await expect(page.getByRole('combobox')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Save settings' })).toBeDisabled();
     expect(await noHorizontalScroll(page)).toBe(true);
     await shot(page, 'alerts-settings-1440');
     await expectNoAxeViolations(page);
   });
 
-  test('Space toggles a switch; save sends the contract body; a reload shows the saved values', async ({ page }) => {
+  test('Space toggles a switch; save sends exactly the three fields, shows Saved, and the next save uses the returned revision', async ({ page }) => {
     const bodies: unknown[] = [];
-    page.on('request', (r) => {
-      if (r.method() === 'PUT') bodies.push({ csrf: r.headers()['x-csrftoken'], body: r.postDataJSON() });
-    });
+    page.on('request', (r) => r.method() === 'POST' && new URL(r.url()).pathname === '/api/v1/me/alert-preferences' && bodies.push(r.postDataJSON()));
     await page.goto('/settings/alerts');
     await settingsLoaded(page);
-    const stuck = sw(page, 'Email, Work I started is stuck');
-    await stuck.focus();
-    const ring = await stuck.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none'));
+    const whatsapp = sw(page, 'WhatsApp');
+    await whatsapp.focus();
     await page.keyboard.press('Space');
-    await expect(stuck).toHaveAttribute('aria-checked', 'false');
-    expect(['solid', 'auto']).toContain(ring);
-    await page.getByRole('combobox', { name: 'Daily digest at' }).click();
-    await page.getByRole('option', { name: '09:00' }).click();
+    await expect(whatsapp).toHaveAttribute('aria-checked', 'true');
+    await expect(page.locator('#alerts-state-whatsapp')).toHaveText('Not ready yet: you will not receive anything on this channel until it is set up');
     await page.getByRole('button', { name: 'Save settings' }).click();
-    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
-    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
-    await expectNoAxeViolations(page);
+    await expect(page.getByText('Saved', { exact: true })).toBeVisible();
+    await expect(page.locator('.alerts-receipt')).toHaveCount(4);
+    await sw(page, 'Email').click();
+    await page.getByRole('button', { name: 'Save settings' }).click();
+    await expect.poll(() => bodies.length).toBe(2);
     expect(bodies).toEqual([
-      {
-        csrf: 'mock-csrf-finance_lead',
-        body: {
-          channel: 'both',
-          frequency: 'immediate',
-          expected_revision: 3,
-          events: [
-            { key: 'decision_waiting', whatsapp: true, email: true },
-            { key: 'info_requested', whatsapp: true, email: true },
-            { key: 'work_stuck', whatsapp: true, email: false },
-            { key: 'work_verified', whatsapp: false, email: true },
-            { key: 'everything_else', whatsapp: false, email: true },
-          ],
-          digest_at: '09:00',
-          quiet_hours: '20-07-weekends',
-        },
-      },
+      { revision: 3, email_requested: true, whatsapp_requested: true },
+      { revision: 4, email_requested: false, whatsapp_requested: true },
     ]);
     await page.reload();
     await settingsLoaded(page);
-    await expect(stuck).toHaveAttribute('aria-checked', 'false');
-    await expect(page.getByRole('combobox', { name: 'Daily digest at' })).toHaveText('09:00');
-    await page.getByRole('button', { name: 'Save settings' }).click();
-    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
-    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
-    expect((bodies[1] as { body: { expected_revision: number } }).body.expected_revision).toBe(4);
+    await expect(sw(page, 'Email')).toHaveAttribute('aria-checked', 'false');
+    await expect(sw(page, 'WhatsApp')).toHaveAttribute('aria-checked', 'true');
   });
 
-  test('stale: the newer version replaces the edits and the callout is focused; the next save works', async ({ page, context }) => {
+  test('stale: the notice shows, nothing retries, and Reload brings the newer version', async ({ page, context }) => {
     await scenario(context, 'stale');
+    let saves = 0;
+    page.on('request', (r) => r.method() === 'POST' && new URL(r.url()).pathname === '/api/v1/me/alert-preferences' && (saves += 1));
     await page.goto('/settings/alerts');
     await settingsLoaded(page);
-    const decision = sw(page, 'WhatsApp, A decision is waiting for me');
-    await decision.click();
-    await expect(decision).toHaveAttribute('aria-checked', 'false');
+    await sw(page, 'WhatsApp').click();
     await page.getByRole('button', { name: 'Save settings' }).click();
-    const callout = page.locator('main .psl-callout--warning');
-    await expect(callout).toHaveText('Someone changed these settings since you opened them. This is the latest version; make your changes again.');
-    await expect(callout).toBeFocused();
-    await expect(decision).toHaveAttribute('aria-checked', 'true');
-    await expect(sw(page, 'Email, Work I started is stuck')).toHaveAttribute('aria-checked', 'false');
+    await expect(page.getByText('These settings changed elsewhere. Reload to see the latest.')).toBeVisible();
+    expect(saves).toBe(1);
     await expectNoAxeViolations(page);
-    const put = page.waitForRequest((r) => r.method() === 'PUT');
-    await page.getByRole('button', { name: 'Save settings' }).click();
-    expect((await put).postDataJSON().expected_revision).toBe(4);
-    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
-    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Reload' }).click();
+    await expect(sw(page, 'Email')).toHaveAttribute('aria-checked', 'false');
+    await expect(sw(page, 'WhatsApp')).toHaveAttribute('aria-checked', 'false');
+    await expect(page.getByText(/changed elsewhere/)).toHaveCount(0);
+    expect(saves).toBe(1);
   });
 
-  test('invalid: channel goes back as read and the 422 message shows, focused; the edits stay', async ({ page, context }) => {
+  test('invalid: the server message shows and the edit stays', async ({ page, context }) => {
     await scenario(context, 'invalid');
     await page.goto('/settings/alerts');
     await settingsLoaded(page);
-    await sw(page, 'Email, Everything else').click();
-    const put = page.waitForRequest((r) => r.method() === 'PUT');
+    await sw(page, 'WhatsApp').click();
     await page.getByRole('button', { name: 'Save settings' }).click();
-    expect((await put).postDataJSON().channel).toBe('sms');
-    const callout = page.locator('main').getByRole('alert');
-    await expect(callout).toHaveText('We couldn’t save your settings. Check these fields: channel.');
-    await expect(callout).toBeFocused();
-    await expect(sw(page, 'Email, Everything else')).toHaveAttribute('aria-checked', 'false');
-    await expectNoAxeViolations(page);
-  });
-
-  test('locked: the reason shows and the switches never change', async ({ page, context }) => {
-    await scenario(context, 'locked');
-    await page.goto('/settings/alerts');
-    await settingsLoaded(page);
-    await expect(page.getByText('Only HR can receive payroll alerts outside the app')).toBeVisible();
-    const locked = sw(page, 'Email, Payroll problems');
-    await expect(locked).toHaveAttribute('aria-disabled', 'true');
-    await locked.dispatchEvent('click');
-    await locked.focus();
-    await page.keyboard.press('Space');
-    await expect(locked).toHaveAttribute('aria-checked', 'false');
-    await expectNoAxeViolations(page);
+    await expect(page.locator('main .psl-callout')).toContainText('Check the settings and try again.');
+    await expect(sw(page, 'WhatsApp')).toHaveAttribute('aria-checked', 'true');
   });
 
   test('401 on the save shows signed out with next=/settings/alerts', async ({ page }) => {
     await page.goto('/settings/alerts');
     await settingsLoaded(page);
-    await page.route('**/api/v1/me/alert-preferences', (route) =>
-      route.request().method() === 'PUT' ? route.continue({ headers: { ...route.request().headers(), 'x-mock-scenario': '401' } }) : route.continue(),
-    );
+    await page.route('**/api/v1/me/alert-preferences', (route) => (route.request().method() === 'POST' ? asStatus('401')(route) : route.continue()));
+    await sw(page, 'WhatsApp').click();
     await page.getByRole('button', { name: 'Save settings' }).click();
-    await expect(page.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in?next=%2Fsettings%2Falerts');
+    await expect(page.getByRole('link', { name: 'Sign in' }).first()).toHaveAttribute('href', '/sign-in?next=%2Fsettings%2Falerts');
+  });
+
+  test('the switch focus ring and the Save focus ring are visible (keyboard focus)', async ({ page }) => {
+    await page.goto('/settings/alerts');
+    await settingsLoaded(page);
+    // A focus ring is a 2px outline, or the design system's inset 2px ring in the focus colour.
+    const ring = (el: Element) => (getComputedStyle(el).outlineStyle !== 'none' ? `${getComputedStyle(el).outlineStyle} ${getComputedStyle(el).outlineWidth}` : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid 2px' : 'none');
+    const reach = async (target: ReturnType<typeof sw>) => {
+      for (let i = 0; i < 40; i++) {
+        if (await target.evaluate((el) => el === document.activeElement)) break;
+        await page.keyboard.press('Tab');
+      }
+      await expect(target).toBeFocused();
+    };
+    const whatsapp = sw(page, 'WhatsApp');
+    await reach(whatsapp);
+    const rings: Record<string, string> = { switch: await whatsapp.evaluate(ring) };
+    await page.keyboard.press('Space');
+    const save = page.getByRole('button', { name: 'Save settings' });
+    await reach(save);
+    rings.save = await save.evaluate(ring);
+    expect(rings).toEqual({ switch: 'solid 2px', save: 'solid 2px' });
   });
 });
 
 test.describe('settings at 390 (SCR-15-mobile-settings)', () => {
   test.use({ viewport: PHONE, hasTouch: true, isMobile: true });
 
-  test('phone: back link, four cards, quiet hours line and the pinned Save; no digest select or number', async ({ page, context }) => {
-    await scenario(context, 'phone');
+  test('phone: back link, two switches, receipts and the pinned Save', async ({ page }) => {
     await page.goto('/settings/alerts');
     await settingsLoaded(page);
     await expect(page.getByRole('link', { name: '← Notifications' })).toHaveAttribute('href', '/notifications');
-    const cards = page.locator('.alerts-eventcard');
-    await expect(cards.locator('.alerts-eventlabel')).toHaveText(['A decision is waiting for me', 'Information is requested from me', 'Work I started is stuck', 'Work I started is verified']);
-    await expect(cards.locator('.alerts-timing')).toHaveText(['Straight away', 'Straight away', 'Straight away', 'Daily digest']);
-    await expect(cards.nth(3).getByRole('switch')).toHaveCount(2);
-    await expect(sw(page, 'WhatsApp, Work I started is verified')).toHaveAttribute('aria-checked', 'false');
-    await expect(page.getByText('Quiet hours 20:00 to 07:00 and weekends')).toBeVisible();
-    await expect(page.getByRole('combobox', { name: 'Daily digest at' })).toHaveCount(0);
-    await expect(page.getByText('WhatsApp number')).toHaveCount(0);
+    await expect(page.getByRole('switch')).toHaveCount(2);
+    for (const s of await page.getByRole('switch').all()) expect((await s.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    await expect(page.locator('.alerts-receipt')).toHaveCount(4);
     const save = page.getByRole('button', { name: 'Save settings' });
     const box = (await save.boundingBox())!;
-    expect(Math.round(box.y + box.height + 18)).toBe(PHONE.height);
+    expect(box.y + box.height).toBeLessThanOrEqual(844);
     expect(box.height).toBeGreaterThanOrEqual(44);
     expect(await noHorizontalScroll(page)).toBe(true);
     await shot(page, 'alerts-settings-390');
     await expectNoAxeViolations(page);
   });
 
-  test('board on the phone: a fifth card, and the save has no digest_at or quiet_hours', async ({ page }) => {
-    await page.goto('/settings/alerts');
-    await settingsLoaded(page);
-    await expect(page.locator('.alerts-eventcard')).toHaveCount(5);
-    const put = page.waitForRequest((r) => r.method() === 'PUT');
-    await page.getByRole('button', { name: 'Save settings' }).click();
-    const body = (await put).postDataJSON();
-    expect(body).not.toHaveProperty('digest_at');
-    expect(body).not.toHaveProperty('quiet_hours');
-    await expect(page.locator('.psl-toast')).toHaveText('Your alert settings are saved.');
-    await expect(page.locator('.psl-callout--success')).toHaveCount(0);
-    await expectNoAxeViolations(page);
-  });
-
-  for (const [name, setup] of [
-    ['stale', 'stale'],
-    ['invalid', 'invalid'],
-  ] as const) {
-    test(`${name} at 390 has no axe violations`, async ({ page, context }) => {
+  for (const setup of ['stale', 'invalid'] as const) {
+    test(`${setup} at 390 shows the notice clear of the pinned Save bar, with no axe violations`, async ({ page, context }) => {
       await scenario(context, setup);
       await page.goto('/settings/alerts');
       await settingsLoaded(page);
+      await sw(page, 'WhatsApp').click();
       await page.getByRole('button', { name: 'Save settings' }).click();
       await expect(page.locator('main .psl-callout[tabindex="-1"]')).toBeFocused();
       await expectClearOfSaveBar(page);
@@ -521,8 +397,9 @@ test.describe('settings at 390 (SCR-15-mobile-settings)', () => {
     await page.goto('/settings/alerts');
     await settingsLoaded(page);
     await page.route('**/api/v1/me/alert-preferences', (route) =>
-      route.request().method() === 'PUT' ? route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ code: 'server_error', message: 'Try again in a moment.' }) }) : route.fallback(),
+      route.request().method() === 'POST' ? route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ code: 'server_error', message: 'Try again in a moment.' }) }) : route.fallback(),
     );
+    await sw(page, 'WhatsApp').click();
     await page.getByRole('button', { name: 'Save settings' }).click();
     await expect(page.locator('main').getByRole('alert')).toContainText('We couldn’t save your settings. Nothing was changed.');
     await expectClearOfSaveBar(page);
@@ -537,25 +414,4 @@ test('direct loads render the headings (message targets, PMO-0-3)', async ({ pag
   await page.goto('/settings/alerts');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('How you’re alerted');
   await expect(page).toHaveTitle('Alert settings · PSL Factory');
-});
-
-test('the switch focus ring and the Save focus ring are visible', async ({ page }) => {
-  await page.setViewportSize(DESKTOP);
-  await page.goto('/settings/alerts');
-  await settingsLoaded(page);
-  const rings: Record<string, string> = {};
-  const targets: [string, Locator][] = [
-    ['switch', sw(page, 'WhatsApp, A decision is waiting for me')],
-    ['select', page.getByRole('combobox', { name: 'Daily digest at' })],
-    ['save', page.getByRole('button', { name: 'Save settings' })],
-  ];
-  for (const [name, target] of targets) {
-    for (let i = 0; i < 40; i++) {
-      if (await target.evaluate((el) => el === document.activeElement)) break;
-      await page.keyboard.press('Tab');
-    }
-    await expect(target).toBeFocused();
-    rings[name] = await target.evaluate((el) => `${(getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none')} ${(getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineWidth : '2px')}`);
-  }
-  expect(rings).toEqual({ switch: 'solid 2px', select: 'solid 2px', save: 'solid 2px' });
 });

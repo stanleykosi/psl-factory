@@ -26,9 +26,11 @@ beforeEach(() => {
   vi.stubGlobal('matchMedia', (q: string) => ({ matches: false, media: q, addEventListener: () => {}, removeEventListener: () => {} }));
   vi.stubGlobal(
     'fetch',
-    vi.fn(async (request: Request) =>
-      new URL(request.url).pathname === '/api/v1/me' ? json(200, read('me.finance_lead.json')) : json(200, read('E-OVERVIEW.json')),
-    ),
+    vi.fn(async (request: Request) => {
+      const path = new URL(request.url).pathname;
+      if (path === '/api/v1/me') return json(200, read('me.finance_lead.json'));
+      return json(200, read(path === '/api/v1/overview' ? 'floor/overview.json' : 'floor/counts.json'));
+    }),
   );
 });
 afterEach(() => vi.unstubAllGlobals());
