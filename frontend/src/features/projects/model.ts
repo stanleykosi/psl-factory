@@ -14,7 +14,7 @@ export type ListTab = NonNullable<ProjectsQuery['status']>;
 export type ProjectTab = 'journey' | 'delivery' | 'milestones' | 'documents' | 'money' | 'registers' | 'actions';
 
 // The project's tabs as drawn on SCR-07, each a link to its own address. Journey is built here; the other tabs' contents
-// belong to their own features. Delivery keeps its route but has no live tab, so it is never in the bar (see visibleTabs).
+// belong to their own features. Delivery has no live tab; visibleTabs adds it after Journey for every project.
 export const PROJECT_TABS: readonly { key: ProjectTab; label: string; path: string }[] = [
   { key: 'journey', label: 'Journey', path: '' },
   { key: 'delivery', label: 'Delivery', path: '/delivery' },
@@ -25,12 +25,14 @@ export const PROJECT_TABS: readonly { key: ProjectTab; label: string; path: stri
   { key: 'actions', label: 'Actions', path: '/actions' },
 ];
 
-/** The live `tabs[]` keys the frontend routes; Delivery, Templates, Month-end and HR are not in the bar. */
+/** The live `tabs[]` keys the frontend routes; Templates, Month-end and HR are not in the bar, and Delivery is added by visibleTabs. */
 const BAR_TABS = PROJECT_TABS.filter((t) => t.key !== 'delivery');
 
-/** The bar's tabs: the keys live returned that the frontend routes, in the order returned. */
+/** The bar's tabs: the keys live returned that the frontend routes, in the order returned, with Delivery after Journey. */
 export function visibleTabs(tabs: readonly { key: string }[]) {
-  return tabs.flatMap(({ key }) => BAR_TABS.filter((t) => t.key === key));
+  const live = tabs.flatMap(({ key }) => BAR_TABS.filter((t) => t.key === key));
+  const at = live.findIndex((t) => t.key === 'journey');
+  return at < 0 ? live : [...live.slice(0, at + 1), PROJECT_TABS[1], ...live.slice(at + 1)];
 }
 
 export const LIST_TABS: readonly { key: ListTab; label: string }[] = [
