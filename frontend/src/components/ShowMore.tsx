@@ -124,19 +124,21 @@ export type ShowMoreProps = {
   /** Rows per page now, and the change handler. */
   size: PageSize;
   onSize: (size: PageSize) => void;
+  /** The button's words where "Show more" would mislead ("Keep looking" after empty pages). */
+  moreLabel?: string;
   /** Drawn on its own under a list of cards (its own frame), not inside a table. */
   solo?: boolean;
   className?: string;
 };
 
-export function ShowMore({ shown, total, onMore, busy = false, failed = false, hasMore, size, onSize, solo = false, className }: ShowMoreProps) {
+export function ShowMore({ shown, total, onMore, busy = false, failed = false, hasMore, size, onSize, moreLabel, solo = false, className }: ShowMoreProps) {
   const phone = usePhone();
   const rows = useRef<HTMLSpanElement>(null);
   // The chosen option keeps keyboard focus; kept per footer, so a footer that goes away takes it with it.
   const focusSize = useRef<PageSize | undefined>(undefined);
   const more = total !== undefined ? total > shown : Boolean(hasMore);
   const text = total === undefined ? `${shown} showing` : more ? `${shown} of ${total} showing` : `All ${total} showing`;
-  const label = total === undefined ? 'Show more' : `Show ${Math.min(size, total - shown)} more`;
+  const label = moreLabel ?? (total === undefined ? 'Show more' : `Show ${Math.min(size, total - shown)} more`);
 
   useEffect(() => {
     if (focusSize.current === undefined) return;

@@ -44,6 +44,9 @@ function floors(counts, overview) {
   return [{ ...overview, lines: FLOORS.map(([key, title, open]) => ({ key, title, total: open })) }, { ...counts, evaluated: 18, lines }];
 }
 
+/** Whether the factory floor answers GET /work/counts: a named variant, or the ceo persona the floor is drawn for. */
+export const ownsFloorCounts = (cookies) => OVERVIEW_VARIANTS.includes(cookies.psl_mock_overview) || cookies.psl_mock_persona === 'ceo';
+
 /** [status, body] for the two reads, or null for any other path. */
 export function floorRead({ pathname, cookies }) {
   if (pathname !== OVERVIEW_PATH && pathname !== COUNTS_PATH) return null;

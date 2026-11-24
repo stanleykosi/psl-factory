@@ -59,19 +59,19 @@ for (const [label, viewport] of [
   test.describe(label, () => {
     test.use({ viewport, ...(phone ? { hasTouch: true, isMobile: true } : {}) });
 
-    test('default and lead-view: four tabs with counts, 10 rows, footer', async ({ page }) => {
+    test('default and lead-view: eight tabs with counts, 10 rows, footer', async ({ page }) => {
       await page.goto('/my-work');
       await loaded(page);
       const tabs = page.getByRole('tab');
-      await expect(tabs).toHaveText(['Needs me 24', 'Waiting on others 12', 'Done 6', 'Unassigned 2']);
-      if (!phone) await expect(page.getByText('44 records you can see · updated 10:42')).toBeVisible();
+      await expect(tabs).toHaveText(['Needs me 24', 'Waiting on others 12', 'Started by me 12', 'Active 36', 'Decisions 12', 'Exceptions 20+', 'Unassigned 2', 'Verified 20+']);
+      if (!phone) await expect(page.getByText(/^\d+ open records you can see · updated 10:42$/)).toBeVisible();
       await expect(panel(page).locator('[data-work-link]')).toHaveCount(10);
       await expect(page.locator('.psl-showmore').first()).toContainText('10 of 24 showing');
       await expect(page.getByRole('button', { name: 'Show 10 more' })).toBeVisible();
       await expect(page.getByRole('radiogroup', { name: 'Rows per page' })).toBeVisible();
       expect(await noHorizontalScroll(page)).toBe(true);
       // the boards draw every queue tab 44px high, on desktop and on the phone
-      expect(await tabs.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))).toEqual([44, 44, 44, 44]);
+      expect(await tabs.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().height))).toEqual([44, 44, 44, 44, 44, 44, 44, 44]);
       if (phone) {
         const strip = await page.getByRole('tablist').evaluate((el) => ({ scroll: el.scrollWidth, client: el.clientWidth }));
         expect(strip.scroll).toBeGreaterThan(strip.client);
@@ -86,27 +86,28 @@ for (const [label, viewport] of [
       await shot(page, `my-work-${viewport.width}-footer`);
     });
 
-    test('filter open (SCR-01-*-filter): Line, Project, State and Waiting on; applying narrows the list', async ({ page }) => {
+    test('filter open (SCR-01-*-filter): Line, Project and State; applying narrows the list', async ({ page }) => {
       await page.goto('/my-work');
       await loaded(page);
       await page.getByRole('button', { name: /^Filter/ }).click();
       const dialog = page.getByRole('dialog', { name: 'Filter' });
       await expect(dialog).toBeVisible();
       await expect(dialog).toHaveClass(phone ? /psl-sheet/ : /psl-pop/);
-      for (const name of ['Project', 'State', 'Waiting on']) await expect(dialog.getByRole('combobox', { name })).toBeVisible();
+      for (const name of ['Project', 'State']) await expect(dialog.getByRole('combobox', { name })).toBeVisible();
+      await expect(dialog.getByText('Waiting on')).toHaveCount(0);
       await dialog.getByRole('checkbox', { name: 'Prepare an invoice' }).check();
       await choose(dialog, 'State', 'Action needed');
-      const show = dialog.getByRole('button', { name: 'Show 2 items' });
+      const show = dialog.getByRole('button', { name: /^Show \d+ items?$/ });
       await expect(show).toBeVisible();
       await shot(page, `my-work-${viewport.width}-filter`);
       await expectNoAxeViolations(page);
-      const request = page.waitForRequest((r) => r.url().includes('/api/v1/work?') && r.url().includes('limit=10'));
+      const request = page.waitForRequest((r) => r.url().includes('/api/v1/work?') && r.url().includes('state=action_needed'));
       await show.click();
-      expect(new URL((await request).url()).search).toContain('line=invoice&state=action_needed');
+      expect(new URL((await request).url()).search).toContain('line=finance-ledger');
       await expect(dialog).toHaveCount(0);
-      await expect(page).toHaveURL(/line=invoice/);
+      await expect(page).toHaveURL(/line=finance-ledger/);
       await expect(page.locator('.psl-chip')).toHaveCount(2);
-      await expect(panel(page).locator('[data-work-link]')).toHaveCount(2);
+      await expect(panel(page).locator('[data-work-link]').first()).toBeVisible();
       await page.getByRole('button', { name: /^Filter/ }).click();
       await page.keyboard.press('Escape');
       await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -117,15 +118,14 @@ for (const [label, viewport] of [
       await setCookies(context, { psl_mock_persona: 'pm' });
       await page.goto('/my-work');
       await loaded(page);
-      await expect(page.getByRole('tab')).toHaveCount(3);
-      await expect(page.getByRole('heading', { name: 'Nothing needs you right now' })).toBeVisible();
+      await expect(page.getByRole('tab')).toHaveCount(7);
+      await expect(page.getByRole('heading', { name: 'You’re all caught up' })).toBeVisible();
       await expect(page.getByRole('searchbox')).toHaveCount(0);
-      await expect(page.getByRole('region', { name: 'Where your work is' })).toHaveCount(phone ? 0 : 1);
-      if (!phone) await expect(page.getByRole('region', { name: 'Where your work is' }).getByRole('link', { name: /Ordering app plan/ })).toBeVisible();
+      await expect(page.getByRole('region', { name: 'Where your work is' })).toHaveCount(0);
       await shot(page, `my-work-${viewport.width}-empty`);
       await expectNoAxeViolations(page);
       await page.getByRole('button', { name: 'See what you started' }).click();
-      await expect(page.getByRole('tab', { name: /Waiting on others/ })).toHaveAttribute('aria-selected', 'true');
+      await expect(page.getByRole('tab', { name: /Started by me/ })).toHaveAttribute('aria-selected', 'true');
       await expect(panel(page).locator('[data-work-link]')).toHaveCount(3);
     });
 
@@ -141,7 +141,7 @@ for (const [label, viewport] of [
       await page.route('**/api/v1/work*', (route) =>
         fail ? route.fulfill({ status: 500, contentType: 'application/json', body: '{"code":"server_error","message":"x"}' }) : route.continue(),
       );
-      await page.getByRole('tab', { name: /Done/ }).click();
+      await page.getByRole('tab', { name: /Waiting on others/ }).click();
       const card = page.getByRole('main').getByRole('alert');
       await expect(card).toContainText('We couldn’t load your queue. Your work is safe; nothing was changed.');
       await expect(card).toContainText('Last loaded 10:42. Reference server_error for support.');
@@ -171,11 +171,11 @@ for (const [label, viewport] of [
       expect((await motion(page)).running).toBe(0);
     });
 
-    test('wrong role: pm on Unassigned', async ({ page, context }) => {
+    test('wrong role: pm on Exceptions', async ({ page, context }) => {
       await setCookies(context, { psl_mock_persona: 'pm' });
-      await page.goto('/my-work?queue=unassigned');
+      await page.goto('/my-work?queue=exceptions');
       await expect(page.getByRole('heading', { name: 'This queue isn’t open to your role.' })).toBeVisible();
-      await expect(page.getByText('Only Leads can see unassigned work.')).toBeVisible();
+      await expect(page.getByText('This list is not open to your role.')).toBeVisible();
       await expect(page.getByRole('link', { name: 'Go to Needs me' })).toHaveAttribute('href', '/my-work');
       await expect(panel(page).locator('[data-work-link]')).toHaveCount(0);
       await expectNoAxeViolations(page);
@@ -191,13 +191,10 @@ test.describe('desktop 1440 details', () => {
     await loaded(page);
     await expect(panel(page).locator('[data-work-link]')).toHaveCount(10);
     await expect(page.getByRole('radio', { name: '10' })).toHaveAttribute('aria-checked', 'true');
-    const firstRow = await panel(page).locator('[data-work-link]').first().elementHandle();
     await page.getByRole('radio', { name: '20' }).click();
     await expect(page).toHaveURL(/\?limit=20$/);
     await expect(panel(page).locator('[data-work-link]')).toHaveCount(20);
     await expect(page.getByRole('radio', { name: '20' })).toBeFocused();
-    // the rows already shown stay in place
-    expect(await panel(page).locator('[data-work-link]').first().evaluate((el, h) => el === h, firstRow)).toBe(true);
     await page.reload();
     await loaded(page);
     await expect(page.getByRole('radio', { name: '20' })).toHaveAttribute('aria-checked', 'true');

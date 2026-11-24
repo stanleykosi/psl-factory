@@ -39,7 +39,7 @@ import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
 import { monthEnd } from './finance.mjs';
 import { invoices } from './invoices.mjs';
-import { COUNTS_PATH, floorRead, OVERVIEW_PATH } from './overview.mjs';
+import { COUNTS_PATH, floorRead, OVERVIEW_PATH, ownsFloorCounts } from './overview.mjs';
 import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { createLineRuns } from './line-runs.mjs';
@@ -48,7 +48,7 @@ import { RECEIVED_BIDS_PATH, receivedBids, receivedBidsLog, resetReceivedBids } 
 import { resetStartLive, START_LIVE_PATH, START_LIVE_WORK, startLive, startLiveLog } from './start-live.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
-import { LIVE_QUEUES, liveWorkItem, liveWorkList, ownsLiveWorkItem } from './live-work.mjs';
+import { isLiveWorkRequest, liveWorkCounts, liveWorkItem, liveWorkList, ownsLiveWorkItem } from './live-work.mjs';
 import { workList } from './work-list.mjs';
 import { FORECAST_PATH, forecastLive } from './forecast-live.mjs';
 import { issuesLog, issuesRoute, resetIssues } from './issues.mjs';
@@ -354,6 +354,17 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       // F-62: the work list's own rows (live-work.mjs) answer their item read before F-85's handler, which owns every other integer id.
       if (method === 'get' && /^\/api\/v1\/work\/\d+$/.test(url.pathname) && ownsLiveWorkItem(Number(url.pathname.split('/')[4]))) { const r = liveWorkItem({ id: Number(url.pathname.split('/')[4]) }); return send(res, r.status, r.body); }
+      // F-63: the live queue counts (live-work.mjs). The scenario cookie answers 401, 403 or 500 here as it does on the list.
+      // The factory floor (F-65, overview.mjs) answers the same path for the ceo persona and whenever a psl_mock_overview variant is named.
+      if (method === 'get' && url.pathname === '/api/v1/work/counts' && !ownsFloorCounts(parseCookies(req.headers.cookie))) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (scenario === 'counts_500') return send(res, 500, { code: 'server_error', message: 'Something went wrong on our side.' });
+        if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        const r = liveWorkCounts({ persona, dataset: cookies.psl_mock_worklist });
+        return send(res, r.status, r.body);
+      }
       // F-85: live work item reads (integer ids only) and the case file upload (work-live.mjs); not in v7. v7 ids and v7 case routes fall through.
       if (WORK_LIVE_PATH.test(url.pathname) || CASE_FILES_PATH.test(url.pathname)) {
         const cookies = parseCookies(req.headers.cookie);
@@ -509,7 +520,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (demo) runs.tick();
       if (ASSISTANT_OPERATIONS.includes(route.operationId)) return send(res, ...assistant.handle({ operationId: route.operationId, url, raw, persona, agents: me[persona].assistant_agents ?? [], demo }));
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
-      if (route.operationId === 'E-WORK-LIST' && LIVE_QUEUES.includes(url.searchParams.get('queue'))) { const r = liveWorkList({ url, persona }); return send(res, r.status, r.body); }
+      if (route.operationId === 'E-WORK-LIST' && isLiveWorkRequest(url)) { const r = liveWorkList({ url, persona, dataset: cookies.psl_mock_worklist }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist, extra: runs.rows(persona) }); return send(res, r.status, r.body); }
       if (CLIENT_OPERATIONS.includes(route.operationId)) { const r = clients({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECTS' || route.operationId === 'E-PROJECT') { const r = projects({ operationId: route.operationId, url, persona }); return send(res, r.status, r.body); }
