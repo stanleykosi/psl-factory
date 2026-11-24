@@ -805,92 +805,20 @@ describe('phone home', () => {
   });
 });
 
-describe('"Start this invoice" opens the normal Start work drawer, prefilled', () => {
-  const dialog = () => screen.getByRole('dialog');
-  const shown = (name: string) => within(dialog()).getByRole('combobox', { name }).querySelector('.sw-picker__value')!.textContent;
+describe('"Start this invoice" opens the Start work drawer', () => {
   const startsRequests = () => bridge.posts(/^\/api\/v1\/work$/);
 
-  async function openDrawer() {
+  // F-86: the drawer starts live lines only; the invoice has no live form yet, so the draft opens the same "can't start here" answer.
+  it('the invoice has no live form: the drawer says "You can’t start this here." and nothing is sent', async () => {
     await open('/assistant/CV-2401');
     await thread();
     fireEvent.click(screen.getByRole('button', { name: 'Start this invoice' }));
-    await screen.findByRole('dialog', { name: 'Invoice preparation and delivery' });
-    await waitFor(() => expect(shown('Completed milestone')).toBe('Milestone 2 · beta signed 30 Oct'));
-  }
-
-  it('shows the project and milestone chosen and sends nothing until the person presses the drawer’s own button', async () => {
-    await openDrawer();
-    expect(shown('Project')).toBe('Harmattan Bank · mobile onboarding');
+    expect(await screen.findByText('You can’t start this here.')).toBeTruthy();
+    expect(within(dialog()).queryByRole('combobox')).toBeNull();
     expect(startsRequests()).toEqual([]);
     expect(assistantPosts()).toEqual([]);
-    expect(within(dialog()).getByRole('button', { name: 'Start the invoice' })).toBeTruthy();
-    // the agent offers no start of its own, and the page's button waits behind the drawer
-    expect(bridge.seen.filter((s) => s.method === 'POST')).toEqual([]);
-  });
-
-  it('one POST /api/v1/work with the typed body and CSRF; the drawer closes, the thread re-reads and shows "Started INV-0415." with focus on it', async () => {
-    await openDrawer();
-    const reads = bridge.gets(/\/assistant\/conversations\/CV-2401$/).length;
-    fireEvent.click(within(dialog()).getByRole('button', { name: 'Start the invoice' }));
-    const line = await screen.findByText(/^Started INV-0415\./);
-    expect(screen.queryByRole('dialog')).toBeNull();
-    const [start] = startsRequests();
-    expect(startsRequests()).toHaveLength(1);
-    expect(start.body).toEqual({ line: 'invoice', case_id: 'C-0102', case_revision: 3, intake: { project: 'P-0102', milestone: 'M-0202' }, idempotency_key: expect.any(String) });
-    expect(start.headers.get('X-CSRFToken')).toBe('mock-csrf-pm');
-    expect(bridge.gets(/\/assistant\/conversations\/CV-2401$/).length).toBe(reads + 1);
-    expect(nav.push).not.toHaveBeenCalled();
-    const status = line.closest('p')!;
-    expect(status.getAttribute('role')).toBe('status');
-    expect(within(status).getByRole('link', { name: 'Open the work item' }).getAttribute('href')).toBe('/work/W-1401');
-    await waitFor(() => expect(document.activeElement).toBe(status));
-    expect(screen.queryByRole('button', { name: 'Start this invoice' })).toBeNull();
-    expect(within(screen.getByRole('complementary', { name: 'Agent and context' })).getByText('Chidi answered from records you can see.')).toBeTruthy();
-    // the list row follows the data, and the assistant wrote nothing itself
-    expect(await within(list()).findByText('Started · INV-0415')).toBeTruthy();
-    expect(assistantPosts()).toEqual([]);
-  });
-
-  it('closing the drawer without a start puts focus back on the draft button', async () => {
-    await openDrawer();
     fireEvent.click(within(dialog()).getByRole('button', { name: 'Close' }));
-    expect(screen.queryByRole('dialog')).toBeNull();
     await waitFor(() => expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Start this invoice' })));
-    expect(startsRequests()).toEqual([]);
-  });
-
-  it('an uncertain start shows Start work’s own notice; the assistant sends nothing and never retries', async () => {
-    await openDrawer();
-    bridge.override((request, url) => (request.method === 'POST' && url.pathname === '/api/v1/work' ? Promise.reject(new TypeError('fetch failed')) : undefined));
-    fireEvent.click(within(dialog()).getByRole('button', { name: 'Start the invoice' }));
-    expect(await within(dialog()).findByText(/We couldn’t confirm the start/)).toBeTruthy();
-    expect(startsRequests()).toHaveLength(1);
-    expect(assistantPosts()).toEqual([]);
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    expect(startsRequests()).toHaveLength(1);
-  });
-
-  it('a second tab that still shows the button gets the 409 through the drawer, then re-reads and shows the started line; one 201 exists', async () => {
-    await openDrawer();
-    // another tab started it first
-    const [first] = [
-      await bridge.stub(
-        new Request('http://localhost/api/v1/work', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ line: 'invoice', case_id: 'C-0102', case_revision: 3, intake: { project: 'P-0102', milestone: 'M-0202' }, idempotency_key: 'other-tab' }),
-        }),
-      ),
-    ];
-    expect(first.status).toBe(201);
-    fireEvent.click(within(dialog()).getByRole('button', { name: 'Start the invoice' }));
-    expect(await within(dialog()).findByText(/changed since you opened the form/)).toBeTruthy();
-    fireEvent.click(within(dialog()).getByRole('button', { name: 'Close' }));
-    const line = await screen.findByText(/^Started INV-0415\./);
-    expect(screen.queryByRole('button', { name: 'Start this invoice' })).toBeNull();
-    await waitFor(() => expect(document.activeElement).toBe(line.closest('p')));
-    // one 201 exists: the other tab's; this tab's press was refused
-    expect(startsRequests()).toHaveLength(2);
   });
 
   it('a draft whose line this person cannot start opens the drawer with "You can’t start this here." and no form', async () => {
@@ -921,20 +849,6 @@ describe('phone: the bar and the footer', () => {
     expect(screen.getByRole('link', { name: 'Back to Assistant' })).toBeTruthy();
     expect(within(section).queryByText('· PMO agent')).toBeNull();
     expect(within(section).getAllByText(/Tola · PMO agent/)).toHaveLength(1);
-  });
-
-  it('after the start the footer is a full-width "Open INV-0415" link to the work item, in place of the composer', async () => {
-    phone();
-    await open('/assistant/CV-2401');
-    await thread();
-    fireEvent.click(screen.getByRole('button', { name: 'Start this invoice' }));
-    await screen.findByRole('dialog');
-    await waitFor(() => expect((within(dialog()).getByRole('button', { name: 'Start the invoice' }) as HTMLButtonElement).disabled).toBe(false));
-    fireEvent.click(within(dialog()).getByRole('button', { name: 'Start the invoice' }));
-    const footer = await screen.findByRole('link', { name: 'Open INV-0415' });
-    expect(footer.getAttribute('href')).toBe('/work/W-1401');
-    expect(footer.className).toContain('psl-btn--block');
-    expect(screen.queryByRole('textbox')).toBeNull();
   });
 });
 
