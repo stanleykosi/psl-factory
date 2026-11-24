@@ -124,35 +124,35 @@
       "name": "HB-M2",
       "category": "board sample content",
       "reason": "Board sample case reference chip; no live field carries it.",
-      "approved_by": "pending design engineer (questions-batch B36)"
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B36 item 1, board sample data)"
     },
     {
       "role": "text",
       "name": "LAGOON HEALTH / MILESTONES",
       "category": "frame (breadcrumb)",
       "reason": "Present as the breadcrumb links \"<project name>\" and \"Milestones\" (monospace, blue) from the shared Breadcrumb; the design engineer decides whether the style is an exception.",
-      "approved_by": "pending design engineer (questions-batch B36)"
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B36 item 2, frame item)"
     },
     {
       "role": "link",
       "name": "← Lagoon Health",
       "category": "frame (phone back link)",
       "reason": "The phone back link is the shell's (usePhoneBack, label \"Milestones\"), not the project name.",
-      "approved_by": "pending design engineer (questions-batch B36)"
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B36 item 2, frame item)"
     }
   ],
   "extras_not_gating": [
     {
       "what": "Shell extras on desktop: nav link \"Overview\", buttons \"Alerts, 1 unread\" and \"Account menu: Kemi Adebayo · PMO Lead\", side panel \"Demo controls\" and button \"Demo\"; Start work and More ways to start are buttons, not links (frame, owned by the shell).",
-      "approved_by": "pending design engineer (questions-batch B36)"
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B36 item 2, frame item)"
     },
     {
       "what": "Shell extras on phone: button \"Alerts, 1 unread\" and side panel \"Demo controls\".",
-      "approved_by": "pending design engineer (questions-batch B36)"
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B36 item 2, frame item)"
     },
     {
       "what": "Disabled grey \"Mark complete\" until a proof and the confirmation are chosen; the board draws every input filled (state difference).",
-      "approved_by": "pending design engineer (questions-batch B36)"
+      "approved_by": "pending: not covered by the B36 answer, which signed the hold case only. This is the SCR-19 form state before proof and confirmation are chosen; under holds the build shows no button (round-2 UI review). Raised again with the coordinator."
     }
   ],
   "visual_waivers": []

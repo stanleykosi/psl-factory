@@ -19,3 +19,11 @@ F-71 merges with three non-blocking items on the Milestones tab and the Money e2
 
 ## LB-2 on live (24 Nov 2026, main coordinator)
 LB-2 is the backend developer's to fix, through role mapping (the PMO Lead gets `milestone.complete`). It's on the design engineer's note for Stanley. F-78 builds to the contract, with "Mark complete" driven only by `can_complete`. In the PR and PMO evidence, record it as: "live: hidden for every staff role until LB-2 is fixed". It is not a frontend gap.
+
+## B36 answered (24 Nov 2026, D-207)
+The main coordinator approved B36 under D-207:
+- (1) "HB-M2" is signed as board sample data.
+- (2) The breadcrumb style, "← Lagoon Health" against the frame's back link, and the not-gating shell extras are signed as frame items.
+- (2, not signed) The grey disabled "Mark complete". The answer: per D-202 batch 5 option 1, "Mark complete" shows on uncompleted rows only when the server allows it, with one hold line above the table. If the build shows a disabled button when can_complete is false, round 3 hides it and shows the hold line. If the build already hides it and only the board draws it grey, it's signed as a board difference.
+  Lane B check: the round-2 UI review saw no button under holds or with no authority. The grey state is SCR-19's submit before a proof and the confirmation tick are chosen, so it is a form state, raised again with the coordinator.
+- (3) A visual waiver for both runs is signed at whatever score round 3 leaves, if it's still under 90 and the UI reviewer confirms no styling gap of the build's own.
