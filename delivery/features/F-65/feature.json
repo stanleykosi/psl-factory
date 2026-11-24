@@ -269,7 +269,7 @@
     "base_branch": "main",
     "base_sha": "f355d33908d66468082b5cadac12aaf6dd6b09ce",
     "task_branch": "fe-connect-1-factory-floor-live",
-    "head_sha": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
+    "head_sha": "56da681b4e7a5d64fe233e978feb7512dfc27b48",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a4",
     "pr_url": null,
     "pr_number": null,
