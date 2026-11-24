@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-24T14:38:46.884Z",
+  "generatedAt": "2026-11-24T14:46:11.093Z",
   "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-30-desktop-no-owner.dc.html",
   "boardName": "SCR-30-desktop-no-owner.dc.html",
   "pageUrl": "http://127.0.0.1:4998/work/5103",
@@ -18,12 +18,12 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-111/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "2 board item(s) are missing from the page and are not approved exceptions (coverage 92.3% with exceptions, needs 100%).",
+    "Every board item is on the page or approved as an exception (100%).",
     "Visual match 84.4 is below 90."
   ],
   "scores": {
     "coverage": 34.6,
-    "coverageWithExceptions": 92.3,
+    "coverageWithExceptions": 100,
     "visual": 84.4
   },
   "visual": {
@@ -478,7 +478,10 @@
           "w": 340,
           "h": 173
         },
-        "exception": null
+        "exception": {
+          "reason": "The frame draws its own signed-in persona and header; the board's side panel holds the hidden write forms (below). (Entry name is \"\", the tool's key for the unnamed side panel; UI-2-1.)",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Pagination",
@@ -492,7 +495,10 @@
           "w": 336,
           "h": 37
         },
-        "exception": null
+        "exception": {
+          "reason": "SCR-30 no-owner desktop draws a NEXT card heading; the frame prints the work item's own next-step line instead. Accepted for the demo under D-202 (frame next step), replaced by F-95 (UI-2-2).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -748,7 +754,7 @@
         }
       }
     ],
-    "unexcepted": 2
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."

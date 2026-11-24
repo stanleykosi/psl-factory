@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-24T14:38:34.535Z",
+  "generatedAt": "2026-11-24T14:46:00.088Z",
   "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-30-desktop-overdue.dc.html",
   "boardName": "SCR-30-desktop-overdue.dc.html",
   "pageUrl": "http://127.0.0.1:4998/work/5102",
@@ -18,25 +18,25 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-111/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "1 board item(s) are missing from the page and are not approved exceptions (coverage 96.4% with exceptions, needs 100%).",
-    "Visual match 78.2 is below 90.",
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 77.6 is below 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 39.3,
-    "coverageWithExceptions": 96.4,
-    "visual": 78.2
+    "coverageWithExceptions": 100,
+    "visual": 77.6
   },
   "visual": {
-    "score": 78.2,
-    "allCellsScore": 83.8,
+    "score": 77.6,
+    "allCellsScore": 83.4,
     "width": 1440,
     "height": 860,
     "boardHeight": 860,
     "pageHeight": 1365,
     "cell": 12,
-    "contentCells": 6408,
-    "mismatchedCells": 1398
+    "contentCells": 6400,
+    "mismatchedCells": 1431
   },
   "coverage": {
     "total": 28,
@@ -74,9 +74,9 @@
         "looks": [],
         "boardBox": {
           "x": 88,
-          "y": 19,
-          "w": 156,
-          "h": 19
+          "y": 18,
+          "w": 122,
+          "h": 20
         },
         "pageBox": {
           "x": 88,
@@ -94,10 +94,10 @@
         "similarity": 100,
         "looks": [],
         "boardBox": {
-          "x": 268,
+          "x": 234,
           "y": 1,
-          "w": 81,
-          "h": 55
+          "w": 83,
+          "h": 54
         },
         "pageBox": {
           "x": 268,
@@ -118,10 +118,10 @@
           "coloured bar under it on the board (#C8401C), none on the page"
         ],
         "boardBox": {
-          "x": 349,
+          "x": 316,
           "y": 1,
-          "w": 80,
-          "h": 55
+          "w": 82,
+          "h": 54
         },
         "pageBox": {
           "x": 349,
@@ -139,10 +139,10 @@
         "similarity": 100,
         "looks": [],
         "boardBox": {
-          "x": 430,
+          "x": 398,
           "y": 1,
-          "w": 86,
-          "h": 55
+          "w": 87,
+          "h": 54
         },
         "pageBox": {
           "x": 515,
@@ -161,9 +161,9 @@
         "note": "a button on the page, a link on the board",
         "looks": [],
         "boardBox": {
-          "x": 1061,
+          "x": 1054,
           "y": 8,
-          "w": 118,
+          "w": 120,
           "h": 40
         },
         "pageBox": {
@@ -186,7 +186,7 @@
           "underlined on the board, not on the page"
         ],
         "boardBox": {
-          "x": 1179,
+          "x": 1175,
           "y": 8,
           "w": 42,
           "h": 40
@@ -231,8 +231,8 @@
         ],
         "boardBox": {
           "x": 88,
-          "y": 119,
-          "w": 686,
+          "y": 118,
+          "w": 548,
           "h": 35
         },
         "pageBox": {
@@ -253,9 +253,9 @@
         "looks": [],
         "boardBox": {
           "x": 90,
-          "y": 299,
+          "y": 298,
           "w": 898,
-          "h": 37
+          "h": 38
         },
         "pageBox": {
           "x": 90,
@@ -275,9 +275,9 @@
         "looks": [],
         "boardBox": {
           "x": 1014,
-          "y": 244,
+          "y": 243,
           "w": 336,
-          "h": 37
+          "h": 38
         },
         "pageBox": {
           "x": 90,
@@ -296,10 +296,10 @@
         "key": "text: Tunde Bello · PMO",
         "container": "navigation",
         "boardBox": {
-          "x": 1245,
+          "x": 1241,
           "y": 20,
-          "w": 107,
-          "h": 17
+          "w": 111,
+          "h": 16
         },
         "exception": {
           "reason": "The frame draws its own signed-in persona and header; the board's side panel holds the hidden write forms (below).",
@@ -316,7 +316,7 @@
           "x": 88,
           "y": 84,
           "w": 1264,
-          "h": 15
+          "h": 14
         },
         "exception": {
           "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
@@ -333,7 +333,7 @@
           "x": 88,
           "y": 84,
           "w": 58,
-          "h": 15
+          "h": 14
         },
         "exception": {
           "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
@@ -350,7 +350,7 @@
           "x": 167,
           "y": 84,
           "w": 94,
-          "h": 15
+          "h": 14
         },
         "exception": {
           "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
@@ -364,9 +364,9 @@
         "key": "text: NO RESPONSE · 3 DAYS",
         "container": "main",
         "boardBox": {
-          "x": 1205,
-          "y": 133,
-          "w": 147,
+          "x": 1196,
+          "y": 132,
+          "w": 156,
           "h": 21
         },
         "exception": {
@@ -382,8 +382,8 @@
         "container": "main",
         "boardBox": {
           "x": 88,
-          "y": 174,
-          "w": 654,
+          "y": 173,
+          "w": 666,
           "h": 48
         },
         "exception": {
@@ -399,8 +399,8 @@
         "container": "tablist",
         "boardBox": {
           "x": 90,
-          "y": 176,
-          "w": 86,
+          "y": 175,
+          "w": 87,
           "h": 44
         },
         "exception": {
@@ -415,9 +415,9 @@
         "key": "tab: Milestones 4",
         "container": "tablist",
         "boardBox": {
-          "x": 176,
-          "y": 176,
-          "w": 129,
+          "x": 177,
+          "y": 175,
+          "w": 132,
           "h": 44
         },
         "exception": {
@@ -432,9 +432,9 @@
         "key": "tab: Documents 6",
         "container": "tablist",
         "boardBox": {
-          "x": 305,
-          "y": 176,
-          "w": 133,
+          "x": 309,
+          "y": 175,
+          "w": 135,
           "h": 44
         },
         "exception": {
@@ -449,9 +449,9 @@
         "key": "tab: Money",
         "container": "tablist",
         "boardBox": {
-          "x": 438,
-          "y": 176,
-          "w": 76,
+          "x": 444,
+          "y": 175,
+          "w": 78,
           "h": 44
         },
         "exception": {
@@ -466,9 +466,9 @@
         "key": "tab: Registers 6",
         "container": "tablist",
         "boardBox": {
-          "x": 514,
-          "y": 176,
-          "w": 120,
+          "x": 523,
+          "y": 175,
+          "w": 122,
           "h": 44
         },
         "exception": {
@@ -483,9 +483,9 @@
         "key": "tab: Actions 9",
         "container": "tablist",
         "boardBox": {
-          "x": 634,
-          "y": 176,
-          "w": 108,
+          "x": 645,
+          "y": 175,
+          "w": 110,
           "h": 44
         },
         "exception": {
@@ -501,8 +501,8 @@
         "container": "main",
         "boardBox": {
           "x": 128,
-          "y": 252,
-          "w": 634,
+          "y": 251,
+          "w": 656,
           "h": 21
         },
         "exception": {
@@ -518,11 +518,14 @@
         "container": "main",
         "boardBox": {
           "x": 1012,
-          "y": 242,
+          "y": 241,
           "w": 340,
-          "h": 235
+          "h": 236
         },
-        "exception": null
+        "exception": {
+          "reason": "The frame draws its own signed-in persona and header; the board's side panel holds the hidden write forms (below). (Entry name is \"\", the tool's key for the unnamed side panel; UI-2-1.)",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -583,9 +586,9 @@
         "name": "NEXT",
         "boardBox": {
           "x": 1014,
-          "y": 244,
+          "y": 243,
           "w": 336,
-          "h": 37
+          "h": 38
         },
         "pageBox": {
           "x": 90,
@@ -817,10 +820,11 @@
         }
       }
     ],
-    "unexcepted": 1
+    "unexcepted": 0
   },
   "warnings": [
-    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: Google Fonts could not be reached (fonts.googleapis.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
   ],
   "images": {
     "board": "board.png",

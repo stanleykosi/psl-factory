@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-24T14:38:55.764Z",
+  "generatedAt": "2026-11-24T14:46:26.848Z",
   "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-30-desktop-verified.dc.html",
   "boardName": "SCR-30-desktop-verified.dc.html",
   "pageUrl": "http://127.0.0.1:4998/work/5104",
@@ -18,13 +18,13 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-111/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "1 board item(s) are missing from the page and are not approved exceptions (coverage 96.2% with exceptions, needs 100%).",
+    "Every board item is on the page or approved as an exception (100%).",
     "Visual match 83.6 is below 90.",
     "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 38.5,
-    "coverageWithExceptions": 96.2,
+    "coverageWithExceptions": 100,
     "visual": 83.6
   },
   "visual": {
@@ -500,7 +500,10 @@
           "w": 340,
           "h": 173
         },
-        "exception": null
+        "exception": {
+          "reason": "The frame draws its own signed-in persona and header; the board's side panel holds the hidden write forms (below). (Entry name is \"\", the tool's key for the unnamed side panel; UI-2-1.)",
+          "approved_by": "builder proposal, pending design engineer"
+        }
       },
       {
         "kind": "Text",
@@ -765,7 +768,7 @@
         }
       }
     ],
-    "unexcepted": 1
+    "unexcepted": 0
   },
   "warnings": [
     "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."

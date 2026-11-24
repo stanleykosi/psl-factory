@@ -744,6 +744,13 @@ F-119 round 2, head `f39d6dda`. The design check ran once on a production build.
 ### LD-Q6 · F-119 · The checklist strip says "(saved <date>)". Keep "saved" or change to "held"?
 The spec and its browser test say "saved". Technical review (TECH-1-5) asked whether "held" reads better for a closure check that is held. **Recommendation:** keep "saved", as the spec says.
 
+### LD-Q7 · F-111 · Issue follow-up (SCR-30, 8 boards): sign the 57 design exceptions and eight visual waivers?
+F-111 round 2, head `8a5c09fe`, ships read-only for the demo under D-202 ("Ship simpler for demo"). The design check ran once on a production build, with a desktop re-run after two entries were corrected. Coverage is 100% after exceptions on all eight boards. Visual scores are under 90 but above D-83's floor of 70: desktop 74.8 default, 77.6 overdue, 84.4 no-owner, 83.6 verified; phone 76.5, 76.9, 75.1, 76.8. The UI reviewer found nothing fixable left. Side-by-sides: `delivery/features/F-111/round-2/fidelity/`. Exceptions: `delivery/features/F-111/fidelity-exceptions.json`.
+- **Layout (recommend keep all):** the frame's breadcrumb, back link, persona, tab bar and "NEXT" card (lane C frame, D-202); the hidden write side panel (owner follow-up, post update, set owner, record reply, raise escalation, issue register link), which is F-111B on F-87. Facts as a vertical list, not the board's four-cell strip, accepted under D-202 until F-95.
+- **Colour (recommend keep):** the severity glyph shows the live tag (D-187). The amber banner where the board has red is accepted under D-202 until F-95.
+- **Copy (recommend keep all):** live status words (D-187 Q1 A); Tola hidden (D-182, D-185); the board's sample dates, ids and sentences; the frame's own next-step line (D-202).
+- **Recommendation:** "Sign all": sign the 57 exceptions and the eight D-83 visual waivers.
+
 ## Answers, batch 1 (23 Nov 2026, D-182)
 
 Every recommended option above is accepted ("Hide, accept all recs"), including LC-Q1 (hide until backend), F-65 (as recommended) and F-76 (read-only list now). Lanes: unpark these features and build them as their specs recommend.
