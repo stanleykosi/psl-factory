@@ -1,0 +1,1428 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T15:17:26.837Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-11-desktop.dc.html",
+  "boardName": "SCR-11-desktop.dc.html",
+  "pageUrl": "http://127.0.0.1:4970/projects/P-0101/registers",
+  "viewport": {
+    "width": 1440,
+    "height": 820
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": null,
+  "pass": false,
+  "passReasons": [
+    "5 board item(s) are missing from the page and are not approved exceptions (coverage 90% with exceptions, needs 100%).",
+    "Visual match 81.1 is below 90.",
+    "9 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 90,
+    "coverageWithExceptions": 90,
+    "visual": 81.1
+  },
+  "visual": {
+    "score": 81.1,
+    "allCellsScore": 92.1,
+    "width": 1440,
+    "height": 820,
+    "boardHeight": 820,
+    "pageHeight": 820,
+    "cell": 12,
+    "contentCells": 3452,
+    "mismatchedCells": 654
+  },
+  "coverage": {
+    "total": 50,
+    "found": 45,
+    "coverage": 90,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 80,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 516,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 581
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 678
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Issues, changes and RFPs",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Issues, changes and RFPs\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 1264,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 123,
+          "w": 1264,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 178,
+          "w": 654,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 182,
+          "w": 637,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 180,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 184,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones 4",
+        "pageName": "Milestones",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 176,
+          "y": 180,
+          "w": 129,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 184,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents 6",
+        "pageName": "Documents",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 305,
+          "y": 180,
+          "w": 133,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 366,
+          "y": 184,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 438,
+          "y": 180,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 473,
+          "y": 184,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers 6",
+        "pageName": "Registers",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 514,
+          "y": 180,
+          "w": 120,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 549,
+          "y": 184,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Actions 9",
+        "pageName": "Actions",
+        "pageRole": "tab",
+        "similarity": 91,
+        "looks": [],
+        "boardBox": {
+          "x": 634,
+          "y": 180,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 643,
+          "y": 184,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Registers",
+        "pageName": "Register",
+        "pageRole": "tablist",
+        "similarity": 96,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 246,
+          "w": 454,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 250,
+          "w": 454,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Issues3",
+        "pageName": "Issues 3",
+        "pageRole": "tab",
+        "similarity": 88,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 248,
+          "w": 100,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 252,
+          "w": 102,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Changes2",
+        "pageName": "Changes 2",
+        "pageRole": "tab",
+        "similarity": 89,
+        "looks": [
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 190,
+          "y": 248,
+          "w": 115,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 192,
+          "y": 252,
+          "w": 115,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Emergencies0",
+        "pageName": "Emergencies 0",
+        "pageRole": "tab",
+        "similarity": 92,
+        "looks": [
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 305,
+          "y": 248,
+          "w": 142,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 307,
+          "y": 252,
+          "w": 142,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "RFPs1",
+        "pageName": "RFPs 1",
+        "pageRole": "tab",
+        "similarity": 83,
+        "looks": [
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 448,
+          "y": 248,
+          "w": 93,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 450,
+          "y": 252,
+          "w": 93,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [
+          "capitals on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 314,
+          "w": 1264,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 318,
+          "w": 1264,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 314,
+          "w": 460,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 318,
+          "w": 464,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "3 ISSUES",
+        "pageName": "3 ISSUES",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1294,
+          "y": 328,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 1294,
+          "y": 331,
+          "w": 58,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "Issues",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 380,
+          "w": 1260,
+          "h": 162
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 384,
+          "w": 1260,
+          "h": 170
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "ISSUE",
+        "pageName": "ISSUE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 380,
+          "w": 126,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 384,
+          "w": 152,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "WHAT",
+        "pageName": "WHAT",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 216,
+          "y": 380,
+          "w": 352,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 242,
+          "y": 384,
+          "w": 397,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "SEVERITY",
+        "pageName": "SEVERITY",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 568,
+          "y": 380,
+          "w": 166,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 639,
+          "y": 384,
+          "w": 160,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "OWNER",
+        "pageName": "OWNER",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 734,
+          "y": 380,
+          "w": 302,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 800,
+          "y": 384,
+          "w": 196,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "STATE",
+        "pageName": "STATE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1036,
+          "y": 380,
+          "w": 243,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1075,
+          "y": 384,
+          "w": 275,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "AGE",
+        "pageName": "AGE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1279,
+          "y": 380,
+          "w": 71,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 996,
+          "y": 384,
+          "w": 80,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0233",
+        "pageName": "ISS-0233",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page"
+        ],
+        "boardBox": {
+          "x": 90,
+          "y": 415,
+          "w": 126,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 422,
+          "w": 152,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Login fails on older Android phones",
+        "pageName": "Login fails on older Android phones",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 216,
+          "y": 415,
+          "w": 352,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 242,
+          "y": 422,
+          "w": 397,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM · Tunde Bello",
+        "pageName": "Tunde Bello",
+        "pageRole": "text",
+        "similarity": 88,
+        "looks": [],
+        "boardBox": {
+          "x": 734,
+          "y": 415,
+          "w": 302,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 800,
+          "y": 422,
+          "w": 196,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Fix in testing",
+        "pageName": "Fix in testing",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1036,
+          "y": 415,
+          "w": 243,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 1075,
+          "y": 422,
+          "w": 275,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2d",
+        "pageName": "2d",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1279,
+          "y": 415,
+          "w": 71,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 996,
+          "y": 422,
+          "w": 80,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0229",
+        "pageName": "ISS-0229",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page"
+        ],
+        "boardBox": {
+          "x": 90,
+          "y": 457,
+          "w": 126,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 466,
+          "w": 152,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Report totals round differently",
+        "pageName": "Report totals round differently",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 216,
+          "y": 457,
+          "w": 352,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 242,
+          "y": 466,
+          "w": 397,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting on Engineering",
+        "pageName": "Waiting on Engineering",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1036,
+          "y": 457,
+          "w": 243,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 1075,
+          "y": 466,
+          "w": 275,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "4d",
+        "pageName": "4d",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1279,
+          "y": 457,
+          "w": 71,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 996,
+          "y": 466,
+          "w": 80,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0221",
+        "pageName": "ISS-0221",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page"
+        ],
+        "boardBox": {
+          "x": 90,
+          "y": 499,
+          "w": 126,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 509,
+          "w": 152,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Slow search on patient list",
+        "pageName": "Slow search on patient list",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 216,
+          "y": 499,
+          "w": 352,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 242,
+          "y": 509,
+          "w": 397,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Closed by QA and PM",
+        "pageName": "Closed by QA and PM",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1036,
+          "y": 499,
+          "w": 243,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 1075,
+          "y": 509,
+          "w": 275,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1279,
+          "y": 499,
+          "w": 71,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 996,
+          "y": 509,
+          "w": 80,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Severity is set by the PM. Closing an issue needs QA and the PM; there is no separate approval.",
+        "pageName": "Severity is set by the PM. Closing an issue needs QA and the PM; there is no separate approval.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 564,
+          "w": 1264,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 659,
+          "w": 1264,
+          "h": 20
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "key": "text: Tunde Bello · PMO",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REGISTERS · LAGOON HEALTH",
+        "key": "text: REGISTERS · LAGOON HEALTH",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "key": "button: Filter",
+        "container": "search",
+        "boardBox": {
+          "x": 558,
+          "y": 314,
+          "w": 88,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Engineering (recorded by PM)",
+        "key": "text: Engineering (recorded by PM)",
+        "container": "table",
+        "boardBox": {
+          "x": 734,
+          "y": 457,
+          "w": 302,
+          "h": 42
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM · Tunde Bello",
+        "key": "text: PM · Tunde Bello",
+        "container": "table",
+        "boardBox": {
+          "x": 734,
+          "y": 499,
+          "w": 302,
+          "h": 42
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Table column \"STATE\"",
+        "kind": "Table column",
+        "name": "STATE",
+        "boardBox": {
+          "x": 1036,
+          "y": 380,
+          "w": 243,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1075,
+          "y": 384,
+          "w": 275,
+          "h": 38
+        },
+        "reasons": [
+          "order: on the board it comes after Table column \"OWNER\"; on the page it comes after Table column \"AGE\""
+        ]
+      },
+      {
+        "label": "Table column \"AGE\"",
+        "kind": "Table column",
+        "name": "AGE",
+        "boardBox": {
+          "x": 1279,
+          "y": 380,
+          "w": 71,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 996,
+          "y": 384,
+          "w": 80,
+          "h": 38
+        },
+        "reasons": [
+          "across the page: right on the board (91% across), right on the page (72% across)"
+        ]
+      },
+      {
+        "label": "Text \"Fix in testing\"",
+        "kind": "Text",
+        "name": "Fix in testing",
+        "boardBox": {
+          "x": 1036,
+          "y": 415,
+          "w": 243,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 1075,
+          "y": 422,
+          "w": 275,
+          "h": 43
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"PM · Tunde Bello\"; on the page it comes after Text \"2d\""
+        ]
+      },
+      {
+        "label": "Text \"2d\"",
+        "kind": "Text",
+        "name": "2d",
+        "boardBox": {
+          "x": 1279,
+          "y": 415,
+          "w": 71,
+          "h": 43
+        },
+        "pageBox": {
+          "x": 996,
+          "y": 422,
+          "w": 80,
+          "h": 43
+        },
+        "reasons": [
+          "across the page: right on the board (91% across), right on the page (72% across)"
+        ]
+      },
+      {
+        "label": "Table \"\"",
+        "kind": "Table",
+        "name": "",
+        "boardBox": {
+          "x": 90,
+          "y": 380,
+          "w": 1260,
+          "h": 162
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 384,
+          "w": 1260,
+          "h": 170
+        },
+        "reasons": [
+          "inside the table frame on the board, inside a section on the page"
+        ]
+      },
+      {
+        "label": "Text \"Waiting on Engineering\"",
+        "kind": "Text",
+        "name": "Waiting on Engineering",
+        "boardBox": {
+          "x": 1036,
+          "y": 457,
+          "w": 243,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 1075,
+          "y": 466,
+          "w": 275,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Report totals round differently\"; on the page it comes after Text \"4d\""
+        ]
+      },
+      {
+        "label": "Text \"4d\"",
+        "kind": "Text",
+        "name": "4d",
+        "boardBox": {
+          "x": 1279,
+          "y": 457,
+          "w": 71,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 996,
+          "y": 466,
+          "w": 80,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: right on the board (91% across), right on the page (72% across)"
+        ]
+      },
+      {
+        "label": "Text \"Closed by QA and PM\"",
+        "kind": "Text",
+        "name": "Closed by QA and PM",
+        "boardBox": {
+          "x": 1036,
+          "y": 499,
+          "w": 243,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 1075,
+          "y": 509,
+          "w": 275,
+          "h": 44
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Slow search on patient list\"; on the page it comes after Text \"—\""
+        ]
+      },
+      {
+        "label": "Text \"—\"",
+        "kind": "Text",
+        "name": "—",
+        "boardBox": {
+          "x": 1279,
+          "y": 499,
+          "w": 71,
+          "h": 42
+        },
+        "pageBox": {
+          "x": 996,
+          "y": 509,
+          "w": 80,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: right on the board (91% across), right on the page (72% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "container": "navigation",
+        "pageBox": {
+          "x": 602,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 970,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Account menu: Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1018,
+          "y": 19,
+          "w": 161,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS / LAGOON HEALTH",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "PROJECTS",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 86,
+          "w": 61,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Delivery",
+        "container": "tablist",
+        "pageBox": {
+          "x": 176,
+          "y": 184,
+          "w": 87,
+          "h": 44
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Registers",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 250,
+          "w": 1264,
+          "h": 429
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "As of 12 Nov 16:40",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 620,
+          "w": 1264,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Demo controls",
+        "container": "page",
+        "pageBox": {
+          "x": 1362,
+          "y": 768,
+          "w": 66,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Demo",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1362,
+          "y": 768,
+          "w": 66,
+          "h": 40
+        }
+      }
+    ],
+    "unexcepted": 5
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

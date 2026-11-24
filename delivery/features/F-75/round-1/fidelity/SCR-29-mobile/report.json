@@ -1,0 +1,828 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T15:23:08.636Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-29-mobile.dc.html",
+  "boardName": "SCR-29-mobile.dc.html",
+  "pageUrl": "http://127.0.0.1:4970/projects/P-0101/actions",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": null,
+  "pass": false,
+  "passReasons": [
+    "7 board item(s) are missing from the page and are not approved exceptions (coverage 74.1% with exceptions, needs 100%).",
+    "Visual match 79.7 is below 90.",
+    "7 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 74.1,
+    "coverageWithExceptions": 74.1,
+    "visual": 79.7
+  },
+  "visual": {
+    "score": 79.7,
+    "allCellsScore": 82.5,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1250,
+    "cell": 12,
+    "contentCells": 2023,
+    "mismatchedCells": 410
+  },
+  "coverage": {
+    "total": 27,
+    "found": 20,
+    "coverage": 74.1,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Lagoon Health\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 106,
+          "w": 374,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 108,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 18,
+          "y": 108,
+          "w": 85,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 110,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones",
+        "pageName": "Milestones",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 103,
+          "y": 108,
+          "w": 104,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 190,
+          "y": 110,
+          "w": 104,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents",
+        "pageName": "Documents",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 207,
+          "y": 108,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 294,
+          "y": 110,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 316,
+          "y": 108,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 402,
+          "y": 110,
+          "w": 75,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search area",
+        "role": "search",
+        "name": "",
+        "pageName": "",
+        "pageRole": "search",
+        "similarity": 90,
+        "looks": [
+          "capitals on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 166,
+          "w": 358,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 168,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Search box",
+        "role": "searchbox",
+        "name": "Search",
+        "pageName": "Search",
+        "pageRole": "searchbox",
+        "similarity": 100,
+        "looks": [
+          "text colour #000000 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 166,
+          "w": 306,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 168,
+          "w": 358,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Send test accounts for UAT",
+        "pageName": "Send test accounts for UAT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 236,
+          "w": 188,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 238,
+          "w": 174,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OPEN",
+        "pageName": "OPEN",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 310,
+          "y": 236,
+          "w": 50,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 312,
+          "y": 346,
+          "w": 48,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Client · Lagoon Health · due 13 Nov",
+        "pageName": "Lagoon Health · due 13 Nov",
+        "pageRole": "text",
+        "similarity": 91,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 263,
+          "w": 330,
+          "h": 16
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 289,
+          "w": 161,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finish the Android login fix",
+        "pageName": "Finish the Android login fix",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 319,
+          "w": 184,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 346,
+          "w": 173,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OPEN",
+        "pageName": "OPEN",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 310,
+          "y": 319,
+          "w": 50,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 312,
+          "y": 455,
+          "w": 48,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Assess the SMS reminders change",
+        "pageName": "Assess the SMS reminders change",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 402,
+          "w": 237,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 455,
+          "w": 221,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OPEN",
+        "pageName": "OPEN",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 310,
+          "y": 402,
+          "w": 50,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 312,
+          "y": 781,
+          "w": 48,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Share the UAT test plan",
+        "pageName": "Share the UAT test plan",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 485,
+          "w": 162,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 563,
+          "w": 152,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · due 04 Nov",
+        "pageName": "Tunde Bello · due 20 Nov",
+        "pageRole": "text",
+        "similarity": 92,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 512,
+          "w": 330,
+          "h": 16
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 809,
+          "w": 146,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Confirm data migration window",
+        "pageName": "Confirm data migration window",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 568,
+          "w": 216,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 672,
+          "w": 204,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Client · Lagoon Health · due 06 Nov",
+        "pageName": "Lagoon Health · due 06 Nov",
+        "pageRole": "text",
+        "similarity": 91,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 595,
+          "w": 330,
+          "h": 16
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 724,
+          "w": 161,
+          "h": 17
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Projects",
+        "key": "link: ← Projects",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 73,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers",
+        "key": "tab: Registers",
+        "container": "tablist",
+        "boardBox": {
+          "x": 392,
+          "y": 108,
+          "w": 94,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Filter",
+        "role": "button",
+        "name": "Filter",
+        "key": "button: Filter",
+        "container": "search",
+        "boardBox": {
+          "x": 330,
+          "y": 166,
+          "w": 44,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Engineering (recorded by PM) · due 15 Nov",
+        "key": "text: Engineering (recorded by PM) · due 15 Nov",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 346,
+          "w": 330,
+          "h": 16
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "No owner · due Unknown",
+        "key": "text: No owner · due Unknown",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 429,
+          "w": 330,
+          "h": 16
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OVERDUE",
+        "key": "text: OVERDUE",
+        "container": "page",
+        "boardBox": {
+          "x": 286,
+          "y": 485,
+          "w": 74,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "OVERDUE",
+        "key": "text: OVERDUE",
+        "container": "page",
+        "boardBox": {
+          "x": 286,
+          "y": 568,
+          "w": 74,
+          "h": 21
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Tab \"Milestones\"",
+        "kind": "Tab",
+        "name": "Milestones",
+        "boardBox": {
+          "x": 103,
+          "y": 108,
+          "w": 104,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 190,
+          "y": 110,
+          "w": 104,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: middle on the board (40% across), middle on the page (62% across)"
+        ]
+      },
+      {
+        "label": "Tab \"Documents\"",
+        "kind": "Tab",
+        "name": "Documents",
+        "boardBox": {
+          "x": 207,
+          "y": 108,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 294,
+          "y": 110,
+          "w": 108,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: right on the board (67% across), right on the page (89% across)"
+        ]
+      },
+      {
+        "label": "Tab \"Money\"",
+        "kind": "Tab",
+        "name": "Money",
+        "boardBox": {
+          "x": 316,
+          "y": 108,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 402,
+          "y": 110,
+          "w": 75,
+          "h": 44
+        },
+        "reasons": [
+          "across the page: right on the board (91% across), right on the page (113% across)"
+        ]
+      },
+      {
+        "label": "Text \"OPEN\"",
+        "kind": "Text",
+        "name": "OPEN",
+        "boardBox": {
+          "x": 310,
+          "y": 236,
+          "w": 50,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 312,
+          "y": 346,
+          "w": 48,
+          "h": 23
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Send test accounts for UAT\"; on the page it comes after Text \"Finish the Android login fix\""
+        ]
+      },
+      {
+        "label": "Text \"OPEN\"",
+        "kind": "Text",
+        "name": "OPEN",
+        "boardBox": {
+          "x": 310,
+          "y": 319,
+          "w": 50,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 312,
+          "y": 455,
+          "w": 48,
+          "h": 23
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Finish the Android login fix\"; on the page it comes after Text \"Assess the SMS reminders change\""
+        ]
+      },
+      {
+        "label": "Text \"OPEN\"",
+        "kind": "Text",
+        "name": "OPEN",
+        "boardBox": {
+          "x": 310,
+          "y": 402,
+          "w": 50,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 312,
+          "y": 781,
+          "w": 48,
+          "h": 23
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Assess the SMS reminders change\"; on the page it comes after Text \"Client · Lagoon Health · due 06 Nov\""
+        ]
+      },
+      {
+        "label": "Text \"Tunde Bello · due 04 Nov\"",
+        "kind": "Text",
+        "name": "Tunde Bello · due 04 Nov",
+        "boardBox": {
+          "x": 30,
+          "y": 512,
+          "w": 330,
+          "h": 16
+        },
+        "pageBox": {
+          "x": 30,
+          "y": 809,
+          "w": 146,
+          "h": 17
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Share the UAT test plan\"; on the page it comes after Text \"OPEN\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Projects",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Delivery",
+        "container": "tablist",
+        "pageBox": {
+          "x": 104,
+          "y": 110,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Actions",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 168,
+          "w": 358,
+          "h": 1066
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Book go-live call",
+        "container": "main",
+        "pageBox": {
+          "x": 30,
+          "y": 781,
+          "w": 107,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "As of 12 Nov 16:40",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1214,
+          "w": 358,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Demo controls",
+        "container": "page",
+        "pageBox": {
+          "x": 312,
+          "y": 712,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Demo",
+        "container": "complementary",
+        "pageBox": {
+          "x": 312,
+          "y": 712,
+          "w": 66,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 7
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: Google Fonts could not be reached (fonts.gstatic.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

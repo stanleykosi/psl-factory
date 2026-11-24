@@ -320,6 +320,13 @@ Parts that 1.24.0 now supplies are switched on as the boards draw them (D-185), 
   3. (Recommended) Waive visual for the six SCR-12/SCR-38 runs (UI-2-3), as D-179 did for sign-in. The score stays under 90 because of accepted hides and spec-approved additions (the INVOICE and PAID columns, Recorded completions). The reviewer found no styling difference of the build's own.
   Alternative: name a board to rebuild closer to the drawing.
 
+- **F-75 · B35. Registers and Actions fidelity gaps (SCR-11, SCR-29).** The round-1 UI review is in `delivery/features/F-75/round-1/review-ui.md`, with fidelity output in `round-1/fidelity/`. The builder drafts `fidelity-exceptions.json` from it. The spec's accepted hides (D-182) and the frame items earlier screens already had approved are cited as such. These need you:
+  1. (Recommended) The board's "Filter" button next to search is hidden on both tabs. Live gives no filter options (B-14), so a Filter button would have nothing to offer. Search stays. (UI-1-3)
+  2. (Recommended) Accept board sample values live data cannot carry as sample content, as you did for F-71 (B34 item 1). These are the sample owners and states such as "Waiting on Engineering · Engineering (recorded by PM)" and "Closed by QA and PM · PM · Tunde Bello", and sample severities. (UI-1-4)
+  3. (Recommended) Keep the phone Registers additions the spec adds and the phone board doesn't draw: the register switch row, and the age on each card. (UI-1-6)
+  4. (Recommended) Waive visual for the SCR-11/SCR-29 runs if the score stays under 90 after the exceptions, as for F-71.
+  Alternative to any item: name what to build as drawn.
+
 ## Lane C
 
 ### LC-Q1 · F-85, F-87 · Work item parts the live API does not give
