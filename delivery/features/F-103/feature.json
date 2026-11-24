@@ -70,7 +70,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "5086ecf920a9bcfcff763520b0a0e5596d8a4684",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T19:45:34Z",
+      "seconds": 274.4,
+      "evidence_ref": "delivery/features/F-103/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -148,7 +161,7 @@
     "base_branch": "main",
     "base_sha": "5b60a572f3ae6b4e57d6e732da378b32db433560",
     "task_branch": "fe-connect-1-cash-forecast-reads",
-    "head_sha": "9a110b1de3376866467c4c06531efca790478589",
+    "head_sha": "5086ecf920a9bcfcff763520b0a0e5596d8a4684",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d",
     "pr_url": null,
     "pr_number": null,
@@ -164,14 +177,12 @@
       "frontend/mock/forecast-live.mjs",
       "frontend/mock/server.mjs",
       "frontend/src/api/types.ts",
-      "frontend/src/features/forecast/ForecastExtra.tsx",
       "frontend/src/features/forecast/forecastAdapter.ts",
       "frontend/src/features/forecast/labels.ts",
-      "frontend/src/features/forecast/useForecastActuals.ts",
       "frontend/src/features/work-item/live/LiveWorkItemView.tsx",
-      "frontend/src/features/workspace/adapter.ts",
       "frontend/tests/forecast-live.test.tsx",
-      "frontend/tests/mock-forecast-live.test.ts"
+      "frontend/tests/mock-forecast-live.test.ts",
+      "frontend/tests/next-config.test.ts"
     ]
   },
   "parallel_execution": {
@@ -240,9 +251,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "5086ecf920a9bcfcff763520b0a0e5596d8a4684"
   },
   "blocked": null
 }
