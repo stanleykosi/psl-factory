@@ -523,3 +523,6 @@ By morning the lanes had 12 worktrees (lane A five, lane D four), about 11 GB. F
 - Each lane keeps at most two worktrees: one building, one in gate, review or merge. No new worktree while a lane has two. A worktree is removed as soon as its feature merges, or parks with its branch pushed.
 - `heavy-lock.sh` lets each lane hold at most one ticket, queued or running. A lane's next heavy job waits until its previous one finishes, so no lane can crowd the queue. Tickets queued before this change run as they are.
 - Run `npm cache clean --force` after every gate. Stop under 3 GB free.
+
+## D-198 (24 Nov 2026): F-88's board questions answered
+LC-Q33 to LC-Q36, "Accept all four": the field is labelled "Client" and lists existing organisations only, with no new-client hint. The board's note and deadline hints are left out. Assign PM's undrawn states are plain callouts in the drawer's style, to be drawn later. The submission method keeps the board's segment, which can't be cleared once picked.
