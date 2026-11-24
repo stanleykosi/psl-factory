@@ -322,6 +322,18 @@ describe('proofs', () => {
   });
 });
 
+const cssText = readFileSync(join(__dirname, '../src/features/projects/milestone-complete.css'), 'utf8');
+
+describe('round 3: the side panel head is white on the blue band (UI-2-1)', () => {
+  it('the next panel is an agent panel and a rule more specific than the shared agent-head colour sets white', async () => {
+    await open();
+    const panel = document.querySelector('.mscomplete__next')!;
+    expect(panel.classList.contains('cmp-panelbox') && panel.classList.contains('psl-panel--agent')).toBe(true);
+    expect(panel.querySelector('.psl-panel__head')).not.toBeNull();
+    expect(cssText).toMatch(/\.cmp-panelbox\.psl-panel--agent\.mscomplete__next > \.psl-panel__head \{[^}]*color: var\(--on-strong\)/);
+  });
+});
+
 describe('round 2: layout, holds, the file, and the remaining criteria', () => {
   it.each([
     ['name_in_use', { can_complete: false, hold: 'name_in_use' }],
