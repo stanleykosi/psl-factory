@@ -4,219 +4,76 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { api, call } from '@/api/client';
-import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, EmptyState, ListToolbar, Loading, ShowMore, Skeleton, Tabs, useIsPhone, usePagedRows, useToast, DEFAULT_PAGE_SIZE, type FilterChip } from '@/components';
-import { AssignPmDrawer, type Assigned } from '@/features/rfp/AssignPmDrawer';
+import { call, liveApi } from '@/api/client';
+import { Button, EmptyState, ListToolbar, ShowMore, Tabs, useIsPhone, type FilterChip, type ShowMoreProps } from '@/components';
+import { coverageNotes, useWorkCounts, useWorkList, WorkListLoading, type LineKey } from '@/features/work-list';
 import { SignedOutState } from '@/shell/FrameStates';
 
 import { CaughtUp } from './CaughtUp';
-import { MyWorkFilter, type Filters, type Preview } from './FilterPanel';
-import {
-  appendPage,
-  buildWorkQuery,
-  filterCount as countFilters,
-  isNarrowed,
-  isV7Row,
-  lineOptions,
-  mergeRefresh,
-  parseView,
-  QUEUES,
-  recordsText,
-  resultCount,
-  queueTotal,
-  stateTag,
-  formatTime,
-  viewSearch,
-  WAITING_ON,
-  type Counts,
-  type Limit,
-  type View,
-  type WorkItem,
-  type Suggestion,
-  type WorkList,
-  type WorkListWithSuggestions,
-} from './model';
+import { MyWorkFilter, useProjects, type Filters, type Preview } from './FilterPanel';
+import { filterCount as countFilters, formatTime, isNarrowed, parseView, QUEUES, recordsText, resultCount, showUnassigned, stateWords, tabCount, viewSearch, type View } from './model';
 import { StartedCards, WorkCards, WorkTable } from './WorkRows';
 
 export const POLL_MS = 15_000;
 const PANEL_ID = 'my-work-panel';
 
-type Loaded = { items: WorkItem[]; firstCount: number; pages: number; nextCursor?: string };
-type ListState = { status: 'loading' } | ({ status: 'ready' } & Loaded) | { status: 'error'; error: ApiError };
-
-const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
-
-/** SCR-01 My work: a person's queues from E-WORK-LIST, with search, filters, paging and live refresh. */
+/** SCR-01 My work: a person's queues from the live work list, with counts, search, filters, paging and live refresh. */
 export function MyWork() {
   const params = useSearchParams();
   const router = useRouter();
-  const urlView = useMemo(() => parseView(new URLSearchParams(params?.toString() ?? '')), [params]);
-  // F-36: opening or closing the assign panel changes the URL but not the list, which stays drawn behind it
-  const listSearch = viewSearch({ ...urlView, assign: undefined });
-  const view = useMemo(() => parseView(new URLSearchParams(listSearch)), [listSearch]);
-  const assignId = urlView.assign;
+  const view = useMemo(() => parseView(new URLSearchParams(params?.toString() ?? '')), [params]);
   const phone = useIsPhone();
+  const unassigned = view.queue === 'unassigned';
 
-  const [list, setList] = useState<ListState>({ status: 'loading' });
-  const [counts, setCounts] = useState<Counts | null | undefined>(undefined);
-  const [asOf, setAsOf] = useState<string>();
-  const [lineFilters, setLineFilters] = useState<WorkList['filters']>();
-  const [suggestions, setSuggestions] = useState<Suggestion[]>();
-  const [refreshFailed, setRefreshFailed] = useState(false);
-  const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
-  const [signedOut, setSignedOut] = useState(false);
+  // The list reads page 1 again whenever one of these changes; the Unassigned tab's body is not this list.
+  const { state: list, loadMore, retry, refresh: refreshList } = useWorkList({ queue: view.queue, line: view.line, q: view.q, project: view.project, state: view.state, limit: view.limit, enabled: !unassigned });
+  const { state: countsState, refresh: refreshCounts } = useWorkCounts();
+  const counts = countsState.status === 'ready' ? countsState.counts : undefined;
+  const projects = useProjects();
+  // The view whose last refresh failed; a new view starts clean.
+  const [failedView, setFailedView] = useState<string>();
   const [filterOpen, setFilterOpen] = useState(false);
-  // F-36: the assign panel's write went through but the list could not be read back; the confirmation itself is a toast (D-151)
-  const [notice, setNotice] = useState<string>();
-  const toast = useToast();
 
-  const seq = useRef(0);
-  const inFlight = useRef(0);
   const lastSuccess = useRef(0);
-  const pollable = useRef(false);
+  const [lastLoaded, setLastLoaded] = useState<string>();
   const focusRow = useRef<number | null>(null);
   const viewRef = useRef(view);
   const panel = useRef<HTMLDivElement>(null);
+  const pollable = useRef(false);
 
-  const tabs = useRef<HTMLDivElement>(null);
   const navigate = useCallback(
-    (next: Partial<View>) => {
-      setNotice(undefined);
-      router.replace(`/my-work${viewSearch({ ...viewRef.current, ...next })}`, { scroll: false });
-    },
+    (next: Partial<View>) => router.replace(`/my-work${viewSearch({ ...viewRef.current, ...next })}`, { scroll: false }),
     [router],
   );
 
-  // The first page is always 10 rows; the paging footer grows the list from there with the cursor.
-  const fetchPage = useCallback(async (v: View, cursor?: string, limit: Limit = DEFAULT_PAGE_SIZE) => {
-    inFlight.current += 1;
-    try {
-      const data = await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery({ ...v, limit }, cursor) } }));
-      // Rows that are not v7 rows fail the whole response, so they never reach the row components.
-      if (!data.items.every(isV7Row)) throw networkError();
-      return data;
-    } finally {
-      inFlight.current -= 1;
-    }
-  }, []);
-
-  const took = useCallback((data: WorkList) => {
-    setCounts(data.counts ?? null);
-    setAsOf(data.as_of);
-    setLineFilters(data.filters);
-    setSuggestions((data as WorkListWithSuggestions).suggestions);
-    setRefreshFailed(false);
-    lastSuccess.current = Date.now();
-  }, []);
-
-  /** Page 1 of a view. A response for an older view is ignored. */
-  const load = useCallback(
-    async (v: View) => {
-      const mine = ++seq.current;
-      setList({ status: 'loading' });
-      setMore('idle');
-      try {
-        const data = await fetchPage(v);
-        if (mine !== seq.current) return;
-        took(data);
-        setList({ status: 'ready', items: data.items, firstCount: data.items.length, pages: 1, nextCursor: data.next_cursor });
-      } catch (error) {
-        if (mine !== seq.current) return;
-        const e = asApiError(error);
-        if (e.kind === 'unauthenticated') setSignedOut(true);
-        else setList({ status: 'error', error: e });
-      }
-    },
-    [fetchPage, took],
-  );
-
-  /** Re-reads page 1 in place: rows loaded with Show more stay, nothing else on screen moves. `force` (after a write) does not skip a read already running; the answer is whether the list was read. */
-  const refresh = useCallback(async (force = false) => {
-    if (inFlight.current > 0 && !force) return true;
-    const mine = seq.current;
-    try {
-      const data = await fetchPage(viewRef.current);
-      if (mine !== seq.current) return true;
-      took(data);
-      setList((prev) =>
-        prev.status !== 'ready'
-          ? prev
-          : {
-              ...prev,
-              items: mergeRefresh(prev.items, prev.firstCount, data.items),
-              firstCount: data.items.length,
-              nextCursor: prev.pages === 1 ? data.next_cursor : prev.nextCursor,
-            },
-      );
-      return true;
-    } catch (error) {
-      if (mine !== seq.current) return true;
-      if (asApiError(error).kind === 'unauthenticated') setSignedOut(true);
-      else setRefreshFailed(true);
-      return false;
-    }
-  }, [fetchPage, took]);
-
-  const showMore = async (limit: Limit) => {
-    if (list.status !== 'ready' || !list.nextCursor) return;
-    const mine = seq.current;
-    setMore('loading');
-    try {
-      const data = await fetchPage(view, list.nextCursor, limit);
-      if (mine !== seq.current) return;
-      took(data);
-      setList((prev) =>
-        prev.status !== 'ready' ? prev : { ...prev, items: appendPage(prev.items, data.items), pages: prev.pages + 1, nextCursor: data.next_cursor },
-      );
-      setMore('idle');
-    } catch (error) {
-      if (mine !== seq.current) return;
-      if (asApiError(error).kind === 'unauthenticated') setSignedOut(true);
-      else setMore('error');
-    }
-  };
-
-  // A new queue, search or filter reloads from page 1; a new rows-per-page choice only grows or trims the shown rows.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const reloadView = useMemo(() => view, [view.queue, view.q, view.line, view.project, view.state, view.waiting]);
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void load(reloadView);
-  }, [reloadView, load]);
+  const ready = list.status === 'ready' && !unassigned ? list : undefined;
   useEffect(() => {
     viewRef.current = view;
   }, [view]);
-  const listReady = list.status === 'ready' ? list : undefined;
-  const { rows, paging: basePaging } = usePagedRows({
-    items: listReady?.items ?? [],
-    next: Boolean(listReady?.nextCursor),
-    busy: more === 'loading',
-    failed: more === 'error',
-    loadMore: (limit) => void showMore(limit),
-    resetKey: reloadView,
-    size: view.limit,
-    onSize: (limit) => navigate({ limit }),
-    total: queueTotal(view, counts),
-  });
-  // Show more: the keyboard moves to the first row it added (not when the rows grow from a rows-per-page choice).
-  const paging = {
-    ...basePaging,
-    onMore: () => {
-      if (more !== 'error') focusRow.current = rows.length;
-      basePaging.onMore();
-    },
-  };
-
   useEffect(() => {
-    pollable.current = list.status === 'ready' && !signedOut;
-    if (focusRow.current !== null && list.status === 'ready' && rows.length > focusRow.current) {
+    if (ready) {
+      lastSuccess.current = Date.now();
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setLastLoaded(ready.asOf);
+      /* eslint-enable react-hooks/set-state-in-effect */
+    }
+  }, [ready?.asOf]); // eslint-disable-line react-hooks/exhaustive-deps
+  const rowCount = ready?.items.length ?? 0;
+  useEffect(() => {
+    pollable.current = !unassigned && list.status === 'ready';
+    // Show more: the keyboard moves to the first row it added.
+    if (focusRow.current !== null && rowCount > focusRow.current) {
       panel.current?.querySelectorAll<HTMLElement>('[data-work-link]')[focusRow.current]?.focus();
       focusRow.current = null;
     }
-  }, [list, signedOut, rows.length]);
+  }, [list.status, rowCount, unassigned]);
 
-  // D-UPDATES: every 15 s while the tab is visible; on return, at once if the data is older than 15 s.
+  // D-UPDATES: every 15 s while the tab is visible; on return, at once if the data is older than 15 s. A failed refresh keeps what is shown.
+  const refresh = useCallback(async () => {
+    const [listed, counted] = await Promise.all([refreshList(), refreshCounts()]);
+    setFailedView(listed && counted ? undefined : viewSearch(viewRef.current));
+    if (listed && counted) lastSuccess.current = Date.now();
+  }, [refreshList, refreshCounts]);
   const refreshRef = useRef(refresh);
   useEffect(() => {
     refreshRef.current = refresh;
@@ -273,74 +130,66 @@ export function MyWork() {
   }, [filterOpen]);
   const applyFilters = (filters: Filters) => {
     closeFilter();
-    navigate({ line: filters.line, project: filters.project, state: filters.state, waiting: filters.waiting });
+    navigate({ line: filters.line, project: filters.project, state: filters.state });
   };
-  // "Show N items" in the filter panel: the same list request with the draft filters, one page of 50.
+  // "Show N items" in the filter panel: a one-page preview of the same list with the draft filters; the count is used only when the server marks it complete.
   const preview = useCallback(async (filters: Filters): Promise<Preview> => {
-    const data = await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery({ ...viewRef.current, ...filters, limit: 50 }) } }));
-    return { count: data.items.length, more: Boolean(data.next_cursor) };
+    const { queue, q } = viewRef.current;
+    const data = await call(liveApi.GET('/api/v1/work', { params: { query: { queue, page: 1, limit: 8, ...(q && { q }), ...filters } } }));
+    return data.total_coverage === 'complete' && data.total !== null ? { count: data.total } : undefined;
   }, []);
   const removeFilter = (filters: Filters) => navigate(filters);
 
-  // F-36: closing the panel keeps the list's own view; after a write the list is read again, the panel closes and the person is told
-  const closeAssign = (wrote = false) => {
-    router.replace(`/my-work${viewSearch(viewRef.current)}`, { scroll: false });
-    if (wrote) void refresh(true);
-  };
-  const assigned = async ({ reference, assignedTo, reread }: Assigned) => {
-    const listed = await refresh(true);
-    if (reread && listed) {
-      setNotice(undefined);
-      toast.show(`${reference} is now with ${assignedTo}.`);
-    } else setNotice('The assignment was sent, but we couldn’t refresh to confirm it. Reload My work to check.');
-    router.replace(`/my-work${viewSearch(viewRef.current)}`, { scroll: false });
-    requestAnimationFrame(() => tabs.current?.querySelector<HTMLElement>('[role="tab"][aria-selected="true"]')?.focus());
-  };
+  if (list.status === 'error' && !unassigned && list.error.kind === 'unauthenticated') return <SignedOutState pathname="/my-work" />;
+  if (countsState.status === 'error' && countsState.error.kind === 'unauthenticated') return <SignedOutState pathname="/my-work" />;
 
-  if (signedOut) return <SignedOutState pathname="/my-work" />;
-
-  const ready = list.status === 'ready' ? list : null;
-  const shownTabs = QUEUES.filter((x) => x.key !== 'unassigned' || counts?.unassigned !== undefined);
+  const shownTabs = QUEUES.filter((x) => x.key !== 'unassigned' || showUnassigned(counts, view.queue));
   const current = QUEUES.find((x) => x.key === view.queue)!;
-  const selectedShown = shownTabs.some((x) => x.key === view.queue);
   const filterCount = countFilters(view);
   const narrowed = isNarrowed(view);
-  const lines = lineOptions(lineFilters, ready?.items ?? [], view.line);
-  const lineTitle = lines.find((l) => l.key === view.line)?.title ?? view.line;
+  const lines = ready?.lineOptions ?? [];
+  const startedTab = tabCount(counts, 'mine');
   // SCR-01-*-empty: an empty Needs me shows the caught-up view without the search bar.
-  const caughtUp = ready !== null && ready.items.length === 0 && !narrowed && view.queue === 'needs_me';
+  const caughtUp = ready !== undefined && ready.items.length === 0 && ready.more === 'done' && !narrowed && view.queue === 'needs_me';
   const records = recordsText(counts);
+  const asOf = ready?.asOf ?? counts?.as_of;
+  const refreshFailed = failedView === viewSearch(view);
 
-  const noFilters = { line: undefined, project: undefined, state: undefined, waiting: undefined };
+  const noFilters = { line: undefined, project: undefined, state: undefined };
   type ChipDef = Omit<FilterChip, 'onRemove'> & { patch: Filters };
   const chipDefs: (ChipDef | undefined)[] = [
-    view.line ? { key: 'line', name: 'Line', value: lineTitle ?? view.line, patch: { line: undefined } } : undefined,
-    view.project ? { key: 'project', name: 'Project', value: view.project, patch: { project: undefined } } : undefined,
-    view.state ? { key: 'state', name: 'State', value: stateTag(view.state).words, patch: { state: undefined } } : undefined,
-    view.waiting ? { key: 'waiting', name: 'Waiting on', value: WAITING_ON[view.waiting], patch: { waiting: undefined } } : undefined,
+    view.line ? { key: 'line', name: 'Line', value: lines.find((l) => l.key === view.line)?.title ?? view.line, patch: { line: undefined } } : undefined,
+    view.project ? { key: 'project', name: 'Project', value: projects.find((p) => p.case_id === view.project)?.title ?? 'Selected project', patch: { project: undefined } } : undefined,
+    view.state ? { key: 'state', name: 'State', value: stateWords(view.state), patch: { state: undefined } } : undefined,
   ];
   const chipList = chipDefs.filter((chip): chip is ChipDef => chip !== undefined);
-  const filterPanel = (
-    <MyWorkFilter
-      lines={lines}
-      applied={{ line: view.line, project: view.project, state: view.state, waiting: view.waiting }}
-      preview={preview}
-      onApply={applyFilters}
-      onClose={closeFilter}
-    />
-  );
+  const filterPanel = <MyWorkFilter lines={lines} projects={projects} applied={{ line: view.line as LineKey | undefined, project: view.project, state: view.state }} preview={preview} onApply={applyFilters} onClose={closeFilter} />;
 
-  // F-36: an Unassigned row opens the assign panel over the list; an item that carries no `assign` goes on to its own page from there
-  const rowHref = (item: WorkItem) => (view.queue === 'unassigned' ? `/my-work${viewSearch({ ...view, assign: item.id })}` : `/work/${item.id}`);
+  const paging: ShowMoreProps | undefined = ready && {
+    shown: ready.items.length,
+    total: ready.totalComplete && ready.total !== null ? ready.total : undefined,
+    hasMore: ready.more !== 'done',
+    busy: ready.more === 'loading',
+    failed: ready.more === 'failed',
+    onMore: () => {
+      if (ready.more !== 'failed') focusRow.current = ready.items.length;
+      void loadMore();
+    },
+    size: view.limit,
+    onSize: (limit) => navigate({ limit: limit as View['limit'] }),
+    moreLabel: ready.more === 'keep-looking' ? 'Keep looking' : undefined,
+  };
 
   let body;
-  if (list.status === 'loading') {
+  if (unassigned) {
+    // F-88 puts received bids here; until it lands the tab says so rather than asking the work list.
     body = (
-      <div className="shell-loading">
-        <Skeleton widths={[90, 70, 80]} />
-        <Loading>Loading your queue…</Loading>
-      </div>
+      <EmptyState title="Unassigned work">
+        Work that still needs an owner opens here once this list is connected to received bids.
+      </EmptyState>
     );
+  } else if (list.status === 'loading') {
+    body = <WorkListLoading>Loading your queue…</WorkListLoading>;
   } else if (list.status === 'error' && list.error.kind === 'forbidden') {
     body = (
       <EmptyState title="This queue isn&rsquo;t open to your role.">
@@ -359,16 +208,16 @@ export function MyWork() {
         <span className="shell-eyebrow">ERROR · COULDN&rsquo;T LOAD</span>
         <span>We couldn&rsquo;t load your queue. Your work is safe; nothing was changed.</span>
         <span className="shell-reference">
-          {asOf && `Last loaded ${formatTime(asOf)}. `}Reference {list.error.code} for support.
+          {lastLoaded && `Last loaded ${formatTime(lastLoaded)}. `}Reference {list.error.code} for support.
         </span>
         <div className="shell-errorcard__action">
-          <Button kind="secondary" size="lg" block onClick={() => void load(view)}>
+          <Button kind="secondary" size="lg" block onClick={() => void retry()}>
             Try again
           </Button>
         </div>
       </div>
     );
-  } else if (list.items.length === 0 && narrowed) {
+  } else if (list.items.length === 0 && list.more === 'done' && narrowed) {
     body = (
       <EmptyState
         title="No work matches"
@@ -382,20 +231,29 @@ export function MyWork() {
       </EmptyState>
     );
   } else if (caughtUp) {
-    body = <CaughtUp counts={counts} phone={phone} suggestions={suggestions} onSeeStarted={() => navigate({ queue: 'waiting_on_others' })} />;
-  } else if (list.items.length === 0) {
+    body = <CaughtUp started={startedTab && !startedTab.atLeast ? startedTab.count : undefined} onSeeStarted={() => navigate({ queue: 'mine' })} />;
+  } else if (list.items.length === 0 && list.more === 'done') {
     body = <EmptyState title={current.empty}>New work will appear here.</EmptyState>;
+  } else if (list.items.length === 0) {
+    // Pages came back empty but the server says there are more: no empty state until it says there is nothing.
+    body = <ShowMore solo {...paging!} />;
   } else {
+    const context = { lines: list.lines, asOf: list.asOf };
     body = (
       <>
         {!phone ? (
-          <WorkTable items={rows} hrefFor={rowHref} paging={paging} />
+          <WorkTable rows={list.items} context={context} paging={paging!} />
         ) : (
           <>
-            {view.queue === 'waiting_on_others' ? <StartedCards items={rows} /> : <WorkCards items={rows} hrefFor={rowHref} />}
-            <ShowMore solo {...paging} />
+            {view.queue === 'waiting' ? <StartedCards rows={list.items} /> : <WorkCards rows={list.items} context={context} />}
+            <ShowMore solo {...paging!} />
           </>
         )}
+        {coverageNotes(list.coverage, list.asOf).map((note) => (
+          <p key={note} className="wl-note">
+            {note}
+          </p>
+        ))}
       </>
     );
   }
@@ -413,64 +271,51 @@ export function MyWork() {
             <p className="my-work__updated">{records ? `${records} · updated ${formatTime(asOf)}` : `Updated ${formatTime(asOf)}`}</p>
           ))}
       </div>
-      {/* D-182: until F-63 places it, Verified outputs is reached from under the My work heading. */}
-      <p className="my-work__verified">
-        <Link href="/verified">Verified outputs</Link>
-      </p>
 
-      {notice && (
-        <Callout kind="warning" className="my-work__notice">
-          {notice}
-        </Callout>
-      )}
-
-      <div className="my-work__tabs" ref={tabs}>
+      <div className="my-work__tabs">
         <Tabs
           label="My work"
           panelId={PANEL_ID}
           strip={phone}
-          selected={selectedShown ? view.queue : shownTabs[0].key}
+          selected={view.queue}
           onSelect={(queue) => navigate({ queue })}
-          tabs={shownTabs.map((tab) => ({ key: tab.key, label: tab.label, count: counts?.[tab.key] }))}
+          tabs={shownTabs.map((tab) => {
+            const count = tabCount(counts, tab.key);
+            return { key: tab.key, label: tab.label, count: count?.count, atLeast: count?.atLeast };
+          })}
         />
-        {counts === null && <span className="my-work__nocount">Count unavailable</span>}
+        {countsState.status === 'error' && <span className="my-work__nocount">Count unavailable</span>}
       </div>
 
-      <form
-        ref={toolbar}
-        role="search"
-        className="my-work__toolbar"
-        hidden={caughtUp}
-        onSubmit={(event) => {
-          event.preventDefault();
-          applySearch(text);
-        }}
-      >
-        <ListToolbar
-          search={{ label: 'Search', placeholder: phone ? 'Search work' : 'Search work, client or reference', value: text, onChange: setText, onSearch: applySearch }}
-          filterCount={filterCount}
-          filterOpen={filterOpen}
-          onFilterToggle={() => (filterOpen ? closeFilter() : setFilterOpen(true))}
-          filterPanel={filterPanel}
-          resultText={ready ? resultCount(view, counts, ready.items.length, Boolean(ready.nextCursor)) : ''}
-          // removeFilter only runs from the chip's button; the navigate it calls reads a ref then, not during render
-          // eslint-disable-next-line react-hooks/refs
-          chips={chipList.map((chip): FilterChip => ({ key: chip.key, name: chip.name, value: chip.value, onRemove: () => removeFilter(chip.patch) }))}
-          onClearAll={() => removeFilter(noFilters)}
-        />
-      </form>
+      {!unassigned && (
+        <form
+          ref={toolbar}
+          role="search"
+          className="my-work__toolbar"
+          hidden={caughtUp}
+          onSubmit={(event) => {
+            event.preventDefault();
+            applySearch(text);
+          }}
+        >
+          <ListToolbar
+            search={{ label: 'Search', placeholder: phone ? 'Search work' : 'Search work, client or reference', value: text, onChange: setText, onSearch: applySearch, maxLength: 120 }}
+            filterCount={filterCount}
+            filterOpen={filterOpen}
+            onFilterToggle={() => (filterOpen ? closeFilter() : setFilterOpen(true))}
+            filterPanel={filterPanel}
+            resultText={ready ? resultCount(ready.items.length, ready.more !== 'done', ready.total, ready.totalComplete) : ''}
+            // removeFilter only runs from the chip's button; the navigate it calls reads a ref then, not during render
+            // eslint-disable-next-line react-hooks/refs
+            chips={chipList.map((chip): FilterChip => ({ key: chip.key, name: chip.name, value: chip.value, onRemove: () => removeFilter(chip.patch) }))}
+            onClearAll={() => removeFilter(noFilters)}
+          />
+        </form>
+      )}
 
-      <div
-        ref={panel}
-        id={PANEL_ID}
-        role="tabpanel"
-        className="my-work__panel"
-        aria-label={current.label}
-      >
+      <div ref={panel} id={PANEL_ID} role="tabpanel" className="my-work__panel" aria-label={current.label}>
         {body}
       </div>
-
-      {assignId && <AssignPmDrawer key={assignId} workId={assignId} onClose={closeAssign} onAssigned={assigned} />}
     </>
   );
 }

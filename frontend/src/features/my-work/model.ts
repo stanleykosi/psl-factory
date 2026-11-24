@@ -1,113 +1,66 @@
-// My work (SCR-01): view state, the E-WORK-LIST query and display mappings. Pure functions only.
-import type { operations } from '@/api/schema';
-import { formatClock, STATE_TAGS } from '@/components';
+// My work (SCR-01): view state, URL rules and display mappings over the live work list. Pure functions only.
+import { formatClock } from '@/components';
+import { stateTag, type LineKey, type WorkCounts, type WorkLimit, type WorkListRow, type WorkQueue, type WorkState } from '@/features/work-list';
 
-type Operation = operations['E-WORK-LIST'];
-export type WorkQuery = Operation['parameters']['query'];
-export type WorkList = Operation['responses'][200]['content']['application/json'];
-export type WorkItem = WorkList['items'][number];
-export type Counts = NonNullable<WorkList['counts']>;
-export type Queue = WorkQuery['queue'];
-export type WorkState = WorkItem['state'];
-export type Limit = NonNullable<WorkQuery['limit']>;
-export type WaitingOn = NonNullable<WorkQuery['waiting_on']>;
-export type LineOption = { key: string; title: string };
-export type Agent = NonNullable<WorkItem['agent']>;
-/**
- * PROPOSAL (F-02 round 3, not in architecture v4/v6): agent suggestions for an idle person ("While you're free",
- * SCR-01-*-empty). Typed here until the contract has them; the page hides the panel when the field is absent.
- */
-export type Suggestion = { id: string; agent: Agent; title: string; detail: string; action: string; href: string };
-export type WorkListWithSuggestions = WorkList & { suggestions?: Suggestion[] };
+export type Station = NonNullable<WorkListRow['station']>;
+export type Kind = NonNullable<WorkListRow['action_kind']>;
+export type Limit = Extract<WorkLimit, 10 | 20 | 50>;
+export type Family = ReturnType<typeof stateTag>['tone'];
 
-export const QUEUES: { key: Queue; label: string; empty: string }[] = [
+/** The tabs, in the order the screen draws them (D-202). `Unassigned` is drawn only when something is unassigned. */
+export const QUEUES: { key: WorkQueue; label: string; empty: string }[] = [
   { key: 'needs_me', label: 'Needs me', empty: 'Nothing needs you right now' },
-  { key: 'waiting_on_others', label: 'Waiting on others', empty: 'Nothing is waiting on others' },
-  { key: 'done', label: 'Done', empty: 'Nothing done yet' },
+  { key: 'waiting', label: 'Waiting on others', empty: 'Nothing is waiting on others' },
+  { key: 'mine', label: 'Started by me', empty: 'You haven’t started anything that is still open' },
+  { key: 'active', label: 'Active', empty: 'Nothing is active right now' },
+  { key: 'decisions', label: 'Decisions', empty: 'No decisions are waiting' },
+  { key: 'exceptions', label: 'Exceptions', empty: 'No exceptions right now' },
   { key: 'unassigned', label: 'Unassigned', empty: 'Nothing is unassigned' },
+  { key: 'verified', label: 'Verified', empty: 'Nothing has been verified yet' },
 ];
 export const LIMITS: Limit[] = [10, 20, 50];
 const DEFAULT_LIMIT: Limit = 10;
+export const MAX_Q = 120;
 
-export type Family = 'person' | 'agent' | 'waiting' | 'done' | 'neutral';
-
-/** CMP-05 words and colour family for each contract state: the shared StateTag table (README), in contract order. */
-const CONTRACT_STATES: WorkState[] = [
-  'ready',
-  'processing',
-  'waiting',
-  'owner_needed',
-  'setup_needed',
-  'action_needed',
-  'effect_uncertain',
-  'awaiting_reconciliation',
-  'verified',
-  'cancelled',
-  'followup_needed',
+/** The 26 line keys the contract accepts; anything else in the URL is dropped. */
+export const LINE_KEYS: LineKey[] = [
+  'process-handoff/v1', 'pmo-issues/v1', 'pmo-leadership-report/v1', 'finance-ledger/v1', 'finance-bu/v1', 'engagement/v1', 'pmo-minutes/v1', 'pmo-escalation/v1',
+  'pmo-weekly-report/v1', 'finance-schedules/v1', 'finance-ppe/v1', 'finance-forecast/v1', 'finance-payroll/v1', 'pmo-emergency/v1', 'pmo-change/v1', 'rfp-response/v1',
+  'finance-accounts/v1', 'pmo-finance/v1', 'planning/v1', 'commercial/v1', 'delivery-release/v1', 'delivery-hypercare/v1', 'delivery-archive/v1', 'delivery-handover/v1',
+  'delivery-closure/v1', 'delivery-go-live/v1',
 ];
-export const STATES = Object.fromEntries(CONTRACT_STATES.map((key) => [key, { words: STATE_TAGS[key].text, family: STATE_TAGS[key].tone }])) as Record<
-  WorkState,
-  { words: string; family: Family }
->;
-export const STATE_KEYS = Object.keys(STATES) as WorkState[];
 
-/** A state outside the table (only if the contract changes) shows its raw value as neutral. */
-export function stateTag(state: string): { words: string; family: Family } {
-  return Object.hasOwn(STATES, state) ? STATES[state as WorkState] : { words: state, family: 'neutral' };
-}
+/** The 11 live states, in the order the filter offers them, with the words every list uses. */
+export const STATE_KEYS: WorkState[] = [
+  'ready', 'processing', 'waiting', 'owner_needed', 'setup_needed', 'action_needed', 'effect_uncertain', 'awaiting_reconciliation', 'verified', 'cancelled', 'followup_needed',
+];
+export const stateWords = (state: WorkState) => stateTag(state).text;
 
-export const KINDS: Record<WorkItem['kind'], { words: string; family: Family }> = {
-  decide: { words: 'DECIDE', family: 'person' },
-  do: { words: 'DO', family: 'person' },
-  fix: { words: 'FIX', family: 'person' },
-  started: { words: 'STARTED', family: 'neutral' },
+export const KINDS: Record<Kind, { words: string; tone: Family }> = {
+  decide: { words: 'DECIDE', tone: 'person' },
+  do: { words: 'DO', tone: 'person' },
+  fix: { words: 'FIX', tone: 'person' },
+  started: { words: 'STARTED', tone: 'neutral' },
 };
 
-/** A v7 row has a known `kind`; a live row may not, and `KindTag` would throw on it. */
-export const isV7Row = (item: unknown): boolean => {
-  const kind = (item as { kind?: unknown } | null)?.kind;
-  return typeof kind === 'string' && Object.hasOwn(KINDS, kind);
-};
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** Waiting-on filter words (D-WORKLIST-FILTERS proposal; the categories are an engineering proposal). */
-export const WAITING_ON: Record<WaitingOn, string> = {
-  me: 'Me',
-  someone_else: 'Someone else',
-  agent: 'An agent',
-  outside_party: 'Someone outside PSL',
-  no_owner: 'No owner yet',
-};
-export const WAITING_KEYS = Object.keys(WAITING_ON) as WaitingOn[];
+export type View = { queue: WorkQueue; q?: string; line?: LineKey; project?: string; state?: WorkState; limit: Limit };
 
-export const AGENTS: Record<Agent, string> = { tola: 'Tola', chidi: 'Chidi', zainab: 'Zainab' };
-
-/** CMP-18 mascot avatars: public/agents/ (from design/mascots/transparent/*-avatar.png, base PR #12). */
-export const AGENT_AVATAR: Record<Agent, { src: string; alt: string }> = {
-  tola: { src: '/agents/tola.png', alt: 'Tola · PMO agent' },
-  chidi: { src: '/agents/chidi.png', alt: 'Chidi · Finance agent' },
-  zainab: { src: '/agents/zainab.png', alt: 'Zainab · HR agent' },
-};
-
-/** `assign` (F-36): the work item whose "Assign accountable PM" panel is open over the list; not part of the list's own request. */
-export type View = { queue: Queue; q?: string; line?: string; project?: string; state?: WorkState; waiting?: WaitingOn; limit: Limit; assign?: string };
-
-/** Reads the view from the URL; invalid values fall back to the defaults. */
+/** Reads the view from the URL; a value the contract does not accept is dropped. */
 export function parseView(params: URLSearchParams): View {
   const queue = QUEUES.find((x) => x.key === params.get('queue'))?.key ?? 'needs_me';
-  const q = params.get('q')?.trim() || undefined;
-  const line = params.get('line') || undefined;
+  const q = params.get('q')?.trim().slice(0, MAX_Q).trim() || undefined;
+  const line = LINE_KEYS.find((key) => key === params.get('line'));
   const rawState = params.get('state');
-  const state = rawState && Object.hasOwn(STATES, rawState) ? (rawState as WorkState) : undefined;
-  const project = params.get('project') || undefined;
-  const rawWaiting = params.get('waiting_on');
-  const waiting = rawWaiting && Object.hasOwn(WAITING_ON, rawWaiting) ? (rawWaiting as WaitingOn) : undefined;
+  const state = STATE_KEYS.find((key) => key === rawState);
+  const rawProject = params.get('project');
+  const project = rawProject && UUID.test(rawProject) ? rawProject : undefined;
   const limit = LIMITS.find((n) => String(n) === params.get('limit')) ?? DEFAULT_LIMIT;
-  const rawAssign = params.get('assign');
-  const assign = queue === 'unassigned' && rawAssign && /^W-\d+$/.test(rawAssign) ? rawAssign : undefined;
-  return { queue, q, line, project, state, waiting, limit, assign };
+  return { queue, q, line, project, state, limit };
 }
 
-/** The URL search for a view; defaults are left out. Cursors are never written. */
+/** The URL search for a view; defaults are left out. */
 export function viewSearch(view: View): string {
   const params = new URLSearchParams();
   if (view.queue !== 'needs_me') params.set('queue', view.queue);
@@ -115,42 +68,48 @@ export function viewSearch(view: View): string {
   if (view.line) params.set('line', view.line);
   if (view.project) params.set('project', view.project);
   if (view.state) params.set('state', view.state);
-  if (view.waiting) params.set('waiting_on', view.waiting);
   if (view.limit !== DEFAULT_LIMIT) params.set('limit', String(view.limit));
-  if (view.assign) params.set('assign', view.assign);
   const search = params.toString();
   return search ? `?${search}` : '';
 }
 
-export function buildWorkQuery(view: View, cursor?: string): WorkQuery {
-  const query: WorkQuery = { queue: view.queue, limit: view.limit };
-  const q = view.q?.trim();
-  if (q) query.q = q;
-  if (view.line) query.line = view.line;
-  if (view.project) query.project = view.project;
-  if (view.state) query.state = view.state;
-  if (view.waiting) query.waiting_on = view.waiting;
-  if (cursor) query.cursor = cursor;
-  return query;
-}
-
-export const isNarrowed = (view: View) => Boolean(view.q || view.line || view.project || view.state || view.waiting);
+export const isNarrowed = (view: View) => Boolean(view.q || view.line || view.project || view.state);
 
 /** Applied filters (search not counted), for the Filter badge. */
-export const filterCount = (view: View) => [view.line, view.project, view.state, view.waiting].filter(Boolean).length;
+export const filterCount = (view: View) => [view.line, view.project, view.state].filter(Boolean).length;
 
-/** "34 records you can see": the person's queue totals added up. Unknown when there are no counts. */
-export function recordsText(counts: Counts | null | undefined): string | undefined {
-  if (!counts) return undefined;
-  const total = counts.needs_me + counts.waiting_on_others + counts.done + (counts.unassigned ?? 0);
-  return `${total} ${total === 1 ? 'record' : 'records'} you can see`;
+/** What a tab's count says. `atLeast`: the server counted some but not all. No entry: nothing to show, never 0. */
+export type TabCount = { count: number; atLeast: boolean };
+export function tabCount(counts: WorkCounts | undefined, queue: WorkQueue): TabCount | undefined {
+  const entry = counts?.queues.find((x) => x.key === queue);
+  if (!entry) return undefined;
+  if (entry.total !== null) return { count: entry.total, atLeast: false };
+  return entry.observed > 0 ? { count: entry.observed, atLeast: true } : undefined;
 }
 
+/** Whether the Unassigned tab is drawn: something is unassigned, or the address already names it. */
+export function showUnassigned(counts: WorkCounts | undefined, selected: WorkQueue): boolean {
+  const entry = counts?.queues.find((x) => x.key === 'unassigned');
+  return selected === 'unassigned' || Boolean(entry && ((entry.total ?? 0) > 0 || entry.observed > 0));
+}
+
+/** "34 open records you can see": the per-line open counts added up; "at least" when the server says it could not check everything. */
+export function recordsText(counts: WorkCounts | undefined): string | undefined {
+  if (!counts) return undefined;
+  const total = counts.lines.reduce((sum, line) => sum + line.open, 0);
+  const words = `${total === 1 ? 'open record' : 'open records'} you can see`;
+  return counts.limited ? `at least ${total} ${words}` : `${total} ${words}`;
+}
+
+/** Seconds since `from`, written as the lists write an age: "5m", "2h", "3d". */
 export function formatAge(seconds: number): string {
   if (seconds < 3600) return `${Math.max(1, Math.floor(seconds / 60))}m`;
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
   return `${Math.floor(seconds / 86400)}d`;
 }
+
+/** How long ago the row started, measured to the list's own `as_of` so a skewed browser clock cannot change it. */
+export const startAge = (row: WorkListRow, asOf: string) => formatAge(Math.max(0, (Date.parse(asOf) - Date.parse(row.started_at)) / 1000));
 
 /** "10:42" in WAT, as the SCR-01 boards write it ("updated 10:42"). */
 export const formatTime = formatClock;
@@ -158,10 +117,10 @@ export const formatTime = formatClock;
 const SEGMENT_BY_FAMILY: Record<Family, string> = { person: 'p', agent: 'a', waiting: 'w', done: '', neutral: '' };
 
 /** CMP-03 segment classes: done before the current station, the state's class on it, empty after. */
-export function miniSegments(station: WorkItem['station'], state: string): string[] {
+export function miniSegments(station: Station, state: WorkState): string[] {
   if (state === 'verified') return Array.from({ length: station.count }, (_, i) => (i === station.count - 1 ? 'v' : 'd'));
   // The segment says who holds the station, not the tag's colour: a Ready item is held by a person.
-  const current = state === 'followup_needed' ? 's' : state === 'cancelled' ? '' : state === 'ready' ? 'p' : SEGMENT_BY_FAMILY[stateTag(state).family];
+  const current = state === 'followup_needed' ? 's' : state === 'cancelled' ? '' : state === 'ready' ? 'p' : SEGMENT_BY_FAMILY[stateTag(state).tone];
   return Array.from({ length: station.count }, (_, i) => {
     const n = i + 1;
     if (n < station.index) return 'd';
@@ -169,43 +128,12 @@ export function miniSegments(station: WorkItem['station'], state: string): strin
   });
 }
 
-export function stationText(station: WorkItem['station'], state: string): string {
+export function stationText(station: Station, state: WorkState): string {
   return state === 'verified' ? `All ${station.count} stations done` : `Station ${station.index} of ${station.count} · ${station.name}`;
 }
 
-/**
- * Line options by key: the response's filters.lines (lines the person has work on), else the lines on the
- * loaded rows. The applied key stays listed even when no row carries it.
- */
-export function lineOptions(filters: WorkList['filters'], items: WorkItem[], applied?: string): LineOption[] {
-  const lines = new Map<string, string>();
-  if (filters) for (const l of filters.lines) lines.set(l.key, l.title);
-  else for (const i of [...items].sort((a, b) => a.line.localeCompare(b.line))) lines.set(i.line_key ?? i.line, i.line);
-  if (applied && !lines.has(applied)) lines.set(applied, applied);
-  return [...lines].map(([key, title]) => ({ key, title }));
-}
-
-/** CMP-22 result count, uppercase mono. */
-export function resultCount(view: View, counts: Counts | null | undefined, loaded: number, more: boolean): string {
-  const total = counts?.[view.queue];
-  if (total === undefined) return `${loaded}${more ? '+' : ''} ITEMS`;
-  if (!isNarrowed(view)) return `${total} ITEMS`;
-  return `${loaded}${more ? '+' : ''} OF ${total} ITEMS`;
-}
-
-/** The queue's open count for the paging footer: known only when no search or filter narrows the list. */
-export function queueTotal(view: View, counts: Counts | null | undefined): number | undefined {
-  return isNarrowed(view) ? undefined : counts?.[view.queue];
-}
-
-/** A refresh replaces page 1 and keeps the rows loaded after it, minus any id now on page 1. */
-export function mergeRefresh(items: WorkItem[], firstCount: number, page: WorkItem[]): WorkItem[] {
-  const fresh = new Set(page.map((i) => i.id));
-  return [...page, ...items.slice(firstCount).filter((i) => !fresh.has(i.id))];
-}
-
-/** Show more appends the next page, skipping ids already shown. */
-export function appendPage(items: WorkItem[], page: WorkItem[]): WorkItem[] {
-  const shown = new Set(items.map((i) => i.id));
-  return [...items, ...page.filter((i) => !shown.has(i.id))];
+/** CMP-22 result count, uppercase mono: exact only when the server marks the total complete. */
+export function resultCount(loaded: number, more: boolean, total: number | null, totalComplete: boolean): string {
+  if (!totalComplete || total === null) return `${loaded}${more ? '+' : ''} ITEMS`;
+  return loaded >= total ? `${total} ITEMS` : `${loaded} OF ${total} ITEMS`;
 }

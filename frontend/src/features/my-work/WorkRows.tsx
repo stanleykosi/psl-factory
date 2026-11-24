@@ -1,109 +1,139 @@
 import Link from 'next/link';
 
-import { AgentAvatar as Avatar, MiniStationBar, type ShowMoreProps, Table, Tag, type Column, type StationStatus } from '@/components';
+import { formatDayTime, MiniStationBar, type ShowMoreProps, Table, Tag, type Column, type StationStatus } from '@/components';
+import { lineTitle, ownerText, stateTag, workHref, type WorkLine, type WorkListRow } from '@/features/work-list';
 import { SampleLabel } from '@/shell/SampleLabel';
 
-import { formatAge, KINDS, miniSegments, stateTag, stationText, type WorkItem } from './model';
+import { KINDS, miniSegments, startAge, stationText, type Station } from './model';
 
-function KindTag({ kind }: { kind: WorkItem['kind'] }) {
+/** What a row needs from its list: the titles for line keys and the list's own clock. */
+export type RowContext = { lines: WorkLine[]; asOf: string };
+
+/** `action_kind` null draws no tag. */
+function KindTag({ kind }: { kind: WorkListRow['action_kind'] }) {
+  if (!kind) return null;
   const tag = KINDS[kind];
   return (
-    <Tag tone={tag.family} className="my-work__kind">
+    <Tag tone={tag.tone} className="my-work__kind">
       {tag.words}
     </Tag>
   );
 }
 
-function StateTag({ state, words }: { state: string; words?: string }) {
-  const tag = stateTag(state);
-  return <Tag tone={tag.family}>{words ?? tag.words}</Tag>;
-}
-
-/** CMP-18: the agent's mascot on its own tint, beside the work it drafted or is doing. The name is beside it in words. */
-export function AgentAvatar({ agent }: { agent?: WorkItem['agent'] }) {
-  return agent ? <Avatar agent={agent} size={20} /> : null;
+function StateTag({ row }: { row: WorkListRow }) {
+  const { text, tone } = stateTag(row.state);
+  return <Tag tone={tone}>{text}</Tag>;
 }
 
 const STATUS: Record<string, StationStatus> = { d: 'done', p: 'person', a: 'agent', w: 'waiting', s: 'stopped', v: 'verified', '': 'todo' };
 
-/** CMP-03: one segment per station, with the station's words beside it. */
-function Stations({ item, className }: { item: WorkItem; className: string }) {
-  return <MiniStationBar className={className} stations={miniSegments(item.station, item.state).map((cls) => STATUS[cls])} text={stationText(item.station, item.state)} />;
+/** CMP-03: one segment per station, with the station's words beside it. A row without a station gets no bar. */
+function Stations({ row, station, className }: { row: WorkListRow; station: Station; className: string }) {
+  return <MiniStationBar className={className} stations={miniSegments(station, row.state).map((cls) => STATUS[cls])} text={stationText(station, row.state)} />;
 }
 
 /** The phone card draws the bar alone (the state tag beside it carries the words), so it is not the MiniStationBar, which always writes its words. */
-function CardBar({ item }: { item: WorkItem }) {
+function CardBar({ row, station }: { row: WorkListRow; station: Station }) {
   return (
     <span className="psl-mini__bar my-work__cardbar" aria-hidden="true">
-      {miniSegments(item.station, item.state).map((cls, i) => (
+      {miniSegments(station, row.state).map((cls, i) => (
         <i key={i} className={cls || undefined} />
       ))}
     </span>
   );
 }
 
-const COLUMNS = (hrefFor: HrefFor): Column<WorkItem>[] => [
+/** "Line title · REFERENCE"; the reference is left out when the row has none. */
+function Meta({ row, lines }: { row: WorkListRow; lines: WorkLine[] }) {
+  return (
+    <span className="my-work__meta">
+      {lineTitle(lines, row.line)}
+      {row.reference && (
+        <>
+          {' · '}
+          <span className="psl-mono">{row.reference}</span>
+        </>
+      )}{' '}
+      <SampleLabel show={row.sample} />
+    </span>
+  );
+}
+
+/** The state's own words with the server's `status_label` beneath when it says more. */
+const Status = ({ row }: { row: WorkListRow }) => (row.status_label && row.status_label !== stateTag(row.state).text ? <span className="my-work__status">{row.status_label}</span> : null);
+
+const COLUMNS = ({ lines, asOf }: RowContext): Column<WorkListRow>[] => [
   {
     key: 'work',
     header: 'WORK',
-    cell: (item) => (
+    cell: (row) => (
       <>
-        <KindTag kind={item.kind} />
-        <Link href={hrefFor(item)} className="my-work__title" data-work-link="">
-          {item.title}
+        <KindTag kind={row.action_kind} />
+        <Link href={workHref(row.id)} className="my-work__title" data-work-link="">
+          {row.title}
         </Link>
-        <span className="my-work__meta">
-          {item.line} · <span className="psl-mono">{item.reference}</span> <SampleLabel show={item.sample} />
-        </span>
+        <Meta row={row} lines={lines} />
       </>
     ),
   },
-  { key: 'where', header: 'WHERE ON ITS LINE', cell: (item) => <Stations item={item} className="my-work__station" /> },
+  {
+    key: 'where',
+    header: 'WHERE ON ITS LINE',
+    cell: (row) => (row.station ? <Stations row={row} station={row.station} className="my-work__station" /> : <span className="my-work__nostation">{row.status_label}</span>),
+  },
   {
     key: 'state',
     header: 'STATE',
-    cell: (item) => (
+    cell: (row) => (
       <>
-        <StateTag state={item.state} />
-        <span className="my-work__waiting">
-          <AgentAvatar agent={item.agent} />
-          {item.waiting_on}
-        </span>
+        <StateTag row={row} />
+        <Status row={row} />
+        <span className="my-work__waiting">{ownerText(row.owner)}</span>
       </>
     ),
   },
-  { key: 'age', header: 'AGE', cell: (item) => formatAge(item.age_seconds), mono: true },
+  {
+    key: 'started',
+    header: 'STARTED',
+    cell: (row) => (
+      <>
+        <time dateTime={row.started_at} title={formatDayTime(row.started_at)}>
+          {startAge(row, asOf)}
+        </time>
+        <span className="my-work__updatedat">
+          Updated <time dateTime={row.updated_at}>{formatDayTime(row.updated_at)}</time>
+        </span>
+      </>
+    ),
+    mono: true,
+  },
 ];
 
-/** Where a row's link goes: the work item, or (F-36) on the Unassigned tab the panel over the list. */
-export type HrefFor = (item: WorkItem) => string;
-const toItem: HrefFor = (item) => `/work/${item.id}`;
-
-/** Desktop (SCR-01-desktop): Work, Where on its line, State, Age. */
-export function WorkTable({ items, hrefFor = toItem, paging }: { items: WorkItem[]; hrefFor?: HrefFor; paging: ShowMoreProps }) {
-  return <Table caption="Your work" columns={COLUMNS(hrefFor)} rows={items} rowKey={(item) => item.id} empty="Nothing to show." className="my-work__tablewrap" paging={paging} />;
+/** Desktop (SCR-01-desktop): Work, Where on its line, State, Started. */
+export function WorkTable({ rows, context, paging }: { rows: WorkListRow[]; context: RowContext; paging: ShowMoreProps }) {
+  return <Table caption="Your work" columns={COLUMNS(context)} rows={rows} rowKey={(row) => String(row.id)} empty="Nothing to show." className="my-work__tablewrap" paging={paging} />;
 }
 
 /** Phone (SCR-01-mobile): each card is one link to the work item. */
-export function WorkCards({ items, hrefFor = toItem }: { items: WorkItem[]; hrefFor?: HrefFor }) {
+export function WorkCards({ rows, context }: { rows: WorkListRow[]; context: RowContext }) {
   return (
     <ul className="my-work__cards">
-      {items.map((item) => (
-        <li key={item.id}>
-          <Link href={hrefFor(item)} className="my-work__card" data-work-link="">
+      {rows.map((row) => (
+        <li key={row.id}>
+          <Link href={workHref(row.id)} className="my-work__card" data-work-link="">
             <span className="my-work__cardtop">
               <span className="my-work__cardwork">
-                <KindTag kind={item.kind} />
-                <span className="my-work__cardtitle">{item.title}</span>
+                <KindTag kind={row.action_kind} />
+                <span className="my-work__cardtitle">{row.title}</span>
               </span>
-              <span className="my-work__age">{formatAge(item.age_seconds)}</span>
+              <span className="my-work__age">{startAge(row, context.asOf)}</span>
             </span>
-            <CardBar item={item} />
+            {row.station && <CardBar row={row} station={row.station} />}
             <span className="my-work__cardstate">
-              <StateTag state={item.state} />
-              <span className="my-work__cardnote">{item.waiting_on}</span>
+              <StateTag row={row} />
+              <span className="my-work__cardnote">{ownerText(row.owner)}</span>
             </span>
-            <SampleLabel show={item.sample} />
+            <SampleLabel show={row.sample} />
           </Link>
         </li>
       ))}
@@ -111,21 +141,19 @@ export function WorkCards({ items, hrefFor = toItem }: { items: WorkItem[]; href
   );
 }
 
-/** Words for a started item on a phone: who it waits on, else its state. */
-const waitingWords = (item: WorkItem) => (item.state === 'waiting' ? `Waiting on ${item.waiting_on}` : undefined);
-
-/** Phone, Waiting on others (SCR-01-mobile-my-work): the title and what it is waiting on. */
-export function StartedCards({ items }: { items: WorkItem[] }) {
+/** Phone, Waiting on others (SCR-01-mobile-my-work): the title, the state and who has it. */
+export function StartedCards({ rows }: { rows: WorkListRow[] }) {
   return (
     // A list built from divs, as on the board: the title links and the tag reads beside it.
     <div role="list" className="my-work__cards">
-      {items.map((item) => (
-        <div role="listitem" key={item.id} className="my-work__started">
-          <Link href={`/work/${item.id}`} className="my-work__cardtitle" data-work-link="">
-            {item.title}
+      {rows.map((row) => (
+        <div role="listitem" key={row.id} className="my-work__started">
+          <Link href={workHref(row.id)} className="my-work__cardtitle" data-work-link="">
+            {row.title}
           </Link>
-          <StateTag state={item.state} words={waitingWords(item)} />
-          <SampleLabel show={item.sample} />
+          <StateTag row={row} />
+          <span className="my-work__cardnote">{ownerText(row.owner)}</span>
+          <SampleLabel show={row.sample} />
         </div>
       ))}
     </div>

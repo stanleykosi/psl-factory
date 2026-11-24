@@ -18,7 +18,7 @@ import { SearchField } from './SearchField';
 export type FilterChip = { key: string; name: string; value: string; onRemove: () => void };
 
 export function ListToolbar({ search, filterCount = 0, filterOpen = false, onFilterToggle, filterPanel, resultText, chips = [], onClearAll, className }: {
-  search: { label: string; placeholder: string; value: string; onChange: (value: string) => void; onSearch?: (query: string) => void };
+  search: { label: string; placeholder: string; value: string; onChange: (value: string) => void; onSearch?: (query: string) => void; maxLength?: number };
   /** How many filters are on. */
   filterCount?: number;
   filterOpen?: boolean;
