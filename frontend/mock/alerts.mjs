@@ -1,173 +1,204 @@
-// Alerts in the contract mock (F-12): E-NOTIFICATIONS, E-NOTIFICATION-READ, E-ALERT-PREFS-READ and E-ALERT-PREFS,
-// shaped by the v7 contract. Sample data only; nothing is sent anywhere.
+// Alerts in the contract mock (F-12, reshaped for F-61): the four live operations of API 1.24.0 -
+// GET /api/v1/notifications?page=, POST /api/v1/notifications/{id}/read, GET and POST /api/v1/me/alert-preferences.
+// Sample data only; nothing is sent anywhere. server.mjs hands these paths here before its v7 routes (ALERT_PATH).
 //
 // Scenario: cookie psl_mock_alerts, else env MOCK_ALERTS_SCENARIO, else board
-// (board | phone | empty | many | bare | stale | invalid | locked | needs-you). State is in memory per persona:scenario;
-// reset() clears it. needs-you (F-15) serves the PROPOSAL overlay proposals/alerts-needs-you.json,
-// whose items carry needs_you (not in v7). bare drops every proposal field and answers 404 to the two v7-only operations. Dates are moved by whole days so that each fixture's as_of falls on today in Africa/Lagos.
+// (board | empty | many | stale | invalid | readfail | gone). many has 60 alerts over three pages of 25. stale answers the
+// first save with 409 after another person saved; invalid answers every save with 422; readfail answers a mark-read
+// with 500; gone answers it with 404. State is in memory per persona:scenario; reset() clears it.
+// The persona fixtures under fixtures/alerts are in the v7 shape; they are converted to live items here.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import Ajv2020 from 'ajv/dist/2020.js';
-import addFormats from 'ajv-formats';
-
 const here = dirname(fileURLToPath(import.meta.url));
 const read = (path) => JSON.parse(readFileSync(join(here, 'fixtures', path), 'utf8'));
 
-export const ALERT_OPERATIONS = ['E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS'];
-export const ALERT_SCENARIOS = ['board', 'phone', 'empty', 'many', 'bare', 'stale', 'invalid', 'locked', 'needs-you'];
-const AGENTS = ['tola', 'chidi', 'zainab'];
-const LIMITS = [10, 20, 50];
+export const ALERT_PATH = /^\/api\/v1\/(notifications|notifications\/[^/]+\/read|me\/alert-preferences)$/;
+export const ALERT_SCENARIOS = ['board', 'empty', 'many', 'stale', 'invalid', 'readfail', 'gone'];
+const PAGE_SIZE = 25;
 const DAY_MS = 86_400_000;
-const ITEM_PROPOSALS = ['reference', 'delivered_via', 'delivered_at', 'digest_at', 'in_app_reason'];
+const MIN_MS = 60_000;
 
-const INVALID_QUERY = { code: 'invalid_query', message: 'We could not read that list request.' };
+const BAD_PAGE = { code: 'invalid', message: 'Check the page number.' };
 const NOT_FOUND = { code: 'not_found', message: 'We could not find that record.' };
 const STALE = { code: 'stale_revision', message: 'Someone changed this since you opened it. Reload to see the latest version.' };
-const invalid = (fields) => ({ status: 422, body: { code: 'invalid', message: `Check these fields: ${[...new Set(fields)].join(', ')}.` } });
-
-/** Field names from Ajv errors, as errorFields in server.mjs: the missing or extra property, else the failing path. */
-function errorFields(errors) {
-  return errors.map(
-    (e) => e.params.missingProperty ?? e.params.additionalProperty ?? (e.instancePath.split('/')[1] || 'body'),
-  );
-}
+const UNAVAILABLE = { code: 'server_error', message: 'Something went wrong on our side.' };
+const invalid = (message) => [422, { code: 'invalid', message }];
 
 const lagosDay = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Lagos', year: 'numeric', month: '2-digit', day: '2-digit' });
 const dayNumber = (value) => Date.parse(`${lagosDay.format(new Date(value))}T00:00:00Z`) / DAY_MS;
+const iso = (ms) => new Date(ms).toISOString().replace('.000Z', 'Z');
 
-/** The list with every date moved by the whole days between its as_of and today (Africa/Lagos). */
+/** A v7 item (what the persona fixtures and the demo's line runs hold) as a live item. */
+function live(item) {
+  const project = item.case_id;
+  return {
+    id: item.id,
+    title: item.text,
+    subject: item.reference ?? '',
+    detail: '',
+    group: item.needs_you === true ? 'action' : 'update',
+    read: item.read,
+    django_url: `/work/${item.work_id}/`,
+    at: item.at ?? null,
+    agent: item.agent ?? null,
+    target_kind: project ? 'project' : 'work',
+    api_url: project ? `/api/v1/projects/${project}` : `/api/v1/work/${item.work_id}`,
+  };
+}
+
+/** The persona's list with every date moved by the whole days between its as_of and today (Africa/Lagos). */
 function shifted(list) {
   const ms = (dayNumber(Date.now()) - dayNumber(list.as_of)) * DAY_MS;
-  const move = (value) => new Date(Date.parse(value) + ms).toISOString().replace('.000Z', 'Z');
-  const items = list.items.map((item) => {
-    const out = { ...item, at: move(item.at) };
-    if (item.delivered_at) out.delivered_at = move(item.delivered_at);
-    if (item.digest_at) out.digest_at = move(item.digest_at);
-    return out;
-  });
-  return { ...list, items, as_of: move(list.as_of) };
+  return list.items.map((item) => (item.at ? { ...item, at: iso(Date.parse(item.at) + ms) } : item));
 }
 
-/** The data a persona starts with: finance_lead's follows the scenario, the others keep their own records. */
+/** Six alerts as the board draws them: needs-you and information, with and without an agent, a time and a link. */
+function boardItems(now) {
+  const base = { detail: '', read: false, target_kind: 'work' };
+  return [
+    { ...base, id: 'a1'.padEnd(64, '0'), title: 'Invoice ready for review', subject: 'Lagoon Health', detail: 'INV-LH-002', group: 'action', django_url: '/work/4103/', at: iso(now - 18 * MIN_MS), agent: 'chidi', api_url: '/api/v1/work/4103' },
+    { ...base, id: 'a2'.padEnd(64, '0'), title: 'Project plan to sign off', subject: 'Kestrel Logistics', group: 'action', django_url: '/work/4102/', at: iso(now - 95 * MIN_MS), agent: 'tola', api_url: '/api/v1/work/4102' },
+    { ...base, id: 'a3'.padEnd(64, '0'), title: 'Assistant reply', subject: 'Lagoon Health', detail: 'Tola', group: 'update', django_url: '/assistant/7/', at: iso(now - 4 * MIN_MS), agent: 'tola', target_kind: 'conversation', api_url: '/api/v1/assistant/conversations/7' },
+    { ...base, id: 'a4'.padEnd(64, '0'), title: 'Milestone 2 is complete', subject: 'Kestrel Logistics', group: 'update', read: true, django_url: '/work/4101/', at: iso(now - DAY_MS - 3 * 3_600_000), agent: 'zainab', target_kind: 'project', api_url: '/api/v1/projects/6c2f1d3e-1a4b-4b8e-9d0a-0a1b2c3d4e5f' },
+    { ...base, id: 'a5'.padEnd(64, '0'), title: 'Invoice review', subject: 'Ojo Foods', detail: 'INV-0398', group: 'action', django_url: '/work/4105/', at: null, agent: null, api_url: null },
+    { ...base, id: 'a6'.padEnd(64, '0'), title: 'Reminder: month-end close', subject: '', group: 'update', django_url: '/reminders/9/', at: null, agent: null, target_kind: null, api_url: null },
+  ];
+}
+
+function manyItems(now) {
+  return Array.from({ length: 60 }, (_, i) => ({
+    id: `m${String(i + 1).padStart(2, '0')}`.padEnd(64, '0'),
+    title: `Update ${i + 1} for Lagoon Health`,
+    subject: 'Lagoon Health',
+    detail: `INV-${String(i + 1).padStart(2, '0')}`,
+    group: i % 5 === 0 ? 'action' : 'update',
+    read: i >= 40,
+    django_url: `/work/${5000 + i}/`,
+    at: iso(now - (i + 1) * 17 * MIN_MS),
+    agent: ['tola', 'chidi', 'zainab'][i % 3],
+    target_kind: 'work',
+    api_url: `/api/v1/work/${5000 + i}`,
+  }));
+}
+
+function prefs() {
+  const now = Date.now();
+  return {
+    revision: 3,
+    email_requested: true,
+    whatsapp_requested: false,
+    email_ready: true,
+    whatsapp_ready: false,
+    recent_deliveries: [
+      { channel: 'email', state: 'delivered', created_at: iso(now - 3 * 3_600_000), delivered_at: iso(now - 3 * 3_600_000 + 4000), receipt: 'r-77' },
+      { channel: 'whatsapp', state: 'uncertain', created_at: iso(now - DAY_MS), delivered_at: null, receipt: null },
+      { channel: 'email', state: 'queued', created_at: iso(now - 2 * DAY_MS), delivered_at: null, receipt: null },
+      { channel: 'whatsapp', state: 'held', created_at: iso(now - 3 * DAY_MS), delivered_at: null, receipt: null },
+    ],
+  };
+}
+
+/** The data a persona starts with: the board's six alerts for finance_lead (all scenarios but many and empty), the persona's fixture for the others. */
 function initialState(persona, scenario) {
-  const own = persona !== 'finance_lead';
-  const who = persona === 'admin' || persona === 'ceo' || persona === 'pmo_lead' || persona === 'hr' || persona === 'hr_lead' ? 'none' : persona; // admin and pmo_lead have no alert records of their own yet; they start with the empty person's
-  let list = own ? read(`alerts/notifications.${persona === 'hr' || persona === 'hr_lead' || persona === 'ceo' ? persona : who}.json`) : read('E-NOTIFICATIONS.json');
-  if (scenario === 'empty') list = read('alerts/notifications.empty.json');
-  else if (scenario === 'many' && !own) list = read('alerts/notifications.many.json');
-  else if (scenario === 'needs-you' && !own) {
-    list = JSON.parse(readFileSync(join(here, 'proposals', 'alerts-needs-you.json'), 'utf8'));
-    delete list.$comment;
+  const now = Date.now();
+  let items;
+  if (scenario === 'empty') items = [];
+  else if (scenario === 'many') items = manyItems(now);
+  else if (persona === 'finance_lead') items = boardItems(now);
+  else {
+    const who = ['admin', 'pmo_lead'].includes(persona) ? 'none' : persona;
+    items = shifted(read(`alerts/notifications.${who}.json`)).map(live);
   }
-  const prefsFile = { phone: 'phone', locked: 'locked', invalid: 'invalid' }[scenario];
-  const prefs = own ? read(`alerts/prefs.${who}.json`) : prefsFile ? read(`alerts/prefs.${prefsFile}.json`) : read('E-ALERT-PREFS-READ.json');
-  return { list: shifted(list), prefs, staleDone: false };
+  return { items, prefs: prefs(), staleDone: false };
 }
 
-function putValidator(openapi) {
-  const ajv = new Ajv2020({ allErrors: true, strict: true });
-  addFormats(ajv);
-  const op = openapi.paths['/api/v1/me/alert-preferences'].put;
-  return ajv.compile(op.requestBody.content['application/json'].schema);
+function listResponse(state, url) {
+  const raw = url.searchParams.get('page');
+  const page = raw === null ? 1 : /^\d+$/.test(raw) ? Number(raw) : 0;
+  const pages = Math.max(1, Math.ceil(state.items.length / PAGE_SIZE));
+  // Live: a page of 0, above 10000 or not a number is a 422; a page past the last is an empty 200.
+  if (page < 1 || page > 10000) return [422, BAD_PAGE];
+  const all = state.items;
+  const today = dayNumber(Date.now());
+  const unreadItems = all.filter((item) => !item.read);
+  return [
+    200,
+    {
+      items: all.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+      as_of: iso(Date.now()),
+      page,
+      next_page: page < pages ? page + 1 : null,
+      unread: unreadItems.length,
+      daily_summary: {
+        date: lagosDay.format(new Date()),
+        actions_open: all.filter((item) => item.group === 'action' && !item.read).length,
+        unread_updates_today: unreadItems.filter((item) => item.group === 'update' && item.at && dayNumber(item.at) === today).length,
+        unread_without_timestamp: unreadItems.filter((item) => !item.at).length,
+        scope: 'current_inbox',
+      },
+    },
+  ];
 }
 
-function listResponse(state, url, bare) {
-  const params = url.searchParams;
-  const limit = params.has('limit') ? Number(params.get('limit')) : 20;
-  const cursor = params.get('cursor');
-  const match = cursor === null ? ['', '0'] : /^o(\d+)$/.exec(cursor);
-  const q = params.get('q');
-  const agent = params.get('agent');
-  const unread = params.get('unread');
-  if (!LIMITS.includes(limit) || !match) return { status: 404, body: INVALID_QUERY };
-  const all = state.list.items;
-  let rows = all;
-  // A v4 backend knows only cursor and limit; bare ignores the v7 parameters as such a backend would.
-  if (!bare) {
-    if (q === '' || (agent !== null && !AGENTS.includes(agent)) || (unread !== null && !['true', 'false'].includes(unread))) {
-      return { status: 404, body: INVALID_QUERY };
-    }
-    const needle = q?.toLowerCase();
-    rows = rows
-      .filter((item) => !needle || [item.text, item.reference ?? ''].some((text) => text.toLowerCase().includes(needle)))
-      .filter((item) => !agent || item.agent === agent)
-      .filter((item) => unread === null || item.read === (unread === 'false'));
+function markRead(state, url, raw, scenario) {
+  let body;
+  try {
+    body = JSON.parse(raw || '{}');
+  } catch {
+    return invalid('Check the request.');
   }
-  const offset = Number(match[1]);
-  let items = rows.slice(offset, offset + limit);
-  if (bare) items = items.map((item) => Object.fromEntries(Object.entries(item).filter(([key]) => !ITEM_PROPOSALS.includes(key))));
-  const body = { items };
-  if (offset + limit < rows.length) body.next_cursor = `o${offset + limit}`;
-  body.as_of = state.list.as_of;
-  if (!bare) {
-    body.total = rows.length;
-    body.unread_count = all.filter((item) => !item.read).length;
-  }
-  return { status: 200, body };
-}
-
-function markRead(state, url) {
+  if (typeof body !== 'object' || body === null || Array.isArray(body) || Object.keys(body).length) return invalid('The request body must be empty.');
+  if (scenario === 'readfail') return [500, UNAVAILABLE];
   const id = decodeURIComponent(url.pathname.split('/')[4] ?? '');
-  const item = state.list.items.find((row) => row.id === id);
-  if (!item) return { status: 404, body: NOT_FOUND };
+  const item = state.items.find((row) => row.id === id);
+  if (!item || scenario === 'gone') return [404, NOT_FOUND];
   item.read = true;
-  return { status: 200, body: { id, read: true, unread_count: state.list.items.filter((row) => !row.read).length } };
+  return [200, { id, read: true }];
 }
 
-function savePrefs(state, raw, validate, scenario) {
+function savePrefs(state, raw, scenario) {
   let body;
   try {
     body = JSON.parse(raw);
   } catch {
-    return invalid(['body']);
+    return invalid('Check the request.');
   }
-  if (!validate(body)) return invalid(errorFields(validate.errors));
-  const { prefs } = state;
-  const byKey = new Map(prefs.events.map((event) => [event.key, event]));
-  for (const sent of body.events ?? []) {
-    const event = byKey.get(sent.key);
-    const changed = event && ['whatsapp', 'email'].some((ch) => ch in sent && sent[ch] !== event[ch]);
-    if (!event || (event.locked_reason && changed)) return invalid(['events']);
+  const keys = typeof body === 'object' && body !== null ? Object.keys(body).sort().join() : '';
+  if (keys !== 'email_requested,revision,whatsapp_requested' || typeof body.revision !== 'number' || typeof body.email_requested !== 'boolean' || typeof body.whatsapp_requested !== 'boolean') {
+    return invalid('Check the settings and try again.');
   }
-  const fields = [];
-  if ('digest_at' in body && !prefs.digest_at?.options.some((o) => o.value === body.digest_at)) fields.push('digest_at');
-  if ('quiet_hours' in body && !prefs.quiet_hours?.options.some((o) => o.value === body.quiet_hours)) fields.push('quiet_hours');
-  if (fields.length) return invalid(fields);
+  if (scenario === 'invalid') return invalid('Check the settings and try again.');
+  const { prefs: held } = state;
   if (scenario === 'stale' && !state.staleDone) {
-    // Another person saves first: the next revision, with "Work I started is stuck" email off.
+    // Another person saves first: the next revision, with email off.
     state.staleDone = true;
-    prefs.revision += 1;
-    const stuck = byKey.get('work_stuck');
-    if (stuck) stuck.email = false;
-    return { status: 409, body: STALE };
+    held.revision += 1;
+    held.email_requested = false;
+    return [409, STALE];
   }
-  if ('expected_revision' in body && body.expected_revision !== prefs.revision) return { status: 409, body: STALE };
-  prefs.channel = body.channel;
-  prefs.frequency = body.frequency;
-  for (const sent of body.events ?? []) {
-    const event = byKey.get(sent.key);
-    if ('whatsapp' in sent) event.whatsapp = sent.whatsapp;
-    if ('email' in sent) event.email = sent.email;
-  }
-  if ('digest_at' in body) prefs.digest_at.value = body.digest_at;
-  if ('quiet_hours' in body) prefs.quiet_hours.value = body.quiet_hours;
-  prefs.revision += 1;
-  return { status: 200, body: prefs };
+  if (body.revision !== held.revision) return [409, STALE];
+  held.email_requested = body.email_requested;
+  held.whatsapp_requested = body.whatsapp_requested;
+  held.revision += 1;
+  // The live save answers the switches and readiness without the receipts.
+  const { recent_deliveries: receipts, ...saved } = held;
+  void receipts;
+  return [200, saved];
 }
 
-export function createAlertsMock({ openapi }) {
-  const validate = putValidator(openapi);
+export function createAlertsMock() {
   const states = new Map();
-  // D-155: alerts the live demo's runs raised (line-runs.mjs), by persona; they join that persona's list on its next read.
+  // D-155: alerts the live demo's runs raised (line-runs.mjs, v7 items), by persona; they join that persona's list on its next read.
   const raised = new Map();
 
   return {
     raise(persona, item) {
       raised.set(persona, [item, ...(raised.get(persona) ?? [])]);
     },
-    handle({ operationId, url, raw, persona, cookies = {} }) {
+    /** [status, body] for one of the four paths; the caller has checked sign-in and CSRF. */
+    handle({ method, url, raw, persona, cookies = {} }) {
       const chosen = cookies.psl_mock_alerts ?? process.env.MOCK_ALERTS_SCENARIO;
       const scenario = ALERT_SCENARIOS.includes(chosen) ? chosen : 'board';
       const key = `${persona}:${scenario}`;
@@ -175,15 +206,16 @@ export function createAlertsMock({ openapi }) {
       const state = states.get(key);
       const added = raised.get(persona);
       if (added) {
-        state.list.items.unshift(...added);
+        state.items.unshift(...added.map(live));
         raised.delete(persona);
       }
-      const bare = scenario === 'bare';
-      if (operationId === 'E-NOTIFICATIONS') return listResponse(state, url, bare);
-      if (bare && operationId !== 'E-ALERT-PREFS') return { status: 404, body: NOT_FOUND };
-      if (operationId === 'E-NOTIFICATION-READ') return markRead(state, url);
-      if (operationId === 'E-ALERT-PREFS-READ') return { status: 200, body: state.prefs };
-      return savePrefs(state, raw, validate, scenario);
+      const path = url.pathname;
+      if (path === '/api/v1/notifications') return method === 'get' ? listResponse(state, url) : [405, { code: 'method_not_allowed', message: 'Not allowed.' }];
+      if (path === '/api/v1/me/alert-preferences') {
+        if (method === 'get') return [200, state.prefs];
+        return method === 'post' ? savePrefs(state, raw, scenario) : [405, { code: 'method_not_allowed', message: 'Not allowed.' }];
+      }
+      return method === 'post' ? markRead(state, url, raw, scenario) : [405, { code: 'method_not_allowed', message: 'Not allowed.' }];
     },
     reset() {
       states.clear();
