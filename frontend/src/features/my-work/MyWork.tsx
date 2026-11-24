@@ -37,6 +37,8 @@ export function MyWork() {
   const lastSuccess = useRef(0);
   const [lastLoaded, setLastLoaded] = useState<string>();
   const focusRow = useRef<number | null>(null);
+  // Rows per page restarts the list, which redraws its footer: the chosen size gets the keyboard back once it is there.
+  const focusSize = useRef<number | null>(null);
   const viewRef = useRef(view);
   const panel = useRef<HTMLDivElement>(null);
   const pollable = useRef(false);
@@ -65,6 +67,13 @@ export function MyWork() {
     if (focusRow.current !== null && rowCount > focusRow.current) {
       panel.current?.querySelectorAll<HTMLElement>('[data-work-link]')[focusRow.current]?.focus();
       focusRow.current = null;
+    }
+    if (focusSize.current !== null && list.status === 'ready') {
+      const radio = panel.current?.querySelector<HTMLElement>(`[role="radio"][aria-label="${focusSize.current}"]`);
+      if (radio) {
+        radio.focus();
+        focusSize.current = null;
+      }
     }
   }, [list.status, rowCount, unassigned]);
 
@@ -176,7 +185,10 @@ export function MyWork() {
       void loadMore();
     },
     size: view.limit,
-    onSize: (limit) => navigate({ limit: limit as View['limit'] }),
+    onSize: (limit) => {
+      focusSize.current = limit;
+      navigate({ limit: limit as View['limit'] });
+    },
     moreLabel: ready.more === 'keep-looking' ? 'Keep looking' : undefined,
   };
 
