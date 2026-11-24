@@ -5415,3 +5415,9 @@
 {"at":"2026-11-24T21:47:11Z","feature":"F-103","round":1,"kind":"fields","fields":{"git.pr_number":121}}
 {"at":"2026-11-24T21:47:12Z","feature":"F-103","round":1,"kind":"fields","fields":{"git.merge_status":"merged"}}
 {"at":"2026-11-24T21:47:12Z","feature":"F-103","round":1,"kind":"fields","fields":{"git.merge_sha":"043fd0c781b016fa2721a4f208a0df976ca05109"}}
+{"at":"2026-11-24T21:55:10Z","feature":"F-91","round":1,"kind":"fields","fields":{"git.pr_number":123}}
+{"at":"2026-11-24T21:55:11Z","feature":"F-91","round":1,"kind":"fields","fields":{"git.merge_status":"merged"}}
+{"at":"2026-11-24T21:55:11Z","feature":"F-91","round":1,"kind":"fields","fields":{"git.merge_sha":"6f940a933d42898730f569049b7b402767916d3d"}}
+{"at":"2026-11-24T21:55:11Z","feature":"F-65","round":2,"kind":"fields","fields":{"git.pr_number":122}}
+{"at":"2026-11-24T21:55:11Z","feature":"F-65","round":2,"kind":"fields","fields":{"git.merge_status":"merged"}}
+{"at":"2026-11-24T21:55:11Z","feature":"F-65","round":2,"kind":"fields","fields":{"git.merge_sha":"d395a707a592945f512e30d737bc928d213818fd"}}

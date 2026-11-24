@@ -46,3 +46,14 @@ None (round 1).
 
 ## Blocked
 Handover only: the next owner should inspect the saved screenshots, and decide on the fidelity run. Possible flake: focus-on-first-new-row test once failed under load; now waits for focus.
+
+## Main sync
+COMMIT: a00aff84d3bb9b45c7184421745ff170b31809ed
+- Merged origin/main (through eddc1dc1, F-119B) into the branch in two merges; the second was clean.
+- mock/server.mjs: kept main's F-61 alert route block after the work-live block.
+- mock/work-live.mjs: kept F-91's WORK_LIVE_PATH (adds /tracking) with F-87's write routes.
+- workspace/adapter.ts: main's optional LineContext.state and read ctx.
+- workspace/lines/index.ts: main's file (weekly report and F-111 issue follow-up registered). Workspace files now equal main.
+- LiveWorkItemView.tsx and model.ts: F-91's version (TrackingBlock, AgentCard, reference, cursor paging) on top of main's ItemControls and Actions slot; the activity text moved into AgentCard.
+- Results: tsc and eslint clean; vitest on work-item, workspace, line-adapter, issue-followup, cash-forecast, live-work, next-config, work-commands, mock-work, workspace-step, F-91's tracking test: 16 files, 500 tests passed.
+- Not run: e2e (Playwright) and the full suite.
