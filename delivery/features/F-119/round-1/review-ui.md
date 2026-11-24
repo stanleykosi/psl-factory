@@ -4,27 +4,27 @@ REVIEWER: reviewer-ui
 AUTHORITY: UI design reviewer
 
 ## Summary
-- incomplete: paused. The UI review did not run. The coordinator paused it while the design engineer is away.
-- The production build never started. It waited in the heavy-job lock queue (lane-d ticket from 08:58 UTC) behind other lanes' jobs for more than an hour. I cancelled the ticket and stopped my queued build when the pause arrived.
-- No fidelity run, no screenshots and no side-by-side reading were done at either width. The fidelity gate is therefore not met, and no UI finding below comes from looking at the page.
-- The builder's own dev-server fidelity run (build.md): SCR-33 desktop 1440 coverage 36% (18/50), visual 79.7. SCR-33 mobile 390 coverage 27.3% (3/11), visual 78. Both fail the tool (coverage 100%, visual >= 90) with no exceptions file. It is unreviewed.
+- Fidelity tool on a production build (API origin 127.0.0.1:4999 confirmed in routes-manifest), case 2001 with dossier 5001, no exceptions file: SCR-33 desktop 1440 FAIL, coverage 36% (18/50), visual 79.7; SCR-33 mobile 390 FAIL, coverage 27.3% (3/11), visual 78.1.
+- Most of the 32 + 8 "missing" items are spec-accepted or hidden parts (listed as UI-1-x for the design engineer's fidelity-exceptions.json). Four differences are not covered by the spec and block.
+- Not reviewed in browser beyond the empty form (case 2001): saved, historical and action-form states were not screenshotted; the builder's e2e covers them.
+- Phone: no horizontal overflow, one column, targets look at least 44px. Contrast is readable. Persona "Ada Okafor" and SAMPLE DATA label are mock/shell, not findings.
+- Reports and side-by-side images: scratchpad fidelity/SCR-33-1440 and fidelity/SCR-33-390 (report.json, side-by-side.png).
 
 ## Findings
-- UI-1-1 | blocking | high | frontend | Fidelity gate not run by the reviewer. Both boards (SCR-33-desktop at 1440, SCR-33-mobile at 390) need the tool run on a production build of head, plus a side-by-side reading for table and row styling, overflow at 390 and contrast. Re-run once a build slot is free.
-- UI-1-2 | blocking | medium | design engineer | No `fidelity-exceptions.json` exists for F-119. The design engineer must approve and list the items below as exceptions, as on F-113. Until then the tool cannot reach 100% coverage. Items are taken from spec.md "Conflicts with the boards" and build.md "Fidelity gap", and I have not checked them against the page.
-- UI-1-2a | exception | design engineer | hidden by spec (D-182): the "Cites:" chip lines under each box.
-- UI-1-2b | exception | design engineer | hidden by spec (D-8): "Save draft" (the API has no draft).
-- UI-1-2c | exception | design engineer | hidden by spec (DC-3): Tola's panel.
-- UI-1-2d | exception | design engineer | spec option (DC-4): the board's uploaded-file chip "retrospective-notes-sabi.docx · Uploaded · 36 KB" is built as a "Notes file" select of recorded proofs. Recorded outside parties under "Who took part" are not offered, only project people.
-- UI-1-2e | exception | design engineer | checklist words: the board's DONE/NOW/UNKNOWN rows and sample titles are replaced by the API titles and the status words Current, Recorded, Closed, Not yet, Unknown, Unavailable. The strip omits context and report.
-- UI-1-2f | exception | design engineer | added required fields not on the boards: "When it was held", Reference (first save), Decisions rows with their supporting file, the saved-versions list, the version label, the "checklist used version n" line, follow-up actions, "Other notes".
-- UI-1-2g | exception | design engineer | board sample text (Sabi Market boxes and names), the frame breadcrumb and the shell persona in place of the board's header, and the phone board's back link and subtitle (the shell shows the breadcrumb on phone). The builder says the tool reads the three box labels as form labels rather than text, so they count as "missing". Confirm in the next run whether the labels are really there.
-- UI-1-3 | non-blocking | low | frontend | Toast for the save, D-151: the success callout was replaced by a toast in 3b782e39. The builder did not re-run the e2e on it. Check the toast on screen in the next run.
+- UI-1-1 | blocking | medium | frontend | Save button size and place differ from the boards. Desktop board: "Save retrospective" is 300x50, directly after the notes file inside the panel. Built: 157px wide, below the extra fields (y 1129 vs 824), with the reason text beside it. Phone board: full-width (358px) button in a bottom bar; built is a 157px inline button (y 1129 vs 776). Make it the board's size (full width on phone) and place it as the board does.
+- UI-1-2 | blocking | medium | frontend | An extra title bar "RECORD THE RETROSPECTIVE" is drawn on the form panel (desktop and phone); the boards' panel has no header. Remove it (the tool lists it as an extra heading).
+- UI-1-3 | blocking | medium | frontend | Checklist status chips restyled. Board: DONE green, NOW red, UNKNOWN amber. Built: UNKNOWN is grey, "NOT YET" (the screen's own row) is amber instead of the board's red NOW chip. The words are spec-approved; the colours should follow the board (held = red, unknown = amber) via existing status tokens. The row is also bold with a "this screen" suffix and a sub-line the board lacks (the suffix and sub-line are an accepted spec addition, see UI-1-9).
+- UI-1-4 | blocking | low | frontend | Phone: the three boxes are plain labelled textareas in a panel; the phone board draws each as its own bordered card with the label inside and 18px "Retrospective" title (built 26px "Project retrospective", tool: 22px vs 26px). Match the card treatment and title size, or list it as an exception for the design engineer. Textareas also show a resize grip the board does not have (both widths).
+- UI-1-5 | exception candidate | low | design engineer | "Cites:" chips under each box are not drawn (D-182, no live source). Fidelity: missing x5 on desktop.
+- UI-1-6 | exception candidate | low | design engineer | "Save draft" not drawn (D-8, no draft exists). Missing x1.
+- UI-1-7 | exception candidate | low | design engineer | Tola panel (avatar, "Tola · PMO agent ...") not drawn (DC-3, no live source). Missing x2; this also moves the checklist panel up (misplaced).
+- UI-1-8 | exception candidate | low | design engineer | Board sample content is not UI: box text, "Tunde Bello (PM), Lagoon Health ... (recorded)", "retrospective-notes-sabi.docx Uploaded · 36 KB". Built uses a checkbox list of project people (outside parties not offered, spec conflict 4) and a "Notes file" select of recorded proofs (spec conflict 3, DC-4), where the board has one bordered line and a dashed upload chip. Also the mobile board's "← Sabi Market" back link and subtitle (the shell shows the breadcrumb on phone).
+- UI-1-9 | exception candidate | low | design engineer | Added required fields and read-only data not on the boards (spec conflict 5): When it was held, Reference, Decisions block and "Add a decision", Write-in-one-box hint, Saved retrospectives list, version label, follow-up actions, "checklist used version n" line, "this screen" row marker. Checklist words are the API's (Closed/Recorded/Not yet/Unknown and titles such as "Hypercare finished", "Handover to Support") instead of DONE/NOW and the board titles; context and report checks omitted (spec conflict 7).
+- UI-1-10 | exception candidate | low | design engineer | The tool counts "What went well", "What didn't", "Lessons for next projects" as missing text (they are form labels on the page) and the board's box sample text as missing (page boxes are empty on case 2001). Needs a pattern or exception entry, not a code change.
 
 ## Verified
 None (round 1).
 
 ## Notes
-- Left to do: build head in a copy, run the fidelity tool at 1440 and 390 for SCR-33-desktop and SCR-33-mobile, copy report.json and side-by-side.png into the scratchpad fidelity/ folder, and screenshot the page at both widths. Check overflow at 390 and the row, spacing and surface differences.
-- No fidelity outputs exist, so none are saved.
-- Cleanup: every process I started was stopped, including the queued build and its wait loops. The heavy lock reports free. The scratchpad copy `ui-F-119` is deleted. No server was started, so ports 4998 and 4999 were not used.
+- Verdict stays CHANGES even after the exceptions above: coverage cannot reach 100% without the design engineer's file, and visual must reach 90 (now 79.7 and 78.1). UI-1-1 to UI-1-4 will lift the score; the rest depends on the exceptions.
+- The build, mock and server I started were stopped by PID and the copy was deleted.

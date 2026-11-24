@@ -1,11 +1,11 @@
-STATUS: IN_PROGRESS
+STATUS: READY
 COMMIT: df2e09f4551626e0e97153c73d924118ceb5546c
 BUILDER: builder
 LANE: full
 
 ## Summary
 - UX-2-4 fixed in the mock, not the Delivery tab: `mock/work-live.mjs` now serves live work items 2501 to 2505, so the delivery row titles on the mock reach a live work item instead of a 404.
-- Paused by the coordinator before the browser walk. Everything else is done and pushed.
+- Browser walk done (see Validation). Everything is pushed.
 
 ## Changes
 - `frontend/mock/work-live.mjs` (lane C's file, additive only, for lane C to know): a small `delivery()` helper over `item()` and five entries 2501 to 2505. Each carries the overview row's line key, title, state, reference and updated_at (2501 to 2503 verified, 2504 action_needed, 2505 ready), with the case id of P-0101. No route, frame or other fixture changed.
@@ -18,5 +18,8 @@ LANE: full
 - `npx vitest run tests/mock-work-live.test.ts tests/delivery-tab.test.tsx`: 28 pass. eslint on the two changed files: clean.
 - No full vitest, build or gate (GitHub runs the gate, D-199).
 
+## Walk
+`next dev -p 4990` (API_ORIGIN 4991) and the mock on 4991, both started by me and stopped by PID. On /projects/00000000-0000-4000-8000-000000000101/delivery I clicked the row title "Release gates" at 1280px and at 390px. Both reached `/work/2501`, the live work item view with the heading "Release gates for Lagoon Health", and no /api/v1/work request answered 4xx. No 404 view. Rows 2502 to 2505 are covered by the mock test (all answer 200).
+
 ## Blocked
-Left: the browser walk of one row title at 1280 and 390 on `next dev` 4990 with the mock on 4991, checking it reaches the live view. Not started (paused). I started no processes this round, so nothing is running.
+None. Note: after the dev server ran, free disk read 3.0 GB (the .next dev cache in lane-d/frontend).

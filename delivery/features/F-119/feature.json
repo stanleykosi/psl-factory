@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-119",
   "outcome": "A person records the project retrospective as a saved version and sees where it stands in the closure checklist",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -99,13 +99,11 @@
   ],
   "reviews": {
     "technical": {
-      "status": "changes_requested",
-      "reviewer": "reviewer-technical",
-      "authority": "technical reviewer (lead)",
-      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
-      "evidence_refs": [
-        "delivery/features/F-119/round-1/review-technical.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "integrated_qa": {
       "status": "pending",
@@ -131,13 +129,11 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "passed",
-      "reviewer": "reviewer-ux",
-      "authority": "UX reviewer",
-      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
-      "evidence_refs": [
-        "delivery/features/F-119/round-1/review-ux.md"
-      ]
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
     },
     "ui": {
       "status": "pending",
@@ -285,9 +281,295 @@
           "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
         }
       ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Save button size and place differ from the boards. Desktop board: \"Save retrospective\" is 300x50, directly after the notes file inside the panel. Built: 157px wide, below the extra fields (y 1129 vs 824), with the reason text beside it. Phone board: full-width (358px) button in a bottom bar; built is a 157px inline button (y 1129 vs 776). Make it the board's size (full width on phone) and place it as the board does.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:41:59Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "An extra title bar \"RECORD THE RETROSPECTIVE\" is drawn on the form panel (desktop and phone); the boards' panel has no header. Remove it (the tool lists it as an extra heading).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:41:59Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Checklist status chips restyled. Board: DONE green, NOW red, UNKNOWN amber. Built: UNKNOWN is grey, \"NOT YET\" (the screen's own row) is amber instead of the board's red NOW chip. The words are spec-approved; the colours should follow the board (held = red, unknown = amber) via existing status tokens. The row is also bold with a \"this screen\" suffix and a sub-line the board lacks (the suffix and sub-line are an accepted spec addition, see UI-1-9).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:41:59Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone: the three boxes are plain labelled textareas in a panel; the phone board draws each as its own bordered card with the label inside and 18px \"Retrospective\" title (built 26px \"Project retrospective\", tool: 22px vs 26px). Match the card treatment and title size, or list it as an exception for the design engineer. Textareas also show a resize grip the board does not have (both widths).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:41:59Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "\"Cites:\" chips under each box are not drawn (D-182, no live source). Fidelity: missing x5 on desktop.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:41:59Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "\"Save draft\" not drawn (D-8, no draft exists). Missing x1.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:41:59Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-7",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Tola panel (avatar, \"Tola \u00b7 PMO agent ...\") not drawn (DC-3, no live source). Missing x2; this also moves the checklist panel up (misplaced).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:41:59Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-8",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Board sample content is not UI: box text, \"Tunde Bello (PM), Lagoon Health ... (recorded)\", \"retrospective-notes-sabi.docx Uploaded \u00b7 36 KB\". Built uses a checkbox list of project people (outside parties not offered, spec conflict 4) and a \"Notes file\" select of recorded proofs (spec conflict 3, DC-4), where the board has one bordered line and a dashed upload chip. Also the mobile board's \"\u2190 Sabi Market\" back link and subtitle (the shell shows the breadcrumb on phone).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:41:59Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-9",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Added required fields and read-only data not on the boards (spec conflict 5): When it was held, Reference, Decisions block and \"Add a decision\", Write-in-one-box hint, Saved retrospectives list, version label, follow-up actions, \"checklist used version n\" line, \"this screen\" row marker. Checklist words are the API's (Closed/Recorded/Not yet/Unknown and titles such as \"Hypercare finished\", \"Handover to Support\") instead of DONE/NOW and the board titles; context and report checks omitted (spec conflict 7).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:41:59Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-10",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The tool counts \"What went well\", \"What didn't\", \"Lessons for next projects\" as missing text (they are form labels on the page) and the board's box sample text as missing (page boxes are empty on case 2001). Needs a pattern or exception entry, not a code change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:41:59Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
     }
   ],
-  "prior_review_records": [],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+          "evidence_refs": [
+            "delivery/features/F-119/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-119/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer",
+          "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+          "evidence_refs": [
+            "delivery/features/F-119/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+          "evidence_refs": [
+            "delivery/features/F-119/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -422,7 +704,7 @@
     }
   },
   "created_at": "2026-11-23T17:35:28Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -448,6 +730,22 @@
       "round": 1,
       "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T13:42:16Z",
+      "round": 1,
+      "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T13:42:17Z",
+      "round": 2,
+      "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "reason": null
     }
   ],
   "routing": {
@@ -463,10 +761,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 2,
-    "verdict": "PASS",
-    "commit": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

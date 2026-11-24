@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-113",
   "outcome": "The Delivery tab shows the project's six delivery lines from the live overview",
-  "state": "IMPLEMENTING",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -99,15 +99,41 @@
       "at": "2026-11-24T03:17:27Z",
       "seconds": 524.6,
       "evidence_ref": "delivery/features/F-113/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T13:33:10Z",
+      "seconds": 12.9,
+      "evidence_ref": "delivery/features/F-113/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 2,
+      "commit": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T13:39:20Z",
+      "seconds": 260.8,
+      "evidence_ref": "delivery/features/F-113/round-3/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical review lead, round 3 (test data only)",
+      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "evidence_refs": [
+        "delivery/features/F-113/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -133,18 +159,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "evidence_refs": [
+        "delivery/features/F-113/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer",
+      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "evidence_refs": [
+        "delivery/features/F-113/round-3/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -847,13 +877,64 @@
         "delivery/features/F-113/round-2/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T09:55:31Z",
           "head": "0c081045fa29ad5d62d5ffed92916e21dbc68f13"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T13:33:11Z",
+          "refs": [
+            "row titles on the mock now reach a live work item (2501 to 2505 answer 200)"
+          ],
+          "head": "df2e09f4551626e0e97153c73d924118ceb5546c",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:41:32Z",
+          "refs": [
+            "Retest: `npx vitest run tests/mock-work-live.test.ts` (frontend/) passes 11 of 11 on df2e09f4. The loop covers 2501 to 2505, each answers 200 and validates against the 1.26.0 schema, and `line`/`state`/`reference` match the overview row. The fixture titles follow the row titles (\"Release gates for Lagoon Health\" and so on), so the item heading matches the row clicked. The `delivery-tab.test.tsx` suite was not rerun by me; the builder ran it (28 tests with the new file) and the UX reviewer's round 3 review covers the browser walk."
+          ],
+          "head": "df2e09f4551626e0e97153c73d924118ceb5546c",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "row titles on the mock now reach a live work item (2501 to 2505 answer 200)"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Retest: `npx vitest run tests/mock-work-live.test.ts` (frontend/) passes 11 of 11 on df2e09f4. The loop covers 2501 to 2505, each answers 200 and validates against the 1.26.0 schema, and `line`/`state`/`reference` match the overview row. The fixture titles follow the row titles (\"Release gates for Lagoon Health\" and so on), so the item heading matches the row clicked. The `delivery-tab.test.tsx` suite was not rerun by me; the builder ran it (28 tests with the new file) and the UX reviewer's round 3 review covers the browser walk."
+      ]
+    },
+    {
+      "id": "TECH-3-1",
+      "round": 3,
+      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/mock/work-live.mjs:72` (`delivery()` helper) sets `next_step` to \"No further step is needed yet.\" for every non-verified fixture, so 2504 (action_needed) and 2505 (ready) say no step is needed while their state asks for one. Schema-valid and sample-only, so not blocking. Expected: give 2504 a next-step sentence that matches action_needed. Actual: generic text. Fix in a later mock pass; no test depends on it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:41:32Z",
+          "head": "df2e09f4551626e0e97153c73d924118ceb5546c"
         }
       ]
     }
@@ -998,7 +1079,7 @@
     "base_branch": "main",
     "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-connect-1-delivery-overview",
-    "head_sha": "0c081045fa29ad5d62d5ffed92916e21dbc68f13",
+    "head_sha": "df2e09f4551626e0e97153c73d924118ceb5546c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d",
     "pr_url": null,
     "pr_number": null,
@@ -1010,157 +1091,20 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
-      ".github/workflows/frontend-checks.yml",
-      "BUILD-BACKLOG.json",
-      "BUILD-DECISIONS.md",
-      "BUILD-LOG.md",
-      "BUILD-STATE.md",
-      "BUILD-TESTS.md",
-      "HANDOFF.md",
-      "apps/agents/assistant.py",
-      "apps/agents/assistant_views.py",
-      "apps/agents/specialist_memory.py",
-      "apps/core/alerts.py",
-      "apps/core/factory_api/finance_operations.py",
-      "apps/core/factory_api/intake.py",
-      "apps/core/factory_api/leadership_reports.py",
-      "apps/core/factory_api/urls.py",
-      "apps/core/management/commands/work_approval_routes.py",
-      "apps/documents/delivery.py",
-      "apps/finance/forecast.py",
-      "apps/finance/month_end.py",
-      "apps/finance/payments_overview.py",
-      "apps/finance/performance_calculation.py",
-      "apps/finance/project_money.py",
-      "apps/identity/role_work_views.py",
-      "apps/pmo/approval_routing.py",
-      "apps/pmo/leadership_project_scope.py",
-      "apps/pmo/leadership_reporting.py",
-      "apps/workflows/factory_coordinator_views.py",
-      "apps/workflows/factory_engagement_views.py",
-      "apps/workflows/factory_execution_views.py",
-      "apps/workflows/factory_intake_views.py",
-      "apps/workflows/factory_leadership.py",
-      "apps/workflows/factory_receipt_recovery_views.py",
-      "apps/workflows/factory_views.py",
-      "apps/workflows/migrations/0104_leadership_current_information.py",
-      "contracts/psl-factory.openapi.json",
-      "delivery/checks.sh",
-      "delivery/connect/backend-answers-2026-11-23.md",
-      "delivery/connect/backend-answers.md",
-      "frontend/e2e/document-review.spec.ts",
-      "frontend/e2e/hr.spec.ts",
-      "frontend/e2e/rfp-intake.spec.ts",
-      "frontend/e2e/start-work-ppe-forecast.spec.ts",
-      "frontend/e2e/start-work-proof.spec.ts",
-      "frontend/e2e/start-work.spec.ts",
-      "frontend/e2e/work-item-live.spec.ts",
       "frontend/mock/delivery-overview.mjs",
-      "frontend/mock/demo-projects.mjs",
-      "frontend/mock/documents.mjs",
-      "frontend/mock/fixtures/documents/review-2901.json",
-      "frontend/mock/fixtures/documents/review-2901.publication.json",
-      "frontend/mock/fixtures/me.admin.json",
-      "frontend/mock/fixtures/me.ceo.json",
-      "frontend/mock/fixtures/me.finance_lead.json",
-      "frontend/mock/fixtures/me.hr.json",
-      "frontend/mock/fixtures/me.hr_lead.json",
-      "frontend/mock/fixtures/me.none.json",
-      "frontend/mock/fixtures/me.pm.json",
-      "frontend/mock/fixtures/me.pmo_lead.json",
-      "frontend/mock/fixtures/projects/list.json",
-      "frontend/mock/projects.mjs",
       "frontend/mock/server.mjs",
-      "frontend/mock/start-live.mjs",
       "frontend/mock/work-live.mjs",
-      "frontend/src/api/live-schema.d.ts",
-      "frontend/src/api/types.ts",
-      "frontend/src/app/work/[id]/(item)/history/page.tsx",
-      "frontend/src/app/work/[id]/(item)/layout.tsx",
-      "frontend/src/app/work/[id]/(item)/page.tsx",
-      "frontend/src/features/assistant/AssistantFrame.tsx",
-      "frontend/src/features/documents/DocumentParts.tsx",
-      "frontend/src/features/documents/DocumentReview.tsx",
-      "frontend/src/features/documents/ReviewControls.tsx",
-      "frontend/src/features/documents/document-review.css",
-      "frontend/src/features/documents/documentModel.ts",
-      "frontend/src/features/documents/useDocument.ts",
-      "frontend/src/features/documents/useReview.ts",
       "frontend/src/features/projects/DeliveryTab.tsx",
-      "frontend/src/features/projects/DocumentsTab.tsx",
       "frontend/src/features/projects/ProjectJourney.tsx",
       "frontend/src/features/projects/deliveryModel.ts",
       "frontend/src/features/projects/dlvov.css",
       "frontend/src/features/projects/model.ts",
       "frontend/src/features/projects/useDeliveryOverview.ts",
-      "frontend/src/features/sign-in/sign-in.css",
-      "frontend/src/features/start-work/LineChooser.tsx",
-      "frontend/src/features/start-work/LineForm.tsx",
-      "frontend/src/features/start-work/ProjectPicker.tsx",
-      "frontend/src/features/start-work/RecordPicker.tsx",
-      "frontend/src/features/start-work/SourcePicker.tsx",
-      "frontend/src/features/start-work/StartUpload.tsx",
-      "frontend/src/features/start-work/StartWorkDrawer.tsx",
-      "frontend/src/features/start-work/intake.ts",
-      "frontend/src/features/start-work/labels.ts",
-      "frontend/src/features/start-work/lines/index.ts",
-      "frontend/src/features/start-work/lines/weeklyReport.tsx",
-      "frontend/src/features/start-work/start-work.css",
-      "frontend/src/features/start-work/types.ts",
-      "frontend/src/features/start-work/useStart.ts",
-      "frontend/src/features/start-work/useStartWork.ts",
-      "frontend/src/features/work-item/live/LiveWorkItemView.tsx",
-      "frontend/src/features/work-item/live/model.ts",
-      "frontend/src/features/work-item/live/useLiveHistory.ts",
-      "frontend/src/features/work-item/live/useLiveWorkItem.ts",
-      "frontend/src/features/work-item/work-item.css",
-      "frontend/src/features/workspace/EvidencePicker.tsx",
-      "frontend/src/features/workspace/adapter.ts",
-      "frontend/src/features/workspace/evidence.ts",
-      "frontend/src/features/workspace/weeklyReportAdapter.ts",
-      "frontend/src/styles/shell.css",
-      "frontend/tests/assistant.test.tsx",
       "frontend/tests/delivery-model.test.ts",
       "frontend/tests/delivery-tab.test.tsx",
-      "frontend/tests/destinations.ts",
-      "frontend/tests/document-review-model.test.ts",
-      "frontend/tests/document-review.test.tsx",
-      "frontend/tests/evidence.test.tsx",
-      "frontend/tests/hypercare.test.tsx",
-      "frontend/tests/issue-detail.test.tsx",
-      "frontend/tests/line-adapter.test.tsx",
-      "frontend/tests/live-work-item.test.tsx",
-      "frontend/tests/mock-live-document-review.test.ts",
-      "frontend/tests/mock-live-projects.test.ts",
       "frontend/tests/mock-work-live.test.ts",
-      "frontend/tests/next-config.test.ts",
-      "frontend/tests/project-tabs.test.tsx",
       "frontend/tests/projects-journey.test.tsx",
-      "frontend/tests/projects-model.test.ts",
-      "frontend/tests/rfp-intake.test.tsx",
-      "frontend/tests/shell-live.test.tsx",
-      "frontend/tests/start-work-intake.test.ts",
-      "frontend/tests/start-work-live.test.tsx",
-      "frontend/tests/start-work-ppe-forecast.test.tsx",
-      "frontend/tests/start-work-prefill.test.tsx",
-      "frontend/tests/start-work-proof.test.tsx",
-      "frontend/tests/start-work.test.tsx",
-      "frontend/tests/weekly.test.tsx",
-      "handoffs/nextjs/README.md",
-      "handoffs/nextjs/live-schema.d.ts",
-      "handoffs/nextjs/psl-factory.openapi.json",
-      "legacy_ui/templates/base.html",
-      "legacy_ui/templates/design/month_end_overview.html",
-      "scripts/railway-worker.sh",
-      "tests/test_finance_performance.py",
-      "tests/test_leadership_project_scope.py",
-      "tests/test_minutes_migration.py",
-      "tests/test_railway_review_regressions.py",
-      "tests/test_railway_worker.py",
-      "tests/test_role_scoped_work.py",
-      "tests/test_specialist_loop.py",
-      "tests/test_statement_ppe_migrations.py",
-      "tests/test_support_channel_workers.py"
+      "frontend/tests/projects-model.test.ts"
     ]
   },
   "parallel_execution": {
@@ -1276,6 +1220,22 @@
       "round": 3,
       "head": "0c081045fa29ad5d62d5ffed92916e21dbc68f13",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T13:39:35Z",
+      "round": 3,
+      "head": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-24T13:41:41Z",
+      "round": 3,
+      "head": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "reason": null
     }
   ],
   "routing": {
@@ -1292,9 +1252,9 @@
   },
   "gate": {
     "round": 3,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 2,
+    "verdict": "PASS",
+    "commit": "df2e09f4551626e0e97153c73d924118ceb5546c"
   },
   "blocked": null
 }

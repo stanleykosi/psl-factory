@@ -1,0 +1,1171 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T13:39:45.948Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-33-desktop.dc.html",
+  "boardName": "SCR-33-desktop.dc.html",
+  "pageUrl": "http://127.0.0.1:4998/projects/3f6c1a52-0d2b-4c11-9b0a-5a1e7d9c2001/retrospective?dossier=5001",
+  "viewport": {
+    "width": 1440,
+    "height": 1060
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": null,
+  "pass": false,
+  "passReasons": [
+    "32 board item(s) are missing from the page and are not approved exceptions (coverage 36% with exceptions, needs 100%).",
+    "Visual match 79.7 is below 90.",
+    "6 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 36,
+    "coverageWithExceptions": 36,
+    "visual": 79.7
+  },
+  "visual": {
+    "score": 79.7,
+    "allCellsScore": 86.3,
+    "width": 1440,
+    "height": 1060,
+    "boardHeight": 1060,
+    "pageHeight": 1251,
+    "cell": 12,
+    "contentCells": 7184,
+    "mismatchedCells": 1458
+  },
+  "coverage": {
+    "total": 50,
+    "found": 18,
+    "coverage": 36,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 80,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 516,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "pageName": "Tunde Bello",
+        "pageRole": "text",
+        "similarity": 86,
+        "looks": [
+          "text colour #C8CDD0 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 134,
+          "y": 695,
+          "w": 75,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 890
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1194
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS / SABI MARKET / CLOSURE",
+        "pageName": "PROJECTS / SABI MARKET WEB STORE / CLOSURE",
+        "pageRole": "text",
+        "similarity": 80,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "PROJECTS",
+        "pageName": "PROJECTS",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 86,
+          "w": 61,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Project retrospective",
+        "pageName": "Project retrospective",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 1264,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 123,
+          "w": 1264,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Sabi Market · web store · needed before closure",
+        "pageName": "Sabi Market web store · needed before closure SAMPLE DATA",
+        "pageRole": "text",
+        "similarity": 88,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 176,
+          "w": 1264,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 180,
+          "w": 1264,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Who took part",
+        "pageName": "Who took part",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 668,
+          "w": 890,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 662,
+          "w": 92,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Save retrospective",
+        "pageName": "Save retrospective",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "text colour #FFFFFF on the board, #4A5357 on the page",
+          "background #2459D6 on the board, #C9CDC7 on the page"
+        ],
+        "boardBox": {
+          "x": 104,
+          "y": 824,
+          "w": 300,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1129,
+          "w": 157,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "",
+        "pageName": "Closure",
+        "pageRole": "complementary",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 1032,
+          "y": 214,
+          "w": 320,
+          "h": 471
+        },
+        "pageBox": {
+          "x": 1032,
+          "y": 222,
+          "w": 320,
+          "h": 387
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Closure can't start until a retrospective is saved. It goes into the closure report the PMO Lead decides on.",
+        "pageName": "Closure can’t start until a retrospective is saved. It goes into the closure report the PMO Lead decides on.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1072,
+          "y": 224,
+          "w": 268,
+          "h": 63
+        },
+        "pageBox": {
+          "x": 1072,
+          "y": 232,
+          "w": 268,
+          "h": 63
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CLOSURE CHECKLIST",
+        "pageName": "CLOSURE CHECKLIST",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1034,
+          "y": 432,
+          "w": 316,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 1034,
+          "y": 321,
+          "w": 316,
+          "h": 43
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What went well",
+        "key": "text: What went well",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 230,
+          "w": 890,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "UAT finished on time; the client's team responded within a day on most questions.",
+        "key": "text: UAT finished on time; the client's team responded within a day on most questions.",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 254,
+          "w": 890,
+          "h": 84
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cites:",
+        "key": "text: Cites:",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 346,
+          "w": 31,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MIN-0138",
+        "key": "text: MIN-0138",
+        "container": "main",
+        "boardBox": {
+          "x": 141,
+          "y": 344,
+          "w": 67,
+          "h": 20
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestone 2",
+        "key": "text: Milestone 2",
+        "container": "main",
+        "boardBox": {
+          "x": 213,
+          "y": 344,
+          "w": 87,
+          "h": 20
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "What didn't",
+        "key": "text: What didn't",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 376,
+          "w": 890,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Older Android phones weren't in the test plan, so a login issue reached UAT.",
+        "key": "text: Older Android phones weren't in the test plan, so a login issue reached UAT.",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 400,
+          "w": 890,
+          "h": 84
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cites:",
+        "key": "text: Cites:",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 492,
+          "w": 31,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0233",
+        "key": "text: ISS-0233",
+        "container": "main",
+        "boardBox": {
+          "x": 141,
+          "y": 490,
+          "w": 67,
+          "h": 20
+        },
+        "exception": null
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Lessons for next projects",
+        "key": "text: Lessons for next projects",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 522,
+          "w": 890,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Ask for the client's device mix during planning and add it to the test plan.",
+        "key": "text: Ask for the client's device mix during planning and add it to the test plan.",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 546,
+          "w": 890,
+          "h": 84
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Cites:",
+        "key": "text: Cites:",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 638,
+          "w": 31,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0233",
+        "key": "text: ISS-0233",
+        "container": "main",
+        "boardBox": {
+          "x": 141,
+          "y": 636,
+          "w": 67,
+          "h": 20
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Test plan v2",
+        "key": "text: Test plan v2",
+        "container": "main",
+        "boardBox": {
+          "x": 213,
+          "y": 636,
+          "w": 93,
+          "h": 20
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello (PM), Lagoon Health product owner (recorded), Engineering (recorded)",
+        "key": "text: Tunde Bello (PM), Lagoon Health product owner (recorded), Engineering (recorded)",
+        "container": "main",
+        "boardBox": {
+          "x": 104,
+          "y": 692,
+          "w": 890,
+          "h": 48
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "retrospective-notes-sabi.docx",
+        "key": "text: retrospective-notes-sabi.docx",
+        "container": "main",
+        "boardBox": {
+          "x": 146,
+          "y": 764,
+          "w": 196,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 36 KB",
+        "key": "text: Uploaded · 36 KB",
+        "container": "main",
+        "boardBox": {
+          "x": 146,
+          "y": 784,
+          "w": 94,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Save draft",
+        "key": "link: Save draft",
+        "container": "main",
+        "boardBox": {
+          "x": 414,
+          "y": 824,
+          "w": 300,
+          "h": 50
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent I pulled the project's issues, changes and late actions to help you. The conclusions are yours.",
+        "key": "text: Tola · PMO agent I pulled the project's issues, changes and late actions to help you. The conclusions are yours.",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1092,
+          "y": 323,
+          "w": 246,
+          "h": 81
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola",
+        "key": "text: Tola",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1092,
+          "y": 324,
+          "w": 27,
+          "h": 18
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Go-live accepted DONE",
+        "key": "text: Go-live accepted DONE",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 483,
+          "w": 288,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "key": "text: DONE",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1287,
+          "y": 483,
+          "w": 49,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Hypercare qualified DONE",
+        "key": "text: Hypercare qualified DONE",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 516,
+          "w": 288,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "key": "text: DONE",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1287,
+          "y": 516,
+          "w": 49,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Archive DONE",
+        "key": "text: Archive DONE",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 549,
+          "w": 288,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "key": "text: DONE",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1287,
+          "y": 549,
+          "w": 49,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Handover received DONE",
+        "key": "text: Handover received DONE",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 582,
+          "w": 288,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "key": "text: DONE",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1287,
+          "y": 582,
+          "w": 49,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Retrospective NOW",
+        "key": "text: Retrospective NOW",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 615,
+          "w": 288,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "NOW",
+        "key": "text: NOW",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1292,
+          "y": 615,
+          "w": 44,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finance confirmation UNKNOWN",
+        "key": "text: Finance confirmation UNKNOWN",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1048,
+          "y": 648,
+          "w": 288,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "UNKNOWN",
+        "key": "text: UNKNOWN",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1258,
+          "y": 648,
+          "w": 78,
+          "h": 21
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"Tunde Bello · PMO\"",
+        "kind": "Text",
+        "name": "Tunde Bello · PMO",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 134,
+          "y": 695,
+          "w": 75,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"More ways to start\"; on the page it comes after Text \"Who took part\"",
+          "across the page: right on the board (90% across), left on the page (12% across)",
+          "inside the top navigation on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"PROJECTS / SABI MARKET / CLOSURE\"",
+        "kind": "Text",
+        "name": "PROJECTS / SABI MARKET / CLOSURE",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Link \"PROJECTS\"",
+        "kind": "Link",
+        "name": "PROJECTS",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 86,
+          "w": 61,
+          "h": 15
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Side panel \"\"",
+        "kind": "Side panel",
+        "name": "",
+        "boardBox": {
+          "x": 1032,
+          "y": 214,
+          "w": 320,
+          "h": 471
+        },
+        "pageBox": {
+          "x": 1032,
+          "y": 222,
+          "w": 320,
+          "h": 387
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Closure can't start until a retrospective is saved. It goes into the closure report the PMO Lead decides on.\"; on the page it comes after Text \"CLOSURE CHECKLIST\""
+        ]
+      },
+      {
+        "label": "Text \"Who took part\"",
+        "kind": "Text",
+        "name": "Who took part",
+        "boardBox": {
+          "x": 104,
+          "y": 668,
+          "w": 890,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 662,
+          "w": 92,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Save retrospective\"",
+        "kind": "Link",
+        "name": "Save retrospective",
+        "boardBox": {
+          "x": 104,
+          "y": 824,
+          "w": 300,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 1129,
+          "w": 157,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "container": "navigation",
+        "pageBox": {
+          "x": 602,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 970,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Account menu: Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1018,
+          "y": 19,
+          "w": 161,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "RECORD THE RETROSPECTIVE",
+        "container": "main",
+        "pageBox": {
+          "x": 90,
+          "y": 224,
+          "w": 918,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "When it was held 24 Nov 2026, 14:39",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 818,
+          "w": 890,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Reference",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 901,
+          "w": 890,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Drop-down",
+        "role": "combobox",
+        "name": "Notes file",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 984,
+          "w": 890,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Decisions",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 1040,
+          "w": 890,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Add a decision",
+        "container": "form",
+        "pageBox": {
+          "x": 104,
+          "y": 1073,
+          "w": 131,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Write in at least one box.",
+        "container": "form",
+        "pageBox": {
+          "x": 271,
+          "y": 1144,
+          "w": 144,
+          "h": 20
+        }
+      }
+    ],
+    "unexcepted": 32
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

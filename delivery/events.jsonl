@@ -4794,3 +4794,17 @@
 {"at":"2026-11-24T13:41:36Z","feature":"F-62","round":1,"kind":"fields","fields":{"git.ci_status":"passed"}}
 {"at":"2026-11-24T13:41:37Z","feature":"F-62","round":1,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), recorded by the lane A coordinator","commit":"b9d61964c993","written_at":"2026-11-24T13:41:34Z"}
 {"at":"2026-11-24T13:41:41Z","feature":"F-113","round":3,"kind":"transition","head":"df2e09f45516","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-24T13:41:59Z","feature":"F-119","round":1,"kind":"finding","action":"add","finding":"UI-1-1","by":"reviewer-ui","severity":"medium","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-24T13:41:59Z","feature":"F-119","round":1,"kind":"finding","action":"add","finding":"UI-1-2","by":"reviewer-ui","severity":"medium","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-24T13:41:59Z","feature":"F-119","round":1,"kind":"finding","action":"add","finding":"UI-1-3","by":"reviewer-ui","severity":"medium","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-24T13:41:59Z","feature":"F-119","round":1,"kind":"finding","action":"add","finding":"UI-1-4","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-24T13:41:59Z","feature":"F-119","round":1,"kind":"finding","action":"add","finding":"UI-1-5","by":"reviewer-ui","severity":"low","owner":"design engineer","blocking":false,"role":"ui"}
+{"at":"2026-11-24T13:41:59Z","feature":"F-119","round":1,"kind":"finding","action":"add","finding":"UI-1-6","by":"reviewer-ui","severity":"low","owner":"design engineer","blocking":false,"role":"ui"}
+{"at":"2026-11-24T13:41:59Z","feature":"F-119","round":1,"kind":"finding","action":"add","finding":"UI-1-7","by":"reviewer-ui","severity":"low","owner":"design engineer","blocking":false,"role":"ui"}
+{"at":"2026-11-24T13:41:59Z","feature":"F-119","round":1,"kind":"finding","action":"add","finding":"UI-1-8","by":"reviewer-ui","severity":"low","owner":"design engineer","blocking":false,"role":"ui"}
+{"at":"2026-11-24T13:41:59Z","feature":"F-119","round":1,"kind":"finding","action":"add","finding":"UI-1-9","by":"reviewer-ui","severity":"low","owner":"design engineer","blocking":false,"role":"ui"}
+{"at":"2026-11-24T13:41:59Z","feature":"F-119","round":1,"kind":"finding","action":"add","finding":"UI-1-10","by":"reviewer-ui","severity":"low","owner":"design engineer","blocking":false,"role":"ui"}
+{"at":"2026-11-24T13:42:16Z","feature":"F-119","round":1,"kind":"transition","head":"3b782e399d96","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-24T13:42:17Z","feature":"F-119","round":2,"kind":"transition","head":"3b782e399d96","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-24T13:42:25Z","feature":"F-125","round":1,"kind":"decision","decision":"BLOCKED","head":"215361f5a3cf","reasons":["technical review covers '215361f5', not head '215361f5a3cf78d8fde907d7c12ec055c9e3dbf7'","integrated_qa review covers '215361f5', not head '215361f5a3cf78d8fde907d7c12ec055c9e3dbf7'","pmo_acceptance review covers 'a0eb67073f7a675f3a1436fbd62b855b8a44161d', not head '215361f5a3cf78d8fde907d7c12ec055c9e3dbf7'","ui review covers '215361f5', not head '215361f5a3cf78d8fde907d7c12ec055c9e3dbf7'"]}
+{"at":"2026-11-24T13:42:25Z","feature":"F-125","round":1,"kind":"fields","fields":{"merge_decision.approver_recommendation":"AUTO_MERGE"}}
