@@ -472,7 +472,7 @@ describe('record what you found (AC 10, 11)', () => {
       release(json(200, item('W-4202.next')));
     });
     await waitFor(() => expect(status().textContent).toBe('AWAITING FINANCE DECISION'));
-    expect(notices()).toContain('Observation recorded.');
+    await waitFor(() => expect(notices()).toContain('Observation recorded.'));
   });
 
   it('a 5xx on the upload shows the proof problem and sends no step', async () => {

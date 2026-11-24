@@ -10,7 +10,8 @@
 .docrev__titlerow /* D-159: one row at every width; when they do not fit they scroll sideways, as on a phone, instead of wrapping into a
    broken second row */
 .projects__tabs { align-self: flex-start; flex-wrap: nowrap; }
-.docrev__status { align-self: flex-start; }
+.docrev__tags { display: flex; flex-wrap: wrap; gap: var(--space-6px); align-self: flex-start; }
+.docrev__blockers { margin: var(--space-1) 0 0; padding-left: var(--space-4); }
 .docrev__panel { display: flex; flex-direction: column; gap: var(--space-20px); min-width: 0; }
 .docrev__drafted { margin: 0; color: var(--ink-muted); }
 
