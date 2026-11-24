@@ -5011,3 +5011,5 @@
 {"at":"2026-11-24T14:35:28Z","feature":"F-119","round":3,"kind":"finding","action":"add","finding":"UI-3-2","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
 {"at":"2026-11-24T14:35:28Z","feature":"F-119","round":3,"kind":"transition","head":"06d07376b024","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-24T14:35:29Z","feature":"F-119","round":4,"kind":"transition","head":"06d07376b024","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-24T14:35:51Z","feature":"F-61","round":1,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/112","git.pr_number":112}}
+{"at":"2026-11-24T14:35:52Z","feature":"F-61","round":1,"kind":"transition","head":"5f61b03c833d","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}

@@ -10,3 +10,9 @@ The design engineer accepted the recommended option for B32: "All recommended op
 
 ## Batch 5 confirmed (24 Nov 2026, D-202)
 The design engineer, in chat, relayed by the main coordinator (records 2d8816cc): "Accept all recs". This covers F-78 batch 5, option 1 (accept all), the same answer D-195 recorded above.
+
+## Carry-over fixes from F-71 (lane coordinator, 24 Nov 2026)
+F-71 merges with three non-blocking items on the Milestones tab and the Money e2e that F-78 builds on. Fix them in F-78 as separate small commits named in build.md:
+- QA-2-1: `frontend/e2e/money.spec.ts:85` still expects the old idle aside name "Choose an amount to see where it comes from."; round 2 (UI-1-3) made the head "Where a figure comes from" with the prompt as the body. Update the spec.
+- TECH-2-1 / QA-2-2: the Proof button in MilestonesTab.tsx doesn't collapse on a second press, and `aria-expanded` dips to false during the re-read. Make it a real toggle with a steady `aria-expanded`.
+(F-71 round-2/review-qa.md and review-technical.md.)
