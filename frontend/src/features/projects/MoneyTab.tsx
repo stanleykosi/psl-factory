@@ -193,11 +193,15 @@ function MoneyContent({ caseId, base }: { caseId: string; base: string }) {
   }
 
   const { items, limited, as_of: asOf } = money.money;
+  const incomplete = limited && <Callout kind="warning">Some figures may be incomplete.</Callout>;
   if (items.length === 0) {
     return (
-      <EmptyState level={2} title="No contract stages yet" className="money__empty">
-        Stages appear here once the SOW is signed.
-      </EmptyState>
+      <>
+        {incomplete}
+        <EmptyState level={2} title="No contract stages yet" className="money__empty">
+          Stages appear here once the SOW is signed.
+        </EmptyState>
+      </>
     );
   }
 
@@ -211,7 +215,6 @@ function MoneyContent({ caseId, base }: { caseId: string; base: string }) {
     },
   };
   const head = headOf(figure, selectedKey, items);
-  const incomplete = limited && <Callout kind="warning">Some figures may be incomplete.</Callout>;
   const explanation: ReactNode = <Explanation figure={figure} onRetry={retryFigure} />;
 
   if (phone) {
@@ -233,7 +236,7 @@ function MoneyContent({ caseId, base }: { caseId: string; base: string }) {
   return (
     <>
       <div className="money__intro">
-        <p className="money__lead">Every figure links to the record it came from. Unknown amounts are shown as Unknown, never as 0.</p>
+        <p className="money__lead">Each figure shows where it comes from when a source is recorded. Unknown amounts are shown as Unknown, never as 0.</p>
       </div>
       {incomplete}
       <div className="money__body">

@@ -154,7 +154,7 @@ describe('rows from the live money read (P-0101, as SCR-12 draws it)', () => {
       ['INV-0420 outside any stage', 'USD 1,000.00', 'INV-0420 · Draft', 'Paid Unknown · Owed USD 1,000.00'],
     ]);
     expect(panel().querySelector('.money__asof')!.textContent).toBe('As of 12 Nov 16:40');
-    expect(screen.getByText('Every figure links to the record it came from. Unknown amounts are shown as Unknown, never as 0.')).toBeTruthy();
+    expect(screen.getByText('Each figure shows where it comes from when a source is recorded. Unknown amounts are shown as Unknown, never as 0.')).toBeTruthy();
   });
 
   it('the order is the order sent, not alphabetical and not by position', async () => {
@@ -233,6 +233,13 @@ describe('limited and empty', () => {
     calls = [];
     await open('P-0102');
     expect(within(panel()).getByText('Some figures may be incomplete.').closest('.psl-callout')).toBeTruthy();
+  });
+
+  it('limited with no items still shows the warning above the empty state', async () => {
+    respond = asMoney({ ...moneyBody(), items: [], limited: true });
+    await open();
+    expect(within(panel()).getByText('Some figures may be incomplete.')).toBeTruthy();
+    expect(within(panel()).getByRole('heading', { level: 2, name: 'No contract stages yet' })).toBeTruthy();
   });
 
   it('P-0106 has no items: "No contract stages yet", no table, no aside', async () => {
@@ -365,6 +372,9 @@ describe('errors and access', () => {
     ['a 500', () => json(500, { code: 'server_error', message: 'Boom' })],
     ['a network failure', () => Promise.reject(new TypeError('offline'))],
     ['a body without items', () => json(200, { limited: false, as_of: '2026-11-12T15:40:00Z', finance_url: '/f' })],
+    ['an invoice without an id', () => json(200, { ...moneyBody(), items: [{ ...moneyBody().items[0], invoices: [{ reference: 'I', status: 'Issued', paid: null, owed: null, currency: 'NGN' }] }] })],
+    ['an invoice without a currency', () => json(200, { ...moneyBody(), items: [{ ...moneyBody().items[0], invoices: [{ id: 1, reference: 'I', status: 'Issued', paid: '1.00', owed: null }] }] })],
+    ['a change without a link_id', () => json(200, { ...moneyBody(), items: [{ ...moneyBody().items[0], changes: [{ reference: 'C', note: 'n', additional_amount: null }] }] })],
     ['a malformed item', () => json(200, { ...moneyBody(), items: [moneyBody().items[0], { key: 'x', label: 'Broken', amount: 4250000 }] })],
   ] as const)('money read failure (%s): the error card and Try again, nothing partial, one new read', async (_, answer) => {
     respond = (url) => (url.pathname.endsWith('/money') ? answer() : fromMock(url, persona));

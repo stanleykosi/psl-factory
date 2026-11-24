@@ -16,7 +16,7 @@ export const isObject = (value: unknown): value is Record<string, unknown> => ty
 const textOrNull = (value: unknown) => value === null || typeof value === 'string';
 
 function isInvoice(value: unknown): boolean {
-  return isObject(value) && typeof value.reference === 'string' && typeof value.status === 'string' && textOrNull(value.paid) && textOrNull(value.owed);
+  return isObject(value) && Number.isInteger(value.id) && typeof value.currency === 'string' && typeof value.reference === 'string' && typeof value.status === 'string' && textOrNull(value.paid) && textOrNull(value.owed);
 }
 
 function isSource(value: unknown): boolean {
@@ -24,7 +24,7 @@ function isSource(value: unknown): boolean {
 }
 
 function isChange(value: unknown): boolean {
-  return isObject(value) && typeof value.reference === 'string' && typeof value.note === 'string' && value.additional_amount === null;
+  return isObject(value) && Number.isInteger(value.link_id) && typeof value.reference === 'string' && typeof value.note === 'string' && value.additional_amount === null;
 }
 
 function isItem(value: unknown): value is MoneyItem {
