@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-119B",
   "outcome": "F-119's closure and retrospective, with UX-5-1 fixed",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -110,8 +110,134 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "9d9b149c0eee33789567d9006229314f1224d6d0",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "AC 24 (UX-5-1) says \"every control in the form that takes keyboard focus (reached by Tab from the first box through to Save and the decisions and follow-up controls)\". The phone test (`frontend/e2e/retrospective.spec.ts` ~L416-441) checks only \"What didn't\" (focus), \"Lessons for next projects\", Tunde Bello, Ada Obi and \"Add a decision\". It never checks \"What went well\", the Reference field, the Notes file select, the decision fields, the follow-up controls, or Save. The criterion's own check is therefore not met as written, and a regression on those controls would pass. Expected: a Tab walk from the first box to the last control (or a loop over all focusable controls in `form` that excludes the bar's own controls), with the same bottom-above-bar and `elementFromPoint` assertions for each. Actual: five sampled controls. Path: `frontend/e2e/retrospective.spec.ts:416-441`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119B/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T16:11:44Z",
+          "head": "9d9b149c0eee33789567d9006229314f1224d6d0"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "9d9b149c0eee33789567d9006229314f1224d6d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`clearOfBar` (`RetroForm.tsx`, the `requestAnimationFrame` in the focus handler) is not cancelled when the form unmounts or the focus moves again. The callback reads `bar.current` and calls `window.scrollBy` after the component may have gone, which is harmless today but can scroll a page the user has left. Expected: keep the frame id and `cancelAnimationFrame` it in an effect cleanup, or accept as a known trade-off. Path: `frontend/src/features/retrospective/RetroForm.tsx` (`clearOfBar`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119B/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T16:11:44Z",
+          "head": "9d9b149c0eee33789567d9006229314f1224d6d0"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "9d9b149c0eee33789567d9006229314f1224d6d0",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The e2e test's negative case is not recorded. Nothing in `build.md` or `checks.md` shows the test failing at 53c24b19 (before the handler), so the claim that it would catch a hidden control is untested. Expected: a note in the round's `checks.md` of a red run at 53c24b19 (or the reason it is not run), so the test is shown to discriminate. Path: `delivery/features/F-119B/round-1/checks.md`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119B/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T16:11:44Z",
+          "head": "9d9b149c0eee33789567d9006229314f1224d6d0"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "9d9b149c0eee33789567d9006229314f1224d6d0",
+          "evidence_refs": [
+            "delivery/features/F-119B/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-119B/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer",
+          "snapshot_ref": "9d9b149c0eee33789567d9006229314f1224d6d0",
+          "evidence_refs": [
+            "delivery/features/F-119B/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (F-119B round 1; static review of the diff since 53c24b19, CSS and components; no server started, fidelity tool not re-run under D-202 per the brief)",
+          "snapshot_ref": "9d9b149c0eee33789567d9006229314f1224d6d0",
+          "evidence_refs": [
+            "delivery/features/F-119B/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -198,7 +324,7 @@
     }
   },
   "created_at": "2026-11-24T16:01:04Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -224,6 +350,22 @@
       "round": 1,
       "head": "9d9b149c0eee33789567d9006229314f1224d6d0",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T16:11:44Z",
+      "round": 1,
+      "head": "9d9b149c0eee33789567d9006229314f1224d6d0",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T16:11:45Z",
+      "round": 2,
+      "head": "9d9b149c0eee33789567d9006229314f1224d6d0",
+      "reason": null
     }
   ],
   "routing": {
@@ -239,10 +381,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "9d9b149c0eee33789567d9006229314f1224d6d0"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
