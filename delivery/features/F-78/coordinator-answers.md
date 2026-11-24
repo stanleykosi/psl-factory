@@ -16,3 +16,6 @@ F-71 merges with three non-blocking items on the Milestones tab and the Money e2
 - QA-2-1: `frontend/e2e/money.spec.ts:85` still expects the old idle aside name "Choose an amount to see where it comes from."; round 2 (UI-1-3) made the head "Where a figure comes from" with the prompt as the body. Update the spec.
 - TECH-2-1 / QA-2-2: the Proof button in MilestonesTab.tsx doesn't collapse on a second press, and `aria-expanded` dips to false during the re-read. Make it a real toggle with a steady `aria-expanded`.
 (F-71 round-2/review-qa.md and review-technical.md.)
+
+## LB-2 on live (24 Nov 2026, main coordinator)
+LB-2 is the backend developer's to fix, through role mapping (the PMO Lead gets `milestone.complete`). It's on the design engineer's note for Stanley. F-78 builds to the contract, with "Mark complete" driven only by `can_complete`. In the PR and PMO evidence, record it as: "live: hidden for every staff role until LB-2 is fixed". It is not a frontend gap.
