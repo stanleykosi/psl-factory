@@ -128,6 +128,9 @@ export function liveWorkList({ url, persona }) {
   };
 }
 
+/** Whether GET /api/v1/work/{id} is one of this list's own rows (verified 401 to 420, exceptions 301 to 320); other ids belong to the work item mock. */
+export const ownsLiveWorkItem = (id) => [...verifiedRows, ...exceptionRows].some((item) => item.id === id);
+
 /** GET /api/v1/work/{id} for the listed ids, with only the fields the list screens read (the full item is lane C's): 413 has no output file; every other verified item has one. */
 export function liveWorkItem({ id }) {
   const found = [...verifiedRows, ...exceptionRows].find((item) => item.id === id);
