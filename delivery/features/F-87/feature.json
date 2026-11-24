@@ -902,7 +902,7 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "eb100065e9af366413e28783654d82280dcf3001",
+    "base_sha": "5b60a572f3ae6b4e57d6e732da378b32db433560",
     "task_branch": "fe-connect-1-work-item-controls",
     "head_sha": "f296a554242b27ef690d2ec359765ff2669b5377",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c",
