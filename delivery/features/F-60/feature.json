@@ -408,7 +408,7 @@
     "repository": null,
     "task_id": "FE-SIGNIN",
     "base_branch": "main",
-    "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
+    "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-signin-account-setup-from-invitation",
     "head_sha": "558514bbc8323c724ad6d6e253b4c7e6db266837",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a-hot",
