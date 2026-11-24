@@ -21,3 +21,7 @@ The rules for this push (D-180, D-184, D-188) cover routine merges. This change 
 
 ## For the human
 Decide whether to merge now and treat the coordinator's psl_demo run as a follow-up, or to hold the merge until that run proves live approve, return, evidence pick and the stale 409. My recommendation is to hold until the run. Files to look at: delivery/features/F-64/round-2/acceptance-pmo.md (PMO-2-1), delivery/features/F-64/round-2/review-qa.md, and frontend/src/features/decide/useLiveDecision.ts.
+
+## Human decision (24 Nov 2026)
+- The design engineer's answer, relayed by the main coordinator, verbatim: "Merge now, prove after".
+- The live decision proof on psl_demo (approve, return, stale and not-yours) becomes a follow-up, run by the main coordinator. The main coordinator merges PR #111 once the conflict with main (F-71, #114) is resolved and CI passes.
