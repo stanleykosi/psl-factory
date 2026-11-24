@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-71",
   "outcome": "Money and Milestones tabs on the live project API",
-  "state": "INTEGRATED_QA",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -147,39 +147,45 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead), lighter panel (D-180)",
-      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "snapshot_ref": "f29087ed4c453d75e2766dfa992956fcc94d9aab",
       "evidence_refs": [
         "delivery/features/F-71/round-2/review-technical.md"
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-qa",
+      "authority": "integrated QA reviewer (lighter panel, D-180)",
+      "snapshot_ref": "f29087ed4c453d75e2766dfa992956fcc94d9aab",
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (delivery only; client/product acceptance, merge and release keep their own authorities)",
+      "snapshot_ref": "f29087ed4c453d75e2766dfa992956fcc94d9aab",
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-71/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), recorded by the lane B coordinator",
+      "authority": "accepted in batch, delegated under D-184 (D-182 \"Hide, accept all recs\", 23 Nov 2026; D-185; D-202 \"Sign all\" for B33 and B34, 24 Nov 2026); carried over under D-188/D-193 (sync with main only) from cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "snapshot_ref": "f29087ed4c453d75e2766dfa992956fcc94d9aab",
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "UX reviewer (lighter panel, D-180)",
-      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "snapshot_ref": "f29087ed4c453d75e2766dfa992956fcc94d9aab",
       "evidence_refs": [
         "delivery/features/F-71/round-2/review-ux.md"
       ]
@@ -188,7 +194,7 @@
       "status": "passed",
       "reviewer": "ui-reviewer",
       "authority": "UI design reviewer",
-      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "snapshot_ref": "f29087ed4c453d75e2766dfa992956fcc94d9aab",
       "evidence_refs": [
         "delivery/features/F-71/round-2/review-ui.md"
       ]
@@ -856,6 +862,144 @@
           "head": "cfc3c462382095787d1edf2bbda089f7140d28cc"
         }
       ]
+    },
+    {
+      "id": "QA-2-1",
+      "round": 2,
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "`frontend/e2e/money.spec.ts:85` (desktop, P-0101) expects `getByRole('complementary', { name: 'Choose an amount to see where it comes from.' })`. Round 2 (UI-1-3) made the idle aside's head \"Where a figure comes from\" with the prompt as the body, so the committed spec fails at this head: \"element(s) not found\", 5 s timeout. Round 2's build.md does not list the e2e as updated or run (only vitest). Expected: e2e matches the shipped panel. Fix: assert the aside by its new head, or the prompt as body text. The phone twin (`money.spec.ts:76`, `getByRole('complementary')` count 0) also failed here, but only because this `next dev` server renders a page-level \"Demo controls\" complementary on every page (confirmed with the demo cookie off). I treat that as an artifact of the shared dev server, not an app defect; a production build may differ.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-24T14:38:17Z",
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-2",
+      "round": 2,
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/src/features/projects/MilestonesTab.tsx` (Proof button): pressing an already-open Proof re-reads. During the re-read `aria-expanded` is false although the proof is still on screen (1440 and 390, sampled right after the second and third press: `false` then `true`; settled `true`; content shown throughout). A screen reader can announce \"collapsed\" for content that did not collapse. Expected: keep `true` while the previous proof stays visible, or make the button a real toggle that hides it. This matches TECH-2-1 and gives UX-1-3's \"returns to false\" a cause; it is not a spec breach (AC21 asks for one GET per press and the proof content), so it is non-blocking.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-24T14:38:17Z",
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc"
+        }
+      ]
+    },
+    {
+      "id": "QA-2-3",
+      "round": 2,
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Evidence note on the shared dev server, not a defect in F-71. Under `next dev` (React StrictMode) every tab read is issued twice on mount: Money `/money` made 2 reads on load and `project-tabs.spec.ts:126` and `:216` (Registers and Actions, outside F-71) fail on \"one request\" for that reason (4 failures, 2 tests at 2 widths). The F-71 Money retry test (\"exactly one more money request\") passes, and in my own run Try again added one read (2 on load, 3 after). Re-run those two specs on a production build before treating them as regressions.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/review-qa.md"
+      ],
+      "raised_by": "reviewer-qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-qa",
+          "at": "2026-11-24T14:38:17Z",
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` still shows UI-1-5, UI-2-1, UI-2-2 and UI-2-3 as OPEN, and TECH-1-4 as FIX_SUBMITTED. `review-ui.md` records UI-2-1 to UI-2-3 as settled by the D-202 signature, and UI-1-5 is the same NGN-for-\u20a6 item as UI-2-2. All four are design-engineer exception or waiver items that carry no code change. Expected: the record is closed, or a note says it was settled by D-202. Actual: the record shows open items. Close them by the D-202 signature at merge bookkeeping. TECH-1-4 stays open by design.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:38:17Z",
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`feature.json` `acceptance_criteria` still carries the pre-1.24.0 wording (AC1 reads \"with no position number\"; AC19 to AC24 are missing). `spec.md` governs and matches what was built and tested (position number shown when `stage_position` is non-null). Expected: the record matches the spec. Refresh the record's criteria list from `spec.md`. This changes no delivery.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:38:17Z",
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-3",
+      "round": 2,
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Hand-off of the open QA and technical items. `frontend/e2e/money.spec.ts:85` is stale against the shipped idle panel, and QA saw it fail on this head (QA-2-1). The Proof button on a re-press re-reads and `aria-expanded` dips to false while the proof stays on screen (QA-2-2, TECH-2-1). The coordinator routes all three to F-78's builder, who builds on the same Milestones tab next. They are not fixed here and are not marked fixed. The e2e specs are not part of the GitHub gate, which ran lint, typecheck, unit tests and build. F-78's spec or readiness must name QA-2-1, QA-2-2 and TECH-2-1 so they are not lost, and F-78's builder must run `money.spec.ts` before claiming done. QA-2-3 (StrictMode double reads under `next dev` in Registers and Actions e2e) belongs to F-75/F-74 and needs a production-build rerun, not an F-71 change.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:38:17Z",
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -935,12 +1079,12 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
+    "base_sha": "4a88c26b2aa399ff54f9ec6cedad65ae075ebbb8",
     "task_branch": "fe-connect-1-money-milestones-tabs",
-    "head_sha": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+    "head_sha": "f29087ed4c453d75e2766dfa992956fcc94d9aab",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/114",
+    "pr_number": 114,
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "not_run",
@@ -1086,6 +1230,22 @@
       "at": "2026-11-24T14:27:25Z",
       "round": 2,
       "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-24T14:38:17Z",
+      "round": 2,
+      "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-24T14:51:20Z",
+      "round": 2,
+      "head": "f29087ed4c453d75e2766dfa992956fcc94d9aab",
       "reason": null
     }
   ],

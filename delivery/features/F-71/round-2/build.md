@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: cfc3c462382095787d1edf2bbda089f7140d28cc
+COMMIT: f29087ed4c453d75e2766dfa992956fcc94d9aab
 BUILDER: builder
 LANE: frontend
 
@@ -44,3 +44,8 @@ Not listed, because the spec or answers do not cover them:
 - Board sample values the live data does not carry (for example "Verified 03 Nov", "Awaiting Finance decision", "Held · owner needed", "Not yet due · amount set at go-live", "Finance tracks", source rows "Signed SOW v2 ...", stage names like "Stage 2 · UAT", "Tunde Bello · PMO", "Done 27 Oct · proof" wording, "CR-0031 added work..." note, "← Project" / "← Projects" back links, "Tap an amount..." link, lead sentence wording, "Where ₦4,250,000 comes from" head).
 - Shell-owned differences (breadcrumb, Start work, user chip, tab counts) belong to F-70.
 - Visual score under 90 may remain; layout gaps cannot be judged without a fidelity run.
+
+## Coordinator sync before merge (D-193)
+- f29087ed merges origin/main 4a88c26b, bringing in F-62 (#106), F-125 (#105), F-113 (#109) and #108, into the builder's cfc3c462. The one conflict was in frontend/mock/server.mjs: F-71's milestone-completion route and F-113's delivery-overview route are both kept, F-71's first. F-71's own diff and the sync share only server.mjs; the other projects-folder changes are F-113's Delivery tab. MoneyTab, MilestonesTab and their tests are unchanged. Typecheck is clean.
+- D-200: F-71's own diff touches no protected path, so base_sha moved to 4a88c26b.
+- ci-mode checks.sh PASS on f29087ed (GitHub Actions frontend-checks run, success). PR #114.

@@ -1,7 +1,16 @@
 VERDICT: PASS
-COMMIT: cfc3c462382095787d1edf2bbda089f7140d28cc
+COMMIT: f29087ed4c453d75e2766dfa992956fcc94d9aab
 REVIEWER: ui-reviewer
 AUTHORITY: UI design reviewer
+
+## D-193 pre-merge re-check of the main sync
+This is a D-193 pre-merge re-check of the merge of origin/main 4a88c26b into the branch (cfc3c462 to f29087ed). Diff-only; no server, no new screenshots or fidelity runs. The evidence and findings below are from cfc3c462 and are kept.
+- `frontend/mock/server.mjs`: the diff adds imports, F-62 live work-list/item routes, and F-113's `deliveryRead` route. F-71's milestone-completion route line is unchanged and still comes first; the delivery route follows it on a different path. Nothing there touches the Money or Milestones reads.
+- F-71's own files are unchanged: no diff in the money and milestones components, `money.test.tsx` or `milestones.test.tsx`. The path-wide `projects/` diff is not empty, but only F-113's files (DeliveryTab, deliveryModel, useDeliveryOverview, dlvov.css) plus two small shared edits.
+- Shared edit that touches my lens: `model.ts` `visibleTabs` now adds a Delivery tab after Journey in the project tab bar for every project, so it shows above the Money and Milestones tabs too. `ProjectJourney.tsx` passes `caseId` to DeliveryTab. Money and Milestones bodies, tables, cards and css are untouched. The bar is the F-70/F-113 shell, which the exceptions file already treats as shell-owned (tab counts, breadcrumb); I have not re-measured it at 1440 or 390. The tab bar already scrolls on the phone width screenshots, so one more label is a low risk. Offered as a note, not blocking.
+- Other incoming files (verified list, work list, my-work css) are on other screens.
+- ci-mode checks passed on f29087ed (GitHub Actions run, success).
+- The signed 46-entry exceptions and D-202 visual waivers are unaffected. Verdict stays PASS.
 
 ## Summary
 - No frontend change is needed. UI-1-2, UI-1-3 and UI-1-4 are fixed and retested at 1440 and 390 with fresh screenshots. No sideways scroll on either tab in any state checked.

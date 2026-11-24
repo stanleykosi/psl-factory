@@ -1,9 +1,13 @@
 VERDICT: PASS
-COMMIT: cfc3c462382095787d1edf2bbda089f7140d28cc
+COMMIT: f29087ed4c453d75e2766dfa992956fcc94d9aab
 REVIEWER: reviewer-ux
 AUTHORITY: UX reviewer (lighter panel, D-180)
 
 ## Summary
+- D-193 pre-merge re-check of the main sync: head f29087ed is cfc3c462 plus one merge of origin/main 4a88c26b (F-62, F-125, F-113, #108); the evidence below was gathered on cfc3c462 and is carried forward by diff-only assessment, with no server run.
+- No F-71 file changed: MoneyTab, MoneyCells, MoneyTab models/hooks, MilestonesTab, milestonesModel, useMilestones, useMoney, money.css, money.test.tsx and milestones.test.tsx are absent from the diff. The projects-folder diff is only F-113 Delivery files plus two shared lines (below).
+- Shared-line impact: ProjectJourney.tsx passes caseId to DeliveryTab, and model.ts visibleTabs now adds a Delivery tab after Journey in the bar for every project. Money and Milestones tab content, headings, states and the sheet are untouched; the bar gains one real link, which matches the approved Delivery tab. Not a finding.
+- frontend/mock/server.mjs: the only conflict spot keeps F-71 milestone-completion route first, then F-113 delivery route; F-62 work-list routes are separate paths and do not touch the money or milestones reads.
 - Retested UX-1-1 to UX-1-3 at 1440 and 390 on head cfc3c462 against the shared dev server (Next 4970, mock 4971), default finance lead, project P-0101. All three are fixed.
 - Re-walked both tabs for regressions in what round 2 touched: Money figures stay on one line (for example "Paid NGN 2,000,000.00 ·" then "Owed NGN 500,000.00"), the idle side panel reads "Where a figure comes from / Choose an amount to see where it comes from.", and Unknown is the same bold brown text on both tabs.
 - Unknown money is still Unknown: no zero-money pattern on either tab, no totals, Go-live amount reads Unknown with its reason, and null Paid/Owed read Unknown. No horizontal scroll at either width; the page made no non-GET requests.
