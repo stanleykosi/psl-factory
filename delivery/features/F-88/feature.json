@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-88",
   "outcome": "Log a received RFP and assign its accountable PM through the live API",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -68,7 +68,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "bdeee685f982b58e4a1acb7c1915ca2ce853e5f6",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T03:28:09Z",
+      "seconds": 638.4,
+      "evidence_ref": "delivery/features/F-88/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -139,7 +152,7 @@
     "base_branch": "main",
     "base_sha": "3b7df6cc589bebd8014502db6ce1eaaa8a01afde",
     "task_branch": "fe-connect-1-received-rfp-assign-pm",
-    "head_sha": "3b7df6cc589bebd8014502db6ce1eaaa8a01afde",
+    "head_sha": "bdeee685f982b58e4a1acb7c1915ca2ce853e5f6",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c2",
     "pr_url": null,
     "pr_number": null,
@@ -150,7 +163,31 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/rfp-assign.spec.ts",
+      "frontend/mock/received-bids.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/rfp/AssignPmDrawer.tsx",
+      "frontend/src/features/rfp/UnassignedBids.tsx",
+      "frontend/src/features/rfp/proposals.ts",
+      "frontend/src/features/rfp/receivedBids.ts",
+      "frontend/src/features/rfp/rfp.css",
+      "frontend/src/features/rfp/useReceivedBidAssign.ts",
+      "frontend/src/features/start-work/LineChooser.tsx",
+      "frontend/src/features/start-work/StartWorkDrawer.tsx",
+      "frontend/src/features/start-work/lines/index.ts",
+      "frontend/src/features/start-work/lines/receivedBid.tsx",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/tests/assign-pm.test.tsx",
+      "frontend/tests/my-work.test.tsx",
+      "frontend/tests/next-config.test.ts",
+      "frontend/tests/received-bid.test.tsx",
+      "frontend/tests/rfp-assign.test.tsx",
+      "frontend/tests/rfp-intake-mock.test.ts",
+      "frontend/tests/start-work-live.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -201,6 +238,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T03:28:27Z",
+      "round": 1,
+      "head": "bdeee685f982b58e4a1acb7c1915ca2ce853e5f6",
+      "reason": null
     }
   ],
   "routing": {
@@ -217,9 +262,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "bdeee685f982b58e4a1acb7c1915ca2ce853e5f6"
   },
   "blocked": null
 }
