@@ -12,8 +12,8 @@
 // control only in the states the server reports, and let the server answer 409/422), and `reload()` re-reads the panel and the
 // work item and resolves to the new item (null when the read failed). A line without `Actions` draws exactly as before.
 //
-//   function Actions({ commands, reload, ctx }: LineActionsProps<Readback>) {
-//     const send = useWorkCommand({ item: ctx, reload });
+//   function Actions({ commands, reload, ctx, onAccessLost }: LineActionsProps<Readback>) {
+//     const send = useWorkCommand({ item: ctx, reload, onAccessLost });
 //     const restart = commands.find((c) => c.id === 'ledger.restart');
 //     return restart && <Button disabled={send.busy || !!restart.disabledReason} onClick={() => void send.run(restart, { note })}>{restart.label}</Button>;
 //     // ...and draw send.notice (a Callout) and send.lockedReason(restart.id) beside the button.
@@ -26,6 +26,7 @@
 import type { ComponentType } from 'react';
 
 import { call, liveApi } from '@/api/client';
+import type { ApiError } from '@/api/errors';
 import type { LiveWorkItem } from '@/api/types';
 import { newIdempotencyKey } from '@/features/start-work/intake';
 
@@ -43,6 +44,8 @@ export type LineActionsProps<Readback = unknown> = {
   ctx: LineContext;
   commands: CommandDescriptor[];
   reload: () => Promise<LiveWorkItem | null>;
+  /** Pass to useWorkCommand: a write answered 401 or 404, so the page shows the signed-out or unavailable state. */
+  onAccessLost: (error: ApiError) => void;
 };
 
 export type LineAdapter<Readback = unknown> = {
@@ -102,12 +105,17 @@ export function makeCommand(spec: CommandSpec): CommandDescriptor {
     ...rest,
     method: 'POST',
     idempotency,
-    body: (inputs) => ({
-      ...inputs,
-      ...(action === null ? {} : { action }),
-      ...spec.tokens,
-      ...(idempotency.field ? { [idempotency.field]: idempotency.value } : {}),
-    }),
+    body: (inputs) => {
+      const body = {
+        ...inputs,
+        ...(action === null ? {} : { action }),
+        ...spec.tokens,
+        ...(idempotency.field ? { [idempotency.field]: idempotency.value } : {}),
+      };
+      // a body with no action has none, whatever the inputs say
+      if (action === null) delete body.action;
+      return body;
+    },
   };
 }
 

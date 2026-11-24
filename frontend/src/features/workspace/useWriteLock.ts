@@ -22,16 +22,6 @@ export function useWriteLock() {
     setPending(null);
   }, []);
   const lock = useCallback((key: string) => setLocked((current) => new Set(current).add(key)), []);
-  const unlock = useCallback(
-    (key: string) =>
-      setLocked((current) => {
-        if (!current.has(key)) return current;
-        const next = new Set(current);
-        next.delete(key);
-        return next;
-      }),
-    [],
-  );
 
-  return { pending, locked, writing, begin, end, lock, unlock };
+  return { pending, locked, writing, begin, end, lock };
 }

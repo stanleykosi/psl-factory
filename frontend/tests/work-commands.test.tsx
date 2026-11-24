@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setCsrfToken } from '@/api/client';
 import { ToastProvider } from '@/components';
 import type { LiveWorkItem } from '@/api/types';
-import { makeCommand, registerLineAdapter, type LineActionsProps, type LineAdapter } from '@/features/workspace/adapter';
+import { makeCommand, readPanel, registerLineAdapter, type PanelRef, type LineActionsProps, type LineAdapter } from '@/features/workspace/adapter';
 import { toFormData, useWorkCommand } from '@/features/workspace/useWorkCommand';
 import { workItemCommands } from '@/features/workspace/workItemCommands';
 import { LiveWorkItemView } from '@/features/work-item/live/LiveWorkItemView';
@@ -253,6 +253,48 @@ describe('useWorkCommand', () => {
     expect(hook.result.current.notice).toBeNull();
   });
 
+  it('a poll landing mid-write does not clear the lock or the notice (deferred POST)', async () => {
+    let release: (r: Response) => void = () => undefined;
+    const base = fetchStub.getMockImplementation()!;
+    fetchStub.mockImplementation(async (request: Request) => (request.method === 'POST' ? new Promise<Response>((resolve) => (release = resolve)) : base(request)));
+    const hook = useSender(4121);
+    const [resume, cancel] = workItemCommands(hook.state.current);
+    let first: Promise<void> = Promise.resolve();
+    await act(async () => {
+      first = hook.result.current.run(resume);
+    });
+    expect(hook.result.current.pending).toBe('work.resume');
+    // a poll lands: a new item object, same revision
+    hook.rerender({ it: { ...hook.state.current } });
+    expect(hook.result.current.pending).toBe('work.resume');
+    expect(hook.result.current.busy).toBe(true);
+    await act(async () => {
+      await hook.result.current.run(cancel);
+    });
+    expect(posts()).toHaveLength(1);
+    // the re-read after the send fails: still locked, and the problem is an error notice
+    hook.reload.mockResolvedValue(null);
+    await act(async () => {
+      release(json(200, { work_id: 4121, state: 'ready', revision: 4 }));
+      await first;
+    });
+    expect(hook.result.current.notice).toMatchObject({ kind: 'error', text: 'Sent. We couldn’t reload the item; reload the page to see its state.' });
+    expect(hook.result.current.busy).toBe(true);
+  });
+
+  it('refuses a url that is not an API path of this site before any request, and an input cannot add an action to a body that has none', async () => {
+    const hook = useSender(4121);
+    for (const url of ['https://evil.example/api/v1/x', '//evil.example/api/v1/x', '/api/v1/../admin', '/other/x']) {
+      const bad = makeCommand({ id: 'x.y', label: 'Y', url, tokens: { expected_revision: 3 }, successStatuses: [200] });
+      await act(async () => {
+        await hook.result.current.run(bad);
+      });
+    }
+    expect(fetchStub.mock.calls.filter(([r]) => r.method === 'POST')).toHaveLength(0);
+    const none = makeCommand({ id: 'work.background.pause', label: 'P', url: '/api/v1/work/1/background', tokens: { expected_revision: 7 }, action: null, successStatuses: [202] });
+    expect(Object.keys(none.body({ action: 'evil', enabled: false }))).toEqual(['enabled', 'expected_revision']);
+  });
+
   it('a multipart command goes through the same sender (lock, re-read) without a JSON content type; JSON stays JSON', async () => {
     const types: (string | null)[] = [];
     fetchStub.mockImplementation(async (request: Request) => {
@@ -390,6 +432,18 @@ describe('the controls row on the live page', () => {
     expect(posts()).toHaveLength(1);
   });
 
+  it('after a 500 on Resume the button is disabled with "Check the page before trying again." beside it, and no second request is sent', async () => {
+    scenario = 'w500';
+    open(4121);
+    fireEvent.click(await screen.findByRole('button', { name: 'Resume' }));
+    await screen.findByText('We couldn’t confirm that this happened. Check the page before trying again.');
+    const resume = screen.getByRole('button', { name: 'Resume' }) as HTMLButtonElement;
+    expect(resume.disabled).toBe(true);
+    expect(within(row()!).getByText('Check the page before trying again.')).toBeTruthy();
+    fireEvent.click(resume);
+    expect(posts()).toHaveLength(1);
+  });
+
   it('a 404 on the write replaces the page with "This record is unavailable."', async () => {
     open(4121);
     const button = await screen.findByRole('button', { name: 'Resume' });
@@ -443,9 +497,57 @@ describe('the line write-form slot (Actions)', () => {
     expect(props.readback).toEqual({ n: 1 });
     expect(props.ctx).toMatchObject({ workId: 4121, revision: 3, caseRevision: 7, state: 'action_needed' });
     expect(props.commands.map((c) => c.id)).toEqual(['slot.go']);
+    expect(typeof props.onAccessLost).toBe('function');
     await act(async () => {
       await expect(props.reload()).resolves.toMatchObject({ id: 4121 });
     });
+  });
+
+  it('a line command that timed out stays locked when the panel re-read fails and Try again is pressed (no second send)', async () => {
+    const Form = ({ commands, reload, ctx, onAccessLost }: LineActionsProps) => {
+      const send = useWorkCommand({ item: ctx, reload, onAccessLost });
+      const go = commands[0];
+      return (
+        <div>
+          <button type="button" disabled={send.busy || send.lockedReason(go.id) !== null} onClick={() => void send.run(go)}>
+            Go
+          </button>
+          {send.lockedReason(go.id)}
+        </div>
+      );
+    };
+    registerLineAdapter({ ...adapter(false), read: (ref: PanelRef) => readPanel<{ n: number }>(ref), Actions: Form } as LineAdapter);
+    withPanel(4121);
+    let panelOk = true;
+    let slotPosts = 0;
+    const wrapped = fetchStub.getMockImplementation()!;
+    fetchStub.mockImplementation(async (request: Request) => {
+      const url = new URL(request.url);
+      if (url.pathname === '/api/v1/work/4121/slot' && request.method === 'GET' && !panelOk) return json(500, { code: 'server_error', message: 'Broke.' });
+      if (url.pathname === '/api/v1/work/4121/slot' && request.method === 'POST') {
+        slotPosts += 1;
+        panelOk = false;
+        return json(500, { code: 'server_error', message: 'Broke.' });
+      }
+      return wrapped(request);
+    });
+    render(<ToastProvider><LiveWorkItemView id="4121" tab="overview" /></ToastProvider>);
+    fireEvent.click(await screen.findByRole('button', { name: 'Go' }));
+    // the uncertain branch re-reads; the panel read fails; the form stays mounted on the last good readback
+    await screen.findByText(/We couldn’t load this part of the page/);
+    expect((screen.getByRole('button', { name: 'Go' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    await screen.findByText(/We couldn’t load this part of the page/);
+    const go = screen.getByRole('button', { name: 'Go' }) as HTMLButtonElement;
+    expect(go.disabled).toBe(true);
+    expect(screen.getByText('Check the page before trying again.')).toBeTruthy();
+    fireEvent.click(go);
+    // and once the panel reads again, the revision is the same, so it is still locked
+    panelOk = true;
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    await waitFor(() => expect(screen.queryByText(/We couldn’t load this part of the page/)).toBeNull());
+    expect((screen.getByRole('button', { name: 'Go' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(slotPosts).toBe(1);
   });
 
   it('without Actions the panel draws as before and nothing extra', async () => {

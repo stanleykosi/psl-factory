@@ -118,6 +118,21 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       expect(sent[1]).toContain('"expected_revision":5');
     });
 
+    test('a 403 shows "You can\u2019t do this." with the server message; a 422 shows its message and field', async ({ page }) => {
+      const sent = writes(page);
+      await scenario(page, 'w403');
+      await page.goto('/work/4121');
+      await loaded(page);
+      const main = page.locator('main#main');
+      await main.getByRole('button', { name: 'Resume' }).click();
+      await expect(main.getByRole('alert')).toContainText('You can\u2019t do this. Your role does not allow this.');
+      await page.context().clearCookies({ name: 'psl_mock_scenario' });
+      await scenario(page, 'w422');
+      await main.getByRole('button', { name: 'Resume' }).click();
+      await expect(main.getByRole('alert')).toContainText('A policy value is missing. Ask the PMO Lead to set it.');
+      expect(sent).toHaveLength(2);
+    });
+
     test('a dropped connection on Resume locks it and the page sends nothing more', async ({ page }) => {
       const sent = writes(page);
       await scenario(page, 'wdrop');

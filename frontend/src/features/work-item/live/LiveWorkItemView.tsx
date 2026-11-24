@@ -120,12 +120,16 @@ function Header({ item, base, tab }: { item: LiveWorkItem; base: string; tab: 'o
   );
 }
 
-/** One panel through its adapter; a key with no adapter has nothing to draw and is left out. */
-function PanelView({ panel, ctx, version, reloadItem }: { panel: PanelRef; ctx: LineContext; version: string; reloadItem: () => Promise<LiveWorkItem | null> }) {
+/** One panel through its adapter; a key with no adapter has nothing to draw and is left out.
+ *  A failed re-read keeps the last good readback on screen with a warning above it: the line's `Actions` stays mounted, so a
+ *  command lock it holds (an uncertain result at this revision) survives the failed read and Try again. */
+function PanelView({ panel, ctx, version, reloadItem, onAccessLost }: { panel: PanelRef; ctx: LineContext; version: string; reloadItem: () => Promise<LiveWorkItem | null>; onAccessLost: (error: ApiError) => void }) {
   const adapter = adapterFor(panel.key);
-  const [state, setState] = useState<{ status: 'loading' } | { status: 'error' } | { status: 'ready'; sections: Section[]; readback: unknown }>({ status: 'loading' });
+  const [ready, setReady] = useState<{ sections: Section[]; readback: unknown } | null>(null);
+  const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const { workId, caseId, revision, caseRevision, state: itemState } = ctx;
+  const commands = useMemo(() => (adapter && ready ? (adapter.commands?.(ready.readback, ctx) ?? []) : []), [adapter, ready, ctx]);
 
   useEffect(() => {
     if (!adapter) return;
@@ -133,10 +137,12 @@ function PanelView({ panel, ctx, version, reloadItem }: { panel: PanelRef; ctx: 
     adapter
       .read(panel, { workId, caseId, revision, caseRevision, state: itemState })
       .then((readback) => {
-        if (active) setState({ status: 'ready', sections: adapter.sections(readback, { workId, caseId, revision, caseRevision, state: itemState }), readback });
+        if (!active) return;
+        setReady({ sections: adapter.sections(readback, { workId, caseId, revision, caseRevision, state: itemState }), readback });
+        setFailed(false);
       })
       .catch(() => {
-        if (active) setState({ status: 'error' });
+        if (active) setFailed(true);
       });
     return () => {
       active = false;
@@ -145,36 +151,34 @@ function PanelView({ panel, ctx, version, reloadItem }: { panel: PanelRef; ctx: 
   }, [adapter, panel, workId, caseId, revision, caseRevision, itemState, version, attempt]);
 
   if (!adapter) return null;
-  if (state.status === 'loading') return null;
-  if (state.status === 'error') {
-    return (
-      <Callout kind="warning">
-        We couldn’t load this part of the page.{' '}
-        <Button
-          kind="secondary"
-          size="sm"
-          onClick={() => {
-            setState({ status: 'loading' });
-            setAttempt((n) => n + 1);
-          }}
-        >
-          Try again
-        </Button>
-      </Callout>
-    );
-  }
   const { Actions } = adapter;
   return (
     <>
-      {state.sections.map((section) => (
+      {failed && (
+        <Callout kind="warning">
+          We couldn’t load this part of the page.{' '}
+          <Button
+            kind="secondary"
+            size="sm"
+            onClick={() => {
+              setFailed(false);
+              setAttempt((n) => n + 1);
+            }}
+          >
+            Try again
+          </Button>
+        </Callout>
+      )}
+      {ready?.sections.map((section) => (
         <SectionView key={section.key} section={section} level={2} />
       ))}
-      {Actions && (
+      {ready && Actions && (
         <PanelBoundary>
           <Actions
-            readback={state.readback}
+            readback={ready.readback}
             ctx={ctx}
-            commands={adapter.commands?.(state.readback, ctx) ?? []}
+            commands={commands}
+            onAccessLost={onAccessLost}
             reload={() => {
               setAttempt((n) => n + 1);
               return reloadItem();
@@ -200,9 +204,10 @@ class PanelBoundary extends Component<{ children: ReactNode }, { failed: boolean
 function Overview({ item, reload, lose }: { item: LiveWorkItem; reload: () => Promise<LiveWorkItem | null>; lose: (error: ApiError) => void }) {
   const activity = activityOf(item);
   const outputHref = safeHref(item.output_url);
+  // a new object per read, so a line's unread lock (useWorkCommand) clears when a read lands
   const ctx: LineContext = useMemo(
     () => ({ workId: item.id, caseId: item.case_id, revision: item.revision, caseRevision: item.case_revision, state: item.state }),
-    [item.id, item.case_id, item.revision, item.case_revision, item.state],
+    [item],
   );
   return (
     <div className="work-columns work-columns--lone">
@@ -265,7 +270,7 @@ function Overview({ item, reload, lose }: { item: LiveWorkItem; reload: () => Pr
           </p>
         )}
         {item.panels.map((panel) => (
-          <PanelView key={panel.key} panel={panel} ctx={ctx} version={item.updated_at} reloadItem={reload} />
+          <PanelView key={panel.key} panel={panel} ctx={ctx} version={item.updated_at} reloadItem={reload} onAccessLost={lose} />
         ))}
       </div>
     </div>

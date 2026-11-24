@@ -4,14 +4,14 @@
 // A write happens only from a press: no timer, effect or loop here ever sends. One write at a time (the shared lock); a failed
 // write with an unknown result locks that command until a re-read shows a newer revision. The result is told from the re-read,
 // never from the 200/202 alone. Words for errors come from ApiError; the server's own message is shown as given.
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { liveApi, refreshSession } from '@/api/client';
 import { ApiError, errorFromResponse, networkError } from '@/api/errors';
 import type { LiveWorkItem } from '@/api/types';
 import { STATE_TAGS } from '@/features/work-item/labels';
 
-import type { CommandDescriptor } from './adapter';
+import { isPanelUrl, type CommandDescriptor } from './adapter';
 import { useWriteLock } from './useWriteLock';
 
 export const WORK_COMMAND_TEXT = {
@@ -53,6 +53,8 @@ export function toFormData(body: Record<string, unknown>): FormData {
 
 /** POST the descriptor's body; resolves to the status, throws ApiError. A stale session token is refreshed once and the press is not repeated. */
 async function send(command: CommandDescriptor, inputs: Record<string, unknown>): Promise<number> {
+  // The CSRF token goes with every write, so only an API path of this site is ever posted to.
+  if (!isPanelUrl(command.url)) throw new ApiError(0, 'invalid', 'refused_before_sending', 'We couldn’t send that. Nothing was changed.');
   const body = command.body(inputs);
   const multipart = command.contentType === 'multipart/form-data';
   let result;
@@ -78,6 +80,11 @@ export function useWorkCommand({ item, reload, onAccessLost }: Args) {
   // The send worked but the re-read did not: nothing may be pressed until a read lands (a new `item`).
   const [unreadAt, setUnreadAt] = useState<object | null>(null);
 
+  // the latest item, so a read that lands while a write runs is not mistaken for the one the write started from
+  const latest = useRef(item);
+  useEffect(() => {
+    latest.current = item;
+  });
   const busy = pending !== null || unreadAt === item;
   /** A command locked after an unknown result stays locked while the item's revision is the one it was sent with. */
   const lockKey = (id: string, revision: number | null) => `${id}@${revision}`;
@@ -93,8 +100,8 @@ export function useWorkCommand({ item, reload, onAccessLost }: Args) {
         await send(command, inputs);
         const fresh = await reload();
         if (!fresh) {
-          setUnreadAt(item);
-          setNotice({ kind: 'success', text: WORK_COMMAND_TEXT.unreadable });
+          setUnreadAt(latest.current);
+          setNotice({ kind: 'error', text: WORK_COMMAND_TEXT.unreadable });
           return;
         }
         const now = STATE_TAGS[fresh.state]?.text ?? fresh.status_label;

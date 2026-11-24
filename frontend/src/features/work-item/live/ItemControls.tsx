@@ -29,10 +29,10 @@ export function ItemControls({ item, reload, onAccessLost }: { item: LiveWorkIte
           return (
             <div key={command.id} className="work-control">
               <Button
-                kind="secondary"
+                kind={command.id === 'work.cancel' ? 'reject' : 'secondary'}
                 size="sm"
                 disabled={send.busy || reason !== null}
-                busy={send.pending === command.id}
+                busy={send.pending === command.id && lockedReason === null}
                 busyLabel="Working…"
                 reason={reason}
                 onClick={() => (command.id === 'work.cancel' ? setConfirming(true) : void send.run(command))}
