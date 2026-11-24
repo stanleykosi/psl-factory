@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 2957a375d13e08ba74a1742bc7657cb19e375f51
+COMMIT: 7b8bad85508f7df1152e3c1c2be2d1bf26c962d8
 BUILDER: builder
 LANE: frontend
 
@@ -68,6 +68,10 @@ One run, production build (API_ORIGIN baked at build), finance_lead, `round-1/fi
 ## Update after main (API 1.26.0) merge
 - Fixture-only change in `frontend/tests/work-list-rows.ts` and `frontend/mock/live-work.mjs`: rows gain the 1.26.0 fields (reference, started_at, verified_at, queue_output_url, exception_code, exception_next_step, exception_started_at, action_kind, station, agent) and pages gain page_size 8, total null, total_coverage incomplete. No assertion changed; the new parts stay off (follow-up).
 - From lane-a2/frontend: `tsc --noEmit` clean; `npm run lint` clean; full `npx vitest run` through heavy-lock: 3827 passed, 1 failed (`rfp-submission.test.tsx` uncertain-path timeout under machine load, file untouched; passes alone, 49 of 49).
+
+## Update after main 3b7df6cc merge (F-85, F-86)
+- `mock/server.mjs` hooks F-62's item reads (ids 301 to 320 and 401 to 420, via `ownsLiveWorkItem` in `mock/live-work.mjs`) before F-85's `work-live` handler, which is unchanged and still answers every other integer id. Unknown ids still 404.
+- Run singly: exceptions-mock, live-work-item, mock-work-live, work-item, work-item-board, verified, exceptions, work-list tests all pass; `tsc --noEmit` and eslint on the mock files clean. Full vitest not run.
 
 ## Blocked
 Not blocked.

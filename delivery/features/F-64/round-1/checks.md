@@ -1,15 +1,16 @@
 GATE: PASS
-COMMIT: 5a57baedc16e5f9757ba82d22f270bb319b4672d
-ATTEMPT: 3
+COMMIT: 7318a3fc23558a60d535835417ef644a320f22bf
+ATTEMPT: 4
 
 ## Summary
 - checks.sh passed
 - Protected paths: none changed
-- Commit 5a57baedc16e, round 1, attempt 3
+- Commit 7318a3fc2355, round 1, attempt 4
 
 ## checks.sh (last 80 lines of checks.log)
 
 ```
+├ ƒ /clients/[clientId]
 ├ ○ /exceptions
 ├ ƒ /finance/month-end
 ├ ○ /finance/payments
@@ -54,11 +55,10 @@ npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
 npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
 npm warn EBADENGINE }
 npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
 Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
 Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
 Not implemented: navigation to another Document
 Not implemented: navigation to another Document

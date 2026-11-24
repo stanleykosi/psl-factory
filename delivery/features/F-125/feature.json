@@ -123,7 +123,7 @@
     "base_branch": "main",
     "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-connect-1-my-work-live-guard",
-    "head_sha": null,
+    "head_sha": "794fa55e1f2f7ef09bf6d39ea0bd3beabcb8dab4",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a4",
     "pr_url": null,
     "pr_number": null,
@@ -134,7 +134,11 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/src/features/my-work/MyWork.tsx",
+      "frontend/src/features/my-work/model.ts",
+      "frontend/tests/my-work.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,

@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-64",
   "outcome": "SCR-03 Decision desk on the live API: read the invoice or accounting review, claim it, record approve, return or reject",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -98,6 +98,18 @@
       "protected_paths_changed": [],
       "at": "2026-11-23T23:58:09Z",
       "seconds": 571.2,
+      "evidence_ref": "delivery/features/F-64/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 4,
+      "commit": "7318a3fc23558a60d535835417ef644a320f22bf",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T01:00:40Z",
+      "seconds": 1580.3,
       "evidence_ref": "delivery/features/F-64/round-1/checks.md"
     }
   ],
@@ -559,6 +571,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T01:02:06Z",
+      "round": 1,
+      "head": "7318a3fc23558a60d535835417ef644a320f22bf",
+      "reason": null
     }
   ],
   "routing": {
@@ -575,9 +595,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 3,
+    "attempts": 4,
     "verdict": "PASS",
-    "commit": "5a57baedc16e5f9757ba82d22f270bb319b4672d"
+    "commit": "7318a3fc23558a60d535835417ef644a320f22bf"
   },
   "blocked": null
 }
