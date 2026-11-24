@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-87",
   "outcome": "The work item can check what happened, resume or cancel, and pause or continue background work, live",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -138,11 +138,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead), lighter panel (D-180), Opus for high risk",
+      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "evidence_refs": [
+        "delivery/features/F-87/round-3/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -168,18 +170,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "evidence_refs": [
+        "delivery/features/F-87/round-3/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "reviewer-ui",
+      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "evidence_refs": [
+        "delivery/features/F-87/round-3/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -641,7 +647,7 @@
         "delivery/features/F-87/round-2/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -658,11 +664,71 @@
           ],
           "head": "2ce45be7e1fe607e261c2ed8af5836f061f4b228",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:25:51Z",
+          "refs": [
+            "I read `git diff a960d20d 2ce45be7`. `useWorkCommand` takes `pending`/`locked`/`unread`/`begin`/`end`/`lock` from `useScopedWriteLock(String(item.workId ?? item.id))`. The controls row passes the `LiveWorkItem` (`id`) and lines pass `ctx` (`workId`), so both resolve to the same work id. The store is a module `Map` read through `useSyncExternalStore`, with a stable `EMPTY` snapshot and an `EMPTY` server snapshot, and `writing` is a module map, so a write still running when Overview unmounts keeps the slot until its own `finally`. The line `ctx` moved up to `LiveWorkItemView`, which the `(item)` layout frame keeps across tabs, so the unread marker survives too. Locks are removed only by `resetScopedWriteLocks` (tests only). Tests: `npx vitest run tests/work-commands.test.tsx` gave 43/43 passed. With a scratch config aliasing `./useWriteLock` to a per-mount variant (`useWriteLock` plus local `unread`), \"a timed-out Resume stays locked after History and back\" and \"switching tabs while a write is running\" both fail (`expected false to be true`), and the round-2 failed-panel test still passes. Scratch line tests (\"line uncertain survives History and back\": slot POST 500, History, back, Go disabled, one POST; \"line unread survives History and back\": slot POST 200, item re-read 500, History, back, Go still disabled, one POST) pass 2/2 on head and fail 2/2 per-mount."
+          ],
+          "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "2ce45be7e1fe607e261c2ed8af5836f061f4b228"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "I read `git diff a960d20d 2ce45be7`. `useWorkCommand` takes `pending`/`locked`/`unread`/`begin`/`end`/`lock` from `useScopedWriteLock(String(item.workId ?? item.id))`. The controls row passes the `LiveWorkItem` (`id`) and lines pass `ctx` (`workId`), so both resolve to the same work id. The store is a module `Map` read through `useSyncExternalStore`, with a stable `EMPTY` snapshot and an `EMPTY` server snapshot, and `writing` is a module map, so a write still running when Overview unmounts keeps the slot until its own `finally`. The line `ctx` moved up to `LiveWorkItemView`, which the `(item)` layout frame keeps across tabs, so the unread marker survives too. Locks are removed only by `resetScopedWriteLocks` (tests only). Tests: `npx vitest run tests/work-commands.test.tsx` gave 43/43 passed. With a scratch config aliasing `./useWriteLock` to a per-mount variant (`useWriteLock` plus local `unread`), \"a timed-out Resume stays locked after History and back\" and \"switching tabs while a write is running\" both fail (`expected false to be true`), and the round-2 failed-panel test still passes. Scratch line tests (\"line uncertain survives History and back\": slot POST 500, History, back, Go disabled, one POST; \"line unread survives History and back\": slot POST 200, item re-read 500, History, back, Go still disabled, one POST) pass 2/2 on head and fail 2/2 per-mount."
+      ]
+    },
+    {
+      "id": "TECH-3-1",
+      "round": 3,
+      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The lock store survives sign-out. `useSignOut` ends the session and calls `router.replace('/sign-in')` (client-side navigation), so the module store stays. If a second person signs in on the same tab and opens the same work item at the same revision, a command that had an uncertain result is still disabled with \"Check the page before trying again.\" until the revision changes or the page reloads. Nothing is sent and nothing about another item is locked. It only over-locks one item for the next person in that tab. Expected: call `resetScopedWriteLocks()` when sign-out succeeds (the DemoBar persona switch already does a full reload). | frontend/src/features/sign-in/useSignOut.ts:25-26; frontend/src/features/workspace/useWriteLock.ts:35-38",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:25:51Z",
+          "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1"
+        }
+      ]
+    },
+    {
+      "id": "TECH-3-2",
+      "round": 3,
+      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Round 2 asked for \"the same test for a registered line `Actions`\", and none was added. The line path depends on two things the controls tests don't cover: the lock key in the shared scope, and `ctx` now being memoized in `LiveWorkItemView` so the unread marker still matches after History and back. My two scratch tests cover both (see Verified). Expected: add them to `tests/work-commands.test.tsx` under \"the line write-form slot (Actions)\". | frontend/tests/work-commands.test.tsx:508",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-3/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:25:51Z",
+          "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1"
+        }
       ]
     }
   ],
@@ -935,6 +1001,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-24T14:15:46Z",
+      "round": 3,
+      "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-24T14:25:52Z",
       "round": 3,
       "head": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
       "reason": null
