@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-75",
   "outcome": "Registers and Actions tabs read the live sectioned project tab",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -103,6 +103,18 @@
       "at": "2026-11-24T15:06:53Z",
       "seconds": 10.5,
       "evidence_ref": "delivery/features/F-75/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T16:01:05Z",
+      "seconds": 236.1,
+      "evidence_ref": "delivery/features/F-75/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -165,14 +177,28 @@
         "delivery/features/F-75/round-1/review-technical.md"
       ],
       "raised_by": "technical reviewer",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "technical reviewer",
           "at": "2026-11-24T15:39:01Z",
           "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T16:01:05Z",
+          "refs": [
+            "merge with F-71 resolved at the three named spots"
+          ],
+          "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "merge with F-71 resolved at the three named spots"
       ]
     },
     {
@@ -234,14 +260,28 @@
         "delivery/features/F-75/round-1/review-ux.md"
       ],
       "raised_by": "ux-reviewer",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "ux-reviewer",
           "at": "2026-11-24T15:39:01Z",
           "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T16:01:05Z",
+          "refs": [
+            "focus on the first new row or card after Show more"
+          ],
+          "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "focus on the first new row or card after Show more"
       ]
     },
     {
@@ -257,14 +297,28 @@
         "delivery/features/F-75/round-1/review-ux.md"
       ],
       "raised_by": "ux-reviewer",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "ux-reviewer",
           "at": "2026-11-24T15:39:01Z",
           "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T16:01:05Z",
+          "refs": [
+            "Severity note on Issues only"
+          ],
+          "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Severity note on Issues only"
       ]
     },
     {
@@ -303,14 +357,28 @@
         "delivery/features/F-75/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "ui-reviewer",
           "at": "2026-11-24T15:39:01Z",
           "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T16:01:05Z",
+          "refs": [
+            "Registers columns in board order, AGE right-aligned"
+          ],
+          "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Registers columns in board order, AGE right-aligned"
       ]
     },
     {
@@ -508,7 +576,7 @@
     "base_branch": "main",
     "base_sha": "f355d33908d66468082b5cadac12aaf6dd6b09ce",
     "task_branch": "fe-connect-1-registers-actions-tabs",
-    "head_sha": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+    "head_sha": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b2",
     "pr_url": null,
     "pr_number": null,
@@ -529,13 +597,17 @@
       "frontend/mock/fixtures/projects/tabs/P-0106.registers.json",
       "frontend/mock/project-tabs.mjs",
       "frontend/src/features/projects/ActionsTab.tsx",
+      "frontend/src/features/projects/DocumentsTab.tsx",
       "frontend/src/features/projects/RegistersTab.tsx",
       "frontend/src/features/projects/TabParts.tsx",
       "frontend/src/features/projects/sectionsModel.ts",
       "frontend/src/features/projects/tabsModel.ts",
+      "frontend/src/features/projects/useFocusAfterMore.ts",
       "frontend/src/features/projects/useProjectSections.ts",
+      "frontend/src/features/projects/useProjectTab.ts",
       "frontend/tests/demo-mock.test.ts",
       "frontend/tests/issue-assign-mock.test.ts",
+      "frontend/tests/mock-live-money.test.ts",
       "frontend/tests/mock-live-project-sections.test.ts",
       "frontend/tests/mock-project-tabs.test.ts",
       "frontend/tests/next-config.test.ts",
@@ -618,6 +690,14 @@
       "round": 2,
       "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T16:01:22Z",
+      "round": 2,
+      "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "reason": null
     }
   ],
   "routing": {
@@ -634,9 +714,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5"
   },
   "blocked": null
 }
