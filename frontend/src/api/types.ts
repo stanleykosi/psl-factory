@@ -38,3 +38,7 @@ export type LiveHistoryRow = LiveWorkHistory['items'][number];
 export type LiveTracking = LiveGet<'/api/v1/work/{work_id}/tracking'>;
 export type LiveStation = LiveTracking['stations'][number];
 export type LiveWeeklyReport = LiveGet<'/api/v1/work/{work_id}/weekly-report'>;
+
+// F-103: the cash forecast reads (contract 1.25.0). The four result arrays and the disclosure arrays are untyped in the contract.
+export type LiveForecast = LiveGet<'/api/v1/work/{work_id}/forecast'>;
+export type LiveForecastMonth = LiveGet<'/api/v1/work/{work_id}/forecast/actuals/{month}'>;

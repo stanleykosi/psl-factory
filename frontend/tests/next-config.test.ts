@@ -135,6 +135,7 @@ describe('the Django embed is gone', () => {
       'demo-mock.test.ts',
       'project-sections-model.test.ts',
       'issues.mjs',
+      'forecast-live.mjs',
     ];
     expect(hits.filter((file) => !allowed.some((name) => file.endsWith(name)) && !/mock\/fixtures\/me\.[a-z_]+\.json$/.test(file) && !/mock\/fixtures\/(projects\/(money\/|tabs\/)?[^/]+|E-PROJECT)\.json$/.test(file))).toEqual([]);
   });
