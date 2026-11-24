@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-65",
   "outcome": "The factory floor shows live recorded work per line, with a way into each line's queue",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -123,8 +123,130 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone (390): the 'FACTORY FLOOR - UPDATED \u2026' eyebrow sits at the bottom of the page; place it above the title as on desktop (keep the updated time). One fix round per the coordinator's D-207 phone rule.",
+      "reproduction": null,
+      "evidence_refs": [],
+      "raised_by": "coordinator",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "coordinator",
+          "at": "2026-11-24T15:51:07Z",
+          "head": "15ad8e8b0d20155707c459097c067c6dfff28dc6"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone (390): count digits inside the station squares are about 8px; make them legible with the design system's smallest text token, keeping blank 0 squares as on the board. One fix round per the coordinator's D-207 phone rule.",
+      "reproduction": null,
+      "evidence_refs": [],
+      "raised_by": "coordinator",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "coordinator",
+          "at": "2026-11-24T15:51:08Z",
+          "head": "15ad8e8b0d20155707c459097c067c6dfff28dc6"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Station squares and the station strip show sampled counts as plain numbers when `limited` is true. For example, the strip reads \"3 items\" and a 0 square is blank, with no \"at least\" wording. The footnote at OverviewPage.tsx:~337 says station figures come from recent items, which covers it. Spec acceptance 3 and 5 only require \"at least N\" on the totals. Optional: add \"at least\" to the strip text when limited (src/features/floor/StationStrip.tsx:28).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-65/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T15:51:09Z",
+          "head": "15ad8e8b0d20155707c459097c067c6dfff28dc6"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead), lighter panel (D-180)",
+          "snapshot_ref": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
+          "evidence_refs": [
+            "delivery/features/F-65/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-65/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
+          "evidence_refs": [
+            "delivery/features/F-65/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
+          "evidence_refs": [
+            "delivery/features/F-65/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -227,7 +349,7 @@
     }
   },
   "created_at": "2026-11-23T13:24:20Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -253,6 +375,22 @@
       "round": 1,
       "head": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T15:51:19Z",
+      "round": 1,
+      "head": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T15:51:21Z",
+      "round": 2,
+      "head": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
+      "reason": null
     }
   ],
   "routing": {
@@ -268,10 +406,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "15ad8e8b0d20155707c459097c067c6dfff28dc6"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }
