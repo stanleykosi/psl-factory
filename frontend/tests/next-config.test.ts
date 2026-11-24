@@ -103,7 +103,7 @@ describe('the Django embed is gone', () => {
     const root = join(__dirname, '..');
     const removed = new RegExp(['FactoryDesk', 'work_desk_url', 'django_url', 'factory-forms', 'factory-assets', 'NEXT_PUBLIC_FACTORY_ORIGIN'].join('|'));
     const hits = matchingSources(['src', 'tests', 'e2e', 'mock'].map((d) => join(root, d)), removed);
-    // The live contract itself and its generated types name these fields (the frame reads `/me` and ignores them); the mock's `/me` fixtures hold the fixed /retired/ value and tests/mock-live-me.test.ts proves their shape; the project list and journey fixtures carry the contract's required django_url, never read (tests/mock-live-projects.test.ts proves their shape). mock/work-live.mjs serves the live work item, whose required `django_url` field it must carry (F-85). The document review fixtures carry the contract's required django_url too (F-72, tests/mock-live-document-review.test.ts). The alerts adapter (F-61) reads `django_url` only as the fallback link of an alert with no typed `api_url` (the contract names it on every alert item), and its mock and tests carry the field. The decision desk's typed work fixtures and its mock (decide.test.tsx, live-decide.mjs) carry the same required django_url. The project money and milestones fixtures carry the same field (F-71).
+    // The live contract itself and its generated types name these fields (the frame reads `/me` and ignores them); the mock's `/me` fixtures hold the fixed /retired/ value and tests/mock-live-me.test.ts proves their shape; the project list and journey fixtures carry the contract's required django_url, never read (tests/mock-live-projects.test.ts proves their shape). mock/work-live.mjs and mock/issues.mjs serve the live work item, whose required `django_url` field they must carry (F-85, F-111). The document review fixtures carry the contract's required django_url too (F-72, tests/mock-live-document-review.test.ts). The alerts adapter (F-61) reads `django_url` only as the fallback link of an alert with no typed `api_url` (the contract names it on every alert item), and its mock and tests carry the field. The decision desk's typed work fixtures and its mock (decide.test.tsx, live-decide.mjs) carry the same required django_url. The project money and milestones fixtures carry the same field (F-71).
     const allowed = [
       'next-config.test.ts',
       'shell-no-embed.test.tsx',
@@ -134,6 +134,7 @@ describe('the Django embed is gone', () => {
       'alerts-bell.test.tsx',
       'demo-mock.test.ts',
       'project-sections-model.test.ts',
+      'issues.mjs',
     ];
     expect(hits.filter((file) => !allowed.some((name) => file.endsWith(name)) && !/mock\/fixtures\/me\.[a-z_]+\.json$/.test(file) && !/mock\/fixtures\/(projects\/(money\/|tabs\/)?[^/]+|E-PROJECT)\.json$/.test(file))).toEqual([]);
   });

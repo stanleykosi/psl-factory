@@ -51,6 +51,7 @@ import { resetTemplates, templatesList, templateVersion } from './templates.mjs'
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { LIVE_QUEUES, liveWorkItem, liveWorkList, ownsLiveWorkItem } from './live-work.mjs';
 import { workList } from './work-list.mjs';
+import { issuesLog, issuesRoute, resetIssues } from './issues.mjs';
 import { liveDecideRoute, ownsLiveDecide, resetLiveDecide } from './live-decide.mjs';
 import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
 import { LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
@@ -299,6 +300,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         alerts.reset();
         resetWorkspace();
         resetWorkLive();
+        resetIssues();
         resetClients();
         resetDocumentReviews();
         assistant.reset();
@@ -309,6 +311,13 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       // F-58: after a logout (cookie psl_mock_session=out) every other read and write answers 401, as a signed-out session does.
       if (url.pathname.startsWith('/api/') && url.pathname !== SESSION_PATH && url.pathname !== LOGOUT_PATH && parseCookies(req.headers.cookie).psl_mock_session === 'out') return send(res, ...SIGNED_OUT_REPLY);
+      // F-111: the issue follow-up reads (work 51xx and the project's issue reads); anything else falls through.
+      if (method === 'get') {
+        const cookies = parseCookies(req.headers.cookie);
+        const reply = issuesRoute({ method, url, scenario: req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario, persona: PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA });
+        if (reply) return send(res, ...reply);
+      }
+      if (method === 'get' && url.pathname === '/__mock/issues-log') return send(res, 200, issuesLog());
       // F-64: the live decision desk (live-decide.mjs): integer work and task ids, the live shapes. Not in v7.
       if (ownsLiveDecide(method, url)) {
         const cookies = parseCookies(req.headers.cookie);
@@ -322,7 +331,10 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const cookies = parseCookies(req.headers.cookie);
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
-        return send(res, ...workLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
+        const reply = workLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes });
+        // a dropped connection: the write ran, the answer never arrives
+        if (reply[0] === 'drop') return req.socket.destroy();
+        return send(res, ...reply);
       }
       // F-61: the alert reads and writes in the live shapes. A scenario status answers every one of them; a write needs the persona's CSRF token.
       if (ALERT_PATH.test(url.pathname)) {
