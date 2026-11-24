@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-64",
   "outcome": "SCR-03 Decision desk on the live API: read the invoice or accounting review, claim it, record approve, return or reject",
-  "state": "AWAITING_USER_APPROVAL",
+  "state": "DONE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -586,9 +586,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -600,16 +600,16 @@
     "base_branch": "main",
     "base_sha": "811465d841db6da9fbbeb6b8953df2816cf62295",
     "task_branch": "fe-connect-1-decision-desk",
-    "head_sha": "7108be9d709378a1d14333db432515028e087aa0",
+    "head_sha": "9d93d66ccb96fbc2744e198893c1bf4ca06be27c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a-f64",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/111",
     "pr_number": 111,
     "pr_author": "hunchoweb",
     "designated_approver": null,
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "4fd055ce825ee3b11bd6d24b4549fbc0f5efec55",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/decide-board.spec.ts",
@@ -676,8 +676,8 @@
     "decided_for_head_sha": "7108be9d709378a1d14333db432515028e087aa0",
     "merged_by": null,
     "pre_merge_sync": {
-      "base_sha": null,
-      "checks_rerun": "not_run"
+      "base_sha": "811465d8",
+      "checks_rerun": "passed"
     }
   },
   "created_at": "2026-11-23T13:23:39Z",
@@ -763,6 +763,30 @@
       "round": 2,
       "head": "7108be9d709378a1d14333db432515028e087aa0",
       "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-24T15:30:02Z",
+      "round": 2,
+      "head": "9d93d66ccb96fbc2744e198893c1bf4ca06be27c",
+      "reason": "Design engineer in chat to the coordinator (D-203): \"Merge now, prove after\""
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-24T15:30:02Z",
+      "round": 2,
+      "head": "9d93d66ccb96fbc2744e198893c1bf4ca06be27c",
+      "reason": "merged by coordinator as 4fd055ce (#111)"
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-24T15:30:03Z",
+      "round": 2,
+      "head": "9d93d66ccb96fbc2744e198893c1bf4ca06be27c",
+      "reason": "on main 4fd055ce; live decision proof on psl_demo is a follow-up (D-203)"
     }
   ],
   "routing": {

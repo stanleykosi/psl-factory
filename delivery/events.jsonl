@@ -5101,3 +5101,13 @@
 {"at":"2026-11-24T15:06:17Z","feature":"F-119","round":5,"kind":"transition","head":"53c24b19059e","from":"IMPLEMENTING","to":"IN_REVIEW"}
 {"at":"2026-11-24T15:06:53Z","feature":"F-75","round":1,"kind":"gate","verdict":"PASS","attempt":3,"exit_code":0,"seconds":10.5,"commit":"bfcad616bcb0"}
 {"at":"2026-11-24T15:07:12Z","feature":"F-75","round":1,"kind":"transition","head":"bfcad616bcb0","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-24T15:18:41Z","feature":"F-64","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"4fd055ce825ee3b11bd6d24b4549fbc0f5efec55","merge_decision.pre_merge_sync":{"base_sha":"811465d8","checks_rerun":"passed"}}}
+{"at":"2026-11-24T15:19:59Z","feature":"F-119","round":5,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"53c24b19059e","findings":{"TECH-5-1":"medium","TECH-5-2":"low","TECH-5-3":"low"},"written_at":"2026-11-24T15:14:55Z"}
+{"at":"2026-11-24T15:19:59Z","feature":"F-119","round":5,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"53c24b19059e","written_at":"2026-11-24T15:15:57Z"}
+{"at":"2026-11-24T15:20:52Z","feature":"F-88","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"98eb07bbb7c5","findings":{"TECH-2-1":"low"},"written_at":"2026-11-24T15:14:42Z"}
+{"at":"2026-11-24T15:20:52Z","feature":"F-88","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"98eb07bbb7c5","findings":{"UX-2-1":"low","UX-1-2":"low"},"written_at":"2026-11-24T15:15:56Z"}
+{"at":"2026-11-24T15:20:52Z","feature":"F-88","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"98eb07bbb7c5","written_at":"2026-11-24T15:15:12Z"}
+{"at":"2026-11-24T15:29:56Z","feature":"F-64","round":2,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-24T15:30:02Z","feature":"F-64","round":2,"kind":"transition","head":"9d93d66ccb96","reason":"Design engineer in chat to the coordinator (D-203): \"Merge now, prove after\"","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-24T15:30:02Z","feature":"F-64","round":2,"kind":"transition","head":"9d93d66ccb96","reason":"merged by coordinator as 4fd055ce (#111)","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-24T15:30:03Z","feature":"F-64","round":2,"kind":"transition","head":"9d93d66ccb96","reason":"on main 4fd055ce; live decision proof on psl_demo is a follow-up (D-203)","from":"MERGED","to":"DONE"}
