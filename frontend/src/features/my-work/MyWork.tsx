@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { api, call } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
-import { Button, Callout, EmptyState, ListToolbar, Loading, ShowMore, Skeleton, Tabs, useIsPhone, usePagedRows, DEFAULT_PAGE_SIZE, type FilterChip } from '@/components';
+import { Button, EmptyState, ListToolbar, Loading, ShowMore, Skeleton, Tabs, useIsPhone, usePagedRows, DEFAULT_PAGE_SIZE, type FilterChip } from '@/components';
 import { UnassignedBids } from '@/features/rfp/UnassignedBids';
 import { SignedOutState } from '@/shell/FrameStates';
 
@@ -67,7 +67,6 @@ export function MyWork() {
   const [signedOut, setSignedOut] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   // F-36: the assign panel's write went through but the list could not be read back; the confirmation itself is a toast (D-151)
-  const [notice, setNotice] = useState<string>();
 
   const seq = useRef(0);
   const inFlight = useRef(0);
@@ -80,7 +79,6 @@ export function MyWork() {
   const tabs = useRef<HTMLDivElement>(null);
   const navigate = useCallback(
     (next: Partial<View>) => {
-      setNotice(undefined);
       router.replace(`/my-work${viewSearch({ ...viewRef.current, ...next })}`, { scroll: false });
     },
     [router],
@@ -398,12 +396,6 @@ export function MyWork() {
             <p className="my-work__updated">{records ? `${records} · updated ${formatTime(asOf)}` : `Updated ${formatTime(asOf)}`}</p>
           ))}
       </div>
-
-      {notice && (
-        <Callout kind="warning" className="my-work__notice">
-          {notice}
-        </Callout>
-      )}
 
       <div className="my-work__tabs" ref={tabs}>
         <Tabs

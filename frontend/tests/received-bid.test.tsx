@@ -76,11 +76,11 @@ function pickNow(label: string) {
 }
 const attach = (file: File) => fireEvent.change(document.querySelector('input[type="file"]') as HTMLInputElement, { target: { files: [file] } });
 /** Everything the form needs, as a person fills it. */
-async function fill({ file = makeFile('rfp.pdf', 'application/pdf', 600), reference = 'RFP-2026-041', deadline = 'Not known' } = {}) {
+async function fill({ file = makeFile('rfp.pdf', 'application/pdf', 600), reference = 'RFP-2026-041', deadline = 'Unknown' } = {}) {
   await choose('Client', 'Northwind Bank');
   fireEvent.change(screen.getByLabelText('RFP reference'), { target: { value: reference } });
   attach(file);
-  pickNow('Actually received');
+  pickNow('Received');
   fireEvent.click(screen.getByRole('radio', { name: deadline }));
 }
 const press = (name = 'Log RFP') => fireEvent.click(screen.getByRole('button', { name }));
@@ -143,11 +143,11 @@ describe('the one POST (AC2, AC3, AC7)', () => {
 
   it('a stated deadline needs its date: the form says so and sends nothing; with a date it sends deadline_at, otherwise never', async () => {
     await open();
-    await fill({ deadline: 'A date is stated' });
+    await fill({ deadline: 'Stated' });
     press();
     expect((await screen.findByRole('alert')).textContent).toContain('Choose the deadline date and time.');
     expect(writes()).toHaveLength(0);
-    pickNow('Deadline date and time');
+    pickNow('Deadline');
     press();
     await screen.findByText('RFP logged.');
     expect(writes()[0].form.fields.deadline_at).toMatch(/Z$/);
@@ -312,7 +312,7 @@ describe('refusals (AC5, AC8)', () => {
     await open();
     press();
     const summary = await screen.findByRole('alert');
-    for (const text of ['Client is required.', 'RFP reference is required.', 'RFP document is required.', 'Actually received is required.', 'Deadline is required.']) expect(within(summary).getByText(text)).toBeTruthy();
+    for (const text of ['Client is required.', 'RFP reference is required.', 'RFP document is required.', 'Received is required.', 'Submission deadline is required.']) expect(within(summary).getByText(text)).toBeTruthy();
     expect(writes()).toHaveLength(0);
   });
 });
@@ -359,6 +359,9 @@ describe('the registry and the chooser (AC17, AC20)', () => {
     expect(await screen.findByRole('dialog', { name: 'Log a received RFP' })).toBeTruthy();
     expect(await screen.findByRole('combobox', { name: 'Client' })).toBeTruthy();
     expect(screen.queryByRole('combobox', { name: 'Project' })).toBeNull();
+    expect(screen.getByText(/Logging an RFP opens a new pre-engagement workspace/)).toBeTruthy();
+    expect(screen.getByText('START WORK · PRE-SALE')).toBeTruthy();
+    expect(screen.getAllByRole('heading', { name: 'Lines you can start' }).length).toBeLessThanOrEqual(1);
     expect(hits(/^\/api\/v1\/lines\/projects$/)).toHaveLength(0);
   });
 

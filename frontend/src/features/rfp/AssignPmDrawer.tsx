@@ -25,7 +25,10 @@ export const ASSIGN_PM_TEXT = {
   submit: 'Assign PM',
   owner: 'Accountable PM',
   choose: 'Choose a PM',
+  intro: 'Only people allowed to prepare RFPs for this workspace are listed. Who may assign is set by PSL in Setup.',
+  count: (n: number) => `${n} ${n === 1 ? 'person' : 'people'} can prepare RFPs here`,
   roleLabel: 'You are assigning as',
+  roleHelp: 'One of the roles PSL allows to assign RFPs',
   chooseRole: 'Choose a role',
   proof: 'Proof',
   listedProof: 'Use a recorded proof',
@@ -217,6 +220,7 @@ export function AssignPmDrawer({ caseId, reloadList, onClose, pathname }: Props)
           }}
         >
           <ValidationSummary attempt={attempt + flow.attempt} problems={problems} />
+          <Callout kind="info">{ASSIGN_PM_TEXT.intro}</Callout>
           <div ref={alertRef} tabIndex={-1}>
             {notice?.kind === 'stale' && (
               <div role="alert">
@@ -245,6 +249,7 @@ export function AssignPmDrawer({ caseId, reloadList, onClose, pathname }: Props)
             <Select
               id={ids.candidate}
               label={ASSIGN_PM_TEXT.owner}
+              hint={ASSIGN_PM_TEXT.count(data.nominees.length)}
               options={data.nominees.map((n) => ({ value: String(n.id), label: n.label }))}
               value={draft.candidate}
               placeholder={ASSIGN_PM_TEXT.choose}
@@ -257,12 +262,14 @@ export function AssignPmDrawer({ caseId, reloadList, onClose, pathname }: Props)
             <div className="resp-field">
               <span className="resp-label">{ASSIGN_PM_TEXT.roleLabel}</span>
               <span className="resp-static">{data.roles[0]}</span>
+              <span className="psl-hint">{ASSIGN_PM_TEXT.roleHelp}</span>
             </div>
           ) : (
             <div className="resp-field">
               <Select
                 id={ids.role}
                 label={ASSIGN_PM_TEXT.roleLabel}
+                hint={ASSIGN_PM_TEXT.roleHelp}
                 options={data.roles.map((r) => ({ value: r, label: r }))}
                 value={draft.role}
                 placeholder={ASSIGN_PM_TEXT.chooseRole}

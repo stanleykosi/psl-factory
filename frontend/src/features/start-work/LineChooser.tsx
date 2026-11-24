@@ -12,7 +12,7 @@ import { SignedOutState } from '@/shell/FrameStates';
 
 import { DrawerFrame, useWide } from './DrawerFrame';
 import { UNAVAILABLE_LINK, UNAVAILABLE_NOTE } from './labels';
-import { lineFormFor, OWN_LINES, ownLineFor } from './lines';
+import { lineFormFor, ownLineFor } from './lines';
 import type { Line } from './types';
 import type { LinesState } from './useStartWork';
 
@@ -48,12 +48,6 @@ function LoadingLines() {
 /** Startable: the contract lets the API start it and a form is registered for it, or the line owns its own submit (F-88). */
 export const isStartable = (line: Line) => ownLineFor(line.key) !== undefined || (line.can_submit_via_api && lineFormFor(line.key) !== undefined);
 
-/** `GET /lines` rows, then each line that owns its submit and is not among them, drawn by its own title (it has no `/lines` row to read). */
-export function withOwnLines(items: Line[]): Line[] {
-  const missing = OWN_LINES.filter((own) => !items.some((line) => line.key === own.key));
-  return [...items, ...missing.map((own) => ({ key: own.key, title: own.drawerTitle, description: own.description, can_submit_via_api: true, django_url: '/', project_options_url: null, submit_url: '', request_schema: {}, content_type: 'application/json' }) as Line)];
-}
-
 function Unavailable({ line, wide }: { line: Line; wide: boolean }) {
   return (
     <div className="psl-choice sw-unavailable" data-line={line.key}>
@@ -73,7 +67,7 @@ export function LineChooser({ state, onRetry, onNext, onClose, pathname }: Props
   const [q, setQ] = useState('');
   const [chosen, setChosen] = useState<string | null>(null);
   const countId = useId();
-  const items = useMemo(() => (state.status === 'ready' ? withOwnLines(state.data.items) : []), [state]);
+  const items = useMemo(() => (state.status === 'ready' ? state.data.items : []), [state]);
   const shown = useMemo(() => {
     const needle = wide ? q.trim().toLowerCase() : '';
     return items.filter((line) => `${line.title}\n${line.description}`.toLowerCase().includes(needle));

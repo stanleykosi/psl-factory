@@ -90,9 +90,9 @@ describe('chooser', () => {
     expect((within(dialog).getByRole('button', { name: 'Next' }) as HTMLButtonElement).disabled).toBe(false);
   });
 
-  it('with no `/lines` rows the received RFP is still the one choice, since it owns its submit (F-88)', async () => {
+  it('says so for an empty list; a line `/lines` does not list is never added (F-88)', async () => {
     render(<LineChooser state={{ status: 'ready', data: { items: [], as_of: '' } }} onRetry={vi.fn()} onNext={vi.fn()} onClose={vi.fn()} pathname="/" />);
-    expect(screen.getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['received-bid']);
+    expect(screen.getByText('There are no lines you can start right now.')).toBeTruthy();
   });
 
   it('opens the project step for the weekly report, with no default line (AC15)', async () => {

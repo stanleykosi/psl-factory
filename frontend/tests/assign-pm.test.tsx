@@ -119,6 +119,9 @@ describe('reading the assignment (AC10, AC14, AC15)', () => {
     expect(screen.getByRole('combobox', { name: 'Accountable PM' }).textContent).toContain('Choose a PM');
     expect(screen.getByRole('combobox', { name: 'You are assigning as' }).textContent).toContain('Choose a role');
     expect(screen.queryByText(/optional/i)).toBeNull();
+    expect(screen.getByText('2 people can prepare RFPs here')).toBeTruthy();
+    expect(screen.getByText(/Only people allowed to prepare RFPs/)).toBeTruthy();
+    expect(screen.getAllByText('One of the roles PSL allows to assign RFPs').length).toBe(1);
     expect(screen.getByText('The PM prepares the RFP response')).toBeTruthy();
     expect(screen.getByText('What happens next:')).toBeTruthy();
     expect(document.body.textContent).not.toMatch(/alerted/i);

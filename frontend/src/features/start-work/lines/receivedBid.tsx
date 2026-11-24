@@ -43,13 +43,13 @@ export const RATE_LIMITED = 'Too many tries. Wait a moment.';
 export const RECEIPT_UNREAD = 'RFP logged. We couldn’t read the receipt back.';
 
 const DEADLINES: { value: DeadlineStatus; label: string }[] = [
-  { value: 'unknown', label: 'Not known' },
-  { value: 'stated', label: 'A date is stated' },
+  { value: 'unknown', label: 'Unknown' },
+  { value: 'stated', label: 'Stated' },
   { value: 'not_stated', label: 'Not stated' },
 ];
 const METHODS: { value: SubmissionMethod; label: string }[] = [
   { value: 'email', label: 'Email' },
-  { value: 'portal', label: 'Portal' },
+  { value: 'portal', label: 'Client portal' },
   { value: 'by_hand', label: 'By hand' },
   { value: 'not_stated', label: 'Not stated' },
 ];
@@ -109,8 +109,8 @@ export function problemsOf(draft: Draft): Record<string, string> {
     const refused = refuseDocument(draft.document);
     if (refused) out.document = refused;
   }
-  if (!draft.receivedAt || offsetTime(draft.receivedAt) === null) out.received_at = 'Actually received is required.';
-  if (!draft.deadlineStatus) out.deadline_status = 'Deadline is required.';
+  if (!draft.receivedAt || offsetTime(draft.receivedAt) === null) out.received_at = 'Received is required.';
+  if (!draft.deadlineStatus) out.deadline_status = 'Submission deadline is required.';
   else if (draft.deadlineStatus === 'stated' && offsetTime(draft.deadlineAt) === null) out.deadline_at = 'Choose the deadline date and time.';
   if (draft.note.length > NOTE_MAX) out.note = `Use ${NOTE_MAX} characters or fewer.`;
   if (draft.prospectName.trim().length > NAME_MAX) out.prospect_name = `Use ${NAME_MAX} characters or fewer.`;
@@ -308,7 +308,7 @@ function OwnDrawer({ onBack, onClose, pathname }: { onBack: () => void; onClose:
 
   if (signedOut) {
     return (
-      <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={cancel} focusKey="signed-out">
+      <DrawerFrame eyebrow="START WORK · PRE-SALE" title={title} subline={subline} onClose={onClose} footer={cancel} focusKey="signed-out">
         <SignedOutState pathname={pathname} />
       </DrawerFrame>
     );
@@ -317,7 +317,7 @@ function OwnDrawer({ onBack, onClose, pathname }: { onBack: () => void; onClose:
   if (done) {
     const { receipt, logged } = done;
     return (
-      <DrawerFrame eyebrow="START WORK" title={title} onClose={onClose} footer={cancel} focusKey="logged">
+      <DrawerFrame eyebrow="START WORK · PRE-SALE" title={title} onClose={onClose} footer={cancel} focusKey="logged">
         <div ref={doneRef} tabIndex={-1} role="status" className="sw-stack">
           {receipt ? (
             <>
@@ -382,8 +382,9 @@ function OwnDrawer({ onBack, onClose, pathname }: { onBack: () => void; onClose:
   const fail = orgs.status === 'error' ? orgs.error : null;
 
   return (
-    <DrawerFrame eyebrow="START WORK" title={title} subline={subline} onClose={onClose} footer={footer} focusKey={`rb-${orgs.status}`}>
+    <DrawerFrame eyebrow="START WORK · PRE-SALE" title={title} subline={subline} onClose={onClose} footer={footer} focusKey={`rb-${orgs.status}`}>
       <ValidationSummary problems={problems} attempt={attempt} />
+      <Callout kind="info">Logging an RFP opens a new pre-engagement workspace for it. The RFP reference can’t be changed later.</Callout>
       <div ref={alertRef} tabIndex={-1}>
         {notice?.kind === 'invalid' && notice.general.length > 0 && (
           <Callout kind="problem">
@@ -428,7 +429,7 @@ function OwnDrawer({ onBack, onClose, pathname }: { onBack: () => void; onClose:
             />
           </div>
           <div className="psl-field sw-field" data-field="reference">
-            <TextField id={fieldId('reference')} label="RFP reference" aria-required value={draft.reference} readOnly={readOnly} error={errors.reference} onChange={(e) => set('reference', e.target.value, 'reference')} />
+            <TextField id={fieldId('reference')} label="RFP reference" hint="As written on their document" aria-required value={draft.reference} readOnly={readOnly} error={errors.reference} onChange={(e) => set('reference', e.target.value, 'reference')} />
           </div>
           <div className="psl-field sw-field" data-field="document" id={fieldId('document')} tabIndex={-1}>
             <FileUpload
@@ -447,11 +448,11 @@ function OwnDrawer({ onBack, onClose, pathname }: { onBack: () => void; onClose:
             />
           </div>
           <div className="psl-field sw-field" data-field="received_at">
-            <DateField time id={fieldId('received_at')} label="Actually received" value={draft.receivedAt} disabled={readOnly} error={errors.received_at} onChange={(when) => set('receivedAt', when, 'received_at')} />
+            <DateField time id={fieldId('received_at')} label="Received" hint="When it actually arrived, not when you log it" value={draft.receivedAt} disabled={readOnly} error={errors.received_at} onChange={(when) => set('receivedAt', when, 'received_at')} />
           </div>
           <div className="psl-field sw-field" data-field="deadline_status" id={fieldId('deadline_status')} tabIndex={-1}>
             <span className="psl-label" id="rb-deadline-label">
-              Deadline
+              Submission deadline
             </span>
             <div aria-invalid={errors.deadline_status ? true : undefined}>
               <Segmented
@@ -472,24 +473,30 @@ function OwnDrawer({ onBack, onClose, pathname }: { onBack: () => void; onClose:
           </div>
           {draft.deadlineStatus === 'stated' && (
             <div className="psl-field sw-field" data-field="deadline_at">
-              <DateField time id={fieldId('deadline_at')} label="Deadline date and time" value={draft.deadlineAt} disabled={readOnly} error={errors.deadline_at} onChange={(when) => set('deadlineAt', when, 'deadline_at')} />
+              <DateField time id={fieldId('deadline_at')} label="Deadline" value={draft.deadlineAt} disabled={readOnly} error={errors.deadline_at} onChange={(when) => set('deadlineAt', when, 'deadline_at')} />
             </div>
           )}
-          <div className="psl-field sw-field" data-field="submission_method">
-            <Select
-              id={fieldId('submission_method')}
-              label="Submission method"
-              optional
-              options={METHODS.map((o) => ({ value: o.value, label: o.label }))}
+          <div className="psl-field sw-field" data-field="submission_method" id={fieldId('submission_method')} tabIndex={-1}>
+            <span className="psl-label" id="rb-method-label">
+              How the client wants it submitted (optional)
+            </span>
+            <Segmented
+              phone={!wide}
+              labelledBy="rb-method-label"
+              className="sw-seg sw-seg--four"
+              options={METHODS.map((o) => ({ value: o.value, label: o.label, disabled: readOnly }))}
               value={draft.submissionMethod}
-              placeholder="Choose…"
-              disabled={readOnly}
-              error={errors.submission_method}
-              onChange={(value) => set('submissionMethod', value as SubmissionMethod, 'submission_method')}
+              onChange={(next) => !readOnly && set('submissionMethod', next, 'submission_method')}
             />
+            {errors.submission_method && (
+              <span className="psl-error">
+                <Icon name="warn" />
+                <span>{errors.submission_method}</span>
+              </span>
+            )}
           </div>
           <div className="psl-field sw-field" data-field="submission_target">
-            <TextField id={fieldId('submission_target')} label="Where to submit" optional value={draft.submissionTarget} readOnly={readOnly} error={errors.submission_target} onChange={(e) => set('submissionTarget', e.target.value, 'submission_target')} />
+            <TextField id={fieldId('submission_target')} label="Submit to" optional hint="From the RFP. Shown on the submission pack and used to send it." value={draft.submissionTarget} readOnly={readOnly} error={errors.submission_target} onChange={(e) => set('submissionTarget', e.target.value, 'submission_target')} />
           </div>
           <div className="psl-field sw-field" data-field="prospect_name">
             <TextField
@@ -529,6 +536,5 @@ export const receivedBid: OwnLine = {
   ownsSubmit: true,
   startLabel: 'Log RFP',
   drawerTitle: 'Log a received RFP',
-  description: 'Record an RFP a client sent, with its file',
   Own: OwnDrawer,
 };
