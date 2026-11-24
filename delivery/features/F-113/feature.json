@@ -63,7 +63,32 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "verdict": "FAIL",
+      "exit_code": 124,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T20:48:46Z",
+      "seconds": 1800.1,
+      "evidence_ref": "delivery/features/F-113/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T01:17:17Z",
+      "seconds": 840.1,
+      "evidence_ref": "delivery/features/F-113/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -110,8 +135,387 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "effect_uncertain maps to the amber \"waiting\" tone; the spec asks for the \"stopped\" tone, and caution maps to \"person\". TagTone has no stopped or caution values, so the builder chose the nearest tone (build.md Notes). The result is that RESULT UNCERTAIN looks like a waiting state. Expected: a distinct tone for an uncertain effect, or a recorded decision that the UI reviewer accepts. Actual: frontend/src/features/projects/deliveryModel.ts STATE_WORDS. Any new tone belongs in the shared Tag component, so confirm with the design engineer first.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "visibleTabs inserts Delivery with the hard index `PROJECT_TABS[1]`. Reordering PROJECT_TABS would silently move the tab. Expected: look it up by key, for example `PROJECT_TABS.find((t) => t.key === 'delivery')`. Actual: frontend/src/features/projects/model.ts visibleTabs.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "stateWords has a redundant ternary: `line.gate_state === 'not_started' ? 'not_started' : line.gate_state` equals `line.gate_state`, so the expression reads as a rule it does not add. Result is correct. Expected: `line.state ?? line.gate_state`. Actual: frontend/src/features/projects/deliveryModel.ts stateWords.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "mock/delivery-overview.mjs started() sets gate_url to the release-register URL for every line. F-113B reads gate_url, so this fixture would send five lines to the wrong gate. Expected: each line's own gate path, or null. Actual: frontend/mock/delivery-overview.mjs:started.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "acceptance criteria 10 (403/404 in a browser on 4990) and 14 (390px with no horizontal scroll) are not run (build.md marks them open). The mobile rules in delivery.css place reference and date in column 2 explicitly, while title and tag auto-place, so the 390px result is not clear from the code. Expected: a browser check before merge. Owner: frontend, with the UI/QA check at 390px on 4990.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-6",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "the closure reason list is keyed by `r.title`. Two checks with the same title would give duplicate React keys. Expected: key by the check key (carry it in HoldReason) or by index. Actual: frontend/src/features/projects/DeliveryTab.tsx, reasons map.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "The row layout breaks the approved SCR-43 board (desktop and mobile). Expected: one aligned row with number, title, reference, tag, date and Open, padded inside the panel (the `.delivery__row` grid, `frontend/src/features/projects/delivery.css:3`). Actual, at 1280px and 390px on P-0101: the tag renders at the left edge and overlaps the \"Updated <date>\" text. \"ACTION NEEDED\" over \"Updated 20 Nov\" is unreadable. The reference sits far right on its own line on desktop, and rows touch the panel border. The grid columns and padding seem not to apply, or the Tag's inline-flex width fights the `auto` track. Fix the layout so no cells overlap and rows are padded. Re-check at both widths. Screenshots (no sign-in involved): /private/tmp/claude-501/ux/d-P-0101.png and /private/tmp/claude-501/ux/m-P-0101.png.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The closure reason joins the check title and its finding with only a space (\"Handover to Support Support listed 2 gaps.\"). Add a separator such as an en dash, or put the finding on its own line, so the two read as separate parts (`frontend/src/features/projects/DeliveryTab.tsx`, the `delivery__finding` span).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The 390px row stacks reference, tag and date on separate lines with large gaps (about 90px per row), so six rows take over 1100px. SCR-43-mobile puts reference and date under the title and groups them tightly. Tighten the row gap once UX-1-1 is fixed.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "high",
+      "blocking": true,
+      "summary": "Tag and date overlap in every row at 1440 and 390 (for example \"VERIFIEDpdated 25 Mar\", \"ACTION NEEDED\" printed over \"Updated 20 Nov\"). The Tag is not laid out in its own grid cell, so the text is unreadable. Expected (board): the tag right-aligned, title and reference on the left, nothing overlapping. `frontend/src/features/projects/delivery.css:3` (6-column grid) against `DeliveryTab.tsx:56-69`. Visible in both side-by-side.png files.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "At 1440 the reference (\"REL-0091\") and \"Open\" are flush against the panel's right border with no inset (the `projects__journeybody` body class appears to override the row padding set at `delivery.css:3`). The board rows have a 16px inset on both sides. Make the row padding show on both edges.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Mobile (390) row structure differs from SCR-43-mobile. The board draws one compact line per row (title left, tag right, about 40px high). The build stacks title, reference, tag, date and Open vertically at about 195px per row, so six rows take about two screens. Put title and tag on one line, with reference and date beneath in small text and Open compact. `delivery.css:13-19`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Copy and element differences that the spec does not list among the hidden parts: the board's row title is an underlined link to the line (the build has plain text plus a separate \"Open\"), and the panel head reads \"DELIVERY LINES\" where the board says \"THE SIX DELIVERY LINES, IN ORDER\". Restore, or ask the design engineer to list them as exceptions.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": true,
+      "summary": "No `fidelity-exceptions.json` for F-113, so the tool reports 23 (desktop) and 3 (mobile) board items missing. The spec-hidden ones are: DLV-0052 header and \"3 OF 6 DONE\" tag, the \"PM TUNDE BELLO\" tag, the sub-nav strip (Overview, Release, Go-live, ...), the Tola card (\"Checked where delivery stands\", DONE, Ask Tola), the NEXT card, \"Open the handover\", and the per-row gate sentences. The design engineer must list them in `fidelity-exceptions.json` before the tool can pass. Also extra: \"Setup\" nav link, alerts, account menu (shell, not this feature), the \"DELIVERY LINES\" head and \"Checked ...\" line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T01:23:35Z",
+          "head": "0517372f2319ecf958c8db0123b884264ab748f6"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical review lead, round 1",
+          "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+          "evidence_refs": [
+            "delivery/features/F-113/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-113/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+          "evidence_refs": [
+            "delivery/features/F-113/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "0517372f2319ecf958c8db0123b884264ab748f6",
+          "evidence_refs": [
+            "delivery/features/F-113/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -260,7 +664,7 @@
     }
   },
   "created_at": "2026-11-23T17:35:17Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -278,6 +682,30 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T01:18:04Z",
+      "round": 1,
+      "head": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T01:23:41Z",
+      "round": 1,
+      "head": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T01:23:51Z",
+      "round": 2,
+      "head": "0517372f2319ecf958c8db0123b884264ab748f6",
+      "reason": null
     }
   ],
   "routing": {
@@ -293,7 +721,7 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null
