@@ -115,6 +115,7 @@ describe('the Django embed is gone', () => {
       'projects-journey.test.tsx',
       'demo-projects.mjs',
       'work-live.mjs',
+      'received-bids.mjs',
       'LineChooser.tsx',
       'start-live.mjs',
       'start-work-live.test.tsx',
