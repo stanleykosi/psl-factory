@@ -43,3 +43,6 @@ LANE: full
 - `npx vitest run` on tests/retrospective-failure, -model, -summary: 49 passed. no-success-callouts earlier run passes; toast unchanged.
 - Dev server 4992 + mock 4993: `playwright test e2e/retrospective.spec.ts`: 24 of 24 pass. Servers stopped by PID; ports free.
 - eslint on my files clean. No build, full vitest or gate run (GitHub gate, D-199).
+
+## Coordinator: D-202 (24 Nov)
+The design engineer answered in chat, relayed by the main coordinator: LD-Q5 "Sign all". The 28 exceptions and two D-83 visual waivers (78.8 desktop, 76.6 phone) are signed in `fidelity-exceptions.json`, which settles UI-2-2. LD-Q6: "keep saved", so the strip keeps "(saved <date>)" (TECH-1-5).
