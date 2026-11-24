@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 // F-119 (contract mock only): the project retrospective (SCR-33) at 1440 and 390: the saved-version write with its
 // recorded requests, the checklist strip, stale and duplicate saves, the unconfirmed 503, and the follow-up action.
@@ -410,34 +410,55 @@ test.describe('phone 390 save bar', () => {
     expect((await message.boundingBox())!.y).toBeLessThan((await at()).y);
   });
 
-  test('a focused control is never hidden under the bar', async ({ page }) => {
+  test('every control Tab reaches in the form ends above the bar, from the first box to Save', async ({ page }) => {
+    // The state of the focused element: is it inside the form or the bar, how far down it ends, what is drawn at its centre.
+    const focused = () =>
+      page.evaluate(() => {
+        const el = document.activeElement as HTMLElement | null;
+        const form = document.querySelector('form:has(.retro__savebar)');
+        const bar = document.querySelector('.retro__savebar')!;
+        if (!el || !form || !form.contains(el)) return { inForm: false };
+        const r = el.getBoundingClientRect();
+        const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        const own = !!hit && (hit === el || el.contains(hit) || !!hit.closest('label')?.contains(el) || !!el.closest('label')?.contains(hit));
+        return { inForm: true, inBar: bar.contains(el), bottom: r.bottom, barTop: bar.getBoundingClientRect().top, hit: own, name: el.getAttribute('aria-label') || el.textContent?.slice(0, 30) || el.id };
+      });
+    async function walk(label: string) {
+      const seen: string[] = [];
+      for (let step = 0; step < 80; step += 1) {
+        await page.keyboard.press('Tab');
+        // wait for the scroll that clears the bar to settle (Save is in the bar, so it is not measured)
+        await expect.poll(async () => {
+          const f = await focused();
+          return !f.inForm || f.inBar || f.bottom! <= f.barTop! + 1;
+        }, { message: `${label} step ${step}: ${JSON.stringify(await focused())}` }).toBe(true);
+        const f = await focused();
+        if (!f.inForm) break;
+        expect(f.hit, `${label} step ${step} ${f.name}: something else is drawn at its centre`).toBe(true);
+        seen.push(f.name as string);
+        if (f.inBar) return seen;
+      }
+      throw new Error(`${label}: Tab never reached Save (${seen.join(' > ')})`);
+    }
+    // an empty retrospective: the boxes, who took part, the notes file, Add a decision, Save
     await page.goto(PAGE('2001'));
     await ready(page);
-    const clear = async (target: Locator) => {
-      await expect(target).toBeFocused();
-      // wait for the scroll that keeps the control above the bar to settle
-      await expect.poll(async () => {
-        const bar = (await page.locator('.retro__savebar').boundingBox())!;
-        const box = (await target.boundingBox())!;
-        return box.y + box.height <= bar.y + 1;
-      }).toBe(true);
-      const covered = await target.evaluate((el) => {
-        const r = el.getBoundingClientRect();
-        const top = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
-        return !(top === el || el.contains(top) || (top && top.closest('label')?.contains(el)));
-      });
-      expect(covered).toBe(false);
-    };
-    // Tab (not focus) from one box into the next, where the next is partly in view behind the bar
-    await field(page, "What didn't").focus();
-    await page.keyboard.press('Tab');
-    await clear(field(page, 'Lessons for next projects'));
-    // and on down through the participants to a control below the fold
-    for (const name of ['Tunde Bello', 'Ada Obi']) {
-      await page.keyboard.press('Tab');
-      await clear(page.getByRole('checkbox', { name }));
-    }
-    await page.getByRole('button', { name: 'Add a decision' }).focus();
-    await clear(page.getByRole('button', { name: 'Add a decision' }));
+    await field(page, 'What went well').fill('x');
+    await choose(page, 'Notes file', 'Test plan v2');
+    // start at the top of the page, where the lower boxes are partly behind the bar
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await field(page, 'What went well').evaluate((el) => (el as HTMLElement).focus({ preventScroll: true }));
+    const first = await walk('empty form');
+    expect(first.length).toBeGreaterThan(6);
+    // a new version: the same, with a carried decision (its text, file and Remove) too
+    await page.goto(PAGE('2002'));
+    await ready(page);
+    await page.getByRole('button', { name: 'Save new version' }).click();
+    await choose(page, 'Notes file', 'Retrospective notes');
+    // start at the top of the page, where the lower boxes are partly behind the bar
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await field(page, 'What went well').evaluate((el) => (el as HTMLElement).focus({ preventScroll: true }));
+    const second = await walk('new version');
+    expect(second.length).toBeGreaterThan(first.length);
   });
 });

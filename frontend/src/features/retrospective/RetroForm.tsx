@@ -49,6 +49,8 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
   const [now] = useState(() => new Date());
   const phone = useIsPhone();
   const bar = useRef<HTMLDivElement>(null);
+  const frame = useRef(0);
+  useEffect(() => () => cancelAnimationFrame(frame.current), []);
   // The phone bar's real height (its reason line can wrap) feeds the page's scroll and bottom padding in the css.
   useEffect(() => {
     const el = bar.current;
@@ -68,7 +70,8 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
     const el = bar.current;
     const target = event.target;
     if (!phone || !el || el.contains(target)) return;
-    requestAnimationFrame(() => {
+    cancelAnimationFrame(frame.current);
+    frame.current = requestAnimationFrame(() => {
       const gap = target.getBoundingClientRect().bottom - (el.getBoundingClientRect().top - 8);
       if (gap > 0) window.scrollBy(0, gap);
     });
