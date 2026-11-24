@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 8a5c09fe624b12c209c2a70cb1f75c8a38238586
+COMMIT: 30143e1a4f9376200d9fc6f89797ff57e97a3b54
 BUILDER: builder
 LANE: full
 
@@ -57,3 +57,6 @@ The design engineer, in chat (relayed by the main coordinator): "Ship simpler fo
 
 ## Coordinator: D-203 (24 Nov)
 The design engineer, in chat, relayed by the main coordinator: LD-Q7 "Sign all". All 57 exceptions and the eight D-83 visual waivers (desktop 74.8, 77.6, 84.4 and 83.6; phone 76.5, 76.9, 75.1 and 76.8) are signed in `fidelity-exceptions.json`. UI-1-5 and UI-1-6 are closed as accepted under D-203.
+
+## Coordinator: D-193 sync with main before merge
+Merged origin/main f355d339 (#114 F-71, #111 F-64) as 30143e1a. There were two conflicts, both resolved by keeping both sides: `frontend/mock/server.mjs` (the F-111 issue routes before the F-64 live decide routes) and `frontend/tests/next-config.test.ts` (the allowlist is main's list plus `issues.mjs`, and the comment names F-111). No other F-111 file changed. Tests: next-config, issue-followup and mock-issues-live, 37 pass; the decide, money and milestones mock and page tests, 195 pass; tsc clean. D-200: base_sha 4fd055ce, no protected path.
