@@ -72,7 +72,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T02:21:31Z",
+      "seconds": 972.7,
+      "evidence_ref": "delivery/features/F-87/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -119,8 +132,300 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "A line form's uncertain lock is lost when its panel re-read fails. `PanelView` draws only the error Callout when `state.status === 'error'`, so `Actions` and the `useWorkCommand` state inside it are unmounted. That state holds the `id@revision` uncertain lock and the unread lock. Pressing \"Try again\" remounts `Actions` with an empty lock, so a command that just timed out or got a 5xx can be sent again at the same revision. That breaks the spec rule (unlock only on a different revision or a page reload), which the coordinator note extends to every line form. This is the likely path, not an edge case: `useWorkCommand`'s own uncertain branch calls `reload()`, which bumps `attempt` and re-reads the panel against a server that has just failed. Any poll-driven re-read failure (`version` = `updated_at`) does the same. Expected: the lock survives a panel re-read. Two ways to do it: keep `Actions` mounted on the last good readback when a re-read fails, and show the warning above it; or hold the command lock above `PanelView` (per work item). Add a test: a line command gets a 500, the panel read gets a 500, the person presses \"Try again\", and the command is still locked. | frontend/src/features/work-item/live/LiveWorkItemView.tsx:148-162 and :170-182",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:29:24Z",
+          "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T02:29:24Z",
+          "refs": [
+            "descriptor fields win over inputs, tested"
+          ],
+          "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "descriptor fields win over inputs, tested"
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "`LineActionsProps` has no `onAccessLost`, and the documented example calls `useWorkCommand({ item: ctx, reload })` without one. On a 401 or 404, a line form therefore draws a notice (\"This record is unavailable.\" or the 401 message) instead of the page's signed-out or unavailable state that criterion 17 gives the controls row. Expected: pass the page's `lose` through `LineActionsProps` (for example `onAccessLost`) and use it in the doc example. | frontend/src/features/workspace/adapter.ts:388-394 and :416-421; LiveWorkItemView.tsx:172-180",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:29:24Z",
+          "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The one sender POSTs to `command.url` without any check, and the CSRF middleware adds `X-CSRFToken` to every write whatever its host. Today's urls are built from `item.id`, so they are safe. Line descriptors in lanes B and D may build urls from served fields, and the spec allows served URLs only as same-origin paths. Expected: `send()` refuses any url that fails `isPanelUrl` (the read side already does this, in `readPanel`) before it makes a request. | frontend/src/features/workspace/useWorkCommand.ts:53-61",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:29:24Z",
+          "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The \"Sent. We couldn't reload the item; reload the page to see its state.\" notice has `kind: 'success'`, so it shows as a toast and then disappears. Every control stays disabled (`busy`) with no reason beside it, which breaks the Button rule \"disabled always carries its reason beside it\". Only the page's general refresh warning is left. Expected: make this an error-kind notice. It describes a problem, which D-151 allows to stay a Callout. Or give the busy-disabled buttons the reason. | frontend/src/features/workspace/useWorkCommand.ts:93-96; frontend/src/features/work-item/live/ItemControls.tsx:25,40",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:29:24Z",
+          "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The unread lock compares object identity (`unreadAt === item`), which fails both ways. (a) A line passes the memoized `ctx` (keyed on id, revision, case revision and state), so a successful re-read that changes none of those leaves every line control locked until the page is reloaded. (b) `run` keeps the `item` from the render where it was pressed. If a poll lands while the write is running, `unreadAt` is set to the old object, `unreadAt !== item` is true at once, and the lock never takes hold. Expected: count reads that land after the send (or compare a load timestamp) instead of object identity. | frontend/src/features/workspace/useWorkCommand.ts:77-79,94",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:29:24Z",
+          "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-6",
+      "round": 1,
+      "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Some tests are missing. Criterion 9 (\"a poll result arriving mid-write does not clear the lock or the notice\", unit test with fake timers and a deferred POST) has no test. No page or e2e test shows the uncertain-locked button disabled with \"Check the page before trying again.\" beside it: the `wdrop` mock moves the revision, so the tests named \"locks it\" actually see Resume unlocked. A `w500` page test would show the lock. Criteria 12 and 13 ask for e2e runs of the forbidden and 422 scenarios, and both are unit-only. | frontend/tests/work-commands.test.tsx; frontend/e2e/work-item-controls.spec.ts:118-128",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:29:24Z",
+          "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-7",
+      "round": 1,
+      "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "With `action: null`, `body()` spreads `...inputs` first and nothing overrides `action`, so an input can add an `action` key to a body that has none. The server rejects it (`additionalProperties:false`, 400), but descriptor fields winning should cover this case too. Separately, `useWriteLock.unlock` is exported and never used. | frontend/src/features/workspace/adapter.ts:105-110; frontend/src/features/workspace/useWriteLock.ts:45-54",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:29:24Z",
+          "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "While the controls are locked after an uncertain result, the pressed button still reads \"Working...\" with the spinner, though nothing is running. Expected: its normal label (Resume) with the sentence; seen at 1440 and 390 on /work/4121 with scenario wdrop. frontend/src/features/work-item/live/ItemControls.tsx",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T02:29:24Z",
+          "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "After a dropped connection where the re-read shows a new revision, the page shows \"Ready to continue\" and the callout \"We couldn't confirm that this happened...\" together, and Resume and Cancel stay enabled (the mock still lists them). Acceptable per the spec; consider clearing the callout once the re-read has settled so it does not contradict the tag.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-87/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T02:29:24Z",
+          "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T02:29:24Z",
+          "refs": [
+            "decision rows capitalised"
+          ],
+          "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "decision rows capitalised"
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead), lighter panel (D-180), Opus for high risk",
+          "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+          "evidence_refs": [
+            "delivery/features/F-87/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-87/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+          "evidence_refs": [
+            "delivery/features/F-87/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "reviewer-ui",
+          "snapshot_ref": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+          "evidence_refs": [
+            "delivery/features/F-87/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -238,7 +543,7 @@
     }
   },
   "created_at": "2026-11-23T13:20:57Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -256,6 +561,30 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T02:21:58Z",
+      "round": 1,
+      "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T02:29:32Z",
+      "round": 1,
+      "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T02:29:33Z",
+      "round": 2,
+      "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+      "reason": null
     }
   ],
   "routing": {
@@ -271,7 +600,7 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null
