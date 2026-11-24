@@ -381,11 +381,18 @@ describe('D-164: a won demo RFP creates a project', () => {
       expect((await get('/api/v1/projects/P-9001', persona)).body).toEqual(page.body);
       expect(page.body.items).toEqual([expect.objectContaining({ state: 'Verified', id: 9001 })]);
       expect(page.body.facts.engagement).toBeNull();
-      for (const tab of ['milestones', 'documents', 'registers', 'actions', 'money']) {
+      for (const tab of ['documents', 'registers', 'actions']) {
         const read = await get(`/api/v1/projects/P-9001/${tab}`, persona);
         check('E-PROJECT-TAB', 200, read.body);
         expect(read.body.items, `${persona} ${tab}`).toEqual([]);
       }
+      // F-71: the milestones and money tabs are the live shape
+      const completions = await get('/api/v1/projects/P-9001/milestones', persona);
+      checkLive('/api/v1/projects/{case_id}/{tab}', completions.body);
+      expect(completions.body.sections[0].items, `${persona} milestones`).toEqual([]);
+      const money = await get('/api/v1/projects/P-9001/money', persona);
+      checkLive('/api/v1/projects/{case_id}/money', money.body);
+      expect(money.body.items, `${persona} money`).toEqual([]);
     }
     expect((await get('/api/v1/projects/P-9001', 'hr')).status).toBe(404);
     expect((await get('/api/v1/projects/P-9001/milestones', 'hr')).status).toBe(404);
@@ -426,6 +433,6 @@ describe('D-164: a won demo RFP creates a project', () => {
     await fetch(`${base}/__mock/reset`, { method: 'POST' });
     expect((await get('/api/v1/projects?status=all', 'pmo_lead')).body.items.some((p: any) => p.case_id.startsWith('P-9'))).toBe(false);
     expect((await projectOptions('pmo_lead')).some((o: any) => o.value.startsWith('P-9'))).toBe(false);
-    expect((await get('/api/v1/projects/P-9001/milestones', 'ceo')).body.items).toEqual([]);
+    expect((await get('/api/v1/projects/P-9001/milestones', 'ceo')).body.sections[0].items).toEqual([]);
   });
 });
