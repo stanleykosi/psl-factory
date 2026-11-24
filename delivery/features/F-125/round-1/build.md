@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 794fa55e1f2f7ef09bf6d39ea0bd3beabcb8dab4
+COMMIT: a0eb67073f7a675f3a1436fbd62b855b8a44161d
 BUILDER: builder
 LANE: frontend
 
@@ -36,3 +36,6 @@ None (round 1).
 
 ## Blocked
 Not blocked.
+
+## Coordinator merge of main 3b7df6cc
+- Merged as a0eb6707 with no conflicts; `npx tsc --noEmit` reports 0 errors.

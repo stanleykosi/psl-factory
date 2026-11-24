@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-64",
   "outcome": "SCR-03 Decision desk on the live API: read the invoice or accounting review, claim it, record approve, return or reject",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -159,8 +159,203 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "7318a3fc23558a60d535835417ef644a320f22bf",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Stale compare (SCR-03-desktop-stale) is a grid, not a table. The tool reports the table and both column headers (\"VERSION 2 \u00b7 REPLACED\", \"VERSION 3 \u00b7 CURRENT\") missing, and they are not excepted. Restore table, columnheader and row semantics. Board rows are about 34px with 12px padding, the page rows about 24px. Board highlights only the changed row (Send to), the page highlights Amount. Board label is \"Send to\", page shows \"Send to\" on desktop but \"To\" is missing on the phone board. Expected: board structure and row rhythm. Actual: grid with tighter rows. Path: frontend/src/features/decide/LiveContent.tsx and decide.css (compare block).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-64/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T01:03:37Z",
+          "head": "7318a3fc23558a60d535835417ef644a320f22bf"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "7318a3fc23558a60d535835417ef644a320f22bf",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Stale phone (SCR-03-mobile-stale-390) differs from the board. Board shows a one-line grey replaced card \"Invoice v2 \u00b7 \u20a64,250,000.00 \u00b7 REPLACED\", then one current card with \"To\" and a \"changed\"/\"unchanged\" tag. Page shows two full cards with \"VERSION 2 \u00b7 REPLACED\" and \"VERSION 3 \u00b7 CURRENT\" headers. The tool lists \"REPLACED\" and \"To\" as missing, not excepted. Build the board's compact replaced card and its \"To\" label, or ask the design engineer for an exception.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-64/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T01:03:37Z",
+          "head": "7318a3fc23558a60d535835417ef644a320f22bf"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "7318a3fc23558a60d535835417ef644a320f22bf",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone not-yours (SCR-03-mobile-not-yours-390): the facts strip is a 2-cell row (Amount, Waiting for) with an empty white cell at the right, where the board has a full 3-column strip with no gap. Fill the row or make the Waiting cell span the remaining width, as the desktop does. The Add comment bar is inline under the text, not the bottom-pinned bar on the board; align it or record an exception.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-64/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T01:03:37Z",
+          "head": "7318a3fc23558a60d535835417ef644a320f22bf"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "7318a3fc23558a60d535835417ef644a320f22bf",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Done desktop (SCR-03-desktop-done-1440): the \"What happens next\" panel is not exposed as a complementary landmark (the board has one), and the tool reports it missing without an exception. Render it as aside. The same applies to the phone done and default pages if they use a plain div.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-64/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T01:03:37Z",
+          "head": "7318a3fc23558a60d535835417ef644a320f22bf"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "7318a3fc23558a60d535835417ef644a320f22bf",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The page title is drawn twice on every board: the large heading, then the same text again as a small sub-line (\"Invoice 3 for the Lekki handover\" twice). The boards have no sub-line. Hide the sub-line when it equals the title; in live data the two may differ.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-64/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T01:03:37Z",
+          "head": "7318a3fc23558a60d535835417ef644a320f22bf"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "7318a3fc23558a60d535835417ef644a320f22bf",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Extra elements not on the boards: a \"0 / 2000\" counter, an \"Open the work item\" link under the not-yours comment, and \"Approving earns APPROVED only.\" replacing the board's longer footnote. The default board's Approve is grey (disabled) until evidence is picked, because the evidence picker is required by the spec, so the board's blue Approve is expected to differ. Confirm with the design engineer; none breaks layout.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-64/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T01:03:37Z",
+          "head": "7318a3fc23558a60d535835417ef644a320f22bf"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "reviewer-technical (lighter panel, D-180)",
+          "snapshot_ref": "7318a3fc23558a60d535835417ef644a320f22bf",
+          "evidence_refs": [
+            "delivery/features/F-64/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-64/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "reviewer-ux",
+          "snapshot_ref": "7318a3fc23558a60d535835417ef644a320f22bf",
+          "evidence_refs": [
+            "delivery/features/F-64/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "7318a3fc23558a60d535835417ef644a320f22bf",
+          "evidence_refs": [
+            "delivery/features/F-64/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -553,7 +748,7 @@
     }
   },
   "created_at": "2026-11-23T13:23:39Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -579,6 +774,22 @@
       "round": 1,
       "head": "7318a3fc23558a60d535835417ef644a320f22bf",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T01:03:37Z",
+      "round": 1,
+      "head": "7318a3fc23558a60d535835417ef644a320f22bf",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T01:03:38Z",
+      "round": 2,
+      "head": "7318a3fc23558a60d535835417ef644a320f22bf",
+      "reason": null
     }
   ],
   "routing": {
@@ -594,10 +805,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 4,
-    "verdict": "PASS",
-    "commit": "7318a3fc23558a60d535835417ef644a320f22bf"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

@@ -1,0 +1,436 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T01:17:48.523Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/lane-a-hot/design/canvas/project/SCR-17-desktop-setup.dc.html",
+  "boardName": "SCR-17-desktop-setup.dc.html",
+  "pageUrl": "http://127.0.0.1:4966/staff/join/#vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-60/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "4 board item(s) are missing from the page and are not approved exceptions (coverage 60% with exceptions, needs 100%).",
+    "Visual match 90.1 meets 90.",
+    "6 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 60,
+    "coverageWithExceptions": 60,
+    "visual": 90.1
+  },
+  "visual": {
+    "score": 90.1,
+    "allCellsScore": 88.1,
+    "width": 1440,
+    "height": 900,
+    "boardHeight": 900,
+    "pageHeight": 900,
+    "cell": 12,
+    "contentCells": 8799,
+    "mismatchedCells": 874
+  },
+  "coverage": {
+    "total": 10,
+    "found": 6,
+    "coverage": 60,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 48,
+          "y": 48,
+          "w": 180,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 48,
+          "y": 48,
+          "w": 180,
+          "h": 30
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Set up your account",
+        "pageName": "Set up your account",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 30px on the board, 32px on the page"
+        ],
+        "boardBox": {
+          "x": 864,
+          "y": 56,
+          "w": 520,
+          "h": 32
+        },
+        "pageBox": {
+          "x": 864,
+          "y": 64,
+          "w": 520,
+          "h": 35
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Welcome, Sola. You've been given PMO for Ojo Foods and Kora Logistics.",
+        "pageName": "Welcome, Sola Martins. You’ve been given PMO for Ojo Foods and Kora Logistics.",
+        "pageRole": "text",
+        "similarity": 96,
+        "looks": [
+          "text colour #4A5357 on the board, #1F2427 on the page"
+        ],
+        "boardBox": {
+          "x": 864,
+          "y": 102,
+          "w": 520,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 864,
+          "y": 115,
+          "w": 520,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "At least 12 characters",
+        "pageName": "At least 12 characters",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 864,
+          "y": 301,
+          "w": 520,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 864,
+          "y": 353,
+          "w": 520,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Finish setup",
+        "pageName": "Finish setup",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 864,
+          "y": 442,
+          "w": 520,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 864,
+          "y": 474,
+          "w": 115,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Wrong roles? Ask the person who invited you; you can't change your own roles.",
+        "pageName": "Wrong roles? Ask the person who invited you; you can’t change your own roles.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text size 12px on the board, 14px on the page"
+        ],
+        "boardBox": {
+          "x": 864,
+          "y": 506,
+          "w": 520,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 864,
+          "y": 540,
+          "w": 520,
+          "h": 21
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "sola.martins@psl.example",
+        "key": "text: sola.martins@psl.example",
+        "container": "page",
+        "boardBox": {
+          "x": 876,
+          "y": 175,
+          "w": 179,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "••••••••••••",
+        "key": "text: ••••••••••••",
+        "container": "page",
+        "boardBox": {
+          "x": 876,
+          "y": 262,
+          "w": 71,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "+234 802 *** 1190",
+        "key": "text: +234 802 *** 1190",
+        "container": "page",
+        "boardBox": {
+          "x": 876,
+          "y": 372,
+          "w": 130,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "We'll send a code to check it. You can change this later.",
+        "key": "text: We'll send a code to check it. You can change this later.",
+        "container": "page",
+        "boardBox": {
+          "x": 864,
+          "y": 411,
+          "w": 520,
+          "h": 17
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"PSL FACTORY\"",
+        "kind": "Text",
+        "name": "PSL FACTORY",
+        "boardBox": {
+          "x": 48,
+          "y": 48,
+          "w": 180,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 48,
+          "y": 48,
+          "w": 180,
+          "h": 30
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Heading \"Set up your account\"",
+        "kind": "Heading",
+        "name": "Set up your account",
+        "boardBox": {
+          "x": 864,
+          "y": 56,
+          "w": 520,
+          "h": 32
+        },
+        "pageBox": {
+          "x": 864,
+          "y": 64,
+          "w": 520,
+          "h": 35
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Welcome, Sola. You've been given PMO for Ojo Foods and Kora Logistics.\"",
+        "kind": "Text",
+        "name": "Welcome, Sola. You've been given PMO for Ojo Foods and Kora Logistics.",
+        "boardBox": {
+          "x": 864,
+          "y": 102,
+          "w": 520,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 864,
+          "y": 115,
+          "w": 520,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"At least 12 characters\"",
+        "kind": "Text",
+        "name": "At least 12 characters",
+        "boardBox": {
+          "x": 864,
+          "y": 301,
+          "w": 520,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 864,
+          "y": 353,
+          "w": 520,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Link \"Finish setup\"",
+        "kind": "Link",
+        "name": "Finish setup",
+        "boardBox": {
+          "x": 864,
+          "y": 442,
+          "w": 520,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 864,
+          "y": 474,
+          "w": 115,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      },
+      {
+        "label": "Text \"Wrong roles? Ask the person who invited you; you can't change your own roles.\"",
+        "kind": "Text",
+        "name": "Wrong roles? Ask the person who invited you; you can't change your own roles.",
+        "boardBox": {
+          "x": 864,
+          "y": 506,
+          "w": 520,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 864,
+          "y": 540,
+          "w": 520,
+          "h": 21
+        },
+        "reasons": [
+          "inside the main area on the board, inside a form on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Work you can see moving, from first draft to verified.",
+        "container": "complementary",
+        "pageBox": {
+          "x": 48,
+          "y": 831,
+          "w": 712,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "This invitation works until 26 Nov 2026, 15:00.",
+        "container": "form",
+        "pageBox": {
+          "x": 864,
+          "y": 152,
+          "w": 520,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Work email",
+        "container": "form",
+        "pageBox": {
+          "x": 864,
+          "y": 216,
+          "w": 520,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "New password",
+        "container": "form",
+        "pageBox": {
+          "x": 864,
+          "y": 303,
+          "w": 520,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Confirm new password",
+        "container": "form",
+        "pageBox": {
+          "x": 864,
+          "y": 414,
+          "w": 520,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 4
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/lane-a-hot/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
