@@ -5145,3 +5145,10 @@
 {"at":"2026-11-24T15:40:03Z","feature":"F-111","round":2,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/116","git.pr_number":116}}
 {"at":"2026-11-24T15:40:16Z","feature":"F-88","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"98eb07bbb7c5","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","surface 'product-decision' always needs a human","24 changed files exceed the auto-merge limit of 15"]}
 {"at":"2026-11-24T15:40:16Z","feature":"F-88","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"AUTO_MERGE"}}
+{"at":"2026-11-24T15:41:03Z","feature":"F-119","round":5,"kind":"review","role":"ux","verdict":"CHANGES","reviewer":"reviewer-ux","commit":"53c24b19059e","findings":{"UX-5-1":"low"},"written_at":"2026-11-24T15:40:23Z"}
+{"at":"2026-11-24T15:41:03Z","feature":"F-119","round":5,"kind":"finding","action":"verify","finding":"UX-4-1","by":"reviewer-technical"}
+{"at":"2026-11-24T15:41:03Z","feature":"F-119","round":5,"kind":"finding","action":"verify","finding":"UX-4-2","by":"reviewer-technical"}
+{"at":"2026-11-24T15:41:03Z","feature":"F-119","round":5,"kind":"finding","action":"add","finding":"TECH-5-1","by":"reviewer-technical","severity":"medium","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-24T15:41:03Z","feature":"F-119","round":5,"kind":"finding","action":"add","finding":"TECH-5-2","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-24T15:41:03Z","feature":"F-119","round":5,"kind":"finding","action":"add","finding":"TECH-5-3","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
+{"at":"2026-11-24T15:41:03Z","feature":"F-119","round":5,"kind":"finding","action":"add","finding":"UX-5-1","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":true,"role":"ux"}

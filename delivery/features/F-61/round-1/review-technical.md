@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: dab5f01825066cb85627bf0f427f27ef29e7d3ef
+COMMIT: b839dfaac7756f1b15facc8fb3e7adb2c14fab15
 REVIEWER: reviewer-technical
 AUTHORITY: reviewer-technical
 
@@ -29,3 +29,15 @@ Scope checked: `git diff --stat 5f61b03c dab5f018` (15 files, all F-113 or main-
 The `work-live` mock and its test changed, but those belong to F-113 (ids 2501 to 2505), not F-61.
 
 Verdict: PASS, unchanged from 5f61b03c. The two non-blocking findings (TECH-1-1, TECH-1-2) still stand as written and are not affected by this change.
+
+## Conflict re-check (b839dfaa)
+
+VERDICT: PASS
+
+Diffed `dab5f018..b839dfaa` over `frontend/mock/server.mjs`, `frontend/tests/next-config.test.ts`, `frontend/src/features/alerts` and `frontend/src/api/alerts.ts`.
+
+1. F-61 alert routing still works. The `ALERT_PATH` import and `createAlertsMock` import are intact. The `ALERT_PATH.test` branch (server.mjs line 317) runs before the new F-71 milestone line (line 380). `ALERT_PATH` matches only the notifications and alert-preferences paths, so the milestone line cannot shadow them. The alerts source and adapter are byte-identical between `dab5f018` and `b839dfaa` (the diff is empty).
+2. No F-61 behaviour changed. The only F-61-adjacent edits in the diff are the F-71 additions: the `isMilestoneRequest` import, the milestone route line, and the `isMoneyRequest` comment. The allow-list change is a union. It keeps every F-61 entry (`features/alerts/model.ts`, `mock/alerts.mjs`, `alerts-helpers.ts`, `alerts-model.test.ts`, `alerts.test.tsx`, `alerts-bell.test.tsx`) and adds `money-model.test.ts` and `milestones-model.test.ts`, which exist in the worktree. The `django_url` comment for the alerts adapter is unchanged.
+3. Nothing of F-71 was dropped. `isMilestoneRequest` is exported from `frontend/mock/money.mjs` (line 51) and imported and used in server.mjs (lines 54 and 380). The `isMoneyRequest` import and call (line 416) are kept. The fixture regex now also accepts `projects/money/` and `projects/tabs/` paths. The F-71 commit `811465d8` is reachable from `b839dfaa` (it appears in `git log dab5f018..b839dfaa`), so its full change is present.
+
+No blocking findings. Carried-forward round-1 findings are unaffected by this conflict resolution.

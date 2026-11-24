@@ -1,0 +1,655 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T15:37:49.991Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/lane-a4/design/canvas/project/SCR-06-mobile.dc.html",
+  "boardName": "SCR-06-mobile.dc.html",
+  "pageUrl": "http://127.0.0.1:4986/overview",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-65/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 60.6 is below 90.",
+    "4 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 68.4,
+    "coverageWithExceptions": 100,
+    "visual": 60.6
+  },
+  "visual": {
+    "score": 60.6,
+    "allCellsScore": 67.5,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1854,
+    "cell": 12,
+    "contentCells": 1936,
+    "mismatchedCells": 762
+  },
+  "coverage": {
+    "total": 19,
+    "found": 13,
+    "coverage": 68.4,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Factory floor",
+        "pageName": "Factory floor",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 28
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "18 in progress · 5 need a person",
+        "pageName": "18 in progress · 5 need a person",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 110,
+          "w": 358,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 112,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Pre-sale",
+        "pageName": "Pre-sale",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 154,
+          "w": 91,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 189,
+          "w": 59,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 WAITING",
+        "pageName": "2 open work",
+        "pageRole": "text",
+        "similarity": 80,
+        "note": "count reads \"1 WAITING\" on the board, \"2 open work\" on the page",
+        "looks": [
+          "weight 600 on the board, 400 on the page",
+          "text colour #6E4700 on the board, #4A5357 on the page",
+          "capitals on the board, not on the page",
+          "background #FFF1D6 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 281,
+          "y": 154,
+          "w": 79,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 291,
+          "y": 370,
+          "w": 69,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Planning",
+        "pageName": "Planning",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 242,
+          "w": 93,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 372,
+          "w": 61,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 STOPPED",
+        "pageName": "2 open work",
+        "pageRole": "text",
+        "similarity": 80,
+        "note": "count reads \"1 STOPPED\" on the board, \"2 open work\" on the page",
+        "looks": [
+          "weight 600 on the board, 400 on the page",
+          "text colour #9A2F10 on the board, #4A5357 on the page",
+          "capitals on the board, not on the page",
+          "background #FBE3D9 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 281,
+          "y": 242,
+          "w": 79,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 291,
+          "y": 554,
+          "w": 69,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Release",
+        "pageName": "Release",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 330,
+          "w": 87,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 556,
+          "w": 55,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 UNCERTAIN",
+        "pageName": "1 open work",
+        "pageRole": "text",
+        "similarity": 80,
+        "note": "count reads \"1 UNCERTAIN\" on the board, \"1 open work\" on the page",
+        "looks": [
+          "weight 600 on the board, 400 on the page",
+          "text colour #9A2F10 on the board, #4A5357 on the page",
+          "capitals on the board, not on the page",
+          "background #FBE3D9 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 267,
+          "y": 330,
+          "w": 93,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 291,
+          "y": 737,
+          "w": 69,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Closing",
+        "pageName": "Closing",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 418,
+          "w": 83,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 740,
+          "w": 51,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Invoices",
+        "pageName": "Invoices",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 506,
+          "w": 91,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 924,
+          "w": 59,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2 WAITING",
+        "pageName": "2 open work",
+        "pageRole": "text",
+        "similarity": 80,
+        "note": "count reads \"2 WAITING\" on the board, \"2 open work\" on the page",
+        "looks": [
+          "weight 600 on the board, 400 on the page",
+          "text colour #6E4700 on the board, #4A5357 on the page",
+          "capitals on the board, not on the page",
+          "background #FFF1D6 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 281,
+          "y": 506,
+          "w": 79,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 291,
+          "y": 1105,
+          "w": 69,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Month-end",
+        "pageName": "Month-end",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 30,
+          "y": 594,
+          "w": 108,
+          "h": 24
+        },
+        "pageBox": {
+          "x": 58,
+          "y": 1108,
+          "w": 76,
+          "h": 19
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Home",
+        "key": "link: ← Home",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Frame item: the phone header belongs to the shell (it draws a menu button and the PSL FACTORY mark).",
+          "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ON TRACK",
+        "key": "text: ON TRACK",
+        "container": "page",
+        "boardBox": {
+          "x": 285,
+          "y": 418,
+          "w": 75,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Row tag: no read supplies a line's status (GET /overview has only key, title and total; GET /work/counts has no status), so the tag reads a neutral \"Not available yet\" instead of the drawn status word (D-182 Q3; D-187 Q8 keeps it neutral).",
+          "approved_by": "design engineer, D-182/D-187"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ON TRACK",
+        "key": "text: ON TRACK",
+        "container": "page",
+        "boardBox": {
+          "x": 285,
+          "y": 594,
+          "w": 75,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Row tag: no read supplies a line's status (GET /overview has only key, title and total; GET /work/counts has no status), so the tag reads a neutral \"Not available yet\" instead of the drawn status word (D-182 Q3; D-187 Q8 keeps it neutral).",
+          "approved_by": "design engineer, D-182/D-187"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "All exceptions · 4",
+        "key": "text: All exceptions · 4",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 668,
+          "w": 358,
+          "h": 17
+        },
+        "exception": {
+          "reason": "REQUEST (phone): the count needs E-EXCEPTIONS (follow-up (a)); the heading reads 'All exceptions · everyone's'.",
+          "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Harmattan Bank · go-live UNCERTAIN",
+        "key": "link: Harmattan Bank · go-live UNCERTAIN",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 691,
+          "w": 358,
+          "h": 45
+        },
+        "exception": {
+          "reason": "REQUEST (phone): F-06 exceptions preview item (follow-up (a)).",
+          "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ojo Foods · plan OWNER NEEDED",
+        "key": "link: Ojo Foods · plan OWNER NEEDED",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 742,
+          "w": 358,
+          "h": 45
+        },
+        "exception": {
+          "reason": "REQUEST (phone): F-06 exceptions preview item (follow-up (a)).",
+          "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"1 WAITING\"",
+        "kind": "Text",
+        "name": "1 WAITING",
+        "boardBox": {
+          "x": 281,
+          "y": 154,
+          "w": 79,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 291,
+          "y": 370,
+          "w": 69,
+          "h": 24
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Pre-sale\"; on the page it comes after Text \"Planning\""
+        ]
+      },
+      {
+        "label": "Text \"1 STOPPED\"",
+        "kind": "Text",
+        "name": "1 STOPPED",
+        "boardBox": {
+          "x": 281,
+          "y": 242,
+          "w": 79,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 291,
+          "y": 554,
+          "w": 69,
+          "h": 24
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Planning\"; on the page it comes after Text \"Release\""
+        ]
+      },
+      {
+        "label": "Text \"1 UNCERTAIN\"",
+        "kind": "Text",
+        "name": "1 UNCERTAIN",
+        "boardBox": {
+          "x": 267,
+          "y": 330,
+          "w": 93,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 291,
+          "y": 737,
+          "w": 69,
+          "h": 24
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Release\"; on the page it comes after Text \"Closing\""
+        ]
+      },
+      {
+        "label": "Text \"2 WAITING\"",
+        "kind": "Text",
+        "name": "2 WAITING",
+        "boardBox": {
+          "x": 281,
+          "y": 506,
+          "w": 79,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 291,
+          "y": 1105,
+          "w": 69,
+          "h": 24
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"Invoices\"; on the page it comes after Text \"Month-end\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Menu",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "container": "banner",
+        "pageBox": {
+          "x": 70,
+          "y": 15,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Counted from all 18 items you can see",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 142,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FACTORY FLOOR · UPDATED 23 Nov 10:30 WAT",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1642,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "All exceptions · everyone’s",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1672,
+          "w": 212,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "See all exceptions",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1702,
+          "w": 117,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Your own exceptions also appear in My work · Needs me, marked Fix.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1733,
+          "w": 358,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Open work is work you can see that isn’t verified or cancelled. Station figures come from your most recent items and can be lower than the total.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 1784,
+          "w": 358,
+          "h": 54
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/lane-a4/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

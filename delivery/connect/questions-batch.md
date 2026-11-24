@@ -177,6 +177,11 @@ Context: API 1.24.0+ gives kind, station, reference, owner, /work/counts and lim
 6. Tab count when the server cannot count everything. (a) Recommended: "12+" with the accessible name "at least 12". (b) Show no number. (c) "12" with a footnote.
 7. The caught-up view without its "Where your work is" groups. (a) Recommended: heading, one sentence, Start work and See what you started, nothing else. (b) Fill the gap with the first rows of Started by me. (c) Show the board's groups with an "unavailable" note.
 
+### F-65 · factory floor visual sign-off (SCR-06), demo path
+Context: F-65 is built on live GET /overview and GET /work/counts, following D-182 and D-187. The fidelity tool's single run gives desktop 1440 coverage 98.5% (with exceptions) and visual 78.2, and phone 390 coverage 100% and visual 60.6. The visual gap comes from the floor-block layout (a floor header row with nested line rows) that the accepted answers call for; the board draws one row per floor. The phone is below the usual 70 floor for a waiver.
+1. Visual waiver for SCR-06. (a) Recommended: waive both boards (desktop 78.2, phone 60.6) for the demo, as built. (b) Waive desktop only and ask for a phone fix round (closer to one row per floor on phone). (c) A fix round on both.
+2. The board's legend line: the page words it for users and puts the open-work footnote (D-187 Q9a) in the same paragraph. (a) Recommended: accept as a text exception. (b) Split the footnote from the legend so the board text matches exactly.
+
 ## Lane B
 
 - **F-74 · B1. Setup without a workspace (backend B-21, short-list 4).** Every live Setup read and save needs a workspace; our Setup pages are organisation-wide. How should Setup open?

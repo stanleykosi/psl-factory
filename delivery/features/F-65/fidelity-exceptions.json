@@ -1,0 +1,184 @@
+{
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "1 WAITING",
+      "reason": "Row tag: no read supplies a line's status (GET /overview has only key, title and total; GET /work/counts has no status), so the tag reads a neutral \"Not available yet\" instead of the drawn status word (D-182 Q3; D-187 Q8 keeps it neutral).",
+      "approved_by": "design engineer, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "1 STOPPED",
+      "reason": "Row tag: no read supplies a line's status (GET /overview has only key, title and total; GET /work/counts has no status), so the tag reads a neutral \"Not available yet\" instead of the drawn status word (D-182 Q3; D-187 Q8 keeps it neutral).",
+      "approved_by": "design engineer, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "1 UNCERTAIN",
+      "reason": "Row tag: no read supplies a line's status (GET /overview has only key, title and total; GET /work/counts has no status), so the tag reads a neutral \"Not available yet\" instead of the drawn status word (D-182 Q3; D-187 Q8 keeps it neutral).",
+      "approved_by": "design engineer, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "ON TRACK",
+      "reason": "Row tag: no read supplies a line's status (GET /overview has only key, title and total; GET /work/counts has no status), so the tag reads a neutral \"Not available yet\" instead of the drawn status word (D-182 Q3; D-187 Q8 keeps it neutral).",
+      "approved_by": "design engineer, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "2 WAITING",
+      "reason": "Row tag: no read supplies a line's status (GET /overview has only key, title and total; GET /work/counts has no status), so the tag reads a neutral \"Not available yet\" instead of the drawn status word (D-182 Q3; D-187 Q8 keeps it neutral).",
+      "approved_by": "design engineer, D-182/D-187"
+    },
+    {
+      "role": "text",
+      "name": "2 PROBLEMS",
+      "reason": "Row tag: no read supplies a line's status (GET /overview has only key, title and total; GET /work/counts has no status), so the tag reads a neutral \"Not available yet\" instead of the drawn status word (D-182 Q3; D-187 Q8 keeps it neutral).",
+      "approved_by": "design engineer, D-182/D-187"
+    },
+    {
+      "role": "link",
+      "name": "Start work",
+      "reason": "Frame item: the Start work button belongs to F-05 (shell header).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "link",
+      "name": "More ways to start",
+      "reason": "Frame item: Start work menu belongs to F-05.",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "Kemi Adebayo · PMO Lead",
+      "reason": "Frame item: signed-in person from /me (the mock persona is Ada Okafor · Finance Lead).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "link",
+      "name": "← Home",
+      "reason": "Frame item: the phone header belongs to the shell (it draws a menu button and the PSL FACTORY mark).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "FACTORY FLOOR · LIVE",
+      "reason": "The page polls every 15 s and AGENTS.md asks for explicit timestamps, so it reads 'FACTORY FLOOR · UPDATED <as_of> WAT'.",
+      "approved_by": "carried from F-08 (requested there; not part of the D-182/D-187 answers)"
+    },
+    {
+      "role": "link",
+      "name": "See all 4",
+      "reason": "REQUEST: the count needs E-EXCEPTIONS, out of F-08 scope (follow-up (a) after F-06). The link reads 'See all exceptions'.",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "table",
+      "name": "",
+      "reason": "REQUEST: the exceptions table is F-06's ExceptionsList, mounted by follow-up (a); F-08 must not fetch E-EXCEPTIONS.",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "columnheader",
+      "name": "WHAT HAPPENED",
+      "reason": "REQUEST: part of the F-06 exceptions table (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "columnheader",
+      "name": "WORK",
+      "reason": "REQUEST: part of the F-06 exceptions table (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "columnheader",
+      "name": "WHAT'S BEING DONE",
+      "reason": "REQUEST: part of the F-06 exceptions table (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "columnheader",
+      "name": "WHO ACTS",
+      "reason": "REQUEST: part of the F-06 exceptions table (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "Harmattan Bank · go-live report GLV-0087",
+      "reason": "REQUEST: F-06 exceptions table row (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "Checking delivery before any resend",
+      "reason": "REQUEST: F-06 exceptions table row (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "Tunde Bello · PM",
+      "reason": "REQUEST: F-06 exceptions table row (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "Ojo Foods · ordering app plan PLN-0151",
+      "reason": "REQUEST: F-06 exceptions table row (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "No eligible design reviewer",
+      "reason": "REQUEST: F-06 exceptions table row (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "A Lead assigns one",
+      "reason": "REQUEST: F-06 exceptions table row (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "Management accounts · October ACC-0010",
+      "reason": "REQUEST: F-06 exceptions table row (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "Statement contract not set",
+      "reason": "REQUEST: F-06 exceptions table row (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "Finance Lead",
+      "reason": "REQUEST: F-06 exceptions table row (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "All exceptions · 4",
+      "reason": "REQUEST (phone): the count needs E-EXCEPTIONS (follow-up (a)); the heading reads 'All exceptions · everyone's'.",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "link",
+      "name": "Harmattan Bank · go-live UNCERTAIN",
+      "reason": "REQUEST (phone): F-06 exceptions preview item (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "link",
+      "name": "Ojo Foods · plan OWNER NEEDED",
+      "reason": "REQUEST (phone): F-06 exceptions preview item (follow-up (a)).",
+      "approved_by": "carried unchanged from F-08/fidelity-exceptions.json (coordinator (overnight, provisional — see delivery/OVERNIGHT-DECISIONS.md D-18)); not an F-65 change"
+    },
+    {
+      "role": "text",
+      "name": "Each square is a station; dark squares hold work, orange ones need a person. In the build, the 3D floor shows the same lines in three.js with work moving between stations. With reduced motion, this flat view is shown instead.",
+      "reason": "The board's legend is a build note; the page words it for users and puts the spec's open-work footnote (D-187 Q9a) in the same paragraph. REQUESTED, listed after the one fidelity run (it was the single unexcepted item, 98.5%).",
+      "approved_by": "REQUESTED, not yet approved by the design engineer"
+    }
+  ]
+}
