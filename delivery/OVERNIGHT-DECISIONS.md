@@ -497,3 +497,10 @@ Lane B reported waiters starving: lane C's Playwright run had waited three hours
 
 ## D-193 (24 Nov 2026): review the gated head; sync main once, right before merge
 Main moves about hourly and a gate waits about an hour in the D-189 queue, so syncing main before the review panel cost one extra gate per feature each time main moved. The coordinator's process decision (engineering, two-way door), proposed by lane A: reviewers, QA and PMO start on the feature's gated head. Right before merging, the lane merges `origin/main` into the branch once and re-runs the gate through the queue. Each routed lens and QA then re-confirms on the new head with a short diff-only check, because the feature tool requires every review to name the merged head. Product acceptance carries over under D-188 when the sync touches none of the feature's own files; otherwise it goes back to the design engineer. If main moves again during that window, merge as soon as the gate on the synced head passes, rather than chasing main.
+
+## D-194 (24 Nov 2026): overnight, the coordinator approves on the design engineer's word
+At bedtime the design engineer said: "i am going to bed now so approve whatever needs approval and from tomorrow we will connect to the railway mcp". Until they are back:
+- Board and presentation questions in the batch: the coordinator accepts the recommended option, as in batches 1 to 3. New business rules or PSL decisions (who may act, amounts, approval order, payroll visibility) are never decided overnight and wait for morning.
+- Merges: the coordinator approves features whose gate, every routed review, QA and PMO acceptance all pass on the exact head being merged, including sign-in, money and security ones, quoting this instruction as the approval. Anything with a failed or disputed review, an open blocking finding, or a merge the classifier refuses is held for morning.
+- Delegated merges in merge-batch.md ("Merged under delegation: confirm") are confirmed under this instruction.
+- Every approval goes in `delivery/connect/night-log-2026-11-24.md`, with the feature, PR, head and evidence.
