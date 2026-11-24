@@ -131,3 +131,6 @@ Both screens: Django 8020 against Postgres 127.0.0.1:55433; Next 4980; mock 4981
 
 ## Coordinator note (lane C, 23 Nov)
 Agreed: F-88 adds the optional `ownsSubmit` flag to the F-86 `LineForm` entry and the chooser (additive, lane C owns both). Check the registry key against live `/lines` and let this line opt out of the project picker if `LineFormProps` forces one.
+
+## Coordinator note (lane C, 24 Nov): live proof
+The design engineer answered "Mock-only, like F-60" (relayed by the main coordinator). The live RFP log success path and the upload limit are proven on the mock only. Live proof covers the 403 refusal for an account with no received-bid organisation. QA, PMO and the PR record them as unproven live, quoting that answer. Nobody sets up organisations or grants in the database by any route.
