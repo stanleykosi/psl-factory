@@ -78,15 +78,55 @@
       "at": "2026-11-23T23:38:50Z",
       "seconds": 554.8,
       "evidence_ref": "delivery/features/F-71/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "802f311ad60583d2f04490b95baa55ea4b98bb77",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T04:04:51Z",
+      "seconds": 83.8,
+      "evidence_ref": "delivery/features/F-71/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 3,
+      "commit": "802f311ad60583d2f04490b95baa55ea4b98bb77",
+      "verdict": "FAIL",
+      "exit_code": 124,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T09:22:14Z",
+      "seconds": 1800.1,
+      "evidence_ref": "delivery/features/F-71/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 4,
+      "commit": "3df5462d49c464d12d789486760215fb1df62304",
+      "verdict": "FAIL",
+      "exit_code": 0,
+      "protected_paths_changed": [
+        "M delivery/checks.sh"
+      ],
+      "at": "2026-11-24T09:55:22Z",
+      "seconds": 311.5,
+      "evidence_ref": "delivery/features/F-71/round-1/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead), lighter panel (D-180)",
+      "snapshot_ref": "e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6",
+      "evidence_refs": [
+        "delivery/features/F-71/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -126,7 +166,156 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`isInvoice` does not check `id` or `currency`, and `isChange` does not check `link_id`. All three are required by the contract. They are used as React keys, and `invoice.currency` goes into `amountText`. A body missing them would draw \"undefined 1.00\" or a duplicate key rather than the bad-body card. Add the integer and string checks at moneyModel.ts:19 and :27.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T04:04:52Z",
+          "head": "e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T04:04:52Z",
+          "refs": [
+            "guards now check an integer `id` and string `currency` on invoices and an integer `link_id` on changes, so a bad body shows the bad-body card (model and component tests added)"
+          ],
+          "head": "802f311ad60583d2f04490b95baa55ea4b98bb77",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "guards now check an integer `id` and string `currency` on invoices and an integer `link_id` on changes, so a bad body shows the bad-body card (model and component tests added)"
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Money intro line says \"Every figure links to the record it came from\". Items with no sources show \"No source recorded\", so the claim is wider than the data. Soften the copy (MoneyTab.tsx, the `money__lead` paragraph).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T04:04:52Z",
+          "head": "e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T04:04:52Z",
+          "refs": [
+            "the Money lead line now reads \"Each figure shows where it comes from when a source is recorded.\""
+          ],
+          "head": "802f311ad60583d2f04490b95baa55ea4b98bb77",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "the Money lead line now reads \"Each figure shows where it comes from when a source is recorded.\""
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "When `money.items` is empty, MoneyTab returns the empty state before the `limited` callout. A limited and empty body hides the \"may be incomplete\" warning. Show the callout above the empty state.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T04:04:52Z",
+          "head": "e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T04:04:52Z",
+          "refs": [
+            "the `limited` warning shows above the empty state, with a test"
+          ],
+          "head": "802f311ad60583d2f04490b95baa55ea4b98bb77",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "the `limited` warning shows above the empty state, with a test"
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Live smoke (AC17) saw only an empty seeded project, so a populated live body is unproven. Re-check on the first populated environment, with `reference`, `milestone_id` and `stage_position` set. Stages whose completion is beyond the first 25 rows lose the \"Recorded by\" line, but Proof still works through `milestone_id`. That is acceptable and documented.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T04:04:52Z",
+          "head": "e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T04:04:52Z",
+          "refs": [
+            "no code (a populated live body is still unseen); left for the integration owner"
+          ],
+          "head": "802f311ad60583d2f04490b95baa55ea4b98bb77",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "no code (a populated live body is still unseen); left for the integration owner"
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -150,7 +339,7 @@
     "base_branch": "main",
     "base_sha": "d906028a759d42bc124e6c935b91c225ca09b2ae",
     "task_branch": "fe-connect-1-money-milestones-tabs",
-    "head_sha": "e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6",
+    "head_sha": "3df5462d49c464d12d789486760215fb1df62304",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b",
     "pr_url": null,
     "pr_number": null,
@@ -162,6 +351,7 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
+      ".github/workflows/frontend-checks.yml",
       "apps/agents/assistant.py",
       "apps/agents/assistant_views.py",
       "apps/agents/specialist_memory.py",
@@ -183,10 +373,20 @@
       "apps/workflows/factory_receipt_recovery_views.py",
       "apps/workflows/factory_views.py",
       "contracts/psl-factory.openapi.json",
+      "delivery/checks.sh",
+      "frontend/e2e/document-review.spec.ts",
+      "frontend/e2e/hr.spec.ts",
       "frontend/e2e/money.spec.ts",
       "frontend/e2e/project-tabs.spec.ts",
+      "frontend/e2e/rfp-intake.spec.ts",
+      "frontend/e2e/start-work-ppe-forecast.spec.ts",
+      "frontend/e2e/start-work-proof.spec.ts",
+      "frontend/e2e/start-work.spec.ts",
       "frontend/e2e/work-item-live.spec.ts",
       "frontend/mock/demo-projects.mjs",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/documents/review-2901.json",
+      "frontend/mock/fixtures/documents/review-2901.publication.json",
       "frontend/mock/fixtures/me.admin.json",
       "frontend/mock/fixtures/me.ceo.json",
       "frontend/mock/fixtures/me.finance_lead.json",
@@ -218,6 +418,7 @@
       "frontend/mock/project-tabs.mjs",
       "frontend/mock/projects.mjs",
       "frontend/mock/server.mjs",
+      "frontend/mock/start-live.mjs",
       "frontend/mock/work-live.mjs",
       "frontend/src/api/live-schema.d.ts",
       "frontend/src/api/types.ts",
@@ -225,6 +426,14 @@
       "frontend/src/app/work/[id]/(item)/layout.tsx",
       "frontend/src/app/work/[id]/(item)/page.tsx",
       "frontend/src/features/assistant/AssistantFrame.tsx",
+      "frontend/src/features/documents/DocumentParts.tsx",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/documents/ReviewControls.tsx",
+      "frontend/src/features/documents/document-review.css",
+      "frontend/src/features/documents/documentModel.ts",
+      "frontend/src/features/documents/useDocument.ts",
+      "frontend/src/features/documents/useReview.ts",
+      "frontend/src/features/projects/DocumentsTab.tsx",
       "frontend/src/features/projects/MilestonesTab.tsx",
       "frontend/src/features/projects/MoneyCells.tsx",
       "frontend/src/features/projects/MoneyTab.tsx",
@@ -238,6 +447,21 @@
       "frontend/src/features/projects/useMoney.ts",
       "frontend/src/features/projects/useProjectTab.ts",
       "frontend/src/features/sign-in/sign-in.css",
+      "frontend/src/features/start-work/LineChooser.tsx",
+      "frontend/src/features/start-work/LineForm.tsx",
+      "frontend/src/features/start-work/ProjectPicker.tsx",
+      "frontend/src/features/start-work/RecordPicker.tsx",
+      "frontend/src/features/start-work/SourcePicker.tsx",
+      "frontend/src/features/start-work/StartUpload.tsx",
+      "frontend/src/features/start-work/StartWorkDrawer.tsx",
+      "frontend/src/features/start-work/intake.ts",
+      "frontend/src/features/start-work/labels.ts",
+      "frontend/src/features/start-work/lines/index.ts",
+      "frontend/src/features/start-work/lines/weeklyReport.tsx",
+      "frontend/src/features/start-work/start-work.css",
+      "frontend/src/features/start-work/types.ts",
+      "frontend/src/features/start-work/useStart.ts",
+      "frontend/src/features/start-work/useStartWork.ts",
       "frontend/src/features/work-item/live/LiveWorkItemView.tsx",
       "frontend/src/features/work-item/live/model.ts",
       "frontend/src/features/work-item/live/useLiveHistory.ts",
@@ -248,14 +472,20 @@
       "frontend/src/features/workspace/evidence.ts",
       "frontend/src/features/workspace/weeklyReportAdapter.ts",
       "frontend/src/styles/shell.css",
+      "frontend/tests/assistant.test.tsx",
       "frontend/tests/demo-mock.test.ts",
       "frontend/tests/destinations.ts",
+      "frontend/tests/document-review-model.test.ts",
+      "frontend/tests/document-review.test.tsx",
       "frontend/tests/evidence.test.tsx",
+      "frontend/tests/hypercare.test.tsx",
+      "frontend/tests/issue-detail.test.tsx",
       "frontend/tests/line-adapter.test.tsx",
       "frontend/tests/live-work-item.test.tsx",
       "frontend/tests/milestones-model.test.ts",
       "frontend/tests/milestones.test.tsx",
       "frontend/tests/mock-contract.test.ts",
+      "frontend/tests/mock-live-document-review.test.ts",
       "frontend/tests/mock-live-money.test.ts",
       "frontend/tests/mock-live-projects.test.ts",
       "frontend/tests/mock-money.test.ts",
@@ -266,7 +496,14 @@
       "frontend/tests/next-config.test.ts",
       "frontend/tests/project-tabs-model.test.ts",
       "frontend/tests/project-tabs.test.tsx",
+      "frontend/tests/rfp-intake.test.tsx",
       "frontend/tests/shell-live.test.tsx",
+      "frontend/tests/start-work-intake.test.ts",
+      "frontend/tests/start-work-live.test.tsx",
+      "frontend/tests/start-work-ppe-forecast.test.tsx",
+      "frontend/tests/start-work-prefill.test.tsx",
+      "frontend/tests/start-work-proof.test.tsx",
+      "frontend/tests/start-work.test.tsx",
       "frontend/tests/weekly.test.tsx",
       "handoffs/nextjs/psl-factory.openapi.json",
       "legacy_ui/templates/base.html",
@@ -347,9 +584,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 1,
-    "verdict": "PASS",
-    "commit": "e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6"
+    "attempts": 4,
+    "verdict": "FAIL",
+    "commit": "3df5462d49c464d12d789486760215fb1df62304"
   },
   "blocked": null
 }

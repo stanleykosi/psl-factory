@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6
+COMMIT: 802f311ad60583d2f04490b95baa55ea4b98bb77
 BUILDER: builder
 LANE: frontend
 
@@ -23,7 +23,10 @@ LANE: frontend
 - Focus after the last completions page moves to the first new completion, through a small effect in `MilestonesTab.tsx` (`useFocusAfterMore` looks only for links or table rows). The no-access note and the empty and error lines use a new `ptabs__line` class, because `ptabs__note` is hidden on phones. `e2e/money.spec.ts` and `e2e/project-tabs.spec.ts` are rewritten, and the `next-config` allow-list merges both sides (F-85's `work-live.mjs` plus mine).
 
 ## Fixes
-None (round 1).
+- TECH-1-1 | guards now check an integer `id` and string `currency` on invoices and an integer `link_id` on changes, so a bad body shows the bad-body card (model and component tests added) | 9bb7e99e
+- TECH-1-2 | the Money lead line now reads "Each figure shows where it comes from when a source is recorded." | 9bb7e99e
+- TECH-1-3 | the `limited` warning shows above the empty state, with a test | 9bb7e99e
+- TECH-1-4 | no code (a populated live body is still unseen); left for the integration owner
 
 ## Acceptance criteria
 1. [x] Rows in the order sent, with the number only on stages: `money.test.tsx` (order and alphabetical tests).
@@ -70,6 +73,10 @@ None (round 1).
   - The "Recorded completions" heading and the Proof button are additions.
   - "Back to Projects" and "Tunde Bello · PMO" belong to the shell.
 - The mock-contract `tab` change, the `next-config` allow-list and the `demo-mock` edits are the shared-test touches listed above. Servers are stopped, and the worktree is clean and pushed.
+
+## Gate and merge after review
+- origin/main (ae0525fb, with F-72 and F-86) is merged. Conflicts were in `tests/next-config.test.ts` (union of both allow-lists) and `mock/server.mjs` (kept both the milestone route and F-72's document route).
+- The full gate (`checks.sh` under the heavy lock) exits 0: 161 files and 3792 tests passed, lint, typecheck and build clean. `npm cache clean --force` is done.
 
 ## Blocked
 None.

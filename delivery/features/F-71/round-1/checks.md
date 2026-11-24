@@ -1,93 +1,33 @@
-GATE: PASS
-COMMIT: e5f7b00d3f67a933ecb2f9029552c9fa0b173ff6
-ATTEMPT: 1
+GATE: FAIL
+COMMIT: 3df5462d49c464d12d789486760215fb1df62304
+ATTEMPT: 4
 
 ## Summary
 - checks.sh passed
-- Protected paths: none changed
-- Commit e5f7b00d3f67, round 1, attempt 1
+- Protected paths: M delivery/checks.sh
+- Commit 3df5462d49c4, round 1, attempt 4
 
 ## checks.sh (last 80 lines of checks.log)
 
 ```
-├ ƒ /finance/month-end
-├ ○ /finance/payments
-├ ƒ /frame-fixtures/phone-back
-├ ○ /my-work
-├ ○ /notifications
-├ ○ /overview
-├ ○ /projects
-├ ƒ /projects/[caseId]
-├ ƒ /projects/[caseId]/[tab]
-├ ƒ /projects/[caseId]/documents/[documentId]
-├ ○ /settings/alerts
-├ ○ /setup
-├ ○ /setup/costing-rule
-├ ○ /setup/delegation
-├ ○ /setup/payroll-visibility
-├ ○ /setup/roles
-├ ○ /setup/rules
-├ ○ /setup/rules/delivery
-├ ○ /setup/rules/finance
-├ ○ /setup/staff
-├ ○ /setup/templates
-├ ○ /sign-in
-├ ƒ /work/[id]
-├ ƒ /work/[id]/decide
-├ ƒ /work/[id]/history
-├ ƒ /work/[id]/outcome
-└ ƒ /work/[id]/respond
-
-
-○  (Static)   prerendered as static content
-ƒ  (Dynamic)  server-rendered on demand
-
-npm warn EBADENGINE Unsupported engine {
-npm warn EBADENGINE   package: 'jsdom@31.0.1',
-npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
-npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
-npm warn EBADENGINE }
-npm warn EBADENGINE Unsupported engine {
-npm warn EBADENGINE   package: 'w3c-xmlserializer@6.0.0',
-npm warn EBADENGINE   required: { node: '^22.22.2 || ^24.15.0 || >=26.0.0' },
-npm warn EBADENGINE   current: { node: 'v24.12.0', npm: '11.6.2' }
-npm warn EBADENGINE }
-npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: navigation to another Document
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
-Not implemented: HTMLCanvasElement's getContext() method: without installing the @napi-rs/canvas npm package
+== ci: GitHub frontend-checks.yml for 3df5462d49c464d12d789486760215fb1df62304
+run: https://github.com/stanleykosi/psl-factory/actions/runs/45368922774
+  success  Set up job
+  success  Initialize containers
+  success  Run actions/checkout@v4
+  success  Run actions/setup-python@v5
+  success  backend · install
+  success  backend · django system check
+  success  Run actions/setup-node@v4
+  success  frontend · install
+  success  frontend · lint
+  success  frontend · typecheck
+  success  frontend · unit tests
+  success  frontend · build
+  success  Post Run actions/setup-node@v4
+  success  Post Run actions/setup-python@v5
+  success  Post Run actions/checkout@v4
+  success  Stop containers
+  success  Complete job
+== ci: PASS
 ```

@@ -4727,3 +4727,9 @@
 {"at":"2026-11-24T09:40:12Z","feature":"F-62","round":1,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), recorded by the lane A coordinator","commit":"7b8bad85508f","written_at":"2026-11-24T09:40:11Z"}
 {"at":"2026-11-24T09:40:43Z","feature":"F-62","round":1,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/106","git.pr_number":106}}
 {"at":"2026-11-24T09:40:44Z","feature":"F-62","round":1,"kind":"transition","head":"7b8bad85508f","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-24T09:55:01Z","feature":"F-113","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"0c081045fa29","findings":{"TECH-2-1":"low"},"written_at":"2026-11-24T09:53:42Z"}
+{"at":"2026-11-24T09:55:01Z","feature":"F-113","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"0c081045fa29","findings":{"QA-2-1":"medium","QA-2-2":"low","QA-2-3":"low"},"written_at":"2026-11-24T09:54:43Z"}
+{"at":"2026-11-24T09:55:01Z","feature":"F-113","round":2,"kind":"review","role":"ux","verdict":"CHANGES","reviewer":"reviewer-ux","commit":"0c081045fa29","written_at":"2026-11-24T09:54:12Z"}
+{"at":"2026-11-24T09:55:01Z","feature":"F-113","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"0c081045fa29","written_at":"2026-11-24T09:53:20Z"}
+{"at":"2026-11-24T09:55:22Z","feature":"F-71","round":1,"kind":"gate","verdict":"FAIL","attempt":4,"exit_code":0,"seconds":311.5,"commit":"3df5462d49c4","protected":["M delivery/checks.sh"]}
+{"at":"2026-11-24T09:55:31Z","feature":"F-113","round":2,"kind":"finding","action":"add","finding":"UX-2-4","by":"reviewer-ux","severity":"medium","owner":"frontend","blocking":true,"role":"ux"}
