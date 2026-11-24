@@ -649,6 +649,8 @@ describe('screen states', () => {
 
   it('pm unassigned: the queue is not open, with the API message and a way back', async () => {
     persona = 'pm';
+    // F-88: the Unassigned tab reads the received RFPs, which answer a person without the role with the same plain 403
+    work = (url) => (url.pathname.includes('received-bids') ? json(403, { code: 'forbidden', message: 'Only Leads can see unassigned work.' }) : mockResponse(url, persona));
     await open('?queue=unassigned');
     expect(screen.getByRole('heading', { name: 'This queue isn’t open to your role.' })).toBeTruthy();
     expect(screen.getByText('Only Leads can see unassigned work.')).toBeTruthy();

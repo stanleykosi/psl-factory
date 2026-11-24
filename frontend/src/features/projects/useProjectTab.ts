@@ -6,9 +6,9 @@ import { api, call } from '@/api/client';
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
 import { DEFAULT_PAGE_SIZE, type PageSize } from '@/components';
 
-import { buildTabQuery, isTabResponse, rowsOf, type ListTab, type TabResponse, type TabRows, type TabView } from './tabsModel';
+import { buildTabQuery, isTabResponse, rowsOf, type ReadTab, type TabResponse, type TabRows, type TabView } from './tabsModel';
 
-export type TabState<T extends ListTab> =
+export type TabState<T extends ReadTab> =
   | { status: 'loading' }
   | { status: 'error'; error: ApiError }
   | { status: 'ready'; rows: TabRows[T]; summary: TabResponse['summary']; asOf: string; nextCursor?: string };
@@ -19,7 +19,7 @@ const asApiError = (error: unknown) => (error instanceof ApiError ? error : netw
  * One E-PROJECT-TAB read per view (tab, register, settled search); "Show more" appends the next page. A late answer
  * for an earlier view is ignored (sequence guard). A failed read drops the earlier rows. No polling, no automatic retry.
  */
-export function useProjectTab<T extends ListTab>(caseId: string, tab: T, view: TabView) {
+export function useProjectTab<T extends ReadTab>(caseId: string, tab: T, view: TabView) {
   const [state, setState] = useState<TabState<T>>({ status: 'loading' });
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
   const seq = useRef(0);

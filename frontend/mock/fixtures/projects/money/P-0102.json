@@ -1,119 +1,118 @@
 {
-  "items": [],
-  "as_of": "2026-11-12T09:05:00Z",
-  "money": [
+  "items": [
     {
-      "position": 3,
-      "stage": "Stage 3 · go-live",
-      "amount": {
-        "amount": "1200.00",
-        "currency": "USD",
-        "unknown": false
-      },
-      "invoice": {
-        "reference": "INV-0503"
-      },
-      "paid": {
-        "status": "not_paid",
-        "owed": {
-          "currency": "USD",
-          "unknown": true
-        }
-      },
-      "figure_id": "FIG-0102-S3"
-    },
-    {
-      "position": 1,
-      "stage": "Stage 1 · kick-off",
-      "amount": {
-        "amount": "2500000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "invoice": {
-        "reference": "INV-0501",
-        "work_id": "W-1713",
-        "state": "verified"
-      },
-      "invoice_status": "Verified 20 Oct",
-      "paid": {
-        "status": "part_paid",
-        "owed": {
-          "amount": "1250000.00",
+      "key": "kickoff",
+      "label": "Kick-off",
+      "amount": "3000000.00",
+      "currency": "NGN",
+      "due_date": "2026-10-30",
+      "milestone_id": 3101,
+      "stage_position": 1,
+      "completed_at": "2026-10-27T10:00:00Z",
+      "contract_stage": true,
+      "missing_reason": null,
+      "invoices": [
+        {
+          "id": 398,
+          "reference": "INV-0398",
+          "version": 1,
           "currency": "NGN",
-          "unknown": false
+          "paid": "2000000.00",
+          "owed": "500000.00",
+          "status": "Delivered",
+          "at": "2026-11-20T09:00:00Z",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/billing-invoices/398"
+        },
+        {
+          "id": 399,
+          "reference": "INV-0399",
+          "version": 1,
+          "currency": "NGN",
+          "paid": "250000.00",
+          "owed": "250000.00",
+          "status": "Issued",
+          "at": "2026-11-20T09:00:00Z",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/billing-invoices/399"
         }
-      },
-      "figure_id": "FIG-0102-S1"
+      ],
+      "sources": [
+        {
+          "label": "Statement of work",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/documents/",
+          "at": "2026-09-30T08:00:00Z",
+          "kind": "Signed SOW",
+          "record_id": 198,
+          "reference": "SOW-0198 v2",
+          "api_url": null
+        },
+        {
+          "label": "Kick-off minutes",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/documents/",
+          "at": "2026-10-27T10:00:00Z",
+          "kind": "Meeting",
+          "record_id": null,
+          "reference": null,
+          "api_url": null
+        }
+      ],
+      "changes": []
     },
     {
-      "position": 2,
-      "stage": "Stage 2 · UAT",
-      "amount": {
-        "amount": "2500000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "invoice_status": "Awaiting Finance decision",
-      "figure_id": "FIG-0102-S2"
+      "key": "uat",
+      "label": "UAT sign-off",
+      "amount": "4250000.00",
+      "currency": "NGN",
+      "due_date": "2026-11-10",
+      "milestone_id": null,
+      "stage_position": 2,
+      "completed_at": "2026-11-11T10:00:00Z",
+      "contract_stage": true,
+      "missing_reason": null,
+      "invoices": [
+        {
+          "id": 412,
+          "reference": "INV-0412",
+          "version": 1,
+          "currency": "NGN",
+          "paid": null,
+          "owed": null,
+          "status": "Delivered",
+          "at": "2026-11-20T09:00:00Z",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/billing-invoices/412"
+        }
+      ],
+      "sources": [],
+      "changes": []
     },
     {
-      "position": 4,
-      "stage": "Stage 4 · hypercare",
-      "amount": {
-        "currency": "NGN",
-        "unknown": false
-      },
-      "paid": {
-        "status": "unknown"
-      }
-    },
-    {
-      "position": 5,
-      "stage": "Change request CR-0031",
-      "amount": {
-        "amount": "800000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "paid": {
-        "status": "not_due"
-      },
-      "figure_id": "FIG-0102-S5"
-    },
-    {
-      "position": 6,
-      "stage": "Stage 6 · support",
-      "amount": {
-        "amount": "500000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "invoice": {
-        "reference": "INV-0506",
-        "work_id": "W-1001",
-        "state": "verified"
-      },
-      "invoice_status": "Verified 05 Nov",
-      "paid": {
-        "status": "paid"
-      },
-      "figure_id": "FIG-0102-S6"
-    },
-    {
-      "position": 7,
-      "stage": "Stage 7 · extension",
-      "amount": {
-        "amount": "9223372036854775807.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "paid": {
-        "status": "not_due"
-      }
+      "key": "go-live",
+      "label": "Go-live",
+      "amount": null,
+      "currency": "NGN",
+      "due_date": "2026-12-12",
+      "milestone_id": null,
+      "stage_position": 3,
+      "completed_at": null,
+      "contract_stage": true,
+      "missing_reason": "The reviewed stage terms do not state an amount.",
+      "invoices": [
+        {
+          "id": 419,
+          "reference": "INV-0419",
+          "version": 1,
+          "currency": "NGN",
+          "paid": null,
+          "owed": null,
+          "status": "Awaiting Finance decision",
+          "at": "2026-11-20T09:00:00Z",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/billing-invoices/419"
+        }
+      ],
+      "sources": [],
+      "changes": []
     }
   ],
-  "summary": {
-    "report_id": "R-0102"
-  }
+  "limited": true,
+  "as_of": "2026-11-12T15:40:00Z",
+  "finance_url": "/projects/00000000-0000-4000-8000-000000000102/finance/"
 }

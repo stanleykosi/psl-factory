@@ -37,12 +37,17 @@ if [ "$mode" = ci ]; then
     exit 1
   fi
   deadline=$(( $(date +%s) + ${PSL_CI_TIMEOUT:-1700} ))
-  seen_at=$(( $(date +%s) + 300 ))
+  appear=${PSL_CI_APPEAR:-900}
+  seen_at=$(( $(date +%s) + appear ))
   while :; do
-    run="$(gh run list --commit "$sha" --workflow "$WORKFLOW" --event push -L 1 \
+    # A gh failure (network, rate limit) is not "no run": keep waiting until the deadline.
+    if run="$(gh run list --commit "$sha" --workflow "$WORKFLOW" --event push -L 1 \
             --json databaseId,status,conclusion,url \
-            -q '.[0] | "\(.databaseId) \(.status) \(.conclusion) \(.url)"' 2>/dev/null || true)"
-    if [ -n "$run" ]; then
+            -q '.[0] | "\(.databaseId) \(.status) \(.conclusion) \(.url)"' 2>/dev/null)"; then gh_ok=1; else gh_ok=0; run=""; fi
+    if [ "$gh_ok" = 0 ]; then
+      echo "gh could not reach GitHub; retrying." >&2
+      seen_at=$(( seen_at + 20 ))
+    elif [ -n "$run" ]; then
       read -r id status conclusion url <<<"$run"
       if [ "$status" = completed ]; then
         echo "run: $url"
@@ -56,7 +61,7 @@ if [ "$mode" = ci ]; then
         exit 1
       fi
     elif [ "$(date +%s)" -gt "$seen_at" ]; then
-      echo "No $WORKFLOW run for $sha after 5 minutes (is the workflow on this branch, and was it pushed?)." >&2
+      echo "No $WORKFLOW run for $sha after $(( appear / 60 )) minutes (is the workflow on this branch, and was it pushed?)." >&2
       exit 1
     fi
     if [ "$(date +%s)" -gt "$deadline" ]; then

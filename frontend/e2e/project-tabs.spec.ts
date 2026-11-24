@@ -72,25 +72,48 @@ for (const [label, viewport] of [
       }
     }
 
-    test('milestones: the board values; the changed state keeps INVOICE and PAID; no completion control', async ({ page, context }) => {
+    test('milestones: stages from /money, Proof on a linked completion, the changed state adds CHANGES; no completion control', async ({ page, context }) => {
       await page.goto('/projects/P-0101/milestones');
       await loaded(page);
-      await expect(page.getByText('Done 11 Nov · client UAT sign-off').first()).toBeVisible();
-      await expect(page.getByText('INV-0398').first()).toBeVisible();
-      await expect(page.getByText('Part paid · ₦500,000.00 owed').first()).toBeVisible();
+      await expect(page.getByText('Done 27 Oct').first()).toBeVisible();
+      await expect(page.getByText('INV-0398 · Delivered').first()).toBeVisible();
+      await expect(page.getByText('Paid NGN 2,000,000.00 · Owed NGN 500,000.00').first()).toBeVisible();
+      await expect(page.getByRole('heading', { level: 2, name: 'Recorded completions' })).toBeVisible();
       await expect(page.getByRole('link', { name: /complete/i })).toHaveCount(0);
       if (!phone) await expect(page.getByRole('columnheader')).toHaveText(['MILESTONE', 'CONTRACT AMOUNT', 'COMPLETION', 'INVOICE', 'PAID']);
+      await page.getByRole('button', { name: 'Proof for Kick-off' }).first().click();
+      await expect(page.getByText('Proof version 2')).toBeVisible();
       await setCookies(context, { psl_mock_milestones: 'changed' });
       await page.reload();
       await loaded(page);
-      await expect(page.getByText('₦4,250,000.00 + the change · change amount Unknown').first()).toBeVisible();
-      if (phone) await expect(page.getByRole('link', { name: 'CHANGED · CR-0031' })).toHaveAttribute('href', '/work/W-1005');
+      await expect(page.getByText('change amount Unknown').first()).toBeVisible();
+      if (phone) await expect(page.getByText('CHANGED · CHG-0007')).toBeVisible();
       else {
         await expect(page.getByRole('columnheader')).toHaveText(['MILESTONE', 'CONTRACT AMOUNT', 'COMPLETION', 'INVOICE', 'PAID', 'CHANGES']);
-        await expect(page.getByRole('link', { name: 'CR-0031 · SMS reminders' })).toHaveAttribute('href', '/work/W-1005');
+        await expect(page.getByText('CHG-0007 · Extra reporting scope')).toBeVisible();
       }
       expect(await noHorizontalScroll(page)).toBe(true);
       await expectNoAxeViolations(page);
+    });
+
+    test('milestones without money access (P-0108) show the completions and the plain note', async ({ page, context }) => {
+      await setCookies(context, { psl_mock_persona: 'finance_lead' });
+      await page.goto('/projects/P-0108/milestones');
+      await loaded(page);
+      await expect(page.getByText('Contract amounts, invoices and payments aren’t available to your role.')).toBeVisible();
+      await expect(page.getByRole('heading', { level: 2, name: 'Recorded completions' })).toBeVisible();
+      await expect(page.getByRole('table')).toHaveCount(0);
+      await expectNoAxeViolations(page);
+    });
+
+    test('milestones P-0102: Show more appends the second page of completions', async ({ page }) => {
+      await page.goto('/projects/P-0102/milestones');
+      await loaded(page);
+      await expect(page.locator('.ptabs__completion')).toHaveCount(25);
+      await page.getByRole('button', { name: 'Show more' }).click();
+      await expect(page.locator('.ptabs__completion')).toHaveCount(27);
+      await expect(page.getByRole('button', { name: 'Show more' })).toHaveCount(0);
+      await expect(page.locator('.ptabs__completion').nth(25)).toBeFocused();
     });
 
     test('registers: the register and search live in the URL; requests follow; keyboard moves along the tabs', async ({ page }) => {
@@ -174,11 +197,11 @@ for (const [label, viewport] of [
     });
 
     test('P-0103: the tab answers 403; the header stays and no fixture text shows', async ({ page }) => {
-      await page.goto('/projects/P-0103/milestones');
+      await page.goto('/projects/P-0103/documents');
       await loaded(page);
       await expect(page.getByRole('heading', { level: 2, name: 'No access to this tab' })).toBeVisible();
       await expect(page.getByRole('tablist', { name: 'Project' })).toBeVisible();
-      await expect(page.getByText('Kick-off')).toHaveCount(0);
+      await expect(page.getByText('Statement of work')).toHaveCount(0);
       await expectNoAxeViolations(page);
     });
 
@@ -204,11 +227,11 @@ test.describe('desktop 1024', () => {
   test.use({ viewport: { width: 1024, height: 800 } });
   test.beforeEach(async ({ context }) => setCookies(context, { psl_mock_persona: 'pm', psl_mock_milestones: 'changed' }));
 
-  test('milestones: the owed amount, the invoice state and the proof are fully visible', async ({ page }) => {
+  test('milestones: the paid amounts, the invoice status, the completion and the change are fully visible', async ({ page }) => {
     await page.goto('/projects/P-0101/milestones');
     await loaded(page);
-    for (const text of ['Part paid · ₦500,000.00 owed', 'INV-0398 · Verified', 'Done 11 Nov · client UAT sign-off', 'CR-0031 · SMS reminders']) {
-      await expect(page.getByRole('cell', { name: text })).toBeVisible();
+    for (const text of ['Paid NGN 2,000,000.00 · Owed NGN 500,000.00', 'INV-0398 · Delivered', 'CHG-0007 · Extra reporting scope']) {
+      await expect(page.getByRole('cell', { name: new RegExp(text.replace(/[.·]/g, '.')) }).first()).toBeVisible();
     }
     const clipped = await page.locator('table.ptabs__ms td').evaluateAll((cells) =>
       cells.filter((c) => c.scrollWidth > c.clientWidth + 1 || getComputedStyle(c).textOverflow === 'ellipsis').map((c) => c.textContent),

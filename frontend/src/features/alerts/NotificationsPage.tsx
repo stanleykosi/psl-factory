@@ -1,158 +1,93 @@
 'use client';
 
 import NextLink from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { api, call } from '@/api/client';
+import { readInbox } from '@/api/alerts';
 import { ApiError, networkError } from '@/api/errors';
-import { Button, EmptyState, Link, ListToolbar, Loading, PageTitle, ShowMore, Skeleton, Tag, useIsPhone, usePagedRows, DEFAULT_PAGE_SIZE, type PageSize, VisuallyHidden } from '@/components';
+import { Button, EmptyState, formatTime, Link, Loading, PageTitle, Skeleton, Tag, useIsPhone, VisuallyHidden } from '@/components';
 import { SignedOutState } from '@/shell/FrameStates';
 
-import { AlertAvatar, AlertBody, AlertsLoadError, useOpenAlert, type OpenAlert } from './AlertParts';
-import { AlertsFilterPanel, type AlertFilters } from './AlertsFilterPanel';
-import type { Alert } from './types';
-import { buildAlertQuery, countLine, filterCount, isNarrowed, parseView, viewSearch, workHref, type View } from './model';
+import { AlertAvatar, AlertBody, AlertsLoadError, RowTail, useAlertActions, type OpenAlert, type RowNotice } from './AlertParts';
+import type { Alert, DailySummary } from './types';
+import { alertHref, loadedLine, needsYou, summaryLine } from './model';
 import './alerts.css';
 
 // `now` is when page 1 arrived: "10:42", "yesterday" and "12 Nov" are read against it.
-type Loaded = { items: Alert[]; nextCursor?: string; total?: number; now: number };
+type Loaded = { items: Alert[]; nextPage: number | null; unread: number; summary?: DailySummary; now: number };
 type ListState = { status: 'loading' } | ({ status: 'ready' } & Loaded) | { status: 'error'; error: ApiError };
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
-// The first page is 10 rows; the paging footer asks for more by cursor.
-const fetchPage = (v: View, cursor?: string, limit: PageSize = DEFAULT_PAGE_SIZE) => call(api.GET('/api/v1/notifications', { params: { query: buildAlertQuery(v, cursor, limit) } }));
+const fetchPage = async (page: number) => {
+  const list = await readInbox(page);
+  // A body without an items list is not an alerts list: shown as a load error, never as "no alerts".
+  if (!Array.isArray(list?.items) || typeof list.unread !== 'number') throw networkError();
+  return list;
+};
 
-/** /notifications (SCR-15): the person's own alerts. useSearchParams needs a Suspense boundary for `next build`. */
+/** /notifications (SCR-15): the person's own alerts, 25 to a page, "Load more" while the server has another page. */
 export function NotificationsPage() {
-  return (
-    <Suspense fallback={null}>
-      <Notifications />
-    </Suspense>
-  );
-}
-
-function Notifications() {
-  const params = useSearchParams();
-  const router = useRouter();
-  const search = params?.toString() ?? '';
-  const view = useMemo(() => parseView(new URLSearchParams(search)), [search]);
   const phone = useIsPhone();
-
   const [list, setList] = useState<ListState>({ status: 'loading' });
-  // From the latest successful response: its time, whether it carries total (search and Filter), its unread count.
   const [asOf, setAsOf] = useState<string>();
-  const [toolbar, setToolbar] = useState(false);
-  const [unreadCount, setUnreadCount] = useState<number>();
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
   const [signedOut, setSignedOut] = useState(false);
-  const [filterOpen, setFilterOpen] = useState(false);
+  const loading = useRef(false);
 
-  const seq = useRef(0);
-  const viewRef = useRef(view);
+  /** Page 1 replaces the list. */
+  const load = useCallback(async () => {
+    if (loading.current) return;
+    loading.current = true;
+    setList((prev) => (prev.status === 'ready' ? prev : { status: 'loading' }));
+    setMore('idle');
+    try {
+      const data = await fetchPage(1);
+      setAsOf(data.as_of);
+      setList({ status: 'ready', items: data.items, nextPage: data.next_page ?? null, unread: data.unread, summary: data.daily_summary, now: Date.now() });
+    } catch (error) {
+      const e = asApiError(error);
+      if (e.kind === 'unauthenticated') setSignedOut(true);
+      else setList({ status: 'error', error: e });
+    }
+    loading.current = false;
+  }, []);
 
-  const navigate = useCallback(
-    (next: Partial<View>) => router.replace(`/notifications${viewSearch({ ...viewRef.current, ...next })}`, { scroll: false }),
-    [router],
-  );
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void load();
+  }, [load]);
 
-  /** Page 1 of a view. A response for an older view is ignored. */
-  const load = useCallback(
-    async (v: View) => {
-      const mine = ++seq.current;
-      setList({ status: 'loading' });
-      setMore('idle');
-      try {
-        const data = await fetchPage(v);
-        if (mine !== seq.current) return;
-        setAsOf(data.as_of);
-        setToolbar(data.total !== undefined);
-        setUnreadCount(data.unread_count);
-        // Without total there is no search or Filter to clear them with, so the filters go and the list is re-read.
-        if (data.total === undefined && isNarrowed(v)) {
-          router.replace('/notifications', { scroll: false });
-          return;
-        }
-        setList({ status: 'ready', items: data.items, nextCursor: data.next_cursor, total: data.total, now: Date.now() });
-      } catch (error) {
-        if (mine !== seq.current) return;
-        const e = asApiError(error);
-        if (e.kind === 'unauthenticated') setSignedOut(true);
-        else setList({ status: 'error', error: e });
-      }
-    },
-    [router],
-  );
-
-  const showMore = async (limit: PageSize) => {
-    if (list.status !== 'ready' || !list.nextCursor || more === 'loading') return;
-    const mine = seq.current;
+  const showMore = async () => {
+    if (list.status !== 'ready' || list.nextPage === null || more === 'loading') return;
     setMore('loading');
     try {
-      const data = await fetchPage(view, list.nextCursor, limit);
-      if (mine !== seq.current) return;
+      const data = await fetchPage(list.nextPage);
       setAsOf(data.as_of);
-      setUnreadCount(data.unread_count);
-      setList((prev) => (prev.status !== 'ready' ? prev : { ...prev, items: [...prev.items, ...data.items], nextCursor: data.next_cursor, total: data.total }));
+      setList((prev) => {
+        if (prev.status !== 'ready') return prev;
+        const seen = new Set(prev.items.map((alert) => alert.id));
+        return { ...prev, items: [...prev.items, ...data.items.filter((alert) => !seen.has(alert.id))], nextPage: data.next_page ?? null };
+      });
       setMore('idle');
     } catch (error) {
-      if (mine !== seq.current) return;
       if (asApiError(error).kind === 'unauthenticated') setSignedOut(true);
       else setMore('error');
     }
   };
 
-  useEffect(() => {
-    viewRef.current = view;
-    // A new search or filter reloads from page 1.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void load(view);
-  }, [view, load]);
-
-  // Search: the box keeps what the person typed; the URL takes the settled search (two characters or more, or none).
-  const [text, setText] = useState(view.q ?? '');
-  const [syncedQ, setSyncedQ] = useState(view.q);
-  if (view.q !== syncedQ) {
-    setSyncedQ(view.q);
-    if ((text.trim() || undefined) !== view.q) setText(view.q ?? '');
-  }
-  const applySearch = (value: string) => {
-    const q = value.trim() || undefined;
-    if (q !== viewRef.current.q) navigate({ q });
-  };
-  const onSearchSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    applySearch(text);
-  };
-
-  const closeFilter = useCallback(() => {
-    setFilterOpen(false);
-  }, []);
-  const applyFilters = (filters: AlertFilters) => {
-    closeFilter();
-    navigate({ agent: filters.agent, unread: filters.unread });
-  };
-
-  const listReady = list.status === 'ready' ? list : undefined;
-  const { rows, paging } = usePagedRows({
-    items: listReady?.items ?? [],
-    next: Boolean(listReady?.nextCursor),
-    busy: more === 'loading',
-    failed: more === 'error',
-    loadMore: (limit) => void showMore(limit),
-    resetKey: `${view.q ?? ''}|${view.agent ?? ''}|${view.unread ?? ''}`,
-    total: listReady?.total,
+  const actions = useAlertActions({
+    onRead: (alert) =>
+      setList((prev) =>
+        prev.status !== 'ready'
+          ? prev
+          : { ...prev, unread: Math.max(0, prev.unread - 1), items: prev.items.map((item) => (item.id === alert.id ? { ...item, read: true } : item)) },
+      ),
+    onGone: () => void load(),
+    onSignedOut: () => setSignedOut(true),
   });
 
-  const openAlert = useOpenAlert();
+  if (signedOut) return <SignedOutState pathname="/notifications" />;
 
-  if (signedOut) return <SignedOutState pathname={`/notifications${search ? `?${search}` : ''}`} />;
-
-  const count = list.status === 'ready' ? countLine(list.total) : undefined;
-  const facets = filterCount(view);
-  const filterPanel = (
-    <AlertsFilterPanel applied={{ agent: view.agent, unread: view.unread }} unreadCount={unreadCount} onApply={applyFilters} onClose={closeFilter} />
-  );
   const settingsLink = (
     <Link href="/settings/alerts" className="cmp-target">
       Alert settings
@@ -168,36 +103,38 @@ function Notifications() {
       </div>
     );
   } else if (list.status === 'error') {
-    body = <AlertsLoadError error={list.error} asOf={asOf} onRetry={() => void load(view)} />;
-  } else if (list.items.length === 0 && isNarrowed(view)) {
-    body = (
-      <EmptyState
-        title="No alerts match"
-        action={
-          <Button kind="secondary" onClick={() => navigate({ q: undefined, agent: undefined, unread: undefined })}>
-            Clear search and filters
-          </Button>
-        }
-      >
-        Nothing fits this search and these filters.
-      </EmptyState>
-    );
-  } else if (list.items.length === 0) {
-    body = (
-      <EmptyState title="No alerts yet.">Alerts for your work will appear here.</EmptyState>
-    );
+    body = <AlertsLoadError error={list.error} asOf={asOf} onRetry={() => void load()} />;
   } else {
-    const { now } = list;
+    const { items, now, unread, nextPage } = list;
+    const summary = summaryLine(list.summary);
+    const rows = { now, onOpen: actions.open, onMark: (alert: Alert) => void actions.markRead(alert), notices: actions.notices };
     body = (
       <>
-        <div className="alerts-listwrap">
-          <ul aria-label="Alerts" className="alerts-list">
-            {rows.map((alert) => (
-              <AlertRow key={alert.id} alert={alert} now={now} onOpen={openAlert} />
-            ))}
-          </ul>
-          <ShowMore {...paging} />
-        </div>
+        {summary && <p className="alerts-summary">{summary}</p>}
+        {items.length === 0 ? (
+          <EmptyState title="No alerts">Alerts for your work will appear here.</EmptyState>
+        ) : (
+          <>
+            <Group id="need" title="Needs you" items={items.filter(needsYou)} primary {...rows} />
+            <Group id="info" title="For information" items={items.filter((alert) => !needsYou(alert))} {...rows} />
+            <p className="alerts-asof">
+              {asOf && `As of ${formatTime(asOf)}. `}
+              {loadedLine(items.length, unread)}.
+            </p>
+          </>
+        )}
+        {more === 'error' && (
+          <p className="alerts-rownote" role="status">
+            Couldn’t load more alerts. Try again.
+          </p>
+        )}
+        {nextPage !== null && (
+          <div className="alerts-more">
+            <Button kind="secondary" busy={more === 'loading'} busyLabel="Loading…" onClick={() => void showMore()}>
+              {more === 'error' ? 'Try again' : 'Load more'}
+            </Button>
+          </div>
+        )}
       </>
     );
   }
@@ -219,42 +156,66 @@ function Notifications() {
         )}
       </div>
 
-      {toolbar && (
-        <form role="search" onSubmit={onSearchSubmit}>
-          <ListToolbar
-            search={{ label: 'Search', placeholder: 'Search notifications', value: text, onChange: setText, onSearch: applySearch }}
-            filterCount={facets}
-            filterOpen={filterOpen}
-            onFilterToggle={() => (filterOpen ? closeFilter() : setFilterOpen(true))}
-            filterPanel={filterPanel}
-            resultText={count ?? ''}
-          />
-          {!phone && count && unreadCount !== undefined && <VisuallyHidden>, {unreadCount} unread</VisuallyHidden>}
-        </form>
-      )}
-
       {body}
       {phone && settingsLink}
     </div>
   );
 }
 
-type RowProps = { alert: Alert; now: number; onOpen: OpenAlert };
+type GroupProps = { id: string; title: string; items: Alert[]; primary?: boolean; now: number; onOpen: OpenAlert; onMark: (alert: Alert) => void; notices: Record<string, RowNotice> };
 
-/** One alert: avatar, text over the meta line, NEW while unread. The whole row is one link to its work. */
-function AlertRow({ alert, now, onOpen }: RowProps) {
-  const unread = alert.read === false;
+/** A group heading with its loaded count over its rows; an empty group is not drawn. */
+function Group({ id, title, items, primary, now, onOpen, onMark, notices }: GroupProps) {
+  if (items.length === 0) return null;
+  return (
+    <section aria-labelledby={`alerts-page-${id}`} className="alerts-listwrap">
+      <h2 id={`alerts-page-${id}`} className={`alerts-grp alerts-grp--page${primary ? ' alerts-grp--need' : ''}`}>
+        <span>{title}</span>
+        <span>
+          <VisuallyHidden>, </VisuallyHidden>
+          {items.length}
+        </span>
+      </h2>
+      <ul aria-label={title} className="alerts-list">
+        {items.map((alert) => (
+          <AlertRow key={alert.id} alert={alert} now={now} onOpen={onOpen} onMark={onMark} notice={notices[alert.id]} />
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+type RowProps = { alert: Alert; now: number; onOpen: OpenAlert; onMark: (alert: Alert) => void; notice?: RowNotice };
+
+/** One alert: avatar, title over subject and meta, NEW while unread. A row with a link is one link to it. */
+function AlertRow({ alert, now, onOpen, onMark, notice }: RowProps) {
+  const unread = !alert.read;
+  const href = alertHref(alert);
+  const content = (
+    <>
+      <AlertAvatar agent={alert.agent} />
+      <AlertBody alert={alert} now={now} />
+      {unread && (
+        <Tag tone="neutral" className="alerts-new">
+          <VisuallyHidden>, </VisuallyHidden>NEW
+        </Tag>
+      )}
+    </>
+  );
   return (
     <li className={unread ? 'alerts-row alerts-row--unread' : 'alerts-row'}>
-      <NextLink href={workHref(alert)} className="alerts-link" onClick={(event) => onOpen(event, alert)}>
-        <AlertAvatar agent={alert.agent} />
-        <AlertBody alert={alert} now={now} />
-        {unread && (
-          <Tag tone="neutral" className="alerts-new">
-            <VisuallyHidden>, </VisuallyHidden>NEW
-          </Tag>
-        )}
-      </NextLink>
+      {href ? (
+        <NextLink href={href} className="alerts-link" onClick={(event) => void onOpen(event, alert)}>
+          {content}
+        </NextLink>
+      ) : (
+        <div className="alerts-link alerts-link--plain">{content}</div>
+      )}
+      {(notice || (unread && !href)) && (
+        <div className="alerts-rowtail">
+          <RowTail alert={alert} notice={notice} onMark={onMark} />
+        </div>
+      )}
     </li>
   );
 }
