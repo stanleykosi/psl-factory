@@ -536,3 +536,13 @@ Changes for the lanes:
 
 ## D-200 (24 Nov 2026): after a main sync, base_sha moves to the merged main commit
 F-71's ci gate failed although GitHub's run passed. The tool flagged `delivery/checks.sh` as a protected path changed since `base_sha`, but that change came in through main's #107 merge, not from F-71. The coordinator's rule (engineering, factual): when a feature branch merges `origin/main`, its `git.base_sha` is set to that main commit (the merge base). The protected-path check then sees only the feature's own changes. Before moving it, the lane confirms with `git diff --name-only $(git merge-base HEAD origin/main) HEAD` that the feature itself touches no protected path. F-71 now has base 8692cf87, and its own diff touches no protected path.
+
+## D-201 (24 Nov 2026): demo path first for the CEO meeting on 25 Nov
+Asked whether everything can be connected today, the design engineer chose "Demo path first", shown on "My laptop (local)". Until the meeting, the four lanes work the demo path in this order and park the rest. The rest is the Finance back-office lines: payroll, management accounts, assets, income schedules, ledger sources, BU totals, month-end. It also covers the sign-in extras F-59 and F-60, plus Setup, staff accounts and the later delivery lines.
+- **Lane A:** F-64 decision desk, F-61 alerts, F-63 My work queue, F-65 factory floor, F-68 fixtures (build green), F-67 role words.
+- **Lane B:** F-71 Money and Milestones, F-78 mark a milestone complete, F-75 Registers and Actions tabs, F-73 clients.
+- **Lane C:** F-87 work item actions, F-88 RFP intake, F-91 station track and six facts, F-89 weekly report correction, F-90 invoice release (its merge still needs the design engineer's approval).
+- **Lane D:** finish F-119 retrospective, F-111 issues and F-103 cash forecast. Then F-115 hypercare and F-117 handover, which lead on from the delivery overview.
+- **Coordinator:** a separate local demo database (`psl_demo`) seeded with the backend's own demo seed commands. Django serves it on 127.0.0.1:8040, and a second app preview (`app-live`) points `API_ORIGIN` at it. The design engineer's mock app on port 3000 stays as it is.
+
+Review rules (D-180), approvals and money and sign-in merges are unchanged.
