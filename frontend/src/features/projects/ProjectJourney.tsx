@@ -156,7 +156,7 @@ export function ProjectTabBody() {
   return tab === 'journey' ? (
     <JourneyTab journey={journey} more={more} showMore={showMore} />
   ) : tab === 'delivery' ? (
-    <DeliveryTab />
+    <DeliveryTab caseId={journey.case_id} />
   ) : hasTabContent(tab) ? (
     <ProjectTabContent caseId={journey.case_id} journey={journey} base={base} tab={tab} />
   ) : (
