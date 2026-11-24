@@ -114,6 +114,8 @@ PR bodies and commits must have **no AI co-author and no "Generated with" footer
 - **Lane C** (work item, PMO lines): F-95 first, because lane D waits on its frame seams. Then F-89, F-90, F-92, F-93, F-94.
 - **Lane D** (Finance and delivery): F-115 and F-117 after F-87. Then F-111B, F-112, F-112B, F-113B, F-114, F-114B, F-116 and F-118, and the Finance back office: F-100 to F-102B, F-103B, F-104 to F-110B.
 
+**Check first:** at handover, F-78's round-3 builder in `/Users/Hunchoo/psl-factory-worktrees/lane-b` may have left uncommitted changes (the UI-2-1 header-colour fix), and F-91's builder in `lane-c2` may still have been running a test. Run `git status` in both before you do anything there.
+
 ## 8. Open items with the backend developer
 
 `/Users/Hunchoo/psl-factory/delivery/connect/note-to-backend-demo-seed.md` is a note for the design engineer to send to Stanley. It covers:
