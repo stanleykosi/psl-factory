@@ -57,17 +57,10 @@
       "approved_by": "builder proposal, pending design engineer"
     },
     {
-      "role": "text",
-      "name": "BLOCKS",
-      "category": "lane C frame",
-      "reason": "The board draws Blocks as a highlighted cell in a strip; the shared facts list draws it as a plain row with the other facts (text only, no link).",
-      "approved_by": "builder proposal, pending design engineer"
-    },
-    {
       "role": "complementary",
-      "name": "(side panel)",
+      "name": "",
       "category": "lane C frame",
-      "reason": "The frame draws its own signed-in persona and header; the board's side panel holds the hidden write forms (below).",
+      "reason": "The frame draws its own signed-in persona and header; the board's side panel holds the hidden write forms (below). (Entry name is \"\", the tool's key for the unnamed side panel; UI-2-1.)",
       "approved_by": "builder proposal, pending design engineer"
     },
     {
@@ -397,6 +390,13 @@
       "name": "Updates recorded. Closing the issue is separate.",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "NEXT",
+      "category": "lane C frame",
+      "reason": "SCR-30 no-owner desktop draws a NEXT card heading; the frame prints the work item's own next-step line instead. Accepted for the demo under D-202 (frame next step), replaced by F-95 (UI-2-2).",
       "approved_by": "builder proposal, pending design engineer"
     }
   ]

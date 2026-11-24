@@ -1,0 +1,318 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T14:39:44.314Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-30-mobile-verified.dc.html",
+  "boardName": "SCR-30-mobile-verified.dc.html",
+  "pageUrl": "http://127.0.0.1:4998/work/5104",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-111/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 76.8 is below 90."
+  ],
+  "scores": {
+    "coverage": 40,
+    "coverageWithExceptions": 100,
+    "visual": 76.8
+  },
+  "visual": {
+    "score": 76.8,
+    "allCellsScore": 82.6,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 997,
+    "cell": 12,
+    "contentCells": 1754,
+    "mismatchedCells": 407
+  },
+  "coverage": {
+    "total": 5,
+    "found": 2,
+    "coverage": 40,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Follow-up verified",
+        "pageName": "Login fails on older Android phones",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Follow-up verified\" on the board, \"Login fails on older Android phones\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Project",
+        "key": "link: ← Project",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 64,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "key": "text: DONE",
+        "container": "page",
+        "boardBox": {
+          "x": 253,
+          "y": 21,
+          "w": 29,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Spec Question 1 Option A: the tag shows the live words (Open, In Progress, Resolved, Closed); the other words are banners and the work-state tag.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updates recorded. Closing the issue is separate.",
+        "key": "text: Updates recorded. Closing the issue is separate.",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 114,
+          "w": 301,
+          "h": 21
+        },
+        "exception": {
+          "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 73,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 161,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Overview",
+        "container": "tablist",
+        "pageBox": {
+          "x": 18,
+          "y": 163,
+          "w": 178,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "History",
+        "container": "tablist",
+        "pageBox": {
+          "x": 196,
+          "y": 163,
+          "w": 178,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verified",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 218,
+          "w": 48,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "With Tunde Bello",
+        "container": "main",
+        "pageBox": {
+          "x": 76,
+          "y": 218,
+          "w": 107,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 23 Nov 10:00",
+        "container": "main",
+        "pageBox": {
+          "x": 195,
+          "y": 218,
+          "w": 143,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "23 Nov 10:00",
+        "container": "main",
+        "pageBox": {
+          "x": 252,
+          "y": 218,
+          "w": 86,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next step. Nothing more to do.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 258,
+          "w": 194,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next step.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 259,
+          "w": 66,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The fix was confirmed by Engineering on 22 Nov.",
+        "container": "main",
+        "pageBox": {
+          "x": 56,
+          "y": 311,
+          "w": 304,
+          "h": 21
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

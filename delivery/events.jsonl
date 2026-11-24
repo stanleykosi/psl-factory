@@ -5039,3 +5039,5 @@
 {"at":"2026-11-24T14:41:50Z","feature":"F-61","round":1,"kind":"transition","head":"dab5f0182506","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
 {"at":"2026-11-24T14:42:18Z","feature":"F-63","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
 {"at":"2026-11-24T14:42:20Z","feature":"F-65","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-24T14:43:08Z","feature":"F-87","round":3,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"9f9dc026b5e6","written_at":"2026-11-24T14:42:57Z"}
+{"at":"2026-11-24T14:43:08Z","feature":"F-87","round":3,"kind":"transition","head":"9f9dc026b5e6","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}

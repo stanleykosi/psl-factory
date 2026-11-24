@@ -1,0 +1,348 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T14:39:33.682Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-30-mobile-no-owner.dc.html",
+  "boardName": "SCR-30-mobile-no-owner.dc.html",
+  "pageUrl": "http://127.0.0.1:4998/work/5103",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-111/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 75.1 is below 90."
+  ],
+  "scores": {
+    "coverage": 33.3,
+    "coverageWithExceptions": 100,
+    "visual": 75.1
+  },
+  "visual": {
+    "score": 75.1,
+    "allCellsScore": 75.3,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 861,
+    "cell": 12,
+    "contentCells": 2322,
+    "mismatchedCells": 579
+  },
+  "coverage": {
+    "total": 6,
+    "found": 2,
+    "coverage": 33.3,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Owner needed",
+        "pageName": "Login fails on older Android phones",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Owner needed\" on the board, \"Login fails on older Android phones\" on the page",
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Project",
+        "key": "link: ← Project",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 66,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0240",
+        "key": "text: ISS-0240",
+        "container": "page",
+        "boardBox": {
+          "x": 223,
+          "y": 21,
+          "w": 58,
+          "h": 14
+        },
+        "exception": {
+          "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0240 has no owner, so nobody can be chased.",
+        "key": "text: ISS-0240 has no owner, so nobody can be chased.",
+        "container": "page",
+        "boardBox": {
+          "x": 56,
+          "y": 114,
+          "w": 306,
+          "h": 42
+        },
+        "exception": {
+          "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Set an owner",
+        "key": "link: Set an owner",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 71,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 161,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Overview",
+        "container": "tablist",
+        "pageBox": {
+          "x": 18,
+          "y": 163,
+          "w": 178,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "History",
+        "container": "tablist",
+        "pageBox": {
+          "x": 196,
+          "y": 163,
+          "w": 178,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 218,
+          "w": 47,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 23 Nov 10:00",
+        "container": "main",
+        "pageBox": {
+          "x": 75,
+          "y": 218,
+          "w": 143,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "23 Nov 10:00",
+        "container": "main",
+        "pageBox": {
+          "x": 132,
+          "y": 218,
+          "w": 86,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next step. Wait for the owner to update the issue.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 258,
+          "w": 312,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next step.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 259,
+          "w": 66,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "This issue has no owner. Choose an owner for this issue.",
+        "container": "main",
+        "pageBox": {
+          "x": 56,
+          "y": 311,
+          "w": 306,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "WHAT HAS HAPPENED",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 599,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "CHASING",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 760,
+          "w": 354,
+          "h": 37
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: Google Fonts could not be reached (fonts.googleapis.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

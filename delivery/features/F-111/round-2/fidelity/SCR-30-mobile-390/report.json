@@ -1,0 +1,575 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T14:39:07.062Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-30-mobile.dc.html",
+  "boardName": "SCR-30-mobile.dc.html",
+  "pageUrl": "http://127.0.0.1:4998/work/5101",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-111/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 76.5 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 17.6,
+    "coverageWithExceptions": 100,
+    "visual": 76.5
+  },
+  "visual": {
+    "score": 76.5,
+    "allCellsScore": 77.2,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 1194,
+    "cell": 12,
+    "contentCells": 2217,
+    "mismatchedCells": 520
+  },
+  "coverage": {
+    "total": 17,
+    "found": 3,
+    "coverage": 17.6,
+    "matched": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "ISS-0233",
+        "pageName": "ISS-0233",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #4A5357 on the page"
+        ],
+        "boardBox": {
+          "x": 223,
+          "y": 21,
+          "w": 58,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 300,
+          "y": 315,
+          "w": 58,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 292,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Login fails on older Android phones",
+        "pageName": "Login fails on older Android phones",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 20px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 22
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Registers",
+        "key": "link: ← Registers",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "■■■HIGH",
+        "key": "text: ■■■HIGH",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 104,
+          "w": 72,
+          "h": 21
+        },
+        "exception": {
+          "reason": "The board draws a bar glyph beside High; the page draws the live severity word in a tag (spec mapping: severity as sent, no glyph).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "■■■",
+        "key": "text: ■■■",
+        "container": "page",
+        "boardBox": {
+          "x": 24,
+          "y": 108,
+          "w": 19,
+          "h": 14
+        },
+        "exception": {
+          "reason": "The board draws a bar glyph beside High; the page draws the live severity word in a tag (spec mapping: severity as sent, no glyph).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FIX IN TESTING",
+        "key": "text: FIX IN TESTING",
+        "container": "page",
+        "boardBox": {
+          "x": 94,
+          "y": 104,
+          "w": 107,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Spec Question 1 Option A: the tag shows the live words (Open, In Progress, Resolved, Closed); the other words are banners and the work-state tag.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "11 Nov 16:40",
+        "key": "text: 11 Nov 16:40",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 151,
+          "w": 330,
+          "h": 13
+        },
+        "exception": {
+          "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Owner update",
+        "key": "text: Owner update",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 170,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Fix is in testing on 3 older Android models.",
+        "key": "text: Fix is in testing on 3 older Android models.",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 193,
+          "w": 330,
+          "h": 16
+        },
+        "exception": {
+          "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "10 Nov 09:15",
+        "key": "text: 10 Nov 09:15",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 249,
+          "w": 330,
+          "h": 13
+        },
+        "exception": {
+          "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Owner acknowledged",
+        "key": "text: Owner acknowledged",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 268,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Engineering (recorded by PM) took it.",
+        "key": "text: Engineering (recorded by PM) took it.",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 291,
+          "w": 330,
+          "h": 16
+        },
+        "exception": {
+          "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "09 Nov 18:02",
+        "key": "text: 09 Nov 18:02",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 347,
+          "w": 330,
+          "h": 13
+        },
+        "exception": {
+          "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola investigated",
+        "key": "text: Tola investigated",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 366,
+          "w": 330,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Tola's note and steps have no live source (DC-3, D-182, D-185); the spec hides them.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Found 14 failed logins, all Android 9 or older, since release 1.4.",
+        "key": "text: Found 14 failed logins, all Android 9 or older, since release 1.4.",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 389,
+          "w": 330,
+          "h": 32
+        },
+        "exception": {
+          "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Post an update",
+        "key": "link: Post an update",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"ISS-0233\"",
+        "kind": "Text",
+        "name": "ISS-0233",
+        "boardBox": {
+          "x": 223,
+          "y": 21,
+          "w": 58,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 300,
+          "y": 315,
+          "w": 58,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes first; on the page it comes after Heading \"Login fails on older Android phones\"",
+          "across the page: right on the board (65% across), right on the page (84% across)"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 127,
+          "w": 71,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 161,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Overview",
+        "container": "tablist",
+        "pageBox": {
+          "x": 18,
+          "y": 163,
+          "w": 178,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "History",
+        "container": "tablist",
+        "pageBox": {
+          "x": 196,
+          "y": 163,
+          "w": 178,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Waiting",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 218,
+          "w": 47,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "With Tunde Bello",
+        "container": "main",
+        "pageBox": {
+          "x": 75,
+          "y": 218,
+          "w": 107,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 23 Nov 10:00",
+        "container": "main",
+        "pageBox": {
+          "x": 194,
+          "y": 218,
+          "w": 143,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "23 Nov 10:00",
+        "container": "main",
+        "pageBox": {
+          "x": 251,
+          "y": 218,
+          "w": 86,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next step. Wait for the owner to update the issue.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 258,
+          "w": 312,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next step.",
+        "container": "main",
+        "pageBox": {
+          "x": 28,
+          "y": 259,
+          "w": 66,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "WHAT HAS HAPPENED",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 605,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "CHASING",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 889,
+          "w": 354,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "heading",
+        "name": "NEXT",
+        "container": "main",
+        "pageBox": {
+          "x": 18,
+          "y": 1093,
+          "w": 354,
+          "h": 37
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: Google Fonts could not be reached (fonts.googleapis.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
