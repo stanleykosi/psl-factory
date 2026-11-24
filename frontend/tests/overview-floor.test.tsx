@@ -51,9 +51,11 @@ beforeEach(() => {
   }));
   vi.stubGlobal(
     'fetch',
-    vi.fn(async (request: Request) =>
-      new URL(request.url).pathname === '/api/v1/me' ? json(200, read('me.finance_lead.json')) : json(200, read('E-OVERVIEW.json')),
-    ),
+    vi.fn(async (request: Request) => {
+      const path = new URL(request.url).pathname;
+      if (path === '/api/v1/me') return json(200, read('me.finance_lead.json'));
+      return json(200, read(path === '/api/v1/overview' ? 'floor/overview.json' : 'floor/counts.json'));
+    }),
   );
 });
 afterEach(() => vi.unstubAllGlobals());
@@ -73,6 +75,8 @@ async function until(check: () => void, tries = 100) {
 }
 
 const radio = (name: string) => screen.getByRole('radio', { name });
+// 3 floors and 5 lines
+const FLOORS_AND_LINES = 8;
 const flatRows = () => document.querySelectorAll('section[aria-label="Lines"] .overview__row');
 
 async function open() {
@@ -90,10 +94,10 @@ describe('the 3D floor loads only when chosen', () => {
     expect(floor.loaded).toBe(false);
     fireEvent.click(radio('3D floor'));
     expect(radio('3D floor').getAttribute('aria-checked')).toBe('true');
-    await until(() => expect(screen.getByRole('img', { name: /^3D factory floor: 8 lines/ })).toBeTruthy());
+    await until(() => expect(screen.getByRole('img', { name: /^3D factory floor: 5 lines/ })).toBeTruthy());
     expect(floor.loaded).toBe(true);
-    expect(screen.getByRole('img', { name: /^3D factory floor/ }).getAttribute('aria-label')).toBe('3D factory floor: 8 lines. The same figures are listed in the flat view below.');
-    expect(flatRows()).toHaveLength(8);
+    expect(screen.getByRole('img', { name: /^3D factory floor/ }).getAttribute('aria-label')).toBe('3D factory floor: 5 lines. The same figures are listed in the flat view below.');
+    expect(flatRows()).toHaveLength(FLOORS_AND_LINES);
     expect(flatRows()[0].closest('.cmp-sr')).not.toBeNull();
     expect(document.querySelectorAll('dl.overview__totals > div')).toHaveLength(4);
     expect(screen.getByRole('link', { name: 'See all exceptions' })).toBeTruthy();
@@ -135,7 +139,7 @@ describe('the 3D floor loads only when chosen', () => {
     expect(screen.getByText('We couldn’t show the 3D floor, so it’s shown flat.').closest('.psl-callout--warning')).not.toBeNull();
     expect(screen.queryByRole('img', { name: /^3D factory floor/ })).toBeNull();
     expect(screen.queryByRole('radiogroup', { name: 'View' })).toBeNull();
-    expect(flatRows()).toHaveLength(8);
+    expect(flatRows()).toHaveLength(FLOORS_AND_LINES);
     expect(flatRows()[0].closest('.cmp-sr')).toBeNull();
   });
 });

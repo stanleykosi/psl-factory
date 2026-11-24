@@ -13,7 +13,7 @@
 // <id>.<verdict>.json (the decided item) as an in-memory override; POST /__mock/reset clears the overrides.
 // Projects: E-PROJECTS and E-PROJECT answer from projects.mjs in the live shape (persona rows, status, q, cursor, page; UUID ids, P-nnnn accepted too; P-0099 is the no-access id).
 // Project tabs (F-25): E-PROJECT-TAB answers from project-tabs.mjs (milestones, registers, actions; documents 501; money goes to money.mjs, F-26).
-// Overview: E-OVERVIEW serves fixtures/overview/<v>.json when cookie psl_mock_overview names a variant.
+// Overview: the live GET /overview and GET /work/counts (overview.mjs) serve a variant when cookie psl_mock_overview names one.
 // Alerts (F-12): the four alert operations go to alerts.mjs; as typed by the v7 contract.
 // Assistant (F-24): the five assistant operations go to assistant.mjs, which also recognises a draft's E-WORK-START.
 // Delegation (F-27): E-DELEGATIONS and E-DELEGATION go to delegations.mjs (scenario and save cookies, overlay proposals).
@@ -38,8 +38,7 @@ import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
 import { monthEnd } from './finance.mjs';
 import { invoices } from './invoices.mjs';
-import { overview } from './overview.mjs';
-import { STATION_ITEMS_PATH, stationItems, withDemoRuns } from './station-items.mjs';
+import { COUNTS_PATH, floorRead, OVERVIEW_PATH } from './overview.mjs';
 import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { createLineRuns } from './line-runs.mjs';
@@ -59,7 +58,7 @@ import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog,
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-OVERVIEW', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-PROJECT-TAB', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DELEGATIONS', 'E-DELEGATION', 'E-INVOICES', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS, 'E-DOCUMENT'];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-NOTIFICATIONS', 'E-NOTIFICATION-READ', 'E-ALERT-PREFS-READ', 'E-ALERT-PREFS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-PROJECT-TAB', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DELEGATIONS', 'E-DELEGATION', 'E-INVOICES', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS, 'E-DOCUMENT'];
 export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin', 'pmo_lead', 'hr', 'hr_lead'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
@@ -339,12 +338,12 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         res.writeHead(200, { 'Content-Type': file.type, 'Cache-Control': 'no-store' });
         return res.end(file.bytes);
       }
-      // D-162 (proposal G-OVERVIEW-STATION, not in v7): the work at one station of the factory floor.
-      if (method === 'get' && url.pathname === STATION_ITEMS_PATH) {
+      // F-65 (API 1.24.0, not in v7): the factory floor's two reads (overview.mjs).
+      if (method === 'get' && (url.pathname === OVERVIEW_PATH || url.pathname === COUNTS_PATH)) {
         const cookies = parseCookies(req.headers.cookie);
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
         if (scenario && SCENARIO_BODIES[scenario]) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
-        return send(res, ...stationItems({ url, cookies, floorRuns: demoOn(cookies) ? runs.floor() : [] }));
+        return send(res, ...floorRead({ pathname: url.pathname, cookies }));
       }
       // Live session reads and writes (session.mjs): not in v7. Reads need no token; sign-in and sign-out check it.
       if (url.pathname === SESSION_PATH || url.pathname === LOGOUT_PATH || url.pathname === ROLE_DASHBOARD_PATH || url.pathname === ONBOARDING_PATH) {
@@ -450,7 +449,6 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const reply = startWork.handle(route.operationId, { url, raw, persona, cookies });
         return send(res, ...(demo && route.operationId === 'E-WORK-START' ? demoStart(runs, reply, raw, persona, startWork.clientLabel) : reply));
       }
-      if (route.operationId === 'E-OVERVIEW') { const r = overview({ cookies }); return send(res, r.status, demo ? withDemoRuns(r.body, runs.floor()) : r.body); }
       // F-29: the statement of work D-2901 (documents.mjs); every other document falls through to F-23's rule below.
       if (route.operationId === 'E-DOCUMENT') { const r = documentRead({ url, persona, cookies, work, overrides }); if (r) return send(res, r.status, r.body); }
       // F-23: the one document the minutes fixtures name (D-2304 v1); any other document stays unmocked, as before.

@@ -143,12 +143,13 @@ describe('ceo projects', () => {
 });
 
 describe('ceo overview', () => {
-  it('is populated: totals, lines with stations, and a note on each line', async () => {
+  it('is populated: lines with open work, and counts with stations for them', async () => {
     const overview = (await get('/api/v1/overview')).body;
-    expect(Object.values(overview.totals).every((n) => typeof n === 'number')).toBe(true);
-    expect(overview.totals.in_progress).toBeGreaterThan(0);
     expect(overview.lines.length).toBeGreaterThanOrEqual(4);
-    for (const line of overview.lines) expect(line.stations.length, line.line).toBeGreaterThan(0);
+    for (const line of overview.lines) expect(line.total, line.key).toBeGreaterThan(0);
+    const counts = (await get('/api/v1/work/counts')).body;
+    expect(counts.lines.length).toBeGreaterThan(0);
+    for (const line of counts.lines) expect(line.stations.length, line.key).toBe(5);
   });
 });
 

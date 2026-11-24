@@ -1,0 +1,30 @@
+{
+  "as_of": "2026-11-23T09:30:00Z",
+  "lines": [
+    {
+      "key": "commercial/v1",
+      "title": "Costing and commercial submission",
+      "total": 3
+    },
+    {
+      "key": "rfp-response/v1",
+      "title": "RFP response and project handoff",
+      "total": 1
+    },
+    {
+      "key": "pmo-finance/v1",
+      "title": "Invoice preparation and delivery",
+      "total": 4
+    },
+    {
+      "key": "pmo-minutes/v1",
+      "title": "Formal minutes and action handoff",
+      "total": 2
+    },
+    {
+      "key": "future-line/v1",
+      "title": "A line added later",
+      "total": 5
+    }
+  ]
+}
