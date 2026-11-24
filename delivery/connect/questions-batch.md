@@ -692,3 +692,7 @@ Every recommended option is accepted: lane A 1.24.0 questions, B19 to B30, LC-Q1
 ## Answer, LC-Q32 (24 Nov 2026, D-191)
 
 "Person's own time zone (built)": local midnight on the first day to local midnight after the last day, in the browser's time zone; a week that has not ended is refused.
+
+## Answers, batch 4 (24 Nov 2026, D-195)
+
+All recommended options accepted: lane A F-69/F-121/F-122, B32, LC-Q23 to LC-Q31, LD-Q3. LD-Q4: plain forms now, and all part-2 recommendations. F-113: all 26 exceptions and 2 visual waivers signed; AC3 "click the row title"; uncertain stays amber "waiting".
