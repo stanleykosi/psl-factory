@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-75",
   "outcome": "Registers and Actions tabs read the live sectioned project tab",
-  "state": "PR_OPEN",
+  "state": "DONE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -122,7 +122,7 @@
       "status": "passed",
       "reviewer": "technical-reviewer",
       "authority": "technical reviewer (lead)",
-      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
+      "snapshot_ref": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
       "evidence_refs": [
         "delivery/features/F-75/round-2/review-technical.md"
       ]
@@ -131,7 +131,7 @@
       "status": "passed",
       "reviewer": "qa-reviewer",
       "authority": "integrated QA reviewer",
-      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
+      "snapshot_ref": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
       "evidence_refs": [
         "delivery/features/F-75/round-2/review-qa.md"
       ]
@@ -140,7 +140,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "PMO delivery acceptance (delivery only; client/product acceptance, merge and release keep their own authorities)",
-      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
+      "snapshot_ref": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
       "evidence_refs": [
         "delivery/features/F-75/round-2/acceptance-pmo.md"
       ]
@@ -151,7 +151,7 @@
       "status": "passed",
       "reviewer": "design engineer (hunchoweb), recorded by the lane B coordinator; B35 signed by the main coordinator under D-207",
       "authority": "accepted in batch, delegated under D-184 (D-182 \"Hide, accept all recs\", 23 Nov 2026); fidelity sign-offs approved by the coordinator under D-207 (B35, 24 Nov 2026); carried over under D-188/D-193 (sync with main only) from 286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
-      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
+      "snapshot_ref": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
       "evidence_refs": [
         "delivery/features/F-75/round-2/acceptance-product.md"
       ]
@@ -160,7 +160,7 @@
       "status": "passed",
       "reviewer": "ux-reviewer",
       "authority": "UX reviewer",
-      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
+      "snapshot_ref": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
       "evidence_refs": [
         "delivery/features/F-75/round-2/review-ux.md"
       ]
@@ -169,7 +169,7 @@
       "status": "passed",
       "reviewer": "ui-reviewer",
       "authority": "UI design reviewer",
-      "snapshot_ref": "d5c203969d05cdde59c15127792da33cc30d3580",
+      "snapshot_ref": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
       "evidence_refs": [
         "delivery/features/F-75/round-2/review-ui.md"
       ]
@@ -768,9 +768,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -780,18 +780,18 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "eb100065e9af366413e28783654d82280dcf3001",
+    "base_sha": "1e78793f0fdb21e1f3b35f2a82cd2bb8e5b6c373",
     "task_branch": "fe-connect-1-registers-actions-tabs",
-    "head_sha": "d5c203969d05cdde59c15127792da33cc30d3580",
+    "head_sha": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b2",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/118",
     "pr_number": 118,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "ci_status": "passed",
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "0676bf24a54a736c3e7a04d28d891ce87639d5ed",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/project-tabs.spec.ts",
@@ -844,9 +844,14 @@
     "approver_recommendation": null,
     "approver": null,
     "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "27 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is None, not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -928,6 +933,38 @@
       "round": 2,
       "head": "d5c203969d05cdde59c15127792da33cc30d3580",
       "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-24T21:09:26Z",
+      "round": 2,
+      "head": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
+      "reason": "decide: HUMAN_APPROVAL (medium risk, contract-change, 27 files); delegated under D-207"
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-24T21:09:38Z",
+      "round": 2,
+      "head": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
+      "reason": "Approved by the coordinator under D-207 (design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\"); frontend only; all six lenses PASS on a24195b3 (D-193 re-checks); CI PASS"
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-24T21:09:39Z",
+      "round": 2,
+      "head": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
+      "reason": "merged by coordinator as 0676bf24 (#118)"
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-24T21:09:39Z",
+      "round": 2,
+      "head": "a24195b3bd085eb5730a9155bce08b2e22fc9e92",
+      "reason": "on main 0676bf24"
     }
   ],
   "routing": {

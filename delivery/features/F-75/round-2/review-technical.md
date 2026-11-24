@@ -1,7 +1,14 @@
 VERDICT: PASS
-COMMIT: d5c203969d05cdde59c15127792da33cc30d3580
+COMMIT: a24195b3bd085eb5730a9155bce08b2e22fc9e92
 REVIEWER: technical-reviewer
 AUTHORITY: technical reviewer (lead)
+
+## D-193 re-check (a24195b3)
+- Ran `git diff d5c20396 a24195b3 --` over every file F-75 changed under frontend/src (including RegistersTab.tsx, ActionsTab.tsx, useProjectSections.ts, sectionsModel.ts and tabsModel.ts). The diff is empty, so the sync left F-75's code untouched.
+- Main's sync brought in F-111 and F-87: issue follow-up, work-item controls, and workspace command and write-lock hooks. Neither tab imports from workspace, work-item or issue-followup (grep found none).
+- mock/server.mjs now routes issues.mjs first, but ISSUES_PATH only matches work/51xx and projects/{case}/issues/{id}(/messages). It does not match the register or action list reads, so those fall through unchanged.
+- next-config.test.ts keeps both allow-list lines, as the brief says.
+- No behaviour on the Registers or Actions tabs changes. GitHub frontend-checks passed on a24195b3.
 
 ## Summary
 - D-193 pre-merge re-check of the main sync (eb100065 merged into 286b4105, giving d5c20396). The earlier evidence below was gathered on 286b4105 and still stands.

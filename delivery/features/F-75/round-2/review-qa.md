@@ -1,10 +1,11 @@
 VERDICT: PASS
-COMMIT: d5c203969d05cdde59c15127792da33cc30d3580
+COMMIT: a24195b3bd085eb5730a9155bce08b2e22fc9e92
 REVIEWER: qa-reviewer
 AUTHORITY: integrated QA reviewer
 
 ## Summary
-- D-193 pre-merge re-check of the main sync. Head d5c20396 is 286b4105 plus one merge of origin/main eb100065. Evidence below was gathered on 286b4105 and is carried forward by the impact assessment in "D-193 re-check". Ci-mode checks passed on d5c20396 (GitHub Actions run, success, reported by the coordinator; not rerun by me).
+- D-193 re-check on head a24195b3 (merge of origin/main 1e78793f, F-111 and F-87). The sync changes no F-75 tab code, shared tab import or project-tab mock response: the only F-75 files it touches are mock/server.mjs (new issue and work-live hooks that match no project tab path) and tests/next-config.test.ts (one allow-list entry). Verdict PASS carries forward. No servers or suites were run for this re-check.
+- Earlier round evidence (head d5c20396, which had the same F-75 code) is kept below. Frontend-checks passed on a24195b3 (run 45486815610, reported by the coordinator; not rerun by me). Ci-mode checks passed on d5c20396 (GitHub Actions run, success, reported by the coordinator; not rerun by me).
 - MOCK, shared dev server (Next 4970, mock 4971), not touched. `e2e/project-tabs.spec.ts` ran in full through a scratch config with the existing server: 31 passed, 4 failed. All 4 failures are the "exactly one request" checks (registers test line 126 and the error/Try again test line 217, at 1440 and 390). Each received the same URL twice. The same doubling shows on the F-71 tabs (milestones makes 2x money + 2x milestones, money 2x) on first load. That is the `next dev` StrictMode double effect, not an F-75 defect. Not proved under `next start`.
 - The spec's success and failure journeys were walked by hand at 1440 and 390 on the mock (P-0101, P-0102, P-0106, P-0099, P-0103), with 401/403/404/422/500/503 forced by route stubs. All behaved as specified (details below). F-71 Money and Milestones load beside these tabs with no console errors and no sideways scroll, and the e2e milestones cases passed.
 - LIVE (criterion 20), read-only on Django 8010 (started by me, PID 68245, stopped afterwards; 8010 no longer listens): the qa-seed account's registers and actions bodies validate against the 1.24.0 contract schema with Ajv (strict). But the account's only project is empty (all totals 0), so only the empty state is proved live.
@@ -18,6 +19,15 @@ None.
 - UX-1-1 | verified | MOCK, P-0102 Registers, Show more sends one `GET ?page=2`. The button goes. Focus lands on TR "ISS-1026 Android login loop (26)" at 1440 and on the card DIV "ISS-1026" at 390.
 - UX-1-2 | verified | MOCK: the Severity note is shown on Issues only (UX reviewer's check; Changes shows none in my walk).
 - TECH-1-1 | verified | MOCK: after the merge, the Milestones, Money, Registers and Actions tabs load at 1440 and 390 with no page errors and no sideways scroll. The e2e milestones, money and axe cases all pass. `?page=0` and `?page=x` against the mock registers endpoint answer 422 at both sizes.
+
+## D-193 re-check (a24195b3)
+- Range checked: `git diff d5c20396 a24195b3 --stat` is 26 files (2113 insertions, 80 deletions), all of main's F-111 (#116) and F-87 (#113) plus the merge; no backend or contract file.
+- F-75's own frontend files: `git diff --name-only 4a88c26b 286b4105 -- frontend/` gives 89 files. Of these, only two differ between d5c20396 and a24195b3: `frontend/mock/server.mjs` (13 lines) and `frontend/tests/next-config.test.ts` (2 lines). The rest (including RegistersTab.tsx, ActionsTab.tsx, TabParts.tsx, useProjectTab.ts, useProjectSections.ts, sectionsModel.ts, tabsModel.ts, project-tabs.mjs and the project fixtures) have an empty diff.
+- `mock/server.mjs` hunks: an import of issues.mjs; `resetIssues()` in the reset route; a GET hook that calls `issuesRoute` before the other routes; and a `drop` branch inside the work-live path. The hook only fires when `ISSUES_PATH` matches (`/api/v1/work/51nn[/issue-followup]` or `/api/v1/projects/{id}/issues/{n}[/messages]`). `/api/v1/projects/{id}/registers` and `/actions` do not match, so they fall through to `E-PROJECT-TAB` -> `projectTab` (server.mjs:469), which is unchanged. The `drop` branch applies only to `WORK_LIVE_PATH` and `CASE_FILES_PATH`.
+- `tests/next-config.test.ts`: the sync adds the comment text for issues.mjs and the allow-list entry `'issues.mjs'`. F-75's `'project-sections-model.test.ts'` entry is kept and no assertion changed.
+- Shared modules the F-75 tabs import (`@/components`, `@/api/client`, `@/api/errors`, `@/shell/FrameStates`, `@/features/work-item/WorkItemStates`) are untouched by the sync. The sync changes `src/features/workspace/*`, `work-item/live/*`, issue-followup, and the alerts/RFP/start-work code; F-75 tab files import none of them (grep).
+- Not run: no servers, no `npm ci`, no suite, and no single test file. The live Django evidence below is unaffected (no backend file changed).
+- Impact on my lens (Registers and Actions tabs, mock and live journeys): none. PASS.
 
 ## Evidence
 
