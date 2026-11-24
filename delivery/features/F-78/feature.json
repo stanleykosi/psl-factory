@@ -106,6 +106,18 @@
       "at": "2026-11-24T16:23:33Z",
       "seconds": 278.4,
       "evidence_ref": "delivery/features/F-78/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T21:03:22Z",
+      "seconds": 7.6,
+      "evidence_ref": "delivery/features/F-78/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -938,14 +950,42 @@
         "delivery/features/F-78/round-2/review-ux.md"
       ],
       "raised_by": "ux-reviewer",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "ux-reviewer",
           "at": "2026-11-24T19:39:33Z",
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T21:15:07Z",
+          "refs": [
+            "d9f900c2"
+          ],
+          "head": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T21:15:07Z",
+          "refs": [
+            "round-3/review-ux.md"
+          ],
+          "head": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9f900c2"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "round-3/review-ux.md"
       ]
     },
     {
@@ -984,14 +1024,42 @@
         "delivery/features/F-78/round-2/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "ui-reviewer",
           "at": "2026-11-24T19:39:33Z",
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T21:15:07Z",
+          "refs": [
+            "d9f900c2"
+          ],
+          "head": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T21:15:07Z",
+          "refs": [
+            "round-3/review-ui.md"
+          ],
+          "head": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "d9f900c2"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "round-3/review-ui.md"
       ]
     },
     {
@@ -1014,6 +1082,52 @@
           "by": "ui-reviewer",
           "at": "2026-11-24T19:39:33Z",
           "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "A committed e2e spec fails at this head. `frontend/e2e/project-tabs.spec.ts:82` (`milestones: stages from /money, Proof on a linked completion... no completion control`) asserts `getByRole('link', { name: /complete/i })` has count 0. F-78 now shows a \"Mark complete\" link per open stage when `can_complete` is true, so the mock gives 2 links on desktop and phone. Command: `E2E_PORT=4971 MOCK_PORT=4972 npx playwright test e2e/money.spec.ts e2e/project-tabs.spec.ts`. Result: 2 failed (desktop 1440, phone 390), 45 passed. Expected: the spec asserts the F-78 behaviour (links present when allowed, absent under a hold or `norole`). The build.md for round 3 does not mention e2e.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-78/round-3/review-qa.md"
+      ],
+      "raised_by": "qa-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa-reviewer",
+          "at": "2026-11-24T21:14:36Z",
+          "head": "d9f900c2122f048e73d85ec1b4e3daac63125900"
+        }
+      ]
+    },
+    {
+      "id": "QA-3-2",
+      "round": 3,
+      "snapshot_ref": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Live, as `live-multi`, the Milestones tab on project 0d790a54 shows \"We couldn't load the recorded completions\" (`unexpected_response`). `GET /projects/{id}/milestones` returns `sections: []` and `isCompletions` requires exactly one section (`milestonesModel.ts:23`). This is F-71 code. The backend sends no completions section for that role. Decide which side changes. No effect on F-78 behaviour.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-78/round-3/review-qa.md"
+      ],
+      "raised_by": "qa-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa-reviewer",
+          "at": "2026-11-24T21:14:36Z",
+          "head": "d9f900c2122f048e73d85ec1b4e3daac63125900"
         }
       ]
     }
@@ -1146,6 +1260,68 @@
           ]
         }
       }
+    },
+    {
+      "round": 3,
+      "reviews": {
+        "technical": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "integrated_qa": {
+          "status": "changes_requested",
+          "reviewer": "qa-reviewer",
+          "authority": "integrated QA",
+          "snapshot_ref": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+          "evidence_refs": [
+            "delivery/features/F-78/round-3/review-qa.md"
+          ]
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-78/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "ux-reviewer",
+          "authority": "UX reviewer",
+          "snapshot_ref": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+          "evidence_refs": [
+            "delivery/features/F-78/round-3/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "ui-reviewer",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+          "evidence_refs": [
+            "delivery/features/F-78/round-3/review-ui.md"
+          ]
+        },
+        "security": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        }
+      }
     }
   ],
   "run_controls": {
@@ -1170,7 +1346,7 @@
     "base_branch": "main",
     "base_sha": "811465d841db6da9fbbeb6b8953df2816cf62295",
     "task_branch": "fe-milestone-complete-mark-complete",
-    "head_sha": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
+    "head_sha": "d9f900c2122f048e73d85ec1b4e3daac63125900",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b",
     "pr_url": null,
     "pr_number": null,
@@ -1230,7 +1406,7 @@
     }
   },
   "created_at": "2026-11-23T13:22:10Z",
-  "round": 3,
+  "round": 4,
   "round_limit": 5,
   "history": [
     {
@@ -1312,6 +1488,30 @@
       "round": 3,
       "head": "ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T21:14:57Z",
+      "round": 3,
+      "head": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+      "reason": "round 3 gate PASS on d9f900c2"
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T21:15:07Z",
+      "round": 3,
+      "head": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+      "reason": "QA-3-1 blocking (stale e2e assertion); QA-3-2 live empty-sections bug; round 4 fixes both"
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T21:15:14Z",
+      "round": 4,
+      "head": "d9f900c2122f048e73d85ec1b4e3daac63125900",
+      "reason": "round 4: QA-3-1, QA-3-2, confirm UI-1-4"
     }
   ],
   "routing": {
@@ -1328,7 +1528,7 @@
     ]
   },
   "gate": {
-    "round": 3,
+    "round": 4,
     "attempts": 0,
     "verdict": null,
     "commit": null

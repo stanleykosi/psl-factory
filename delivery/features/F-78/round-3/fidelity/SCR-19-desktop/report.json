@@ -1,0 +1,779 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T21:06:36.727Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-worktrees/lane-b/design/canvas/project/SCR-19-desktop.dc.html",
+  "boardName": "SCR-19-desktop.dc.html",
+  "pageUrl": "http://localhost:4970/projects/P-0101/milestones/complete?name=Go-live",
+  "viewport": {
+    "width": 1440,
+    "height": 960
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-78/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 80.9 is below 90.",
+    "2 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 53.6,
+    "coverageWithExceptions": 100,
+    "visual": 80.9
+  },
+  "visual": {
+    "score": 80.9,
+    "allCellsScore": 90.3,
+    "width": 1440,
+    "height": 960,
+    "boardHeight": 960,
+    "pageHeight": 960,
+    "cell": 12,
+    "contentCells": 4858,
+    "mismatchedCells": 928
+  },
+  "coverage": {
+    "total": 28,
+    "found": 15,
+    "coverage": 53.6,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 80,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 516,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 790
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 785
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Mark a milestone complete",
+        "pageName": "Mark a milestone complete",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 1264,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 123,
+          "w": 1264,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MILESTONE 2",
+        "pageName": "Milestone",
+        "pageRole": "text",
+        "similarity": 93,
+        "looks": [
+          "font Archivo on the board, IBM Plex Sans on the page",
+          "weight 800 on the board, 500 on the page",
+          "text colour #FFFFFF on the board, #1F2427 on the page",
+          "capitals on the board, not on the page",
+          "background #1F2427 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 90,
+          "y": 180,
+          "w": 720,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 324,
+          "w": 688,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health · patient app",
+        "pageName": "LAGOON HEALTH · PATIENT APP / MILESTONES",
+        "pageRole": "text",
+        "similarity": 89,
+        "looks": [
+          "font IBM Plex Sans on the board, IBM Plex Mono on the page",
+          "text size 14px on the board, 12px on the page",
+          "text colour #1F2427 on the board, #4A5357 on the page",
+          "capitals on the page, not on the board",
+          "background #FFFFFF on the board, none on the page",
+          "coloured bar under it on the board (#1F2427), none on the page",
+          "outlined on the board, no outline on the page"
+        ],
+        "boardBox": {
+          "x": 106,
+          "y": 260,
+          "w": 688,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Checkbox",
+        "role": "checkbox",
+        "name": "I confirm this milestone is complete as the SOW describes it.",
+        "pageName": "I confirm this milestone is complete as the SOW describes it.",
+        "pageRole": "checkbox",
+        "similarity": 100,
+        "looks": [
+          "background none on the board, #1F2427 on the page",
+          "bar under it on the page (#1F2427), none on the board",
+          "outlined on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 106,
+          "y": 690,
+          "w": 20,
+          "h": 20
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 680,
+          "w": 20,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "I confirm this milestone is complete as the SOW describes it.",
+        "pageName": "I confirm this milestone is complete as the SOW describes it.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 136,
+          "y": 690,
+          "w": 380,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 134,
+          "y": 679,
+          "w": 380,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Mark complete",
+        "pageName": "Mark complete",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 106,
+          "y": 722,
+          "w": 280,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 720,
+          "w": 133,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "WHAT HAPPENS NEXT",
+        "pageName": "WHAT HAPPENS NEXT",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [
+          "bar under it on the page (#2459D6), none on the board"
+        ],
+        "boardBox": {
+          "x": 836,
+          "y": 180,
+          "w": 460,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 832,
+          "y": 184,
+          "w": 416,
+          "h": 43
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "key": "text: Tunde Bello · PMO",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "LAGOON HEALTH / MILESTONES",
+        "key": "text: LAGOON HEALTH / MILESTONES",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Present as the breadcrumb links \"<project name>\" and \"Milestones\" (monospace, blue) from the shared Breadcrumb; the design engineer decides whether the style is an exception.",
+          "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B36 item 2, frame item)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestone 2 · UAT sign-off",
+        "key": "text: Milestone 2 · UAT sign-off",
+        "container": "main",
+        "boardBox": {
+          "x": 106,
+          "y": 344,
+          "w": 688,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Changed: before recording only the name is shown; after the re-read \"Completed <completed_at>\"; no stage number or SOW version (spec Conflicts 4, B32 option 1: \"before recording show only the name; after the re-read show \\\"Completed <completed_at>\\\"\").",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "From the signed SOW v2, stage 2",
+        "key": "text: From the signed SOW v2, stage 2",
+        "container": "main",
+        "boardBox": {
+          "x": 106,
+          "y": 398,
+          "w": 688,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Changed: before recording only the name is shown; after the re-read \"Completed <completed_at>\"; no stage number or SOW version (spec Conflicts 4, B32 option 1: \"before recording show only the name; after the re-read show \\\"Completed <completed_at>\\\"\").",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "11 Nov 2026",
+        "key": "text: 11 Nov 2026",
+        "container": "main",
+        "boardBox": {
+          "x": 106,
+          "y": 451,
+          "w": 688,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Changed: before recording only the name is shown; after the re-read \"Completed <completed_at>\"; no stage number or SOW version (spec Conflicts 4, B32 option 1: \"before recording show only the name; after the re-read show \\\"Completed <completed_at>\\\"\").",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Client UAT sign-off · recorded on REL-0077",
+        "key": "text: Client UAT sign-off · recorded on REL-0077",
+        "container": "main",
+        "boardBox": {
+          "x": 106,
+          "y": 535,
+          "w": 688,
+          "h": 48
+        },
+        "exception": {
+          "reason": "Changed: the board's one fixed evidence row is replaced by the radio list of proofs on record and the private PDF picker (spec Conflicts 2, B32 option 1: \"a radio list of existing proofs by `label`, an optional private PDF zone only when `can_attach_pdf`\").",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Recorded by Tunde Bello on 11 Nov with proof",
+        "key": "text: Recorded by Tunde Bello on 11 Nov with proof",
+        "container": "main",
+        "boardBox": {
+          "x": 106,
+          "y": 589,
+          "w": 688,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Hidden: the recorder name and REL id are not in the options read, the write or the re-read; the page says \"with the proof you chose\" (spec Conflicts 3, B32 option 1: \"show the `label` only … show no recorder name or REL id\").",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "lagoon-uat-signoff.pdf",
+        "key": "text: lagoon-uat-signoff.pdf",
+        "container": "main",
+        "boardBox": {
+          "x": 148,
+          "y": 630,
+          "w": 146,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Changed: the board's one fixed evidence row is replaced by the radio list of proofs on record and the private PDF picker (spec Conflicts 2, B32 option 1: \"a radio list of existing proofs by `label`, an optional private PDF zone only when `can_attach_pdf`\").",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Uploaded · 240 KB",
+        "key": "text: Uploaded · 240 KB",
+        "container": "main",
+        "boardBox": {
+          "x": 148,
+          "y": 650,
+          "w": 101,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Changed: the board's one fixed evidence row is replaced by the radio list of proofs on record and the private PDF picker (spec Conflicts 2, B32 option 1: \"a radio list of existing proofs by `label`, an optional private PDF zone only when `can_attach_pdf`\").",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The milestone is recorded as complete, with your name and the proof.",
+        "key": "text: The milestone is recorded as complete, with your name and the proof.",
+        "container": "main",
+        "boardBox": {
+          "x": 872,
+          "y": 236,
+          "w": 408,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Changed: the board's invoice text (\"Chidi drafts the stage 2 invoice from the SOW terms… Finance reviews it; a Finance Lead approves it…\") claims a draft that D-187 forbids; the page shows the fixed \"What happens next\" wording instead (spec Conflicts with the boards 1, B32 option 1: \"replace with the fixed \\\"What happens next\\\" wording … Completing a milestone is not invoicing it\").",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Chidi drafts the stage 2 invoice from the SOW terms. The amount comes from the contract, not from this form.",
+        "key": "text: Chidi drafts the stage 2 invoice from the SOW terms. The amount comes from the contract, not from this form.",
+        "container": "main",
+        "boardBox": {
+          "x": 872,
+          "y": 284,
+          "w": 408,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Changed: the board's invoice text (\"Chidi drafts the stage 2 invoice from the SOW terms… Finance reviews it; a Finance Lead approves it…\") claims a draft that D-187 forbids; the page shows the fixed \"What happens next\" wording instead (spec Conflicts with the boards 1, B32 option 1: \"replace with the fixed \\\"What happens next\\\" wording … Completing a milestone is not invoicing it\").",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finance reviews it; a Finance Lead approves it before anything goes to the client.",
+        "key": "text: Finance reviews it; a Finance Lead approves it before anything goes to the client.",
+        "container": "main",
+        "boardBox": {
+          "x": 872,
+          "y": 332,
+          "w": 408,
+          "h": 42
+        },
+        "exception": {
+          "reason": "Changed: the board's invoice text (\"Chidi drafts the stage 2 invoice from the SOW terms… Finance reviews it; a Finance Lead approves it…\") claims a draft that D-187 forbids; the page shows the fixed \"What happens next\" wording instead (spec Conflicts with the boards 1, B32 option 1: \"replace with the fixed \\\"What happens next\\\" wording … Completing a milestone is not invoicing it\").",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Completing a milestone is not invoicing it. PMO completes milestones; Finance handles invoices.",
+        "key": "text: Completing a milestone is not invoicing it. PMO completes milestones; Finance handles invoices.",
+        "container": "main",
+        "boardBox": {
+          "x": 852,
+          "y": 386,
+          "w": 428,
+          "h": 34
+        },
+        "exception": {
+          "reason": "Changed: the board's invoice text (\"Chidi drafts the stage 2 invoice from the SOW terms… Finance reviews it; a Finance Lead approves it…\") claims a draft that D-187 forbids; the page shows the fixed \"What happens next\" wording instead (spec Conflicts with the boards 1, B32 option 1: \"replace with the fixed \\\"What happens next\\\" wording … Completing a milestone is not invoicing it\").",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-195/D-202 \"Accept all recs\" (B32 option 1, relayed by the main coordinator)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"MILESTONE 2\"",
+        "kind": "Text",
+        "name": "MILESTONE 2",
+        "boardBox": {
+          "x": 90,
+          "y": 180,
+          "w": 720,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 324,
+          "w": 688,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Heading \"Mark a milestone complete\"; on the page it comes after Pagination \"WHAT HAPPENS NEXT\""
+        ]
+      },
+      {
+        "label": "Text \"Lagoon Health · patient app\"",
+        "kind": "Text",
+        "name": "Lagoon Health · patient app",
+        "boardBox": {
+          "x": 106,
+          "y": 260,
+          "w": 688,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes after Pagination \"WHAT HAPPENS NEXT\"; on the page it comes after Link \"More ways to start\"",
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "container": "navigation",
+        "pageBox": {
+          "x": 602,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 970,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Account menu: Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1018,
+          "y": 19,
+          "w": 161,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "LAGOON HEALTH · PATIENT APP",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 86,
+          "w": 207,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "MILESTONES",
+        "container": "navigation",
+        "pageBox": {
+          "x": 318,
+          "y": 86,
+          "w": 77,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Demo controls",
+        "container": "page",
+        "pageBox": {
+          "x": 1362,
+          "y": 908,
+          "w": 66,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Demo",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1362,
+          "y": 908,
+          "w": 66,
+          "h": 40
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/lane-b/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

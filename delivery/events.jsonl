@@ -5386,3 +5386,13 @@
 {"at":"2026-11-24T21:09:38Z","feature":"F-75","round":2,"kind":"transition","head":"a24195b3bd08","reason":"Approved by the coordinator under D-207 (design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\"); frontend only; all six lenses PASS on a24195b3 (D-193 re-checks); CI PASS","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
 {"at":"2026-11-24T21:09:39Z","feature":"F-75","round":2,"kind":"transition","head":"a24195b3bd08","reason":"merged by coordinator as 0676bf24 (#118)","from":"APPROVED","to":"MERGED"}
 {"at":"2026-11-24T21:09:39Z","feature":"F-75","round":2,"kind":"transition","head":"a24195b3bd08","reason":"on main 0676bf24","from":"MERGED","to":"DONE"}
+{"at":"2026-11-24T21:14:36Z","feature":"F-78","round":3,"kind":"review","role":"integrated_qa","verdict":"CHANGES","reviewer":"qa-reviewer","commit":"d9f900c2122f","findings":{"QA-3-1":"medium","QA-3-2":"low"},"written_at":"2026-11-24T21:14:22Z"}
+{"at":"2026-11-24T21:14:36Z","feature":"F-78","round":3,"kind":"finding","action":"add","finding":"QA-3-1","by":"qa-reviewer","severity":"medium","owner":"frontend","blocking":true,"role":"integrated_qa"}
+{"at":"2026-11-24T21:14:36Z","feature":"F-78","round":3,"kind":"finding","action":"add","finding":"QA-3-2","by":"qa-reviewer","severity":"low","owner":"integration","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T21:14:57Z","feature":"F-78","round":3,"kind":"transition","head":"d9f900c2122f","reason":"round 3 gate PASS on d9f900c2","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-24T21:15:07Z","feature":"F-78","round":3,"kind":"finding","action":"fix","finding":"UI-2-1","by":"builder"}
+{"at":"2026-11-24T21:15:07Z","feature":"F-78","round":3,"kind":"finding","action":"fix","finding":"UX-2-1","by":"builder"}
+{"at":"2026-11-24T21:15:07Z","feature":"F-78","round":3,"kind":"finding","action":"verify","finding":"UI-2-1","by":"reviewer-ui"}
+{"at":"2026-11-24T21:15:07Z","feature":"F-78","round":3,"kind":"finding","action":"verify","finding":"UX-2-1","by":"reviewer-ux"}
+{"at":"2026-11-24T21:15:07Z","feature":"F-78","round":3,"kind":"transition","head":"d9f900c2122f","reason":"QA-3-1 blocking (stale e2e assertion); QA-3-2 live empty-sections bug; round 4 fixes both","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-24T21:15:14Z","feature":"F-78","round":4,"kind":"transition","head":"d9f900c2122f","reason":"round 4: QA-3-1, QA-3-2, confirm UI-1-4","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
