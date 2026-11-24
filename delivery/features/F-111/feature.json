@@ -152,14 +152,28 @@
         "delivery/features/F-111/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T02:05:31Z",
           "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:52:08Z",
+          "refs": [
+            "mock django_url restored, allowlist entry, contract check"
+          ],
+          "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "mock django_url restored, allowlist entry, contract check"
       ]
     },
     {
@@ -221,14 +235,28 @@
         "delivery/features/F-111/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T02:05:31Z",
           "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:52:08Z",
+          "refs": [
+            "planned wording"
+          ],
+          "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "planned wording"
       ]
     },
     {
@@ -244,14 +272,28 @@
         "delivery/features/F-111/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T02:05:31Z",
           "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:52:08Z",
+          "refs": [
+            "`allowedActions()` removed"
+          ],
+          "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "`allowedActions()` removed"
       ]
     },
     {
@@ -313,14 +355,28 @@
         "delivery/features/F-111/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T02:05:31Z",
           "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:52:08Z",
+          "refs": [
+            "same as UI-1-2"
+          ],
+          "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "same as UI-1-2"
       ]
     },
     {
@@ -359,14 +415,28 @@
         "delivery/features/F-111/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T02:05:31Z",
           "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:52:08Z",
+          "refs": [
+            "no-owner sentence shown once on the page's sections"
+          ],
+          "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "no-owner sentence shown once on the page's sections"
       ]
     },
     {
@@ -382,14 +452,28 @@
         "delivery/features/F-111/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T02:05:31Z",
           "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:52:08Z",
+          "refs": [
+            "repeated status word and acknowledgement line dropped"
+          ],
+          "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "repeated status word and acknowledgement line dropped"
       ]
     },
     {
@@ -428,14 +512,28 @@
         "delivery/features/F-111/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T02:05:31Z",
           "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:52:08Z",
+          "refs": [
+            "Blocks moved into the facts"
+          ],
+          "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "Blocks moved into the facts"
       ]
     },
     {
@@ -451,14 +549,28 @@
         "delivery/features/F-111/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T02:05:31Z",
           "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:52:08Z",
+          "refs": [
+            "\"Time unknown\" gone from Chasing"
+          ],
+          "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "\"Time unknown\" gone from Chasing"
       ]
     },
     {
@@ -633,7 +745,7 @@
     "base_branch": "main",
     "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-connect-1-issue-reads",
-    "head_sha": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+    "head_sha": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d3",
     "pr_url": null,
     "pr_number": null,
@@ -651,7 +763,9 @@
       "frontend/src/features/issue-followup/issueFollowupAdapter.ts",
       "frontend/src/features/issue-followup/model.ts",
       "frontend/src/features/work-item/live/LiveWorkItemView.tsx",
-      "frontend/tests/issue-followup.test.tsx"
+      "frontend/tests/issue-followup.test.tsx",
+      "frontend/tests/mock-issues-live.test.ts",
+      "frontend/tests/next-config.test.ts"
     ]
   },
   "parallel_execution": {
