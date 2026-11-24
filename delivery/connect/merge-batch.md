@@ -38,6 +38,10 @@ Resume from here (24 Nov, about 21:00 WAT). Lane D has two worktrees: `lane-d` (
 - **F-115, F-117** · READY specs, unbuilt. They wait for F-87 (#113) on main, and then a worktree (after F-119B merges, reuse `lane-d2`).
 - **F-100 to F-102B, F-104 to F-110B, F-113B, F-114, F-114B, F-116, F-118** · READY specs, unbuilt, in that order (D-205). Money and payroll merges are risky: send them to the coordinator under D-207, except anything database-related, which goes to the design engineer. LD-1 to LD-11 in backend-questions.md are still open.
 - **F-114C** · BLOCKED on backend LD-6.
+- **F-87 landed** as 1e78793f (#113), after this handover was written. It brings `useWorkCommand` (JSON and multipart), `LineAdapter.Actions`, `LineContext.state`, `read(ref, ctx)` and `src/features/workspace/lines/index.ts`. F-111's adapter import now lives in lines/index.ts. Consequences:
+  - F-103 and F-119B: at the next main merge, move any adapter import from LiveWorkItemView.tsx into `workspace/lines/index.ts` (expect a conflict there). F-103's proof link and month actuals can come back through `Actions` as a follow-up.
+  - F-115 and F-117 are no longer waiting on F-87. They start when a worktree frees up.
+  - F-95 (lane C's frame seams for F-111) is in lane C's handover table.
 
 ## Lane A, for Codex (handover, 24 Nov 2026, about 21:00 WAT)
 Lane A worktrees: `/Users/Hunchoo/psl-factory-worktrees/lane-a2` (F-63) and `lane-a4` (F-65); at most two per lane (D-197). Gates run on GitHub Actions (D-199): merge origin/main, push, apply D-200 (`set git.base_sha` to the merge base after checking that no protected path is in the diff), then `feature.py gate`. Risky merges: send the head SHA and evidence to the main coordinator (D-207); never record a human approval yourself. Don't merge to main while a coordinator freeze is on (one was on for F-87 at handover).
