@@ -37,7 +37,7 @@ test.describe('the page', () => {
     await expect(page).toHaveTitle('Set up your account');
     await expect(page.getByRole('heading', { level: 1, name: 'Set up your account' })).toBeVisible();
     await expect(page.locator('.join-welcome')).toHaveText('Welcome, Sola Martins. You’ve been given PMO for Ojo Foods and Kora Logistics.');
-    await expect(page.getByText(/This invitation works until \d+ Nov 2026, \d\d:\d\d\./)).toBeVisible();
+    await expect(page.getByText(/This invitation works until \d+ Nov 2026 · \d\d:\d\d WAT\./)).toBeVisible();
     await expect(page.getByLabel('Work email')).toHaveValue('sola.martins@psl.example');
     await expect(page.getByText('At least 12 characters')).toBeVisible();
     await expect(page.getByText('Work you can see moving, from first draft to verified.')).toBeVisible();

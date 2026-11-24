@@ -12,11 +12,3 @@ export function welcomeSentences(workspaces: Workspace[]): { lead: string; acces
   }
   return groups.map((g, i) => ({ lead: i === 0 ? 'You’ve been given' : 'You’ve also been given', access: g.access, names: joined(g.names) }));
 }
-
-const WHEN = new Intl.DateTimeFormat('en-GB', { timeZone: 'Africa/Lagos', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
-
-/** "26 Nov 2026, 15:00" in Africa/Lagos, or null when the value is not a date. */
-export function lagosWhen(value: string): string | null {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? null : WHEN.format(date);
-}

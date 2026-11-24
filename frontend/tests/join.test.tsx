@@ -134,7 +134,7 @@ describe('the set-up form', () => {
     await formReady();
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Set up your account');
     expect(welcome()).toBe('Welcome, Sola Martins. You’ve been given PMO for Ojo Foods and Kora Logistics.');
-    expect(screen.getByText('This invitation works until 26 Nov 2026, 15:00.')).toBeTruthy();
+    expect(screen.getByText('This invitation works until 26 Nov 2026 · 15:00 WAT.')).toBeTruthy();
     const email = field('Work email');
     expect(email.readOnly).toBe(true);
     expect(email.disabled).toBe(false);
@@ -205,6 +205,13 @@ describe('the set-up form', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
     await formReady();
     expect(await Promise.all(calls(PREVIEW).map(async (r) => (await bodyOf(r)).token))).toEqual([TOKEN, TOKEN]);
+  });
+
+  it('a 4xx on the session read is the cannot-open state, not a verdict on the invitation', async () => {
+    routes['GET /api/v1/session'] = () => json(400, { code: 'bad_request', message: 'x' });
+    open();
+    expect(await screen.findByText('We couldn’t open your invitation. Nothing was changed.')).toBeTruthy();
+    expect(screen.queryByText('This invitation can’t be used')).toBeNull();
   });
 
   it('a failed session read is the same state', async () => {
@@ -379,6 +386,21 @@ describe('after set-up', () => {
     expect(document.querySelector('.psl-callout')).toBeNull();
     expect(calls('GET /api/v1/me/onboarding')).toHaveLength(0);
     expect(nav.replace).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['500', () => json(500, { code: 'server_error', message: 'x' })],
+    ['network', () => Promise.reject(new TypeError('Failed to fetch'))],
+  ])('a failed session read after a successful accept (%s) still shows the ready state', async (_name, fail) => {
+    let reads = 0;
+    routes['GET /api/v1/session'] = () => (++reads === 1 ? session() : fail());
+    open();
+    await fill();
+    press();
+    await screen.findByRole('heading', { name: 'Your account is ready.' });
+    expect(screen.getByText('Sign in with sola.martins@psl.example.')).toBeTruthy();
+    expect(screen.queryByText(/Nothing was changed/)).toBeNull();
+    expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in');
   });
 
   it('the Sign in link follows a safe next_url and ignores a foreign one', async () => {

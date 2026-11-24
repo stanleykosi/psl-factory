@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 
 import { call, csrfHeader, liveApi, refreshSession } from '@/api/client';
 import { ApiError } from '@/api/errors';
-import { Button, buttonClass, Callout, Loading, Skeleton, TextField, useIsPhone } from '@/components';
+import { Button, buttonClass, Callout, formatDateTime, Loading, Skeleton, TextField, UNKNOWN, useIsPhone } from '@/components';
 import { safeNext } from '@/shell/signInNext';
 
 import { BrandColumn } from '../sign-in/BrandColumn';
@@ -16,7 +16,7 @@ import { NewPasswordFields, newPasswordProblems, type NewPasswordProblems } from
 import { NotAdmittedBody, useAfterSignIn } from '../sign-in/useAfterSignIn';
 import './join.css';
 import { signInTarget } from './signInTarget';
-import { lagosWhen, welcomeSentences, type Workspace } from './welcome';
+import { welcomeSentences, type Workspace } from './welcome';
 
 type Phase = 'loading' | 'cannot-open' | 'unavailable' | 'form' | 'done' | 'not-admitted';
 type Preview = { name: string; email: string; expires_at: string; workspaces: Workspace[] };
@@ -64,6 +64,11 @@ export function JoinView() {
     setPhase('loading');
     try {
       await refreshSession();
+    } catch {
+      // The session read failing is never a verdict on the invitation.
+      return setPhase('cannot-open');
+    }
+    try {
       const found = await call(liveApi.POST(PREVIEW, { params: csrfHeader, body: { token: held } }));
       setPreview(found);
       setPhase('form');
@@ -80,6 +85,8 @@ export function JoinView() {
       token.current = TOKEN.test(value) ? value : '';
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
     }
+    // The first state change in open() is the loading phase of a request this effect starts.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void open();
   }, [open]);
 
@@ -126,8 +133,9 @@ export function JoinView() {
       setPassword('');
       setConfirm('');
       setTarget(signInTarget(accepted.next_url));
-      const session = await refreshSession();
-      if (session.signed_in) {
+      // The account exists now: a failed session read cannot undo that, so it shows the ready state like a signed-out session.
+      const session = await refreshSession().catch(() => null);
+      if (session?.signed_in) {
         await afterSignIn(safeNext(accepted.next_url));
         return;
       }
@@ -212,7 +220,8 @@ export function JoinView() {
   } else if (phase === 'not-admitted') {
     body = <NotAdmittedBody />;
   } else {
-    const expires = preview ? lagosWhen(preview.expires_at) : null;
+    const when = preview ? formatDateTime(preview.expires_at) : UNKNOWN;
+    const expires = when === UNKNOWN ? null : when;
     body = (
       <form className="signin-form join-form" method="post" noValidate onSubmit={(event) => void submit(event)}>
         <h1 className="signin-title">Set up your account</h1>

@@ -5,3 +5,5 @@
 .join-form .psl-btn--block { align-self: stretch; }
 .join-link { align-self: flex-start; }
 .join-done-title:focus { outline: none; }
+/* The board draws the read-only email as a white bordered input like the others; it stays read-only. */
+.join-form .psl-input[readonly] { background: var(--surface); border-color: var(--ink); }
