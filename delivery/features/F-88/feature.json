@@ -498,7 +498,7 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "3b7df6cc589bebd8014502db6ce1eaaa8a01afde",
+    "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-connect-1-received-rfp-assign-pm",
     "head_sha": "eacdc7045a458039ad42eb19ea5852cc411578df",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c2",
