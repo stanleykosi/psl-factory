@@ -71,7 +71,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead), light panel (D-180)",
-      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "snapshot_ref": "215361f5",
       "evidence_refs": [
         "delivery/features/F-125/round-1/review-technical.md"
       ]
@@ -80,7 +80,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "qa",
-      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "snapshot_ref": "215361f5",
       "evidence_refs": [
         "delivery/features/F-125/round-1/review-qa.md"
       ]
@@ -107,7 +107,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "reviewer-ux",
-      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "snapshot_ref": "215361f5a3cf78d8fde907d7c12ec055c9e3dbf7",
       "evidence_refs": [
         "delivery/features/F-125/round-1/review-ux.md"
       ]
@@ -116,7 +116,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer",
-      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "snapshot_ref": "215361f5",
       "evidence_refs": [
         "delivery/features/F-125/round-1/review-ui.md"
       ]
@@ -199,7 +199,7 @@
     "pr_number": 105,
     "pr_author": "hunchoweb",
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,

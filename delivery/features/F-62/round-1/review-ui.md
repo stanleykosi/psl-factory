@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 3b8d10de03c23bf581a9b941189eb38a74b22681
+COMMIT: b9d61964c993dcbd1f19dc563e14ce6dabe10ccd
 REVIEWER: reviewer-ui
 AUTHORITY: UI design reviewer (D-180 lighter panel)
 
@@ -16,3 +16,16 @@ None.
 - Phone search placeholders are cut off ("Search verified ou", "Search exception"); the board also has a narrow box, so taste only. Shorter placeholder text would read better.
 - The My work "Verified outputs" link (my-work.css .my-work__verified) sits on its own line between title and tabs, leaving a loose gap; consider placing it beside the updated line.
 - Visual scores stay below 90 because the tool compares live mock rows with board sample rows; the design engineer's sign-off on that gap (D-179-style waiver) is a human call, not mine.
+
+## Pre-merge re-confirm (b9d61964)
+
+VERDICT: PASS (no change to the reviewed lens)
+
+Diff `7b8bad85..b9d61964` is the merge of main (8692cf87 CI gates, ae0525fb F-72) plus 21 files. Checked against the /verified, /exceptions and work-list surfaces:
+
+- No file under `frontend/src/features/{verified,work-list,exceptions}`, `frontend/src/app/{verified,exceptions}`, or `frontend/mock/{work-list,exceptions}.mjs` changed. Their fixtures and tests are unchanged.
+- `frontend/src/components` and the shared style/token files are unchanged, so the shared Table, Tag, Panel and Callout they use render as before.
+- `frontend/mock/server.mjs` changed only to route the F-72 document-review paths and reset them; the verified, exceptions and work-list routes are not touched.
+- The only stylesheet change is `document-review.css` (`.docrev__tags` added, `.docrev__status` align-self moved to the tag wrapper, `.docrev__blockers` added). These classes belong to the SCR-08 document review, not to the lens surfaces.
+
+Note (outside this lens): the same merge carries F-72 rewrites of the SCR-08 document review (`DocumentReview.tsx`, `DocumentParts.tsx`, `ReviewControls.tsx`, `DocumentsTab.tsx`). I did not run the fidelity check on SCR-08 for this re-confirm; if that screen is in F-62's scope, it needs its own check.

@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: a0eb67073f7a675f3a1436fbd62b855b8a44161d
+COMMIT: 215361f5
 REVIEWER: qa
 AUTHORITY: qa
 
@@ -14,3 +14,8 @@ None.
 
 ## Verified
 None (round 1, no fixes).
+
+## Pre-merge re-confirm (215361f5)
+Diff a0eb6707..215361f5 reviewed: 21 files, all from the F-72 document review merge (documents feature, mock/documents, document tests), the CI workflow and checks.sh, and small test fixes (hypercare, next-config, project-tabs). No My Work source, route or test file changed. `npx vitest run tests/my-work.test.tsx` run singly in lane-a4/frontend: 1 file, 42/42 passed. GitHub Actions `checks` passed on PR #105. The earlier live run as qa-seed on a0eb6707 carries forward by this impact assessment. No new findings.
+
+Verdict: QA PASS confirmed on 215361f5.

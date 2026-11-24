@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 3b8d10de03c23bf581a9b941189eb38a74b22681
+COMMIT: b9d61964
 REVIEWER: reviewer-ux
 AUTHORITY: reviewer-ux (lighter panel, D-180: diff and spec read, targeted code checks, no browser walk)
 
@@ -15,3 +15,11 @@ AUTHORITY: reviewer-ux (lighter panel, D-180: diff and spec read, targeted code 
 
 ## Verified
 None.
+
+## Pre-merge re-confirm (b9d61964)
+
+Verdict: PASS for /verified, /exceptions and the My work link.
+
+Checked: `git diff --stat 7b8bad85 b9d61964` lists 21 files. None is under `features/verified/`, `features/exceptions/`, `features/my-work/`, `app/` or the shared `components/`. The My work link ("Verified outputs" under the My work heading, MyWork.tsx) and the /verified and /exceptions routes are unchanged. The mock server change only adds the document-review path matcher and a reset call. Its matcher is limited to the document-review path, so it does not catch the other three surfaces.
+
+Outside this lens, noted for the merge owner: the changed files are the F-72 document review (documents/*, projects/DocumentsTab.tsx). On the project Documents tab, a row now links to its review only when the row's own api_url is this project's document-review path. Otherwise it is plain text (B-7). That is a visible change in the Documents tab, which I did not review in this pass.

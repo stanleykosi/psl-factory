@@ -129,7 +129,7 @@
       "status": "passed",
       "reviewer": "design engineer (hunchoweb), recorded by the lane A coordinator",
       "authority": "accepted in batch, delegated under D-184 (the design engineer's batch answer D-182, 23 Nov 2026)",
-      "snapshot_ref": "7b8bad85508f7df1152e3c1c2be2d1bf26c962d8",
+      "snapshot_ref": "b9d61964c993dcbd1f19dc563e14ce6dabe10ccd",
       "evidence_refs": [
         "delivery/features/F-62/round-1/acceptance-product.md"
       ]
@@ -138,7 +138,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "reviewer-ux (lighter panel, D-180: diff and spec read, targeted code checks, no browser walk)",
-      "snapshot_ref": "3b8d10de03c23bf581a9b941189eb38a74b22681",
+      "snapshot_ref": "b9d61964",
       "evidence_refs": [
         "delivery/features/F-62/round-1/review-ux.md"
       ]
@@ -147,7 +147,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer (D-180 lighter panel)",
-      "snapshot_ref": "3b8d10de03c23bf581a9b941189eb38a74b22681",
+      "snapshot_ref": "b9d61964c993dcbd1f19dc563e14ce6dabe10ccd",
       "evidence_refs": [
         "delivery/features/F-62/round-1/review-ui.md"
       ]
@@ -465,7 +465,7 @@
     "pr_number": 106,
     "pr_author": "hunchoweb",
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
