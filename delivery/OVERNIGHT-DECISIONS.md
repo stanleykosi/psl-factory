@@ -491,3 +491,6 @@ F-72 used its three gate attempts per round on causes outside its own code: a ti
 
 ## D-191 (24 Nov 2026): a weekly report week uses the person's own time zone (LC-Q32)
 Asked which time zone a weekly client report week uses, the design engineer answered "Person's own time zone (built)". The week runs from local midnight on the first day to local midnight after the last day, in the browser's time zone, and a week that has not finished yet is refused. This settles F-86's last product question.
+
+## D-192 (24 Nov 2026): the heavy-job lock queues in order; single browser checks run freely
+Lane B reported waiters starving: lane C's Playwright run had waited three hours, and a UX reviewer's single browser walk an hour. Two changes from the coordinator (engineering, two-way door). `heavy-lock.sh` now queues first-come-first-served with ticket files in `.heavy-lock-queue`, and `heavy-lock.sh status` shows the holder and the queue in order. A single Playwright spec file, or a reviewer's browser walk or screenshot script against an app that is already built or already running, is no longer heavy and runs without the lock. A full gate, a full vitest run, a build, a full Playwright suite and `npm ci` still queue.
