@@ -100,3 +100,7 @@ div.sw-next { display: flex; flex-direction: column; gap: var(--space-6px); bord
 
 /* the summary's links sit in a list: each is a 24px target so neighbours keep the spacing axe asks for */
 .sw-body .psl-summary a { display: inline-block; min-height: 24px; line-height: 24px; }
+
+/* F-88: the logged-RFP receipt (SCR-23) */
+.sw-receipt { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-2) var(--space-4); margin: 0; }
+.sw-receipt dd { margin: 0; }

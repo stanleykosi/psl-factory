@@ -83,20 +83,21 @@ describe('chooser', () => {
     const links = within(dialog).getAllByRole('link', { name: 'Open in the full form' });
     // pmo-minutes (cannot submit), finance-payroll (can submit, no registered form), pmo-issues (cannot submit)
     expect(links.map((a) => a.getAttribute('href'))).toEqual(['/lines/pmo-minutes/', '/lines/finance-payroll/', '/lines/pmo-issues/']);
-    expect(within(dialog).getAllByRole('radio')).toHaveLength(1);
+    // the weekly report, and the received RFP, which owns its submit and is not a `/lines` row (F-88)
+    expect(within(dialog).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['pmo-weekly-report/v1', 'received-bid']);
     expect((within(dialog).getByRole('button', { name: 'Next' }) as HTMLButtonElement).disabled).toBe(true);
-    fireEvent.click(within(dialog).getByRole('radio'));
+    fireEvent.click(within(dialog).getAllByRole('radio')[0]);
     expect((within(dialog).getByRole('button', { name: 'Next' }) as HTMLButtonElement).disabled).toBe(false);
   });
 
-  it('says so for an empty list, a failure and a 401 (states)', async () => {
+  it('with no `/lines` rows the received RFP is still the one choice, since it owns its submit (F-88)', async () => {
     render(<LineChooser state={{ status: 'ready', data: { items: [], as_of: '' } }} onRetry={vi.fn()} onNext={vi.fn()} onClose={vi.fn()} pathname="/" />);
-    expect(screen.getByText('There are no lines you can start right now.')).toBeTruthy();
+    expect(screen.getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['received-bid']);
   });
 
   it('opens the project step for the weekly report, with no default line (AC15)', async () => {
     await chooser();
-    fireEvent.click(screen.getByRole('radio'));
+    fireEvent.click(screen.getAllByRole('radio')[0]);
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     expect(await screen.findByRole('dialog', { name: 'Weekly client report' })).toBeTruthy();
     expect(screen.getByRole('combobox', { name: 'Project' })).toBeTruthy();
@@ -108,7 +109,7 @@ describe('chooser', () => {
 
   it('presses Start report with nothing filled: no POST /work, each missing field listed (AC4)', async () => {
     await chooser();
-    fireEvent.click(screen.getByRole('radio'));
+    fireEvent.click(screen.getAllByRole('radio')[0]);
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Start report' }));
     const summary = await screen.findByRole('alert');

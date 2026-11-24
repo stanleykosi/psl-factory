@@ -5,6 +5,7 @@ import type { ComponentType } from 'react';
 
 import type { FieldValue, Values } from '../intake';
 import type { StartBody } from '../types';
+import { receivedBid } from './receivedBid';
 import { weeklyReport } from './weeklyReport';
 
 /** What the shell hands a line's fields. `errors` and `setValue` are by control name. */
@@ -42,8 +43,30 @@ export type LineForm = {
   target(serverName: string): string | undefined;
 };
 
+/** What a line that owns its whole drawer is handed: the shell's way back and out, and where a signed-out person returns. */
+export type OwnLineProps = { onBack: () => void; onClose: () => void; pathname: string };
+
+/** A line with its own endpoint (the received RFP, F-88): `ownsSubmit` means the shell's project picker and `POST /work` are
+ *  not used. It draws its drawer, sends its own request and is startable whatever `GET /lines` says about it (it need not be listed). */
+export type OwnLine = {
+  key: string;
+  ownsSubmit: true;
+  startLabel: string;
+  drawerTitle: string;
+  /** The chooser's card, where `GET /lines` does not carry this line. */
+  description: string;
+  Own: ComponentType<OwnLineProps>;
+};
+
 const FORMS: LineForm[] = [weeklyReport];
+const OWN: OwnLine[] = [receivedBid];
 
 export function lineFormFor(key: string): LineForm | undefined {
   return FORMS.find((form) => form.key === key);
 }
+
+export function ownLineFor(key: string): OwnLine | undefined {
+  return OWN.find((line) => line.key === key);
+}
+
+export const OWN_LINES: readonly OwnLine[] = OWN;

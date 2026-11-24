@@ -1,24 +1,19 @@
 'use client';
 
-// SCR-24 "Assign the accountable PM" (F-36, PROPOSAL D-RFP-INTAKE, contract mock only): the shared Drawer over My work's Unassigned
-// list. It reads the work item and draws only what the response carries: `assign.candidates` are the only people to choose from,
-// nothing is chosen ahead, nothing comes from /me, and an item with no `assign` has no control (the page goes on to /work/<id>).
-// F-30's AssignForm and useWorkspaceAssign send the one E-WORK-ASSIGN; the proposed keys (assign.roles, evidence_kind, next and the
-// request's acting_role, evidence_id, case_revision) are read through ./proposals and sent only when the response offers them.
-// The success words wait for the item and the list to be read again; a failed, timed-out or uncertain write never says "assigned".
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+// SCR-24 "Assign accountable PM" (F-88, contract 1.26.0): the shared Drawer over the Unassigned list. It reads
+// `GET /received-bids/{case_id}/assignment` and draws only what that read carries: its nominees, roles, proofs and next steps,
+// with nothing chosen ahead and nothing filtered here. Proof and a reason are required (LC-Q7). "PM assigned" waits for the
+// assignment and the list to be read again; a failed or uncertain write never says it and is never repeated by itself
+// (useReceivedBidAssign). Nothing here calls the v7 assignment or the base64 evidence upload.
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button, Callout, Drawer, ErrorState, Icon, Loading, Select, Unknown, UNKNOWN, useIsPhone, ValidationSummary } from '@/components';
-import { ProofField } from '@/features/response/ProofField';
-import { useEvidenceUpload } from '@/features/response/useEvidenceUpload';
-import { AssignForm, type AssignWords } from '@/features/workspace/AssignForm';
-import { useWorkspacePage } from '@/features/workspace/usePageReload';
-import { ASSIGN_TEXT, useWorkspaceAssign, type AssignRequest } from '@/features/workspace/useWorkspaceAssign';
-import type { SubmitResult } from '@/features/workspace/useWorkspaceStep';
+import { Button, Callout, Drawer, ErrorState, Icon, Loading, Segmented, Select, TextArea, Checkbox, formatDateTime, useIsPhone, ValidationSummary } from '@/components';
+import { EvidencePicker } from '@/features/workspace/EvidencePicker';
+import type { UploadedFile } from '@/features/workspace/evidence';
 import { SignedOutState } from '@/shell/FrameStates';
 
-import { assignEvidenceKind, assignNext, assignRoles } from './proposals';
+import { REASON_MAX, type AssignmentRead } from './receivedBids';
+import { FORBIDDEN, GONE, useReceivedBidAssign, type AssignInput } from './useReceivedBidAssign';
 
 import '@/features/response/response.css';
 import '@/features/workspace/workspace.css';
@@ -28,309 +23,318 @@ import './rfp.css';
 export const ASSIGN_PM_TEXT = {
   title: 'Assign accountable PM',
   submit: 'Assign PM',
-  intro: 'Only people allowed to prepare RFPs for this workspace are listed. Who may assign is set by PSL in Setup.',
-  count: (n: number) => `${n} ${n === 1 ? 'person' : 'people'} can prepare RFPs here`,
+  owner: 'Accountable PM',
+  choose: 'Choose a PM',
   roleLabel: 'You are assigning as',
-  roleHelp: 'One of the roles PSL allows to assign RFPs',
-  chooseRole: 'Choose a role to continue.',
-  proof: 'Proof (optional)',
-  proofBlocked: 'Remove the file that didn’t upload, or try it again.',
+  chooseRole: 'Choose a role',
+  proof: 'Proof',
+  listedProof: 'Use a recorded proof',
+  uploadProof: 'Upload a file',
+  chooseProof: 'Choose a proof',
+  checked: 'I checked this file is the right proof.',
+  reason: 'Reason for choosing this PM',
   nextHead: 'What happens next:',
-  next: 'The PM you choose is alerted and sees it in Needs me. They start the RFP response.',
-  empty: 'No one can prepare RFPs here yet.',
-  notOpen: 'You can’t open this item.',
-  loadFailed: 'We couldn’t load this item. Nothing was changed.',
+  setup: 'Nobody is set up to assign yet. Ask a PSL admin to finish setup.',
+  noNominees: 'No one can be chosen for this RFP yet.',
+  loadFailed: 'We couldn’t load this RFP. Nothing was changed.',
+  stale: 'This changed while you were working.',
   unconfirmedHead: 'Not confirmed',
   unconfirmed: 'We couldn’t confirm the PM was assigned. Check before trying again.',
-  checkAgain: 'Check again',
-  gone: 'That person can no longer be chosen.',
-  // the page's own words for a 422 on a field, whatever wording the backend sends
-  fieldMessage: { person_id: 'Choose a PM from the list to continue.', note: 'Check the note and try again.', acting_role: 'Choose a role you may assign as.', evidence_id: 'Remove the file, or add it again.' } as Record<string, string>,
   confirmedAfter: 'Not confirmed at first; confirmed after reading it again.',
+  checkAgain: 'Check again',
+  listRefresh: 'We couldn’t refresh the list.',
   cancel: 'Cancel',
   close: 'Close',
 } as const;
 
-const WORDS: AssignWords = { owner: 'Accountable PM', choose: 'Choose a PM', submit: ASSIGN_PM_TEXT.submit, chooseOwner: 'Choose a PM to continue.', gone: ASSIGN_PM_TEXT.gone };
-const FORM_ID = 'assign-pm-form';
-const ROLE_ID = 'assign-pm-role';
-const ROLE_STATIC_ID = 'assign-pm-role-text';
-const PROOF_ID = 'assign-pm-proof';
+/** The messages without the one for a control the person just changed. */
+const without = (messages: Record<string, string>, control: string) => Object.fromEntries(Object.entries(messages).filter(([name]) => name !== control));
 
-export type Assigned = { reference: string; assignedTo: string; reread: boolean };
+const FORM_ID = 'assign-pm-form';
+const ids = { candidate: 'ap-candidate', role: 'ap-role', proof: 'ap-proof', reason: 'ap-reason', checked: 'ap-checked' } as const;
+
+type Route = 'listed' | 'upload';
+type Draft = { candidate: string | undefined; role: string | undefined; route: Route | undefined; evidence: string | undefined; upload: UploadedFile | null; checked: boolean; reason: string };
+const EMPTY: Draft = { candidate: undefined, role: undefined, route: undefined, evidence: undefined, upload: null, checked: false, reason: '' };
+
+/** The role to send: the only one served, or the one the person chose. */
+const roleOf = (data: AssignmentRead, draft: Draft) => (data.roles.length === 1 ? data.roles[0] : draft.role);
+
+/** What is missing, by control, in the order drawn: PM, role, proof, reason. */
+export function assignProblems(data: AssignmentRead, draft: Draft): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (!draft.candidate) out.candidate = 'Choose a PM to continue.';
+  if (!roleOf(data, draft)) out.role = 'Choose a role to continue.';
+  const route = data.proofs.length === 0 ? 'upload' : draft.route;
+  if (route === 'listed' ? !draft.evidence : route === 'upload' ? !draft.upload : true) out.proof = 'Add proof to continue.';
+  else if (route === 'upload' && !draft.checked) out.proof = 'Confirm you checked the file.';
+  if (!draft.reason.trim()) out.reason = 'Give a reason to continue.';
+  else if (draft.reason.length > REASON_MAX) out.reason = `Use ${REASON_MAX} characters or fewer.`;
+  return out;
+}
+
+function NextSteps({ steps }: { steps: AssignmentRead['next_steps'] }) {
+  if (steps.length === 0) return null;
+  return (
+    <div className="rfp-assign__next">
+      <strong>{ASSIGN_PM_TEXT.nextHead}</strong>
+      <ul>
+        {steps.map((step) => (
+          <li key={step.key}>{step.label}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 type Props = {
-  workId: string;
-  /** `wrote`: the Drawer ended on an assignment that was written, so the list behind it needs a re-read. */
-  onClose: (wrote: boolean) => void;
-  /** 200 and the item re-read: the page re-reads the list, then closes this Drawer and says so. */
-  onAssigned: (done: Assigned) => Promise<void>;
+  caseId: string;
+  /** The list behind the drawer, read again after a write: whether the RFP is still listed, or null when it could not be read. */
+  reloadList: () => Promise<boolean | null>;
+  onClose: () => void;
+  /** Where a signed-out person returns. */
+  pathname: string;
 };
 
-export function AssignPmDrawer({ workId, onClose, onAssigned }: Props) {
-  const router = useRouter();
+export function AssignPmDrawer({ caseId, reloadList, onClose, pathname }: Props) {
   const phone = useIsPhone();
-  const { fresh, lost, page } = useWorkspacePage(workId);
-  const { reload } = page;
-  const item = fresh?.item;
-  const assign = item?.assign;
-  const rfp = item?.rfp;
-  // set once the person presses Assign: an item without `assign` after that is the result of a write (read-only), not a page to leave
-  const [submitted, setSubmitted] = useState(false);
-  // the item as it was while the item and list are read again after a 200
-  const [holding, setHolding] = useState<typeof item>(undefined);
-  const [rolePick, setRolePick] = useState<string>();
-  const [roleError, setRoleError] = useState<string>();
-  const [proofError, setProofError] = useState<string>();
-  const [fieldError, setFieldError] = useState<{ evidence?: string }>({});
-  // bumps when this panel's own fields (role, proof) are refused, so the summary is announced and focus goes to the first of them
+  const flow = useReceivedBidAssign(caseId, reloadList);
+  const { view, notice, errors, busy } = flow;
+  const [draft, setDraft] = useState<Draft>(EMPTY);
+  const [local, setLocal] = useState<Record<string, string>>({});
   const [attempt, setAttempt] = useState(0);
-  const [focusField, setFocusField] = useState<{ id: string }>();
-
-  // Runs after the summary's own focus effect in the same commit, so the field wins however late the render comes.
-  useEffect(() => {
-    if (focusField) document.getElementById(focusField.id)?.focus();
-  }, [focusField]);
+  const alertRef = useRef<HTMLDivElement>(null);
+  const doneRef = useRef<HTMLDivElement>(null);
+  const shown = useMemo(() => ({ ...local, ...errors }), [local, errors]);
 
   useEffect(() => {
-    void reload();
-  }, [reload]);
-
-  // No `assign` on the first read: this is not an item to assign here, so the page goes on to the item itself.
-  const leave = item !== undefined && !assign && !submitted;
+    if (notice) alertRef.current?.focus();
+  }, [notice]);
   useEffect(() => {
-    if (leave) router.replace(`/work/${workId}`);
-  }, [leave, router, workId]);
+    if (view.kind === 'done') doneRef.current?.focus();
+  }, [view.kind]);
 
-  const flow = useWorkspaceAssign({ id: workId, revision: item?.revision, page });
-  const proofKind = assign ? assignEvidenceKind(assign) : undefined;
-  const proof = useEvidenceUpload({
-    caseId: item?.case_id,
-    caseRevision: item?.case_revision,
-    kind: proofKind,
-    reloadCaseRevision: async () => (await reload())?.case_revision,
-    onAccessError: page.onAccessLost,
-  });
-
-  // Held while the item and list are read again after a 200, so the form does not flip to the result before the page says so.
-  const shown = holding ?? item;
-  const shownAssign = shown?.assign;
-  const roles = shownAssign ? assignRoles(shownAssign) : undefined;
-  const picked = roles?.some((r) => r.role === rolePick) ? rolePick : undefined;
-  const actingRole = roles && roles.length === 1 ? roles[0].role : (picked ?? roles?.find((r) => r.role === shownAssign?.role)?.role);
-
-  const refused = (fieldId: string) => {
-    setAttempt((n) => n + 1);
-    setFocusField({ id: fieldId });
+  const set = <K extends keyof Draft>(patch: Pick<Draft, K>, control: string) => {
+    setDraft((d) => ({ ...d, ...patch }));
+    setLocal((e) => without(e, control));
+    flow.setErrors((e) => without(e, control));
   };
-  const roleFieldId = roles && roles.length > 1 ? ROLE_ID : ROLE_STATIC_ID;
+  const problems = useMemo(() => Object.entries(shown).map(([name, message]) => ({ fieldId: ids[name as keyof typeof ids] ?? name, message })), [shown]);
+  const unconfirmed = notice?.kind === 'unconfirmed';
 
-  const submit = async (request: { person_id: string; note?: string }): Promise<SubmitResult> => {
-    if (!shownAssign || proof.uploading) return { kind: 'kept' };
-    setSubmitted(true);
-    setRoleError(undefined);
-    setProofError(undefined);
-    setFieldError({});
-    if (roles && actingRole === undefined) {
-      setRoleError(ASSIGN_PM_TEXT.chooseRole);
-      refused(ROLE_ID);
-      return { kind: 'invalid', fields: { acting_role: ASSIGN_PM_TEXT.chooseRole } };
+  const send = (data: AssignmentRead) => {
+    if (unconfirmed) return void flow.checkAgain();
+    const found = assignProblems(data, draft);
+    if (Object.keys(found).length > 0) {
+      setLocal(found);
+      flow.setErrors({});
+      setAttempt((n) => n + 1);
+      return;
     }
-    if (proof.files.some((f) => f.status !== 'uploaded')) {
-      setProofError(ASSIGN_PM_TEXT.proofBlocked);
-      refused(PROOF_ID);
-      return { kind: 'kept' };
-    }
-    const file = proof.files.length === 1 ? proof.files[0] : undefined;
-    const body: AssignRequest = {
-      ...request,
-      ...(roles && actingRole !== undefined ? { acting_role: actingRole } : {}),
-      ...(file?.evidenceId ? { evidence_id: file.evidenceId, case_revision: proof.caseRevision() } : {}),
-    };
-    setHolding(item);
-    const result = await flow.submit(body);
-    if (result.kind === 'done' && 'assignedTo' in result) {
-      await onAssigned({ reference: shown?.reference ?? item?.reference ?? workId, assignedTo: result.assignedTo, reread: result.reread });
-      return { kind: 'done' };
-    }
-    setHolding(undefined);
-    if (result.kind === 'invalid') {
-      const fields = Object.fromEntries(Object.keys(result.fields).map((name) => [name, ASSIGN_PM_TEXT.fieldMessage[name] ?? result.fields[name]]));
-      if (fields.acting_role) setRoleError(fields.acting_role);
-      if (fields.evidence_id) setFieldError({ evidence: fields.evidence_id });
-      if (fields.acting_role || fields.evidence_id) {
-        // the first of the panel's own fields takes focus, unless the PM or note was refused too (the form focuses that one)
-        if (!fields.person_id && !fields.note) refused(fields.acting_role ? roleFieldId : PROOF_ID);
-        else setAttempt((n) => n + 1);
-      }
-      // a named field has its own message; the backend's raw sentence ("Check these fields: …") is not shown
-      const named = ['person_id', 'note', 'acting_role', 'evidence_id'].some((name) => fields[name]);
-      return { ...result, fields, message: named ? undefined : result.message };
-    }
-    return result as SubmitResult;
+    setLocal({});
+    const route = data.proofs.length === 0 ? 'upload' : draft.route;
+    const proof: AssignInput['proof'] = route === 'listed' ? { evidence: Number.parseInt(draft.evidence ?? '', 10) } : { uploadId: draft.upload?.upload_id ?? 0 };
+    void flow.submit(data, {
+      candidate: Number.parseInt(draft.candidate ?? '', 10),
+      candidateLabel: data.nominees.find((n) => String(n.id) === draft.candidate)?.label ?? '',
+      role: roleOf(data, draft) ?? '',
+      reason: draft.reason.trim(),
+      proof,
+    });
   };
-
-  const rfpWords = shown?.rfp !== undefined;
-  const clientPart = rfp ? (rfp.client ?? UNKNOWN) : (item?.title ?? UNKNOWN);
-  const heading = item && !lost ? `${clientPart} · ${rfp?.reference ?? item.reference}` : undefined;
-  const title = rfpWords || !item ? ASSIGN_PM_TEXT.title : ASSIGN_TEXT.open;
-  const busy = flow.pending || holding !== undefined;
-  const wrote = item !== undefined && !assign && submitted;
-  const close = () => onClose(wrote);
 
   let body;
   let footer;
-  if (lost?.kind === 'unauthenticated') {
-    body = <SignedOutState pathname={`/my-work?queue=unassigned&assign=${workId}`} />;
-  } else if (lost) {
+  const close = () => onClose();
+  const closeButton = (
+    <Button kind="secondary" onClick={close}>
+      {ASSIGN_PM_TEXT.close}
+    </Button>
+  );
+  const bid = view.kind === 'ready' || view.kind === 'done' ? view.data.bid : undefined;
+
+  if (view.kind === 'lost' && view.why === 'unauthenticated') {
+    body = <SignedOutState pathname={pathname} />;
+  } else if (view.kind === 'lost') {
     body = (
       <>
-        <p>{ASSIGN_PM_TEXT.notOpen}</p>
-        <Button kind="secondary" onClick={close}>
-          {ASSIGN_PM_TEXT.close}
-        </Button>
+        <Callout kind="problem" announce={false}>{view.why === 'forbidden' ? FORBIDDEN : GONE}</Callout>
+        {closeButton}
       </>
     );
-  } else if (!item && page.refreshFailed) {
-    body = (
-      <ErrorState title={ASSIGN_PM_TEXT.loadFailed} onRetry={() => void reload()} />
-    );
-  } else if (!item || leave) {
+  } else if (view.kind === 'error') {
+    body = <ErrorState title={ASSIGN_PM_TEXT.loadFailed} onRetry={() => void flow.load()} />;
+  } else if (view.kind === 'loading') {
     body = <Loading>Loading…</Loading>;
-  } else if (!shownAssign) {
-    // the re-read shows the assignment was written (ours, a lost reply, or someone else's)
-    const name = rfp?.pm?.name;
+  } else if (view.kind === 'done') {
     body = (
-      <>
-        <p role="status">
-          Assigned to {name ?? <Unknown />}
-        </p>
-        {flow.notice?.kind === 'unconfirmed' && <p className="psl-hint">{ASSIGN_PM_TEXT.confirmedAfter}</p>}
-        <Button kind="secondary" onClick={close}>
-          {ASSIGN_PM_TEXT.close}
-        </Button>
-      </>
-    );
-  } else if (shownAssign.candidates.length === 0) {
-    body = (
-      <>
-        <p>{ASSIGN_PM_TEXT.empty}</p>
-        <Button kind="secondary" onClick={close}>
-          {ASSIGN_PM_TEXT.close}
-        </Button>
-      </>
+      <div ref={doneRef} tabIndex={-1} role="status" className="rfp-assign__body">
+        <Callout kind="success">
+          <strong>PM assigned: {view.label}.</strong>
+        </Callout>
+        {view.listed === null && <p className="psl-hint">{ASSIGN_PM_TEXT.listRefresh}</p>}
+        <NextSteps steps={view.data.next_steps} />
+        {closeButton}
+      </div>
     );
   } else {
-    const staticRole = roles ? (roles.length === 1 ? roles[0].label : undefined) : shownAssign.role;
-    const next = assignNext(shownAssign);
-    const unconfirmed = flow.notice?.kind === 'unconfirmed';
-    const words = rfpWords ? WORDS : undefined;
-    body = (
-      <>
-        {page.refreshFailed && (
-          <Callout kind="warning">
-            <span>We couldn’t refresh this item, so Assign PM stays off.</span>{' '}
-            <Button kind="secondary" size="sm" onClick={() => void reload()}>
-              {ASSIGN_PM_TEXT.checkAgain}
-            </Button>
-          </Callout>
-        )}
-        {flow.notice?.kind === 'stale' && <Callout kind="warning">{ASSIGN_TEXT.stale(flow.notice.revision)}</Callout>}
-        {unconfirmed && (
-          <Callout kind="warning">
-            <strong>{ASSIGN_PM_TEXT.unconfirmedHead}</strong> <span>{ASSIGN_PM_TEXT.unconfirmed}</span>
-          </Callout>
-        )}
-        <AssignForm
-          assign={shownAssign}
-          pending={busy || proof.uploading}
-          words={words}
-          hint={rfpWords ? ASSIGN_PM_TEXT.count(shownAssign.candidates.length) : undefined}
-          formId={FORM_ID}
-          actions={false}
-          lead={
-            <>
-              <ValidationSummary
-                attempt={attempt}
-                problems={[
-                  ...(roleError ? [{ fieldId: roleFieldId, message: roleError }] : []),
-                  ...((proofError ?? fieldError.evidence) ? [{ fieldId: PROOF_ID, message: (proofError ?? fieldError.evidence)! }] : []),
-                ]}
+    const data = view.data;
+    const who = data.assignment ? (data.nominees.find((n) => n.id === data.assignment?.person_id)?.label ?? null) : null;
+    if (data.assignment) {
+      body = (
+        <>
+          {notice?.kind === 'confirmed' && <p className="psl-hint">{ASSIGN_PM_TEXT.confirmedAfter}</p>}
+          <p role="status">{who ? `Already assigned: ${who}` : 'Assigned to another person'}</p>
+          <NextSteps steps={data.next_steps} />
+          {closeButton}
+        </>
+      );
+    } else if (data.setup_required) {
+      body = (
+        <>
+          <p>{ASSIGN_PM_TEXT.setup}</p>
+          {closeButton}
+        </>
+      );
+    } else if (data.nominees.length === 0) {
+      body = (
+        <>
+          <p>{ASSIGN_PM_TEXT.noNominees}</p>
+          {closeButton}
+        </>
+      );
+    } else {
+      const route: Route | undefined = data.proofs.length === 0 ? 'upload' : draft.route;
+      const locked = busy || unconfirmed;
+      body = (
+        <form
+          id={FORM_ID}
+          className="rfp-assign__body"
+          noValidate
+          onSubmit={(event) => {
+            event.preventDefault();
+            send(data);
+          }}
+        >
+          <ValidationSummary attempt={attempt + flow.attempt} problems={problems} />
+          <div ref={alertRef} tabIndex={-1}>
+            {notice?.kind === 'stale' && (
+              <div role="alert">
+                <Callout kind="warning">{ASSIGN_PM_TEXT.stale}</Callout>
+              </div>
+            )}
+            {notice?.kind === 'problem' && <Callout kind="problem">{notice.message}</Callout>}
+            {notice?.kind === 'invalid' && notice.general.length > 0 && (
+              <Callout kind="problem">
+                <span className="sw-stack">
+                  {notice.general.map((message) => (
+                    <span key={message}>{message}</span>
+                  ))}
+                </span>
+              </Callout>
+            )}
+            {unconfirmed && (
+              <div role="alert">
+                <Callout kind="warning">
+                  <strong>{ASSIGN_PM_TEXT.unconfirmedHead}</strong> <span>{ASSIGN_PM_TEXT.unconfirmed}</span>
+                </Callout>
+              </div>
+            )}
+          </div>
+          <div className="resp-field">
+            <Select
+              id={ids.candidate}
+              label={ASSIGN_PM_TEXT.owner}
+              options={data.nominees.map((n) => ({ value: String(n.id), label: n.label }))}
+              value={draft.candidate}
+              placeholder={ASSIGN_PM_TEXT.choose}
+              disabled={locked}
+              error={shown.candidate}
+              onChange={(candidate) => set({ candidate }, 'candidate')}
+            />
+          </div>
+          {data.roles.length === 1 ? (
+            <div className="resp-field">
+              <span className="resp-label">{ASSIGN_PM_TEXT.roleLabel}</span>
+              <span className="resp-static">{data.roles[0]}</span>
+            </div>
+          ) : (
+            <div className="resp-field">
+              <Select
+                id={ids.role}
+                label={ASSIGN_PM_TEXT.roleLabel}
+                options={data.roles.map((r) => ({ value: r, label: r }))}
+                value={draft.role}
+                placeholder={ASSIGN_PM_TEXT.chooseRole}
+                disabled={locked}
+                error={shown.role}
+                onChange={(role) => set({ role }, 'role')}
               />
-              {rfpWords && <Callout kind="info">{ASSIGN_PM_TEXT.intro}</Callout>}
-            </>
-          }
-          middle={
-            <>
-              {roles && roles.length > 1 ? (
-                <div className="resp-field">
-                  <Select
-                    id={ROLE_ID}
-                    label={ASSIGN_PM_TEXT.roleLabel}
-                    hint={ASSIGN_PM_TEXT.roleHelp}
-                    options={roles.map((r) => ({ value: r.role, label: r.label }))}
-                    value={actingRole}
-                    onChange={setRolePick}
-                    placeholder="Choose a role"
-                    error={roleError}
-                  />
-                </div>
-              ) : staticRole ? (
-                <div className="resp-field" id={ROLE_STATIC_ID} tabIndex={-1}>
-                  <span className="resp-label">{ASSIGN_PM_TEXT.roleLabel}</span>
-                  <span className="resp-static">{staticRole}</span>
-                  {roleError ? (
-                    <span className="psl-error" role="alert">
-                      <Icon name="warn" />
-                      <span>{roleError}</span>
-                    </span>
-                  ) : (
-                    <span className="psl-hint">{ASSIGN_PM_TEXT.roleHelp}</span>
-                  )}
-                </div>
-              ) : null}
-              {proofKind && (
-                <div className="resp-field" id={PROOF_ID} tabIndex={-1}>
-                  <ProofField proof={proof} label={ASSIGN_PM_TEXT.proof} />
-                  {(proofError ?? fieldError.evidence) && (
-                    <span className="psl-error" role="alert">
-                      <Icon name="warn" />
-                      <span>{proofError ?? fieldError.evidence}</span>
-                    </span>
-                  )}
-                </div>
-              )}
-            </>
-          }
-          tail={
-            rfpWords ? (
-              <p className="rfp-assign__next">
-                <strong>{ASSIGN_PM_TEXT.nextHead}</strong> {next ? [next.summary, next.agent].filter(Boolean).join(' ') : ASSIGN_PM_TEXT.next}
-              </p>
-            ) : undefined
-          }
-          onSubmit={submit}
-        />
-      </>
-    );
-    const label = unconfirmed ? ASSIGN_TEXT.tryAgain : (words?.submit ?? ASSIGN_TEXT.submit);
-    const off = busy || proof.uploading || page.refreshFailed;
-    footer = (
-      <>
-        {!phone && (
-          <Button kind="secondary" onClick={close}>
-            {ASSIGN_PM_TEXT.cancel}
+            </div>
+          )}
+          <div className="resp-field" id={ids.proof} tabIndex={-1}>
+            <span className="resp-label" id="ap-proof-label">
+              {ASSIGN_PM_TEXT.proof}
+            </span>
+            {data.proofs.length > 0 && (
+              <Segmented
+                labelledBy="ap-proof-label"
+                options={[
+                  { value: 'listed' as Route, label: ASSIGN_PM_TEXT.listedProof, disabled: locked },
+                  { value: 'upload' as Route, label: ASSIGN_PM_TEXT.uploadProof, disabled: locked },
+                ]}
+                value={draft.route}
+                onChange={(next) => !locked && set({ route: next, evidence: undefined, upload: null, checked: false }, 'proof')}
+              />
+            )}
+            {route === 'listed' && (
+              <Select
+                label={ASSIGN_PM_TEXT.listedProof}
+                hideLabel
+                options={data.proofs.map((p) => ({ value: String(p.id), label: p.label }))}
+                value={draft.evidence}
+                placeholder={ASSIGN_PM_TEXT.chooseProof}
+                disabled={locked}
+                onChange={(evidence) => set({ evidence }, 'proof')}
+              />
+            )}
+            {route === 'upload' && (
+              <>
+                <EvidencePicker caseId={caseId} value={draft.upload} onChange={(upload) => set({ upload, checked: false }, 'proof')} disabledReason={locked ? 'The form is locked while it is checked.' : undefined} />
+                {draft.upload && <Checkbox id={ids.checked} label={ASSIGN_PM_TEXT.checked} checked={draft.checked} disabled={locked} onChange={(event) => set({ checked: event.target.checked }, 'proof')} />}
+              </>
+            )}
+            {shown.proof && (
+              <span className="psl-error">
+                <Icon name="warn" />
+                <span>{shown.proof}</span>
+              </span>
+            )}
+          </div>
+          <div className="resp-field">
+            <TextArea id={ids.reason} label={ASSIGN_PM_TEXT.reason} limit={REASON_MAX} value={draft.reason} readOnly={locked} error={shown.reason} onChange={(event) => set({ reason: event.target.value }, 'reason')} />
+          </div>
+          <NextSteps steps={data.next_steps} />
+        </form>
+      );
+      footer = (
+        <>
+          {!phone && (
+            <Button kind="secondary" onClick={close}>
+              {ASSIGN_PM_TEXT.cancel}
+            </Button>
+          )}
+          <Button type="submit" form={FORM_ID} kind="start" size={phone ? 'lg' : 'md'} block={phone} busy={busy} busyLabel="Assigning…">
+            {unconfirmed ? ASSIGN_PM_TEXT.checkAgain : ASSIGN_PM_TEXT.submit}
           </Button>
-        )}
-        <Button type="submit" form={FORM_ID} kind="start" size={phone ? 'lg' : 'md'} block={phone} busy={busy} busyLabel="Assigning…" aria-disabled={off || undefined}>
-          {label}
-        </Button>
-      </>
-    );
+        </>
+      );
+    }
   }
 
+  const heading = bid ? `${bid.reference} · received ${formatDateTime(bid.received_at)}` : undefined;
   return (
-    <Drawer className="rfp-assign" keepTop title={title} eyebrow={phone ? undefined : heading} subline={phone ? heading : undefined} onClose={close} footer={footer}>
+    <Drawer className="rfp-assign" keepTop title={ASSIGN_PM_TEXT.title} eyebrow={phone ? undefined : heading} subline={phone ? heading : undefined} onClose={close} footer={footer}>
       <div className="rfp-assign__body">{body}</div>
     </Drawer>
   );

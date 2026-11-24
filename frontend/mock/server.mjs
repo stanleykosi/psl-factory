@@ -42,6 +42,7 @@ import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.m
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { createLineRuns } from './line-runs.mjs';
 import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
+import { RECEIVED_BIDS_PATH, receivedBids, receivedBidsLog, resetReceivedBids } from './received-bids.mjs';
 import { resetStartLive, START_LIVE_PATH, START_LIVE_WORK, startLive, startLiveLog } from './start-live.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
@@ -285,6 +286,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         overrides.clear();
         startWork.reset();
         resetStartLive();
+        resetReceivedBids();
         resetResponses();
         resetSetup();
         resetTemplates();
@@ -316,6 +318,14 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
           const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
           return send(res, ...startLive({ method, url, raw, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona }));
         }
+      }
+      // F-88: the live received RFP (received-bids.mjs); the v7 contract has none of these routes.
+      if (method === 'get' && url.pathname === '/__mock/received-bids-log') return send(res, 200, receivedBidsLog());
+      if (liveStart && RECEIVED_BIDS_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        return send(res, ...receivedBids({ method, url, raw, rawBytes, contentType: req.headers['content-type'], scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona }));
       }
       if (method === 'get' && url.pathname === '/__mock/work-live-log') return send(res, 200, workLiveLog());
       if (method === 'get' && url.pathname === WORKSPACE_LOG_PATH) return send(res, 200, workspaceLog());

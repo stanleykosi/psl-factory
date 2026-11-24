@@ -9,9 +9,9 @@ import { useCallback, useState } from 'react';
 import { Callout, Loading } from '@/components';
 
 import { DrawerFrame } from './DrawerFrame';
-import { isStartable, LineChooser } from './LineChooser';
+import { isStartable, LineChooser, withOwnLines } from './LineChooser';
 import { LineDrawer } from './LineForm';
-import { lineFormFor } from './lines';
+import { lineFormFor, ownLineFor } from './lines';
 import type { Line } from './types';
 import { useLines } from './useStartWork';
 
@@ -49,7 +49,7 @@ export function StartWorkDrawer({ onClose, prefill, onStarted: started, onConfli
   let view: Step = step;
   if (step.kind === 'entry') {
     const data = state.status === 'ready' ? state.data : undefined;
-    const direct = prefill ? data?.items.find((l) => l.key === prefill.line_key && isStartable(l)) : undefined;
+    const direct = prefill ? (data ? withOwnLines(data.items) : undefined)?.find((l) => l.key === prefill.line_key && isStartable(l)) : undefined;
     if (direct) view = { kind: 'line', line: direct };
     else if (prefill && data) {
       // The draft names a line this person can't start here: no form.
@@ -69,6 +69,10 @@ export function StartWorkDrawer({ onClose, prefill, onStarted: started, onConfli
     } else view = { kind: 'chooser' };
   }
 
+  const own = view.kind === 'line' ? ownLineFor(view.line.key) : undefined;
+  if (view.kind === 'line' && own) {
+    return <own.Own key={own.key} onBack={() => setStep({ kind: 'chooser' })} onClose={onClose} pathname={pathname} />;
+  }
   const form = view.kind === 'line' ? lineFormFor(view.line.key) : undefined;
   if (view.kind === 'line' && form) {
     return (
