@@ -10,9 +10,8 @@ import { useEffect, useRef } from 'react';
 import { Breadcrumb, Button, buttonClass, Callout, Checkbox, PageTitle, Panel, RadioGroup, useIsPhone, When } from '@/components';
 import { EvidencePicker } from '@/features/workspace/EvidencePicker';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
-import { useMe, usePhoneBack } from '@/shell/AppShell';
-import { hasDestination, visibleDestinations } from '@/shell/destinations';
-import { LoadingState, NotOpenState, SignedOutState } from '@/shell/FrameStates';
+import { usePhoneBack } from '@/shell/AppShell';
+import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
 import { holdText, usableName } from './milestonesModel';
 import { routeCaseId, textOf } from './model';
@@ -197,7 +196,7 @@ function Body({ caseId, name }: { caseId: string; name: string }) {
                     hideLegend
                     options={options.proofs.map((p) => ({ value: String(p.id), label: p.label }))}
                     value={m.chosen?.kind === 'proof' ? String(m.chosen.id) : undefined}
-                    onChange={(value) => m.setChosen({ kind: 'proof', id: Number(value) })}
+                    onChange={(value) => m.setChosen({ kind: 'proof', id: parseInt(value, 10) })}
                     disabled={locked}
                   />
                 )}
@@ -252,10 +251,8 @@ function Body({ caseId, name }: { caseId: string; name: string }) {
 }
 
 function Route({ caseId, name }: { caseId: string; name: string | null }) {
-  const me = useMe();
   const base = `/projects/${encodeURIComponent(caseId)}`;
   usePhoneBack({ label: 'Projects', href: '/projects' });
-  if (!hasDestination(me, 'projects')) return <NotOpenState first={visibleDestinations(me.destinations)[0]} />;
   if (!usableName(name)) {
     return (
       <section className="psl-panel mscomplete__card" aria-label="Choose a milestone">
