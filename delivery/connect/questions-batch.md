@@ -337,6 +337,12 @@ Parts that 1.24.0 now supplies are switched on as the boards draw them (D-185), 
     - (iii) a visual waiver for the four runs. The gap comes from the frame and sample data; the reviewer found no table or row styling difference of the build's own.
     Items 1 to 4 above map onto these.
 
+- **F-78 · B36. Mark a milestone complete (SCR-19): the last fidelity sign-offs.** Round 2 UI review: `delivery/features/F-78/round-2/review-ui.md`, fidelity in `round-2/fidelity/`. Coverage is 100% on desktop and phone with `fidelity-exceptions.json`. Conflicts 1 to 4 and "Tunde Bello · PMO" are already signed under B32/D-195/D-202. Still pending:
+  1. (Recommended) Sign "HB-M2" (the phone case chip), a board sample value live data doesn't carry.
+  2. (Recommended) Sign the frame items: the breadcrumb style "LAGOON HEALTH / MILESTONES", and the phone back link "← Lagoon Health" (the frame shows "← Projects"). Also sign the not-gating extras: the desktop and phone shell extras, and the grey disabled "Mark complete" state, which shows when the server's `can_complete` is false.
+  3. (Recommended) Waive visual for both SCR-19 runs (78.3 desktop, 77.0 phone, needs 90), unless the round-3 header-colour fix (UI-2-1) lifts them to 90. The gap is excepted content plus the grey disabled button against the board's filled blue.
+  Nothing here is database-related.
+
 ## Lane C
 
 ### LC-Q1 · F-85, F-87 · Work item parts the live API does not give

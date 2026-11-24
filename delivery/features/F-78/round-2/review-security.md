@@ -1,0 +1,27 @@
+VERDICT: PASS
+COMMIT: ca4abee2fb0b22e6aca06c61e643eba2ae8fb02f
+REVIEWER: security-reviewer
+AUTHORITY: security
+
+## Summary
+- Limiting the picker to PDFs only changes what the user is offered. The server still makes the real check. The upload endpoint caps files at 5 MiB and requires `evidence.add`. The completion write accepts an upload only if it belongs to this caller on this case and is a genuine PDF: `.pdf` name, `%PDF-` header, strict pypdf parse, not encrypted. The backend did not change this round.
+- The "I have checked this file" tick now belongs to one file. Removing or replacing the file clears it, and `complete()` refuses to send a file without both the file and the tick. Double sends are still blocked by the `inFlight` ref. After a 409 the page now stays busy until the reload finishes, which closes the round-1 window where a quick second press could send the old revision.
+- Error wording leaks less than before. A 422 or 400 on the write now shows only the field message or the fixed fallback (there is a test for this with "SECRET server text"). Upload errors use the spec wording for 413 and 415 and otherwise the existing shared wording.
+- Nothing widens who can write. The new "no proof controls under a hold" rule only hides more. The new 401 note after a 201 adds no access. SEC-1-2 is verified. SEC-1-1 (backend, non-blocking) is carried forward unchanged. LB-2 is carried as recorded.
+
+## Findings
+None.
+
+## Verified
+- SEC-1-2 | verified | `tests/milestone-complete.test.tsx`: the fetch stub now records `input.headers.get('X-CSRFToken')` (line 47), and the SEC-1-2 case (line 484) asserts `posts()[0].csrf === 'mock-csrf-pm'`. That is the `csrf_token` from `mock/fixtures/me.pm.json`, not the empty `csrfHeader` placeholder, so the assertion proves the shared middleware sets the real token. `npx vitest run tests/milestone-complete.test.tsx`: 44 passed.
+
+## Notes
+- **LB-2 (carried as recorded): "live: hidden for every staff role until LB-2 is fixed".** The server checks only an explicit `milestone.complete` grant, which no staff role grants. Both the options read and the write still call `require(..., 'milestone.complete')` (`apps/core/factory_api/project_operations.py:196`, `:213`). This round leaves that unchanged, and the UI still follows `can_complete`, the 403 and the 404 only.
+- **SEC-1-1 carried forward (backend, non-blocking, low).** Impact assessment: the write still accepts any 1 to 200 character `name` and does not bind it to a configured SOW milestone (`record_milestone`, `project_operations.py:195-207`). Round 2 changes no backend code and does not touch how the name is read or sent, so the risk is the same as in round 1: a crafted name variant could record a second completion and queue a second Finance handoff, but only through an authorised person's deliberate confirmation.
+- **Client `accept` is a UX filter.** `EvidencePicker` passes `accept` to `FileUpload`. When `accept` is undefined, `FileUpload` falls back to `PROOF_TYPES`, so the other caller (`StartUpload.tsx`) behaves as before (`tests/evidence.test.tsx`: 15 passed). `uploadCaseFile` still applies the wider default `refuseFile` check, so a crafted call could upload a PNG. Even then, `POST /cases/{id}/files` (`apps/core/factory_api/agents.py:173-183`, `apps/agents/upload_views.py:25-37`) only stores a private file for the caller, and the completion write rejects it in `owned_pdf` / `pdf_bytes` (`apps/core/factory_api/work_proofs.py:34-39`, `apps/workflows/factory_ppe_opening.py:42-62`).
+- **Size limits (UX, pre-existing).** The client allows up to 10 MiB (`PROOF_MAX_BYTES`) but the server caps uploads at 5 MiB. A 7 MiB PDF reaches the server and is refused with its own fixed sentence ("Choose a file up to 5 MiB."). No internals are exposed.
+- **`describeError` fallback.** `pdfUploadMessage` falls back to the shared `uploadErrorMessage`. For a 422 that shows the server's field message or the `ValidationError` sentence, and for a server error it shows `UNEXPECTED_MESSAGE`, or the message of a well-formed error body. These are sentences the server writes deliberately, with no ids, emails, tokens or stack details, and this behaviour predates this change.
+- **Proof zone under `proof_required`.** On the live API, `milestone_options` only returns `proof_required` when `attach` is false, so `showPdf` for `proof_required` never shows the zone there; it only appears in the mock. Even where it appears, an upload needs `evidence.add` on the server and cannot complete anything, because the completion control requires `can_complete`. Under `baseline_required`, the zone is now hidden even when `can_attach_pdf` is true, so this rule only narrows what is shown.
+- **401 after 201.** The "We saved your completion..." callout is accurate, since the 201 already arrived. It shows no server data, and `SignedOutState` keeps the same `safeNext`-checked return path as in round 1. `inFlight` stays set, so nothing is resent.
+- **XSS, secrets, dependencies.** The diff adds no `dangerouslySetInnerHTML`, `innerHTML`, storage or location writes. It adds no secrets: the "SECRET" string is a test fixture checking that server text is not shown. No package or lockfile changes.
+- **Run.** `npx vitest run tests/milestone-complete.test.tsx` (44 passed) and `npx vitest run tests/evidence.test.tsx` (15 passed). I ran no backend tests, because they need test-database writes, and started no servers.
