@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 // F-119 (contract mock only): the project retrospective (SCR-33) at 1440 and 390: the saved-version write with its
 // recorded requests, the checklist strip, stale and duplicate saves, the unconfirmed 503, and the follow-up action.
@@ -413,18 +413,31 @@ test.describe('phone 390 save bar', () => {
   test('a focused control is never hidden under the bar', async ({ page }) => {
     await page.goto(PAGE('2001'));
     await ready(page);
-    for (const target of [page.getByRole('checkbox', { name: 'Ada Obi' }), field(page, 'Lessons for next projects')]) {
-      await target.focus();
-      await page.waitForTimeout(200);
+    const clear = async (target: Locator) => {
+      await expect(target).toBeFocused();
+      // wait for the scroll that keeps the control above the bar to settle
+      await expect.poll(async () => {
+        const bar = (await page.locator('.retro__savebar').boundingBox())!;
+        const box = (await target.boundingBox())!;
+        return box.y + box.height <= bar.y + 1;
+      }).toBe(true);
       const covered = await target.evaluate((el) => {
         const r = el.getBoundingClientRect();
         const top = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
         return !(top === el || el.contains(top) || (top && top.closest('label')?.contains(el)));
       });
       expect(covered).toBe(false);
-      const bar = (await page.locator('.retro__savebar').boundingBox())!;
-      const box = (await target.boundingBox())!;
-      expect(box.y + box.height).toBeLessThanOrEqual(bar.y + 1);
+    };
+    // Tab (not focus) from one box into the next, where the next is partly in view behind the bar
+    await field(page, "What didn't").focus();
+    await page.keyboard.press('Tab');
+    await clear(field(page, 'Lessons for next projects'));
+    // and on down through the participants to a control below the fold
+    for (const name of ['Tunde Bello', 'Ada Obi']) {
+      await page.keyboard.press('Tab');
+      await clear(page.getByRole('checkbox', { name }));
     }
+    await page.getByRole('button', { name: 'Add a decision' }).focus();
+    await clear(page.getByRole('button', { name: 'Add a decision' }));
   });
 });

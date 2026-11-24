@@ -2,7 +2,7 @@
 
 // The retrospective form: three boxes, who took part, the notes file, decisions, and one Save. Every save is a recorded
 // version; there is no draft. Typed values stay through any failed save.
-import { useState } from 'react';
+import { useEffect, useRef, useState, type FocusEvent } from 'react';
 
 import { Button, Callout, Checkbox, DateField, Select, TextArea, TextField, useIsPhone } from '@/components';
 
@@ -48,6 +48,31 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
   const [draft, setDraft] = useState(initial);
   const [now] = useState(() => new Date());
   const phone = useIsPhone();
+  const bar = useRef<HTMLDivElement>(null);
+  // The phone bar's real height (its reason line can wrap) feeds the page's scroll and bottom padding in the css.
+  useEffect(() => {
+    const el = bar.current;
+    if (!phone || !el || typeof ResizeObserver === 'undefined') return;
+    const root = document.documentElement;
+    const measure = () => root.style.setProperty('--retro-bar', `${Math.ceil(el.getBoundingClientRect().height)}px`);
+    measure();
+    const watch = new ResizeObserver(measure);
+    watch.observe(el);
+    return () => {
+      watch.disconnect();
+      root.style.removeProperty('--retro-bar');
+    };
+  }, [phone]);
+  /** Phone: a focused control ends fully above the fixed bar. The browser does not scroll for a control that is partly in view. */
+  function clearOfBar(event: FocusEvent<HTMLFormElement>) {
+    const el = bar.current;
+    const target = event.target;
+    if (!phone || !el || el.contains(target)) return;
+    requestAnimationFrame(() => {
+      const gap = target.getBoundingClientRect().bottom - (el.getBoundingClientRect().top - 8);
+      if (gap > 0) window.scrollBy(0, gap);
+    });
+  }
   const proofs = options?.proofs ?? [];
   const problems = saveProblems(draft, proofs.length, now);
   const set = (patch: Partial<SaveDraft>) => setDraft((d) => ({ ...d, ...patch }));
@@ -105,7 +130,7 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
   );
 
   const saveBar = (
-      <div className="retro__actions retro__savebar">
+      <div ref={bar} className="retro__actions retro__savebar">
         <Button type="submit" kind="primary" size="lg" className="retro__save" busy={busy} busyLabel="Saving…" disabled={disabled} reason={reasonText}>
           {first ? 'Save retrospective' : 'Save new version'}
         </Button>
@@ -116,6 +141,7 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
     <form
       className="retro__stack"
       noValidate
+      onFocus={clearOfBar}
       onSubmit={(event) => {
         event.preventDefault();
         if (disabled) return;
