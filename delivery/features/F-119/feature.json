@@ -99,11 +99,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -129,11 +131,13 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer",
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-ux.md"
+      ]
     },
     "ui": {
       "status": "pending",
@@ -143,7 +147,146 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "A 422 with no mappable field is not shown. Spec: \"422 shows `fields[].message` under the named field, else the `message` in a `Callout`.\" `failureOf` (`useRetrospective.ts:33-38`) puts any field name outside `FIELD_OF` into `fields.other`, and the message becomes \"Check the highlighted fields.\" only when some field exists. Two results. (a) `ActionForm.tsx:62` draws the Callout only when `failure.kind !== 'invalid'`, and no control reads `fields.other` or `ownerId`, so a 422 with `fields: []` (a plain `message`) or with an `owner_id` field draws nothing, and the person sees Create re-enable with no explanation. (b) `RetroForm.tsx:166-177` shows \"Check the highlighted fields.\" when the only field was `other`, `ownerId` or `dueAt`-like and nothing is highlighted. Expected: show the API `message`, or the unplaced field messages, in the Callout whenever no control carries them; add an Owner error too. Add a test: 422 with empty `fields` on action create, and a 422 naming an unmapped field on save.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T08:52:10Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`save` in `useRetrospective.ts:193-196`: if the POST succeeds and the re-read inside `confirmSaved` fails with a non-network error (for example 429), the catch maps it to \"Try again shortly\" and Save is enabled again. Nothing says the version was recorded, and a repeat press gets a 409 for the stale revision. Safe (no duplicate), but the message is wrong. Treat any failure after a 201 as unconfirmed, or keep the saved version number and say it was saved.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T08:52:10Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`createAction` on an unconfirmed failure (503 or network) does not re-read the actions list. It only tells the person to check, and the form stays open, so a retry hits the duplicate-reference 422. Re-read the detail on `unconfirmed` so the result is shown, as the retrospective save does.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T08:52:10Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A `signed_out` failure on either write (401 after the page loaded) draws nothing: the Callout is excluded for `signed_out` in `RetroForm.tsx:166` and for `invalid` only in `ActionForm`, and the Save press ends silently. Show the sign-in link.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T08:52:10Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The strip says \"The checklist used version n (saved <date>)\" using `detail.occurred_at`, which is when the meeting was held. This follows the spec wording; consider \"held\" so the date is not read as a save time.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T08:52:10Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-6",
+      "round": 1,
+      "snapshot_ref": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The builder says the e2e was not re-run after the toast change (3b782e39). Run `e2e/retrospective.spec.ts` once before merge. The toast does not carry a \"saved\" claim before the re-read, since `savedNote` is set only after it. Criterion 21 (live Django) is still unchecked; acceptable for a read and save screen if QA covers it on 55433.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T08:52:10Z",
+          "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
