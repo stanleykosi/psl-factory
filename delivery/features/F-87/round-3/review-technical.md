@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 9f9dc026b5e62762de288ca468aa8a4380a649f1
+COMMIT: f296a554242b27ef690d2ec359765ff2669b5377
 REVIEWER: reviewer-technical
 AUTHORITY: technical reviewer (lead), lighter panel (D-180), Opus for high risk
 
@@ -8,7 +8,8 @@ AUTHORITY: technical reviewer (lead), lighter panel (D-180), Opus for high risk
 - The two new page tests pass on this head. I aliased the store to a per-mount variant from a scratch config, without touching the worktree, and both tests fail there. Line forms got no test of their own, so I wrote two scratch tests (uncertain lock, and the unread marker, across History and back). Both pass on this head and fail per-mount.
 - The shared API for lanes B and D is unchanged. `useWriteLock` is byte-identical (the new code is only appended), `useWorkspaceStep` still uses it, and `Actions`, `LineContext`, `read(ref, ctx)` and `lines/index.ts` did not change. `useWorkCommand` only widens `item` with an optional `workId`/`id`, and the `ctx` that lanes already pass carries `workId`.
 - No wrong-item leak. The scope is the work id, writes to the store happen only in press handlers (never during a server render, which reads `EMPTY`), and a stale lock can only disable a button, never send. One low gap: sign-out is a client-side navigation and does not clear the store (TECH-3-1).
-- Scope: `4a88c26b..9f9dc026` is F-87's 19 frontend files. The merge brought nothing into `work-item/` or `workspace/`, and the CI gate passed on this head.
+- Scope: `4a88c26b..9f9dc026` is F-87's 19 frontend files. The merge brought nothing into `work-item/` or `workspace/`, and the CI gate passed on 9f9dc026.
+- Merge delta (D-193, f296a554 = 9f9dc026 + origin/main eb100065): `git range-diff 4a88c26b..9f9dc026 eb100065..f296a554` shows all 7 F-87 commits `=`. The net diff `eb100065..f296a554` matches `4a88c26b..9f9dc026` except for hunk context in `mock/server.mjs`, where F-61 added the alert routes after the live work route. F-71, F-64, F-61, F-88, #115 and #117 change none of `adapter.ts`, `useWorkCommand.ts`, `useWriteLock.ts`, `lines/index.ts` or `LiveWorkItemView.tsx`, and add no caller of `useWorkCommand`, `useScopedWriteLock`, `registerLineAdapter` or `LineActionsProps`. F-64 only adds new `Live*` aliases to `api/types.ts` and leaves `LiveWorkItem` as it was. CI passed on f296a554. The verdict stands.
 
 ## Findings
 - TECH-3-1 | non-blocking | low | frontend | The lock store survives sign-out. `useSignOut` ends the session and calls `router.replace('/sign-in')` (client-side navigation), so the module store stays. If a second person signs in on the same tab and opens the same work item at the same revision, a command that had an uncertain result is still disabled with "Check the page before trying again." until the revision changes or the page reloads. Nothing is sent and nothing about another item is locked. It only over-locks one item for the next person in that tab. Expected: call `resetScopedWriteLocks()` when sign-out succeeds (the DemoBar persona switch already does a full reload). | frontend/src/features/sign-in/useSignOut.ts:25-26; frontend/src/features/workspace/useWriteLock.ts:35-38

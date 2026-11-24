@@ -141,7 +141,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead), lighter panel (D-180), Opus for high risk",
-      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "snapshot_ref": "f296a554242b27ef690d2ec359765ff2669b5377",
       "evidence_refs": [
         "delivery/features/F-87/round-3/review-technical.md"
       ]
@@ -156,10 +156,10 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "changes_requested",
+      "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "pmo",
-      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "snapshot_ref": "f296a554242b27ef690d2ec359765ff2669b5377",
       "evidence_refs": [
         "delivery/features/F-87/round-3/acceptance-pmo.md"
       ]
@@ -170,7 +170,7 @@
       "status": "passed",
       "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
       "authority": "D-182 and D-183 (batch answers); D-184 (batch-approved board changes count as product acceptance)",
-      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "snapshot_ref": "f296a554242b27ef690d2ec359765ff2669b5377",
       "evidence_refs": [
         "delivery/features/F-87/round-3/acceptance-product.md"
       ]
@@ -179,7 +179,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "reviewer-ux",
-      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "snapshot_ref": "f296a554242b27ef690d2ec359765ff2669b5377",
       "evidence_refs": [
         "delivery/features/F-87/round-3/review-ux.md"
       ]
@@ -188,7 +188,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "reviewer-ui",
-      "snapshot_ref": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+      "snapshot_ref": "f296a554242b27ef690d2ec359765ff2669b5377",
       "evidence_refs": [
         "delivery/features/F-87/round-3/review-ui.md"
       ]
@@ -902,15 +902,15 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "4a88c26b2aa399ff54f9ec6cedad65ae075ebbb8",
+    "base_sha": "eb100065e9af366413e28783654d82280dcf3001",
     "task_branch": "fe-connect-1-work-item-controls",
-    "head_sha": "9f9dc026b5e62762de288ca468aa8a4380a649f1",
+    "head_sha": "f296a554242b27ef690d2ec359765ff2669b5377",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/113",
     "pr_number": 113,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "approved",
     "merge_status": "not_merged",
     "merge_sha": null,
