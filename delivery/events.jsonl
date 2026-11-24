@@ -5013,3 +5013,14 @@
 {"at":"2026-11-24T14:35:29Z","feature":"F-119","round":4,"kind":"transition","head":"06d07376b024","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
 {"at":"2026-11-24T14:35:51Z","feature":"F-61","round":1,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/112","git.pr_number":112}}
 {"at":"2026-11-24T14:35:52Z","feature":"F-61","round":1,"kind":"transition","head":"5f61b03c833d","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
+{"at":"2026-11-24T14:38:16Z","feature":"F-111","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"8a5c09fe624b","findings":{"TECH-2-1":"low"},"written_at":"2026-11-24T14:34:19Z"}
+{"at":"2026-11-24T14:38:16Z","feature":"F-111","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"8a5c09fe624b","findings":{"UX-2-1":"low","UX-2-2":"low"},"written_at":"2026-11-24T14:34:51Z"}
+{"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"reviewer-qa","commit":"cfc3c4623820","findings":{"QA-2-1":"medium","QA-2-2":"low","QA-2-3":"low"},"written_at":"2026-11-24T14:36:38Z"}
+{"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"cfc3c4623820","findings":{"PMO-2-1":"low","PMO-2-2":"low","PMO-2-3":"medium"},"written_at":"2026-11-24T14:38:01Z"}
+{"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"finding","action":"add","finding":"QA-2-1","by":"reviewer-qa","severity":"medium","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"finding","action":"add","finding":"QA-2-2","by":"reviewer-qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"finding","action":"add","finding":"QA-2-3","by":"reviewer-qa","severity":"low","owner":"integration","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"finding","action":"add","finding":"PMO-2-3","by":"pmo-acceptance","severity":"medium","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-24T14:38:17Z","feature":"F-71","round":2,"kind":"transition","head":"cfc3c4623820","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}

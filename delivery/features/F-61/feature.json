@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-61",
   "outcome": "Alerts list, drawer and alert settings on the live API",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -99,20 +99,24 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance",
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-61/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), recorded by the lane A coordinator",
+      "authority": "accepted in batch, delegated under D-184 (the design engineer's batch answers D-182, D-187 and D-202)",
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -303,6 +307,52 @@
           "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
         }
       ]
+    },
+    {
+      "id": "PMO-1-1",
+      "round": 1,
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Open non-blocking findings need a named disposition before merge. Owners: TECH-1-1, QA-1-3, QA-1-4 and QA-1-5 frontend; TECH-1-2 and QA-1-1 backend or integration (LA-4); QA-1-2 frontend, which must be run at base and head and fixed or documented, and the e2e is not in the CI gate. None of these is accepted as risk by any named authority yet. Expected: the coordinator records a fix or a deferral for each. Actual: all are OPEN in feature.json. Path: delivery/features/F-61/feature.json.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:35:24Z",
+          "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-2",
+      "round": 1,
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The parent package's status must stop at this slice. The account tab, account-menu items, per-event switches, digest and quiet hours stay out. Any status note must not claim them as live. Path: delivery/features/F-61/readiness.md (Out).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:35:24Z",
+          "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
+        }
+      ]
     }
   ],
   "prior_review_records": [],
@@ -326,13 +376,13 @@
     "repository": null,
     "task_id": "FE-ALERTS",
     "base_branch": "main",
-    "base_sha": "156996538dc28d1fdd1412c93023d8fa69a51def",
+    "base_sha": "4a88c26b2aa399ff54f9ec6cedad65ae075ebbb8",
     "task_branch": "fe-alerts-live-alerts-and-settings",
     "head_sha": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a2",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/112",
+    "pr_number": 112,
+    "pr_author": "hunchoweb",
     "designated_approver": null,
     "ci_status": "not_run",
     "human_approval": "pending",
@@ -454,6 +504,14 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-24T14:28:48Z",
+      "round": 1,
+      "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-24T14:35:52Z",
       "round": 1,
       "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
       "reason": null
