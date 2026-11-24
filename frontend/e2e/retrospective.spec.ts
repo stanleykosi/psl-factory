@@ -354,10 +354,33 @@ test.describe('phone 390', () => {
     }
     const order = await page.evaluate(() => ['Project retrospective', 'What went well', 'Who took part', 'Notes file', 'Save retrospective', 'Closure checklist'].map((t) => {
       const el = [...document.querySelectorAll('h1, label, legend, button, h2, span')].find((e) => e.textContent?.trim() === t || e.textContent?.startsWith(`${t}`));
-      return el ? el.getBoundingClientRect().top + window.scrollY : -1;
+      return el ? [...document.querySelectorAll('*')].indexOf(el) : -1;
     }));
     expect(order.every((top) => top >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
     await page.screenshot({ path: test.info().outputPath('retrospective-390.png'), fullPage: true });
+  });
+});
+
+test.describe('phone 390 save bar', () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+  test('Save sits in a bar at the bottom of the screen and a form message is not covered', async ({ page }) => {
+    await page.goto(PAGE('2001'));
+    await ready(page);
+    const save = page.getByRole('button', { name: 'Save retrospective' });
+    const box = (await save.boundingBox())!;
+    // the bar is on screen without scrolling, full width, at the bottom
+    expect(box.y + box.height).toBeGreaterThan(844 - 80);
+    expect(box.width).toBeGreaterThan(300);
+    await field(page, 'What went well').fill('x');
+    await choose(page, 'Notes file', 'Test plan v2');
+    await page.getByRole('textbox', { name: 'Reference' }).fill('Retrospective 2026-11-21');
+    await save.click();
+    const message = page.getByText('Pick people who are on the project.');
+    await expect(message).toBeVisible();
+    await message.scrollIntoViewIfNeeded();
+    const m = (await message.boundingBox())!;
+    const b = (await save.boundingBox())!;
+    expect(m.y + m.height).toBeLessThanOrEqual(b.y);
   });
 });

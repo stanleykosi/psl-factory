@@ -150,7 +150,7 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
         </Callout>
       )}
 
-      <div className="retro__actions">
+      <div className="retro__actions retro__savebar">
         <Button type="submit" kind="primary" size="lg" className="retro__save" busy={busy} busyLabel="Saving…" disabled={disabled} reason={reasonText}>
           {first ? 'Save retrospective' : 'Save new version'}
         </Button>
