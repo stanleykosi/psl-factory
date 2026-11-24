@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-113",
   "outcome": "The Delivery tab shows the project's six delivery lines from the live overview",
-  "state": "PR_OPEN",
+  "state": "MERGED",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -130,7 +130,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical review lead, round 3 (test data only)",
-      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "snapshot_ref": "7ea09ba55efec2f90b009e55042ff1d54c9c80ab",
       "evidence_refs": [
         "delivery/features/F-113/round-3/review-technical.md"
       ]
@@ -139,7 +139,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "integrated QA, round 3 (test data only)",
-      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "snapshot_ref": "7ea09ba55efec2f90b009e55042ff1d54c9c80ab",
       "evidence_refs": [
         "delivery/features/F-113/round-3/review-qa.md"
       ]
@@ -148,7 +148,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "PMO delivery acceptance, round 3",
-      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "snapshot_ref": "7ea09ba55efec2f90b009e55042ff1d54c9c80ab",
       "evidence_refs": [
         "delivery/features/F-113/round-3/acceptance-pmo.md"
       ]
@@ -159,7 +159,7 @@
       "status": "passed",
       "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
       "authority": "carried over under D-188 (sync with main only, plus round 3 test data); D-187 (LD-Q2: every recommended spec option accepted) and D-195 (\"Sign all, keep amber\"); D-184 (batch-approved board changes count as product acceptance)",
-      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "snapshot_ref": "7ea09ba55efec2f90b009e55042ff1d54c9c80ab",
       "evidence_refs": [
         "delivery/features/F-113/round-3/acceptance-product.md"
       ]
@@ -168,7 +168,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "reviewer-ux",
-      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "snapshot_ref": "7ea09ba55efec2f90b009e55042ff1d54c9c80ab",
       "evidence_refs": [
         "delivery/features/F-113/round-3/review-ux.md"
       ]
@@ -177,7 +177,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer",
-      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "snapshot_ref": "7ea09ba55efec2f90b009e55042ff1d54c9c80ab",
       "evidence_refs": [
         "delivery/features/F-113/round-3/review-ui.md"
       ]
@@ -1152,18 +1152,18 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
+    "base_sha": "8573a7a14bdb84a08541825fa2989fa20b3a13b4",
     "task_branch": "fe-connect-1-delivery-overview",
-    "head_sha": "df2e09f4551626e0e97153c73d924118ceb5546c",
+    "head_sha": "7ea09ba55efec2f90b009e55042ff1d54c9c80ab",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/109",
     "pr_number": 109,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "merge_status": "merged",
+    "merge_sha": "4a88c26b2aa399ff54f9ec6cedad65ae075ebbb8",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/mock/delivery-overview.mjs",
@@ -1200,16 +1200,20 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
-    "merged_by": null,
+    "approver_recommendation": "AUTO_MERGE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-113/decision.md"
+    ],
+    "script_decision": "AUTO_MERGE",
+    "script_reasons": [
+      "all gates passed on the current head and no policy rule needs a human"
+    ],
+    "decided_for_head_sha": "7ea09ba55efec2f90b009e55042ff1d54c9c80ab",
+    "merged_by": "hunchoweb (lane D coordinator, delegated under D-180/D-184)",
     "pre_merge_sync": {
-      "base_sha": null,
-      "checks_rerun": "not_run"
+      "base_sha": "8573a7a14bdb84a08541825fa2989fa20b3a13b4",
+      "checks_rerun": "passed"
     }
   },
   "created_at": "2026-11-23T17:35:17Z",
@@ -1326,6 +1330,14 @@
       "at": "2026-11-24T13:46:41Z",
       "round": 3,
       "head": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "MERGED",
+      "at": "2026-11-24T13:58:45Z",
+      "round": 3,
+      "head": "7ea09ba55efec2f90b009e55042ff1d54c9c80ab",
       "reason": null
     }
   ],

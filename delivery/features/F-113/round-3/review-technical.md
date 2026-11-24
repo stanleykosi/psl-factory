@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: df2e09f4551626e0e97153c73d924118ceb5546c
+COMMIT: 7ea09ba55efec2f90b009e55042ff1d54c9c80ab
 REVIEWER: reviewer-technical
 AUTHORITY: technical review lead, round 3 (test data only)
 
 ## Summary
+- D-193 sync-only re-check of 7ea09ba5 (merge of origin/main 8573a7a1 into the round 3 head df2e09f4): no F-113 file changed by the merge except frontend/mock/server.mjs, which main changed only by F-62 lines (live work item route and list route, ids 301-320 and 401-420) that sit before F-113's delivery read and do not collide with 2501-2505. F-113's own server.mjs lines are intact. The Delivery tab imports (projects, work-item, components, api, shell) are unchanged; `git diff --name-only df2e09f4 7ea09ba5` touches none of them. No new findings; round 3 PASS stands.
 - Round 3 diff `0c081045..df2e09f4` is additive test data: five live work fixtures (2501 to 2505) in `frontend/mock/work-live.mjs` and one new test file. No route, frame or existing 41xx fixture changed.
 - The five fixtures match the 1.26.0 work item 200 schema (`contracts/psl-factory.openapi.json`). Their `line`, `state`, `reference` and `updated_at` equal the P-0101 overview rows in `frontend/mock/delivery-overview.mjs` (the `started()` rows for 2501 to 2505).
 - `npx vitest run tests/mock-work-live.test.ts` run alone in `frontend/`: 1 file, 11 of 11 tests pass. The new test takes every row with a `work_id` from the P-0101 overview (exactly five), and asserts status 200, schema validity and the row's line, state and reference for each.
@@ -19,6 +20,7 @@ AUTHORITY: technical review lead, round 3 (test data only)
 - Row backing | verified | The five started rows in `P0101` (`delivery-overview.mjs`) have work_ids 2501 to 2505, and the fixtures use the same id, line key, state and reference. The test enforces this for line, state and reference; `updated_at` equality is by inspection of the diff only.
 
 ## Notes
+- D-193 re-check: `git diff --name-only df2e09f4 7ea09ba5` lists 31 main-side files (exceptions, my-work, verified, work-list, live-work.mjs, server.mjs). None is in the F-113 delivery set; server.mjs is shared and is covered above. Checked with git only; no servers started, no Railway calls.
 - Carried forward from round 2 (round 3 does not touch these files, so the impact is unchanged): TECH-2-1 (dead `delivery__*` rules in `project-tabs.css`, non-blocking) and the round 1 items TECH-1-1 to TECH-1-6, all non-blocking, unchanged.
 - The D-199 CI gate passed on attempt 2 after one CI-only flake in an unrelated ledger-source test, per the builder's note. I did not rerun that test; it is outside this diff.
 - The round 2 PASS stands for everything else in F-113. I re-read no code outside the round 3 diff.

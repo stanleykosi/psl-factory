@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: df2e09f4551626e0e97153c73d924118ceb5546c
+COMMIT: 7ea09ba55efec2f90b009e55042ff1d54c9c80ab
 REVIEWER: qa
 AUTHORITY: integrated QA, round 3 (test data only)
 
 ## Summary
+- D-193 sync-only re-check of head 7ea09ba5 (round 3 merged with origin/main 8573a7a1, PRs #105, #106, #108): ran the single vitest command in worktree `frontend/` with no lock: 5 files, 97 of 97 tests passed (31 s). No servers started, no Railway tools called. Earlier journey evidence carries forward. GitHub checks on 7ea09ba5 are run separately and added by the coordinator. QA-2-1 stays unproven live.
 - Round 3 diff `0c081045..df2e09f4` is two files: `frontend/mock/work-live.mjs` (live work fixtures 2501 to 2505 for P-0101) and `frontend/tests/mock-work-live.test.ts` (one new test). No app route, Delivery tab file or style changed, so the round 2 journeys carry forward unchanged.
 - Ran the single vitest command in the worktree `frontend/` with no lock: 5 files, 97 of 97 tests passed (25 s). The fixtures match the five started rows of `mock/delivery-overview.mjs` on work_id, line, state, reference and updated_at.
 - UX-2-4 is verified at the data level: at 0c081045 no fixture for 2501 existed and the mock answered 404 (`work-live.mjs` line 159); at df2e09f4 all five answer 200 and validate against the 1.26 schema. The 1280 and 390 click-through to `/work/2501` was done by the builder, not by me: I started no servers, per the brief.

@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: df2e09f4551626e0e97153c73d924118ceb5546c
+COMMIT: 7ea09ba55efec2f90b009e55042ff1d54c9c80ab
 REVIEWER: design engineer (hunchoweb), accepted in batch, delegated under D-184
 AUTHORITY: carried over under D-188 (sync with main only, plus round 3 test data); D-187 (LD-Q2: every recommended spec option accepted) and D-195 ("Sign all, keep amber"); D-184 (batch-approved board changes count as product acceptance)
 
@@ -20,6 +20,8 @@ Carried over under D-188 from round 2 (head 6636f0eb). The changes since then do
   - 3b7df6cc F-86: Start work on the live API, weekly report first (SCR-04) (#103)
   - e2f44656 F-85: live work item page, shared line adapter and evidence picker (#101)
 Two main merges came in under D-193 and D-199: ae0525fb (F-86, F-72) and 8692cf87 (the CI workflow). One test-data conflict in `mock/server.mjs` was resolved by keeping both sides. Round 3 adds only live test-data work items 2501 to 2505 so the row titles reach a work item (UX-2-4). The Delivery tab, its words, its look and the signed exceptions are unchanged. Every routed lens and QA re-checked on this head.
+
+Then 7ea09ba5 merges origin/main 8573a7a1 (#105 F-125, #106 F-62, #108 ledger test wait) cleanly, touching no F-113 file, D-193 pre-merge sync. Carried over under D-188. Technical, UX, UI and QA re-checked on 7ea09ba5, and CI PASS on 7ea09ba5.
 
 ## Not covered
 - A live started row (QA-2-1): unproven live. The qa-seed project's six lines are all not_started. `seed_delivery_demo --username qa-seed` on 55433 (run by the main coordinator, 24 Nov) fails before creating anything with "Capture a current separate SOW and PRD signature packet": it depends on commercial seed data that isn't there, and seed commands aren't chained. The started row is proved on the mock and on a replay of the live overview JSON only.

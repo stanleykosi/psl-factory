@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: df2e09f4551626e0e97153c73d924118ceb5546c
+COMMIT: 7ea09ba55efec2f90b009e55042ff1d54c9c80ab
 BUILDER: builder
 LANE: full
 
@@ -23,3 +23,6 @@ LANE: full
 
 ## Blocked
 None. Note: after the dev server ran, free disk read 3.0 GB (the .next dev cache in lane-d/frontend).
+
+## Coordinator: D-193 sync with main before merge
+Merged origin/main 8573a7a1 (#105 F-125, #106 F-62, #108 ledger test wait) as 7ea09ba5. It merged cleanly, and no F-113 file is touched (`git diff --name-only df2e09f4 7ea09ba5` against the F-113 paths is empty). D-200: base_sha 8573a7a1, no protected path.
