@@ -8,6 +8,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MilestoneCompletePage } from '@/features/projects/MilestoneComplete';
 import { AppShell } from '@/shell/AppShell';
 
+// @ts-expect-error plain ESM module without type declarations
+import { projects } from '../mock/projects.mjs';
 import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
 vi.mock('next/navigation', () => ({ usePathname: () => '/projects/P-0101/milestones/complete', useRouter: () => ({ replace: vi.fn(), push: vi.fn(), prefetch: vi.fn() }), useSearchParams: () => new URLSearchParams() }));
@@ -20,7 +22,7 @@ const OPTIONS = { revision: 5, proofs: [{ id: 31, label: 'Completion evidence ·
 const RECORDED = { id: 412, revision: 6, name: NAME, evidence_id: 31 };
 const REREAD = { id: 412, name: NAME, completed_at: '2026-11-23T10:15:00Z', evidence_id: 31, proof_version: 3 };
 
-type Req = { method: string; path: string; search: string; body: string };
+type Req = { method: string; path: string; search: string; body: string; csrf: string | null };
 let log: Req[];
 let optionsBody: unknown;
 let onPost: () => Response | Promise<Response>;
@@ -42,7 +44,11 @@ beforeEach(() => {
       const url = new URL(input.url);
       if (url.pathname === '/api/v1/me') return json(200, me);
       const body = input.method === 'POST' && !url.pathname.endsWith('/files') ? await input.clone().text() : '';
-      log.push({ method: input.method, path: url.pathname.replace(CASE, 'CASE'), search: url.search, body });
+      log.push({ method: input.method, path: url.pathname.replace(CASE, 'CASE'), search: url.search, body, csrf: input.headers.get('X-CSRFToken') });
+      if (url.pathname === `/api/v1/projects/${CASE}`) {
+        const r = projects({ operationId: 'E-PROJECT', url: new URL('http://x/api/v1/projects/P-0101'), persona: 'pm' });
+        return json(r.status, r.body);
+      }
       if (url.pathname.endsWith('/files')) return onFile();
       if (url.pathname.endsWith('/milestones/completions')) return input.method === 'POST' ? onPost() : typeof optionsBody === 'function' ? (optionsBody as () => Response)() : json(200, optionsBody);
       if (/\/milestones\/\d+$/.test(url.pathname)) return onReread();
@@ -97,6 +103,14 @@ const ready = async () => {
   pickProof();
   confirmBox();
 };
+
+const fileInput = () => document.querySelector('input[type="file"]') as HTMLInputElement;
+const choose = (file: File) => fireEvent.change(fileInput(), { target: { files: [file] } });
+async function uploadPdf(name: string) {
+  choose(new File(['%PDF'], name, { type: 'application/pdf' }));
+  await until(() => expect(screen.queryByLabelText('I have checked this file is the proof for this milestone.')).not.toBeNull());
+}
+const phone = () => vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('max-width'), media: q, addEventListener: () => {}, removeEventListener: () => {} }));
 
 describe('control follows the server', () => {
   it('can_complete true shows the control; false shows none, whatever the persona', async () => {
@@ -195,10 +209,7 @@ describe('the write and the re-read', () => {
 
   it('a PDF uploads first, needs the second tick, then posts upload_id and checked', async () => {
     await open();
-    await until(() => expect(screen.getByLabelText(/Evidence file|Choose a file/i, { selector: 'input' })).toBeTruthy());
-    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-    fireEvent.change(input, { target: { files: [new File(['%PDF'], 'signoff.pdf', { type: 'application/pdf' })] } });
-    await until(() => expect(text()).toContain('signoff.pdf'));
+    await uploadPdf('signoff.pdf');
     confirmBox();
     await until(() => expect(screen.queryByLabelText('I have checked this file is the proof for this milestone.')).not.toBeNull());
     expect(button()!.disabled).toBe(true);
@@ -308,5 +319,175 @@ describe('proofs', () => {
     await until(() => expect(screen.getByLabelText('Completion evidence · version 0')).toBeTruthy());
     expect(optionReads().at(-1)!.search).toBe(`?name=${encodeURIComponent(NAME)}&page=2`);
     expect(screen.getAllByLabelText('Completion evidence · version 1')).toHaveLength(1);
+  });
+});
+
+describe('round 2: layout, holds, the file, and the remaining criteria', () => {
+  it.each([
+    ['name_in_use', { can_complete: false, hold: 'name_in_use' }],
+    ['norole', { can_complete: false, hold: null }],
+    ['baseline_required', { can_complete: false, hold: 'baseline_required' }],
+  ])('UI-1-4: under %s there are no proof radios and no upload zone', async (_n, patch) => {
+    optionsBody = { ...OPTIONS, ...patch };
+    await open();
+    expect(document.querySelector('input[type="radio"]')).toBeNull();
+    expect(fileInput()).toBeNull();
+    expect(text()).not.toContain('Evidence');
+  });
+
+  it('proof_required keeps only the PDF zone when can_attach_pdf is true', async () => {
+    optionsBody = { ...OPTIONS, can_complete: false, hold: 'proof_required', proofs: [] };
+    await open();
+    expect(document.querySelector('input[type="radio"]')).toBeNull();
+    expect(fileInput()).not.toBeNull();
+    expect(button()).toBeNull();
+  });
+
+  it('desktop shows the read-only Project and Milestone fields; the card has the dark head', async () => {
+    await open();
+    await until(() => expect(document.querySelectorAll('.mscomplete__box')).toHaveLength(2));
+    expect([...document.querySelectorAll('.mscomplete__box')].map((b) => b.textContent)).toEqual(['Lagoon Health · patient app', NAME]);
+    expect(document.querySelector('.psl-panel__head--dark')!.textContent).toBe('Milestone');
+  });
+
+  it('UI-1-3: phone is flat, the milestone name is the heading, there is no breadcrumb', async () => {
+    phone();
+    await open();
+    expect(screen.getByRole('heading', { level: 1, name: NAME })).toBeTruthy();
+    expect(document.querySelector('.psl-crumb')).toBeNull();
+    expect(document.querySelector('.mscomplete__card')).toBeNull();
+    expect(button()).not.toBeNull();
+  });
+
+  it('TECH-1-1: a PNG is refused before any request; the input is named "Or upload a private PDF"', async () => {
+    await open();
+    expect(fileInput().getAttribute('accept')).toBe('.pdf');
+    expect(screen.getByLabelText('Or upload a private PDF', { selector: 'input' })).toBe(fileInput());
+    choose(new File(['x'], 'photo.png', { type: 'image/png' }));
+    await until(() => expect(text()).toContain('PNG files can’t be used as proof'));
+    expect(log.some((r) => r.path.endsWith('/files'))).toBe(false);
+  });
+
+  it.each([
+    [413, 'too_large', 'That file is too large to upload.'],
+    [415, 'unsupported', 'Only a PDF can be attached as proof.'],
+  ])('TECH-1-1: an upload %i says the spec wording', async (status, code, words) => {
+    onFile = () => json(status, { code, message: 'x' });
+    await open();
+    choose(new File(['%PDF'], 'a.pdf', { type: 'application/pdf' }));
+    await until(() => expect(text()).toContain(words));
+  });
+
+  it('TECH-1-2: the file tick is cleared when the file is removed and another is uploaded', async () => {
+    await open();
+    await uploadPdf('a.pdf');
+    confirmBox();
+    fireEvent.click(screen.getByLabelText('I have checked this file is the proof for this milestone.'));
+    expect(button()!.disabled).toBe(false);
+    fireEvent.click(screen.getByRole('button', { name: /Remove/ }));
+    await until(() => expect(screen.queryByLabelText('I have checked this file is the proof for this milestone.')).toBeNull());
+    await uploadPdf('b.pdf');
+    expect((screen.getByLabelText('I have checked this file is the proof for this milestone.') as HTMLInputElement).checked).toBe(false);
+    expect(button()!.disabled).toBe(true);
+    expect(posts()).toHaveLength(0);
+  });
+
+  it('AC 9: a 409 keeps the uploaded PDF and both ticks', async () => {
+    let first = true;
+    onPost = () => {
+      if (first) {
+        first = false;
+        return json(409, { code: 'stale_revision', message: 'x' });
+      }
+      return json(201, RECORDED);
+    };
+    await open();
+    await uploadPdf('a.pdf');
+    confirmBox();
+    fireEvent.click(screen.getByLabelText('I have checked this file is the proof for this milestone.'));
+    fireEvent.click(button()!);
+    await until(() => expect(text()).toContain('This project changed while you were confirming.'));
+    expect(text()).toContain('signoff.pdf');
+    expect((screen.getByLabelText('I have checked this file is the proof for this milestone.') as HTMLInputElement).checked).toBe(true);
+    expect(button()!.disabled).toBe(false);
+  });
+
+  it('AC 9: a 409 that drops the chosen proof deselects it with a note', async () => {
+    onPost = () => {
+      optionsBody = { ...OPTIONS, revision: 6, proofs: [OPTIONS.proofs[1]] };
+      return json(409, { code: 'stale_revision', message: 'x' });
+    };
+    await ready();
+    fireEvent.click(button()!);
+    await until(() => expect(text()).toContain('That proof is no longer available.'));
+    expect((screen.getByLabelText('Completion evidence · version 1') as HTMLInputElement).checked).toBe(false);
+  });
+
+  it('TECH-1-4: a 409 whose reload fails says so, and the form stays busy until the reload settles', async () => {
+    onPost = () => {
+      optionsBody = () => json(500, { code: 'server_error', message: 'x' });
+      return json(409, { code: 'stale_revision', message: 'x' });
+    };
+    await ready();
+    fireEvent.click(button()!);
+    await until(() => expect(text()).toContain('we couldn’t reload it'));
+    expect(text()).not.toContain('We reloaded it.');
+  });
+
+  it('AC 10: "It wasn’t recorded" keeps the proof and the tick', async () => {
+    onPost = () => json(503, { code: 'server_error', message: 'x' });
+    await ready();
+    fireEvent.click(button()!);
+    await until(() => expect(text()).toContain('We couldn’t tell'));
+    fireEvent.click(screen.getByRole('button', { name: 'Check again' }));
+    await until(() => expect(text()).toContain('It wasn’t recorded.'));
+    expect((screen.getByLabelText('Completion evidence · version 2') as HTMLInputElement).checked).toBe(true);
+    expect((screen.getByLabelText('I confirm this milestone is complete as the SOW describes it.') as HTMLInputElement).checked).toBe(true);
+  });
+
+  it('AC 11: a 401 on the write shows the signed-out state', async () => {
+    onPost = () => json(401, { code: 'not_authenticated', message: 'x' });
+    await ready();
+    fireEvent.click(button()!);
+    await until(() => expect(text()).toContain('You’re signed out.'));
+  });
+
+  it('TECH-1-8: a 401 on the re-read after a 201 says the completion was saved', async () => {
+    onReread = () => json(401, { code: 'not_authenticated', message: 'x' });
+    await ready();
+    fireEvent.click(button()!);
+    await until(() => expect(text()).toContain('We saved your completion'));
+    expect(text()).toContain('You’re signed out.');
+    expect(text()).not.toContain('Milestone recorded');
+  });
+
+  it('TECH-1-5: a 422 without a field message shows the fallback, not the server text', async () => {
+    onPost = () => json(422, { code: 'invalid', message: 'SECRET server text' });
+    await ready();
+    fireEvent.click(button()!);
+    await until(() => expect(text()).toContain('We couldn’t record this. Check the proof and try again.'));
+    expect(text()).not.toContain('SECRET');
+  });
+
+  it('AC 12: a 404 and a 500 on the options read', async () => {
+    optionsBody = () => json(404, { code: 'not_found', message: 'x' });
+    await open();
+    expect(text()).toContain('This project or milestone isn’t available to you.');
+    cleanup();
+    optionsBody = () => json(500, { code: 'server_error', message: 'x' });
+    await open();
+    await until(() => expect(text()).toContain('We couldn’t load this milestone.'));
+    expect(screen.getByRole('button', { name: 'Try again' })).toBeTruthy();
+    expect(button()).toBeNull();
+  });
+
+  it('SEC-1-2: the write carries the X-CSRFToken from /me; AC 13: the Recorded text is the fixed wording and only allowed requests are made', async () => {
+    await ready();
+    fireEvent.click(button()!);
+    await until(() => expect(text()).toContain('Milestone recorded'));
+    expect(posts()[0].csrf).toBe('mock-csrf-pm');
+    expect(text()).toContain('Finance is handed this milestone and starts any invoice itself. The amount comes from the contract, not from this form. Completing a milestone is not invoicing it. PMO completes milestones; Finance handles invoices.');
+    const allowed = [/\/milestones\/completions$/, /\/milestones\/\d+$/, /\/files$/, /\/projects\/CASE$/];
+    expect(log.filter((r) => !allowed.some((a) => a.test(r.path)))).toEqual([]);
   });
 });
