@@ -14,8 +14,15 @@ export type LineKey = NonNullable<ListQuery['line']>;
 export type WorkState = WorkListRow['state'];
 export type WorkLine = WorkListPage['lines'][number];
 
+/** Rows per page the server accepts; no `limit` means the server's own default. */
+export type WorkLimit = NonNullable<ListQuery['limit']>;
+
 /** What narrows a queue; any change restarts the list from page 1. */
-export type WorkListFilters = { line?: LineKey; q?: string; project?: string };
+export type WorkListFilters = { line?: LineKey; q?: string; project?: string; state?: WorkState; limit?: WorkLimit };
+
+/** GET /api/v1/work/counts: the person's whole queues and per-line summaries. */
+export type WorkCounts = operations['work_counts']['responses'][200]['content']['application/json'];
+export type QueueCount = WorkCounts['queues'][number];
 
 /** `evaluated` is the count of work items the server looked at, never a total of rows. */
 export type WorkCoverage = { limited: boolean; evaluated: number; deferredCount: number };

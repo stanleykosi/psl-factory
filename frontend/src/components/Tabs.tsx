@@ -11,7 +11,7 @@ import { useRef, type KeyboardEvent } from 'react';
 import { CountBadge } from './CountBadge';
 import { cx } from './internal';
 
-export type TabItem<K extends string> = { key: K; label: string; count?: number; href?: string; /** Shown, but cannot be opened. */ disabled?: boolean };
+export type TabItem<K extends string> = { key: K; label: string; count?: number; /** `count` is a lower bound ("12+"). */ atLeast?: boolean; href?: string; /** Shown, but cannot be opened. */ disabled?: boolean };
 
 export function Tabs<K extends string>({ label, tabs, selected, onSelect, panelId, strip = false, className }: {
   label: string;
@@ -71,7 +71,7 @@ export function Tabs<K extends string>({ label, tabs, selected, onSelect, panelI
             {tab.count !== undefined && (
               <>
                 {' '}
-                <CountBadge count={tab.count} />
+                <CountBadge count={tab.count} atLeast={tab.atLeast} />
               </>
             )}
           </>

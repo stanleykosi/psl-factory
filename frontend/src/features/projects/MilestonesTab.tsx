@@ -3,29 +3,35 @@
 // SCR-38 Milestones: the contract stages of /money (amount, completion, invoice and paid as separate facts), then the
 // recorded completions of /milestones as their own list. A change sits beside the stage it changes; its amount is shown
 // next to the contract amount and never added to it. A stage is tied to a completion only through `milestone_id`.
-import { useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 
-import { Button, Callout, Table, Tag, useIsPhone, VisuallyHidden, When, type Column } from '@/components';
+import { Button, buttonClass, Callout, Table, Tag, useIsPhone, VisuallyHidden, When, type Column } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
 import { InvoiceCell, PaidCell, Value } from './MoneyCells';
-import { changeText, completedText, completionFor, completionText, contractAmount, contractStages, dueText, hasChanges, recordedByText, type CompletionRow } from './milestonesModel';
+import { changeText, completedText, completeHref, completionFor, completionText, contractAmount, contractStages, dueText, hasChanges, holdText, recordedByText, type CompletionRow } from './milestonesModel';
 import { stageLabel, type MoneyItem } from './moneyModel';
 import { AsOf, NONE, TabEmpty } from './TabParts';
 import { useMilestones, type ProofState } from './useMilestones';
 
 const NO_FINANCE = 'Contract amounts, invoices and payments aren’t available to your role.';
 
-type Proofs = { proofs: Record<string, ProofState>; press: (slot: string, id: number) => void };
+/** What a row needs: the proofs read on press, and (F-78) the link to SCR-19 when the server's own read allows a completion. */
+type Proofs = { proofs: Record<string, ProofState>; press: (slot: string, id: number) => void; completeHref: (label: string) => string | undefined };
 
-/** "Proof" for one recorded completion; pressing it reads that completion once and shows the answer under the button. */
+/** "Proof" for one recorded completion: a toggle. Opening it reads that completion once and shows the answer under the button; pressing again hides it. */
 function Proof({ slot, id, label, proofs }: { slot: string; id: number; label: string; proofs: Proofs }) {
   const phone = useIsPhone();
-  const state = proofs.proofs[slot];
+  const [open, setOpen] = useState(false);
+  const state = open ? proofs.proofs[slot] : undefined;
   return (
     <span className="ptabs__proof">
-      <Button kind="secondary" size={phone ? 'md' : 'sm'} aria-expanded={state !== undefined && state.status !== 'loading'} busy={state?.status === 'loading'} busyLabel="Loading…" onClick={() => proofs.press(slot, id)}>
+      <Button kind="secondary" size={phone ? 'md' : 'sm'} aria-expanded={open} busy={state?.status === 'loading'} busyLabel="Loading…" onClick={() => {
+          if (!open) proofs.press(slot, id);
+          setOpen(!open);
+        }}>
         Proof<VisuallyHidden> for {label}</VisuallyHidden>
       </Button>
       {state?.status === 'ready' && (
@@ -70,6 +76,8 @@ function AmountCell({ item }: { item: MoneyItem }) {
 
 /** Done or not, the due date, who recorded it (only through `milestone_id`), and Proof where a completion is linked. */
 function CompletionCell({ item, rows, proofs }: { item: MoneyItem; rows: CompletionRow[]; proofs: Proofs }) {
+  const phone = useIsPhone();
+  const href = item.completed_at === null ? proofs.completeHref(item.label) : undefined;
   const match = completionFor(item, rows);
   const by = match ? recordedByText(match) : undefined;
   const due = dueText(item);
@@ -78,6 +86,11 @@ function CompletionCell({ item, rows, proofs }: { item: MoneyItem; rows: Complet
       <span className="ptabs__block">{completionText(item)}</span>
       {due && <span className="ptabs__block ptabs__hint">{due}</span>}
       {by && <span className="ptabs__block ptabs__hint">{by}</span>}
+      {href && (
+        <Link className={buttonClass('secondary', phone ? 'md' : 'sm')} href={href}>
+          Mark complete<VisuallyHidden> for {item.label}</VisuallyHidden>
+        </Link>
+      )}
       {item.completed_at !== null && item.milestone_id !== null && <Proof slot={`stage-${item.key}`} id={item.milestone_id} label={item.label} proofs={proofs} />}
     </>
   );
@@ -152,7 +165,7 @@ function CompletionItem({ row, proofs }: { row: CompletionRow; proofs: Proofs })
 
 export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: string }) {
   const phone = useIsPhone();
-  const { money, completions, more, proofs, retryMoney, retryCompletions, showMore, readProof } = useMilestones(caseId);
+  const { money, completions, more, proofs, entry, retryMoney, retryCompletions, showMore, readProof } = useMilestones(caseId);
   const listRef = useRef<HTMLUListElement>(null);
   const count = completions.status === 'ready' ? completions.rows.length : 0;
   const before = useRef(count);
@@ -165,7 +178,8 @@ export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: 
     if (active && active !== document.body && active.isConnected) return;
     (listRef.current?.children[previous] as HTMLElement | undefined)?.focus();
   }, [count]);
-  const proof: Proofs = { proofs, press: (slot, id) => void readProof(slot, id) };
+  const proof: Proofs = { proofs, press: (slot, id) => void readProof(slot, id), completeHref: (label) => (entry?.can_complete ? completeHref(caseId, label) : undefined) };
+  const hold = entry && !entry.can_complete && entry.hold !== null ? holdText(entry) : undefined;
 
   if (money.status === 'loading' || completions.status === 'loading') return <LoadingState />;
   const signedOut = (money.status === 'error' && money.error.kind === 'unauthenticated') || (completions.status === 'error' && completions.error.kind === 'unauthenticated');
@@ -182,6 +196,7 @@ export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: 
       {money.status === 'ready' && money.money.limited && <Callout kind="warning">Some figures may be incomplete.</Callout>}
       <div className="ptabs__rows">
         {money.status === 'ready' && stages.length > 0 && <h2 className="cmp-sr">Contract milestones</h2>}
+        {money.status === 'ready' && stages.length > 0 && hold && <p className="ptabs__line">{hold}</p>}
         {money.status === 'ready' &&
           (stages.length === 0 ? (
             <TabEmpty>No milestones on this project yet.</TabEmpty>

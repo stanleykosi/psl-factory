@@ -16,23 +16,23 @@ export type TabState<T extends ReadTab> =
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
 
 /**
- * One E-PROJECT-TAB read per view (tab, register, settled search); "Show more" appends the next page. A late answer
+ * One E-PROJECT-TAB read per view (tab, settled search); "Show more" appends the next page. A late answer
  * for an earlier view is ignored (sequence guard). A failed read drops the earlier rows. No polling, no automatic retry.
  */
 export function useProjectTab<T extends ReadTab>(caseId: string, tab: T, view: TabView) {
   const [state, setState] = useState<TabState<T>>({ status: 'loading' });
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
   const seq = useRef(0);
-  const { register, q } = view;
+  const { q } = view;
 
   const fetchPage = useCallback(
     async (limit: PageSize, cursor?: string) => {
-      const query = buildTabQuery(tab, { register, q }, cursor, limit);
+      const query = buildTabQuery({ q }, cursor, limit);
       const data = await call(api.GET('/api/v1/projects/{case_id}/{tab}', { params: { path: { case_id: caseId, tab }, query } }));
       if (!isTabResponse(data, tab)) throw new ApiError(200, 'server', 'unexpected_response', UNEXPECTED_MESSAGE);
       return data;
     },
-    [caseId, tab, register, q],
+    [caseId, tab, q],
   );
 
   const load = useCallback(async () => {

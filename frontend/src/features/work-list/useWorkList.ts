@@ -1,11 +1,11 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type SetStateAction } from 'react';
 
 import { call, liveApi } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
 
-import type { MoreState, WorkCoverage, WorkLine, WorkListFilters, WorkListPage, WorkListRow, WorkQueue } from './types';
+import type { MoreState, WorkCoverage, WorkLimit, WorkLine, WorkListFilters, WorkListPage, WorkListRow, WorkQueue, WorkState } from './types';
 
 /** One click or first load asks at most this many pages while they come back empty. */
 export const MAX_EMPTY_PAGES = 10;
@@ -23,23 +23,40 @@ export type WorkListState =
       asOf: string;
       coverage: WorkCoverage;
       more: MoreState;
+      /** The server's count for the narrowed list. Exact only when `totalComplete`; otherwise unknown, never 0. */
+      total: number | null;
+      totalComplete: boolean;
+      pageSize: number;
     };
 
-export type WorkListQuery = WorkListFilters & { queue: WorkQueue };
+/** `enabled` false keeps the list from asking at all (a tab whose body is not this list). */
+export type WorkListQuery = WorkListFilters & { queue: WorkQueue; enabled?: boolean };
 
 const coverageOf = (page: WorkListPage): WorkCoverage => ({ limited: page.limited, evaluated: page.evaluated, deferredCount: page.deferred.length });
+const totalsOf = (page: WorkListPage) => ({ total: page.total, totalComplete: page.total_coverage === 'complete' && page.total !== null, pageSize: page.page_size });
+
+/** A refresh replaces page 1 and keeps the rows loaded after it, minus any id now on page 1. */
+export function mergeRefresh(items: WorkListRow[], firstCount: number, page: WorkListRow[]): WorkListRow[] {
+  const fresh = new Set(page.map((row) => row.id));
+  return [...page, ...items.slice(firstCount).filter((row) => !fresh.has(row.id))];
+}
 
 /**
  * The live work list, for any queue (GET /api/v1/work). Rows come back in the server's order, 8 to a page, and are
  * never re-sorted. A page with no rows and a `next_page` is skipped: the list keeps asking (up to MAX_EMPTY_PAGES
  * requests, then "keep-looking") until rows arrive or `next_page` is null. Changing the queue, line, search or
- * project restarts from page 1 and drops the answers to earlier requests.
+ * project, state or rows per page (`limit`) restarts from page 1 and drops the answers to earlier requests. A screen
+ * either calls `setFilters` (Verified, Exceptions) or passes the filters as props from its URL (My work).
+ * `refresh()` re-reads page 1 in place and answers whether it could.
  *
- *   const { state, loadMore, retry, setFilters, filters } = useWorkList({ queue: 'verified' });
- *   state: { status: 'loading' } | { status: 'error', error } | { status: 'ready', items, lines, lineOptions, asOf, coverage, more }
+ *   const { state, loadMore, retry, refresh, setFilters, filters } = useWorkList({ queue: 'verified' });
+ *   state: { status: 'loading' } | { status: 'error', error } | { status: 'ready', items, lines, lineOptions, asOf, coverage, more, total, totalComplete, pageSize }
  */
-export function useWorkList({ queue, line, q, project }: WorkListQuery) {
-  const [filters, setFilters] = useState<WorkListFilters>({ line, q, project });
+export function useWorkList({ queue, line, q, project, state: rowState, limit, enabled = true }: WorkListQuery) {
+  const [chosen, setChosen] = useState<WorkListFilters | null>(null);
+  const given = useMemo<WorkListFilters>(() => ({ line, q, project, state: rowState, limit }), [line, q, project, rowState, limit]);
+  const filters = chosen ?? given;
+  const setFilters = useCallback((next: SetStateAction<WorkListFilters>) => setChosen((c) => (typeof next === 'function' ? next(c ?? given) : next)), [given]);
   const [state, setState] = useState<WorkListState>({ status: 'loading' });
   // The page to ask for next; null when the list is complete.
   const next = useRef<number | null>(1);
@@ -47,14 +64,25 @@ export function useWorkList({ queue, line, q, project }: WorkListQuery) {
   const request = useRef(0);
   // The line filter's choices, kept across filter changes within one queue so a narrowed list can be widened again.
   const options = useRef<{ queue: WorkQueue; lines: WorkLine[] } | null>(null);
+  // The page the latest answer came from, and how many rows the first page gave (what a refresh replaces).
+  const reached = useRef(1);
+  const firstCount = useRef(0);
+  const inFlight = useRef(0);
 
   const fetchPage = useCallback(
     async (page: number) => {
-      const query: { queue: WorkQueue; page: number; line?: WorkListFilters['line']; q?: string; project?: string } = { queue, page };
+      const query: { queue: WorkQueue; page: number; line?: WorkListFilters['line']; q?: string; project?: string; state?: WorkState; limit?: WorkLimit } = { queue, page };
       if (filters.line) query.line = filters.line;
       if (filters.q) query.q = filters.q;
       if (filters.project) query.project = filters.project;
-      return call(liveApi.GET('/api/v1/work', { params: { query } }));
+      if (filters.state) query.state = filters.state;
+      if (filters.limit) query.limit = filters.limit;
+      inFlight.current += 1;
+      try {
+        return await call(liveApi.GET('/api/v1/work', { params: { query } }));
+      } finally {
+        inFlight.current -= 1;
+      }
     },
     [queue, filters],
   );
@@ -76,17 +104,20 @@ export function useWorkList({ queue, line, q, project }: WorkListQuery) {
 
   const load = useCallback(async () => {
     const n = ++request.current;
+    if (!enabled) return;
     setState({ status: 'loading' });
     try {
       const body = await collect(1, n);
       if (n !== request.current) return;
       next.current = body.next_page;
+      reached.current = body.page;
+      firstCount.current = body.items.length;
       if (!filters.line || options.current?.queue !== queue) options.current = { queue, lines: body.lines };
-      setState({ status: 'ready', items: body.items, lines: body.lines, lineOptions: options.current.lines, asOf: body.as_of, coverage: coverageOf(body), more: moreOf(body) });
+      setState({ status: 'ready', items: body.items, lines: body.lines, lineOptions: options.current.lines, asOf: body.as_of, coverage: coverageOf(body), more: moreOf(body), ...totalsOf(body) });
     } catch (error) {
       if (n === request.current) setState({ status: 'error', error: error instanceof ApiError ? error : networkError() });
     }
-  }, [collect, filters.line, queue]);
+  }, [collect, enabled, filters.line, queue]);
 
   useEffect(() => {
     // First page on open and whenever the queue, line, search or project changes.
@@ -103,6 +134,7 @@ export function useWorkList({ queue, line, q, project }: WorkListQuery) {
       const body = await collect(page, n);
       if (n !== request.current) return;
       next.current = body.next_page;
+      reached.current = body.page;
       setState((s) => {
         if (s.status !== 'ready') return s;
         const seen = new Set(s.items.map((row) => row.id));
@@ -115,6 +147,7 @@ export function useWorkList({ queue, line, q, project }: WorkListQuery) {
           asOf: body.as_of,
           coverage: coverageOf(body),
           more: moreOf(body),
+          ...totalsOf(body),
         };
       });
     } catch (error) {
@@ -125,5 +158,30 @@ export function useWorkList({ queue, line, q, project }: WorkListQuery) {
     }
   }, [collect]);
 
-  return { state, loadMore, retry: load, setFilters, filters: { queue, ...filters } };
+  /** Re-reads page 1 in place: rows loaded with Show more stay and nothing else moves. True when it could be read. */
+  const refresh = useCallback(async () => {
+    if (!enabled || inFlight.current > 0) return true;
+    const n = request.current;
+    try {
+      const body = await fetchPage(1);
+      if (n !== request.current) return true;
+      // Only a list still on its first page takes the new next page; one that has paged on keeps its own.
+      const onFirstPage = reached.current === 1;
+      if (onFirstPage) next.current = body.next_page;
+      const first = firstCount.current;
+      firstCount.current = body.items.length;
+      setState((s) =>
+        s.status !== 'ready'
+          ? s
+          : { ...s, items: mergeRefresh(s.items, first, body.items), lines: body.lines, asOf: body.as_of, coverage: coverageOf(body), ...totalsOf(body), more: onFirstPage ? moreOf(body) : s.more },
+      );
+      return true;
+    } catch (error) {
+      if (n !== request.current) return true;
+      if (error instanceof ApiError && error.kind === 'unauthenticated') setState({ status: 'error', error });
+      return false;
+    }
+  }, [enabled, fetchPage]);
+
+  return { state, loadMore, retry: load, refresh, setFilters, filters: { queue, ...filters } };
 }

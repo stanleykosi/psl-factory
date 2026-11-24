@@ -29,7 +29,7 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       await expect(main.getByRole('heading', { level: 1 })).toHaveText('Weekly update for Lagoon Health');
       await expect(main.locator('.work-state')).toHaveText('Processing');
       await expect(main.getByText('Drafting the weekly update')).toBeVisible();
-      await expect(main.locator('.psl-track, .work-facts, .work-agent, .work-agentsec')).toHaveCount(0);
+      await expect(main.locator('.work-agentsec, .psl-steps')).toHaveCount(0);
       await expect(main.getByText(/not available/i)).toHaveCount(0);
       // the weekly report panel through the adapter
       await expect(main.getByRole('heading', { name: 'Period' })).toBeVisible();
@@ -83,7 +83,7 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       expect(await page.locator('main#main').innerText()).toBe(first);
     });
 
-    test('history: tabs ask by kind, no counts or Show more, the latest-30 caption only at 30 rows', async ({ page }) => {
+    test('history: tabs ask by kind, no counts or Show more, the latest-30 caption only while older events remain', async ({ page }) => {
       const asked: string[] = [];
       page.on('request', (r) => {
         if (r.url().includes('/api/v1/work/') && r.url().includes('/history')) asked.push(new URL(r.url()).searchParams.get('kind') ?? 'all');
@@ -95,7 +95,8 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       await expect.poll(() => asked).toEqual(['all', 'decision', 'worker', 'evidence']);
       await expect(page.getByText(/show more/i)).toHaveCount(0);
       if (SHOTS) await page.screenshot({ path: `${SHOTS}/4101-history-${viewport.width}.png`, fullPage: true });
-      await page.goto('/work/4108/history');
+      await expect(page.getByText(/Showing all changes\./)).toBeVisible();
+      await page.goto('/work/4101/history');
       await expect(page.getByText(/Showing the latest 30 changes\./)).toBeVisible();
     });
 

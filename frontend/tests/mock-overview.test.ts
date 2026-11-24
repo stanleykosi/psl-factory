@@ -8,21 +8,20 @@ import addFormats from 'ajv-formats';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
-import { overview, OVERVIEW_VARIANTS } from '../mock/overview.mjs';
+import { OVERVIEW_VARIANTS } from '../mock/overview.mjs';
 // @ts-expect-error plain ESM module without type declarations
-import { OPENAPI_PATH, startMockServer } from '../mock/server.mjs';
+import { startMockServer } from '../mock/server.mjs';
 
-// E-OVERVIEW fixtures against the v4 200 schema (the mock's contract).
-type Op = { operationId: string; responses: Record<string, { content: { 'application/json': { schema: object } } }> };
-const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Op>> };
-const schema = openapi.paths['/api/v1/overview'].get.responses['200'].content['application/json'].schema;
-const ajv = new Ajv2020({ allErrors: true, strict: true });
+// The mock's two floor reads against the live contract (contracts/psl-factory.openapi.json, 1.24.0).
+const contract = JSON.parse(readFileSync(join(__dirname, '../../contracts/psl-factory.openapi.json'), 'utf8')) as {
+  paths: Record<string, { get: { responses: Record<string, { content: { 'application/json': { schema: object } } }> } }>;
+  components: object;
+};
+const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
-const validate = ajv.compile(schema);
-
-const fixtures = join(__dirname, '../mock/fixtures');
-const read = (path: string) => JSON.parse(readFileSync(join(fixtures, path), 'utf8'));
-const DEFAULT = read('E-OVERVIEW.json');
+const compile = (path: string) => ajv.compile({ ...contract.paths[path].get.responses['200'].content['application/json'].schema, components: contract.components });
+const validOverview = compile('/api/v1/overview');
+const validCounts = compile('/api/v1/work/counts');
 
 let server: Server;
 let base: string;
@@ -32,75 +31,62 @@ beforeAll(async () => {
 });
 afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
-describe('E-OVERVIEW mock', () => {
-  it('lists the four variants', () => {
-    expect(OVERVIEW_VARIANTS).toEqual(['empty', 'zero', 'changed', 'status']);
+const get = async (path: string, variant?: string) => {
+  const res = await fetch(`${base}${path}`, { headers: { cookie: `psl_mock_persona=ceo${variant ? `; psl_mock_overview=${variant}` : ''}` } });
+  return { status: res.status, body: await res.json() };
+};
+
+describe('GET /overview and GET /work/counts in the mock', () => {
+  it('lists the six variants', () => {
+    expect(OVERVIEW_VARIANTS).toEqual(['empty', 'limited', 'missing', 'missing-limited', 'no-counts', 'floors']);
   });
 
-  it('the status variant is the default plus a status (label and tone) per line, valid under v7', () => {
-    const status = read('overview/status.json');
-    expect(validate(status), ajv.errorsText(validate.errors)).toBe(true);
-    type Line = { line: string; status: { label: string; tone: string } };
-    expect((status.lines as Line[]).map((l) => l.status.tone)).toEqual(['neutral', 'stopped', 'uncertain', 'verified', 'neutral', 'verified', 'verified', 'person']);
-    const { lines, ...rest } = status;
-    expect(rest).toEqual({ as_of: DEFAULT.as_of, totals: DEFAULT.totals });
-    expect((lines as Line[]).map((line) => Object.fromEntries(Object.entries(line).filter(([k]) => k !== 'status')))).toEqual(DEFAULT.lines);
+  it('serves exactly {as_of, lines[{key,title,total}]} and the counts shape, both valid under the live contract', async () => {
+    const overview = await get('/api/v1/overview');
+    expect(overview.status).toBe(200);
+    expect(validOverview(overview.body), ajv.errorsText(validOverview.errors)).toBe(true);
+    expect(Object.keys(overview.body).sort()).toEqual(['as_of', 'lines']);
+    expect(Object.keys(overview.body.lines[0]).sort()).toEqual(['key', 'title', 'total']);
+    const counts = await get('/api/v1/work/counts');
+    expect(validCounts(counts.body), ajv.errorsText(validCounts.errors)).toBe(true);
+    expect(counts.body.limited).toBe(false);
+    expect(counts.body.evaluated).toBe(15);
   });
 
-  for (const file of ['E-OVERVIEW.json', 'overview/empty.json', 'overview/zero.json', 'overview/changed.json']) {
-    it(`${file} is schema-valid`, () => {
-      expect(validate(read(file)), ajv.errorsText(validate.errors)).toBe(true);
-    });
-  }
-
-  it('the default fixture is the SCR-06 board, and its station counts do not add up to the totals', () => {
-    expect(DEFAULT.as_of).toBe('2026-11-14T15:40:00Z');
-    expect(DEFAULT.totals).toEqual({ in_progress: 18, need_a_person: 5, stopped: 3, verified_this_month: 28 });
-    type Line = { line: string; note: string; stations: { count: number; needs_person: boolean }[] };
-    const lines = DEFAULT.lines as Line[];
-    expect(lines.map((l) => [l.line, l.stations.length, l.note])).toEqual([
-      ['Pre-sale', 5, '1 WAITING'],
-      ['Planning', 5, '1 STOPPED'],
-      ['Release', 5, '1 UNCERTAIN'],
-      ['Closing', 4, 'ON TRACK'],
-      ['Invoices', 7, '2 WAITING'],
-      ['Month-end', 5, 'ON TRACK'],
-      ['Cash and BU', 4, 'ON TRACK'],
-      ['Payroll', 5, '2 PROBLEMS'],
-    ]);
-    const board = lines.map((l) => l.stations.map((s) => (s.needs_person ? 'O' : s.count > 0 ? 'D' : 'W')).join(''));
-    expect(board).toEqual(['DWOWW', 'DWOWD', 'DDWOW', 'WDWD', 'DWDOWWD', 'WDWDW', 'DWWW', 'WDOWW']);
-    expect(lines.flatMap((l) => l.stations).reduce((a, s) => a + s.count, 0)).toBe(21);
-  });
-
-  it('empty and zero variants hold what their names say; changed is later with changed figures', () => {
-    const empty = read('overview/empty.json');
-    expect(empty.lines).toEqual([]);
-    expect(Object.values(empty.totals)).toEqual([0, 0, 0, 0]);
-    const zero = read('overview/zero.json');
-    expect(zero.lines).toHaveLength(8);
-    expect(zero.lines.flatMap((l: { stations: object[] }) => l.stations).every((s: { count: number; needs_person: boolean }) => s.count === 0 && !s.needs_person)).toBe(true);
-    expect(Object.values(zero.totals)).toEqual([0, 0, 0, 0]);
-    const changed = read('overview/changed.json');
-    expect(changed.as_of).toBe('2026-11-14T15:40:15Z');
-    expect(changed.totals).not.toEqual(DEFAULT.totals);
-  });
-
-  it('overview() picks the variant named by the cookie, and the default otherwise', () => {
-    for (const v of OVERVIEW_VARIANTS as string[]) {
-      expect(overview({ cookies: { psl_mock_overview: v } })).toEqual({ status: 200, body: read(`overview/${v}.json`) });
+  it('every variant answers a valid body (counts 503 for no-counts)', async () => {
+    for (const variant of OVERVIEW_VARIANTS as string[]) {
+      const overview = await get('/api/v1/overview', variant);
+      expect(validOverview(overview.body), `${variant} overview: ${ajv.errorsText(validOverview.errors)}`).toBe(true);
+      const counts = await get('/api/v1/work/counts', variant);
+      if (variant === 'no-counts') {
+        expect(counts.status).toBe(503);
+        continue;
+      }
+      expect(validCounts(counts.body), `${variant} counts: ${ajv.errorsText(validCounts.errors)}`).toBe(true);
     }
-    expect(overview({ cookies: { psl_mock_overview: 'nonsense' } })).toEqual({ status: 200, body: DEFAULT });
-    expect(overview({ cookies: {} })).toEqual({ status: 200, body: DEFAULT });
   });
 
-  it('GET /api/v1/overview through the mock server honours the cookie', async () => {
-    const get = async (cookie: string) => {
-      const response = await fetch(`${base}/api/v1/overview`, { headers: { Cookie: cookie } });
-      return { status: response.status, body: await response.json() };
-    };
-    expect(await get('psl_mock_overview=changed')).toEqual({ status: 200, body: read('overview/changed.json') });
-    expect(await get('psl_mock_persona=pm; psl_mock_overview=empty')).toEqual({ status: 200, body: read('overview/empty.json') });
-    expect(await get('psl_mock_persona=none')).toEqual({ status: 200, body: DEFAULT });
+  it('limited has 50 evaluated and null queue totals; missing leaves commercial/v1 out of the counts only', async () => {
+    const limited = (await get('/api/v1/work/counts', 'limited')).body;
+    expect([limited.limited, limited.evaluated, limited.queues.map((q: { total: number | null }) => q.total)]).toEqual([true, 50, [null]]);
+    const missing = (await get('/api/v1/work/counts', 'missing')).body;
+    expect(missing.limited).toBe(false);
+    expect(missing.lines.map((l: { key: string }) => l.key)).not.toContain('commercial/v1');
+    expect((await get('/api/v1/overview', 'missing')).body.lines.map((l: { key: string }) => l.key)).toContain('commercial/v1');
+    expect((await get('/api/v1/work/counts', 'missing-limited')).body.limited).toBe(true);
+    expect((await get('/api/v1/overview', 'empty')).body.lines).toEqual([]);
+  });
+
+  it('floors puts one line on each of the eight floors, summing to the board\'s 18, 5, 3 and 28', async () => {
+    const counts = (await get('/api/v1/work/counts', 'floors')).body;
+    const sum = (pick: (l: Record<string, number>) => number) => counts.lines.reduce((n: number, l: Record<string, number>) => n + pick(l), 0);
+    expect([sum((l) => l.open), sum((l) => l.needs_person), sum((l) => l.stopped), sum((l) => l.verified_this_month)]).toEqual([18, 5, 3, 28]);
+    const overview = (await get('/api/v1/overview', 'floors')).body;
+    expect(overview.lines.map((l: { key: string }) => l.key)).toEqual(counts.lines.map((l: { key: string }) => l.key));
+    for (const line of counts.lines) expect(line.stations.map((s: { count: number }) => s.count).slice(0, 3).reduce((a: number, b: number) => a + b, 0), line.key).toBe(line.open);
+  });
+
+  it('keeps no v7 overview and no station read', async () => {
+    expect((await get('/api/v1/overview/stations/items?line=Planning&station=Scope')).status).toBe(404);
   });
 });

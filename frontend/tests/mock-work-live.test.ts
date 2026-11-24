@@ -49,6 +49,22 @@ describe('the live work mock', () => {
     }
   });
 
+  it('tracking and paged history are valid answers (F-91)', () => {
+    const tracking = validator('/api/v1/work/{work_id}/tracking', 'get', '200');
+    for (const id of [4101, 4102, 4103, 4104]) expect(tracking(get(`/api/v1/work/${id}/tracking`)[1]), JSON.stringify(tracking.errors)).toBe(true);
+    expect(get('/api/v1/work/4107/tracking')[0]).toBe(503);
+    expect(get('/api/v1/work/4105/tracking')[0]).toBe(404);
+    const history = validator('/api/v1/work/{work_id}/history', 'get', '200');
+    const [, first] = get('/api/v1/work/4101/history') as [number, { items: { entry_id: number }[]; next_before: number | null }];
+    expect(first.items).toHaveLength(30);
+    expect(first.next_before).not.toBeNull();
+    const [, second] = get(`/api/v1/work/4101/history?before=${first.next_before}`) as [number, { items: { entry_id: number }[]; next_before: number | null }];
+    expect(history(second), JSON.stringify(history.errors)).toBe(true);
+    expect(second.items).toHaveLength(30);
+    expect(second.next_before).toBeNull();
+    expect(new Set([...first.items, ...second.items].map((r) => r.entry_id)).size).toBe(60);
+  });
+
   it('history and the weekly report are valid answers', () => {
     const history = validator('/api/v1/work/{work_id}/history', 'get', '200');
     for (const id of [4101, 4108]) expect(history(get(`/api/v1/work/${id}/history`)[1]), JSON.stringify(history.errors)).toBe(true);

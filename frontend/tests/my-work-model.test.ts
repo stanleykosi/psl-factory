@@ -1,184 +1,213 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  buildWorkQuery,
-  formatAge,
   filterCount,
+  formatAge,
   isNarrowed,
-  lineOptions,
-  recordsText,
-  mergeRefresh,
+  LINE_KEYS,
   miniSegments,
   parseView,
+  QUEUES,
+  recordsText,
   resultCount,
-  queueTotal,
-  stateTag,
-  STATE_KEYS,
-  STATES,
+  showUnassigned,
+  startAge,
   stationText,
+  tabCount,
   viewSearch,
   type View,
-  type WorkItem,
 } from '@/features/my-work/model';
+import type { WorkCounts } from '@/features/work-list';
 
-const view = (v: Partial<View> = {}): View => ({ queue: 'needs_me', limit: 10, ...v });
-const item = (id: string, extra: Partial<WorkItem> = {}): WorkItem => ({
-  id,
-  title: id,
-  line: 'Prepare an invoice',
-  reference: 'R',
-  kind: 'do',
-  state: 'ready',
-  station: { index: 1, count: 3, name: 'S' },
-  waiting_on: 'X',
-  age_seconds: 60,
-  sample: true,
-  ...extra,
-});
+import { row } from './work-list-rows';
 
-describe('state words and families (CMP-05)', () => {
-  it.each([
-    ['ready', 'Ready to continue', 'person'],
-    ['processing', 'Processing', 'agent'],
-    ['waiting', 'Waiting', 'waiting'],
-    ['owner_needed', 'Owner needed', 'person'],
-    ['setup_needed', 'Setup needed', 'person'],
-    ['action_needed', 'Action needed', 'person'],
-    ['effect_uncertain', 'Effect uncertain', 'waiting'],
-    ['awaiting_reconciliation', 'Awaiting reconciliation', 'waiting'],
-    ['verified', 'Verified', 'done'],
-    ['cancelled', 'Cancelled', 'neutral'],
-    ['followup_needed', 'Stopped: invoice follow-up needed', 'person'],
-  ])('%s → %s (%s)', (state, words, family) => {
-    expect(stateTag(state)).toEqual({ words, family });
-  });
+const parse = (search: string) => parseView(new URLSearchParams(search));
+const PROJECT = '7d7c0c9e-2f0a-4c3e-9c61-0f6a8f1a2b11';
+const station = (index: number, count = 5) => ({ key: 'execution' as const, index, count, name: 'Approval' });
 
-  it('covers the 11 contract states in order; an unknown state shows raw and neutral', () => {
-    expect(STATE_KEYS).toHaveLength(11);
-    expect(Object.keys(STATES)).toEqual(STATE_KEYS);
-    expect(stateTag('on_hold')).toEqual({ words: 'on_hold', family: 'neutral' });
-    expect(stateTag('toString')).toEqual({ words: 'toString', family: 'neutral' });
+describe('queues', () => {
+  it('lists the eight tabs in order with their live queue values', () => {
+    expect(QUEUES.map((x) => x.key)).toEqual(['needs_me', 'waiting', 'mine', 'active', 'decisions', 'exceptions', 'unassigned', 'verified']);
+    expect(QUEUES.map((x) => x.label)).toEqual(['Needs me', 'Waiting on others', 'Started by me', 'Active', 'Decisions', 'Exceptions', 'Unassigned', 'Verified']);
   });
 });
 
-describe('mini station bar (CMP-03) and age', () => {
-  it('waiting at 4 of 7: three done, the fourth w, then empty', () => {
-    expect(miniSegments({ index: 4, count: 7, name: 'Finance review' }, 'waiting')).toEqual(['d', 'd', 'd', 'w', '', '', '']);
-    expect(stationText({ index: 4, count: 7, name: 'Finance review' }, 'waiting')).toBe('Station 4 of 7 · Finance review');
+describe('parseView (acceptance 2, 7, 17)', () => {
+  it('defaults to Needs me, ten rows and no filters', () => {
+    expect(parse('')).toEqual({ queue: 'needs_me', q: undefined, line: undefined, project: undefined, state: undefined, limit: 10, assign: undefined });
   });
 
-  it('maps the current segment by family; followup is s, cancelled has none, verified is all done then v', () => {
-    const s = { index: 2, count: 3, name: 'N' };
-    expect(miniSegments(s, 'action_needed')[1]).toBe('p');
-    expect(miniSegments(s, 'processing')[1]).toBe('a');
-    expect(miniSegments(s, 'awaiting_reconciliation')[1]).toBe('w');
-    expect(miniSegments(s, 'followup_needed')[1]).toBe('s');
-    expect(miniSegments(s, 'cancelled')).toEqual(['d', '', '']);
-    expect(miniSegments({ index: 4, count: 4, name: 'Verified' }, 'verified')).toEqual(['d', 'd', 'd', 'v']);
-    expect(stationText({ index: 4, count: 4, name: 'Verified' }, 'verified')).toBe('All 4 stations done');
+  it.each(['done', 'waiting_on_others', 'nope', 'NEEDS_ME', ' waiting', 'waiting%00'])('drops the queue %j', (queue) => {
+    expect(parse(`queue=${queue}`).queue).toBe('needs_me');
   });
 
-  it.each([
-    [0, '1m'],
-    [30, '1m'],
-    [3599, '59m'],
-    [3600, '1h'],
-    [7200, '2h'],
-    [86399, '23h'],
-    [86400, '1d'],
-    [691200, '8d'],
-  ])('%i seconds → %s', (s, text) => expect(formatAge(s)).toBe(text));
-});
-
-describe('view and query', () => {
-  it('reads the URL, falling back on invalid values', () => {
-    expect(parseView(new URLSearchParams('queue=done&q=lagoon&state=verified&limit=50&line=X'))).toEqual({
-      queue: 'done',
-      q: 'lagoon',
-      line: 'X',
-      state: 'verified',
-      limit: 50,
-    });
-    expect(parseView(new URLSearchParams('queue=bogus&limit=7&state=nope&q=%20%20'))).toEqual(view());
+  it.each(LINE_KEYS)('keeps the line key %s', (line) => {
+    expect(parse(`line=${line}`).line).toBe(line);
   });
 
-  it('builds the query: queue and limit always, q trimmed and never empty, cursor only when given', () => {
-    expect(buildWorkQuery(view())).toEqual({ queue: 'needs_me', limit: 10 });
-    expect(buildWorkQuery(view({ q: '  ' }))).toEqual({ queue: 'needs_me', limit: 10 });
-    expect(buildWorkQuery(view({ q: ' lagoon ', line: 'L', state: 'waiting', limit: 10 }), 'o10')).toEqual({
-      queue: 'needs_me',
-      limit: 10,
-      q: 'lagoon',
-      line: 'L',
-      state: 'waiting',
-      cursor: 'o10',
-    });
+  it.each(['nope', '', 'Finance-Ledger/v1', 'finance-ledger/v1 ', 'finance-ledger', '../finance-ledger/v1', 'finance-ledger/v2'])('drops the line %j', (line) => {
+    expect(parse(new URLSearchParams({ line }).toString()).line).toBeUndefined();
   });
 
-  it('reads, sends and writes project and waiting_on (D-WORKLIST-FILTERS); an unknown waiting_on is ignored', () => {
-    expect(parseView(new URLSearchParams('project=C-OJO&waiting_on=agent'))).toEqual(view({ project: 'C-OJO', waiting: 'agent' }));
-    expect(parseView(new URLSearchParams('waiting_on=everyone'))).toEqual(view());
-    expect(buildWorkQuery(view({ project: 'C-OJO', waiting: 'agent' }))).toEqual({ queue: 'needs_me', limit: 10, project: 'C-OJO', waiting_on: 'agent' });
-    expect(viewSearch(view({ project: 'C-OJO', waiting: 'me' }))).toBe('?project=C-OJO&waiting_on=me');
-    expect(isNarrowed(view({ waiting: 'me' }))).toBe(true);
+  it.each(['not-a-uuid', '', PROJECT.slice(1), `${PROJECT} `, ` ${PROJECT}`, `${PROJECT}/..`, `https://x/${PROJECT}`, `//${PROJECT}`, 'C-LAGOON-HEALTH', '%2e%2e'])('drops the project %j', (project) => {
+    expect(parse(new URLSearchParams({ project }).toString()).project).toBeUndefined();
   });
 
-  it('writes the URL without defaults', () => {
-    expect(viewSearch(view())).toBe('');
-    expect(viewSearch(view({ queue: 'done', limit: 20, line: 'Prepare an invoice' }))).toBe('?queue=done&line=Prepare+an+invoice&limit=20');
+  it('keeps a uuid project in either case', () => {
+    expect(parse(`project=${PROJECT}`).project).toBe(PROJECT);
+    expect(parse(`project=${PROJECT.toUpperCase()}`).project).toBe(PROJECT.toUpperCase());
+  });
+
+  it.each(['nope', '', 'WAITING', 'verified ', 'awaiting_finance_decision'])('drops the state %j', (state) => {
+    expect(parse(new URLSearchParams({ state }).toString()).state).toBeUndefined();
+  });
+
+  it('keeps each of the 11 states', () => {
+    for (const state of ['ready', 'processing', 'waiting', 'owner_needed', 'setup_needed', 'action_needed', 'effect_uncertain', 'awaiting_reconciliation', 'verified', 'cancelled', 'followup_needed']) {
+      expect(parse(`state=${state}`).state).toBe(state);
+    }
+  });
+
+  it.each(['8', '15', '0', '-10', '100', '10.0', '', 'abc', '2e1'])('drops the limit %j', (limit) => {
+    expect(parse(`limit=${limit}`).limit).toBe(10);
+  });
+
+  it('keeps 20 and 50', () => {
+    expect(parse('limit=20').limit).toBe(20);
+    expect(parse('limit=50').limit).toBe(50);
+  });
+
+  it('trims the search and cuts it to 120 characters', () => {
+    expect(parse('q=%20%20lagoon%20').q).toBe('lagoon');
+    expect(parse(`q=${'a'.repeat(130)}`).q).toBe('a'.repeat(120));
+    expect(parse('q=%20%20').q).toBeUndefined();
+  });
+
+  it('never reads the old parameters', () => {
+    const view = parse('waiting_on=agent&cursor=o10&assign=W-1&counts=1');
+    expect(Object.keys(view).sort()).toEqual(['assign', 'limit', 'line', 'project', 'q', 'queue', 'state']);
+    expect(view.assign).toBeUndefined();
+  });
+
+  it('keeps an assign case uuid only on the Unassigned tab (F-88)', () => {
+    expect(parse(`queue=unassigned&assign=${PROJECT}`).assign).toBe(PROJECT);
+    expect(parse(`queue=waiting&assign=${PROJECT}`).assign).toBeUndefined();
+    expect(parse(`assign=${PROJECT}`).assign).toBeUndefined();
+    for (const bad of ['W-1001', 'nope', '', `${PROJECT}/..`, ` ${PROJECT}`]) expect(parse(new URLSearchParams({ queue: 'unassigned', assign: bad }).toString()).assign).toBeUndefined();
   });
 });
 
-describe('counts, footer and merging', () => {
-  const counts = { needs_me: 24, waiting_on_others: 12, done: 6 };
+describe('viewSearch', () => {
+  const base: View = { queue: 'needs_me', limit: 10 };
 
-  it('result count', () => {
-    expect(resultCount(view(), counts, 20, true)).toBe('24 ITEMS');
-    expect(resultCount(view({ q: 'x' }), counts, 2, false)).toBe('2 OF 24 ITEMS');
-    expect(resultCount(view({ state: 'ready' }), counts, 20, true)).toBe('20+ OF 24 ITEMS');
-    expect(resultCount(view(), null, 20, true)).toBe('20+ ITEMS');
-    expect(resultCount(view(), null, 3, false)).toBe('3 ITEMS');
+  it('leaves the defaults out', () => {
+    expect(viewSearch(base)).toBe('');
   });
 
-  it('the footer total is the queue count only when nothing narrows the list', () => {
-    expect(queueTotal(view(), counts)).toBe(24);
-    expect(queueTotal(view({ q: 'x' }), counts)).toBeUndefined();
-    expect(queueTotal(view(), null)).toBeUndefined();
+  it('writes what differs, once', () => {
+    expect(viewSearch({ ...base, queue: 'verified', limit: 20, state: 'ready', line: 'finance-ledger/v1', project: PROJECT, q: 'lagoon' })).toBe(
+      `?queue=verified&q=lagoon&line=finance-ledger%2Fv1&project=${PROJECT}&state=ready&limit=20`,
+    );
   });
 
-  it('line options come from filters.lines by key, in response order, keeping the applied key', () => {
-    const filters = { lines: [{ key: 'inv', title: 'Invoice preparation and delivery' }, { key: 'plan', title: 'Planning and delivery handoff' }] };
-    expect(lineOptions(filters, [item('a', { line: 'Other' })], 'plan')).toEqual(filters.lines);
-    expect(lineOptions(filters, [], 'gone')).toEqual([...filters.lines, { key: 'gone', title: 'gone' }]);
+  it('writes assign beside the Unassigned tab', () => {
+    expect(viewSearch({ queue: 'unassigned', limit: 10, assign: PROJECT })).toBe(`?queue=unassigned&assign=${PROJECT}`);
   });
 
-  it('without filters.lines, line options are the loaded rows\' lines, distinct and A–Z', () => {
-    const rows = [item('a', { line: 'B', line_key: 'b' }), item('b', { line: 'A', line_key: 'a' }), item('c', { line: 'B', line_key: 'b' })];
-    expect(lineOptions(undefined, rows, 'c')).toEqual([
-      { key: 'a', title: 'A' },
-      { key: 'b', title: 'B' },
-      { key: 'c', title: 'c' },
+  it('round-trips through parseView', () => {
+    const view: View = { queue: 'mine', q: 'a b', line: 'pmo-minutes/v1', project: PROJECT, state: 'waiting', limit: 50 };
+    expect(parse(viewSearch(view))).toEqual(view);
+  });
+});
+
+describe('filters', () => {
+  it('counts line, project and state, not the search', () => {
+    expect(filterCount({ queue: 'needs_me', limit: 10, q: 'x' })).toBe(0);
+    expect(filterCount({ queue: 'needs_me', limit: 10, state: 'ready', project: PROJECT })).toBe(2);
+    expect(isNarrowed({ queue: 'needs_me', limit: 10, q: 'x' })).toBe(true);
+    expect(isNarrowed({ queue: 'needs_me', limit: 10 })).toBe(false);
+  });
+});
+
+const counts = (queues: WorkCounts['queues'], over: Partial<WorkCounts> = {}): WorkCounts => ({ as_of: '2026-11-24T09:42:00Z', evaluated: 5, limited: false, verified_month: '2026-11', queues, lines: [], ...over });
+
+describe('tabCount (acceptance 5)', () => {
+  it('shows the total, "at least" the observed count, nothing when unknown, and a real 0', () => {
+    const c = counts([
+      { key: 'needs_me', observed: 3, total: 3 },
+      { key: 'waiting', observed: 2, total: null },
+      { key: 'mine', observed: 0, total: null },
+      { key: 'decisions', observed: 0, total: 0 },
     ]);
+    expect(tabCount(c, 'needs_me')).toEqual({ count: 3, atLeast: false });
+    expect(tabCount(c, 'waiting')).toEqual({ count: 2, atLeast: true });
+    expect(tabCount(c, 'mine')).toBeUndefined();
+    expect(tabCount(c, 'decisions')).toEqual({ count: 0, atLeast: false });
+    expect(tabCount(c, 'active')).toBeUndefined();
+    expect(tabCount(undefined, 'needs_me')).toBeUndefined();
   });
+});
 
-  it('records you can see adds up the queue totals; unknown without counts', () => {
-    expect(recordsText({ needs_me: 24, waiting_on_others: 12, done: 6, unassigned: 2 })).toBe('44 records you can see');
-    expect(recordsText({ needs_me: 1, waiting_on_others: 0, done: 0 })).toBe('1 record you can see');
-    expect(recordsText(null)).toBeUndefined();
+describe('showUnassigned (acceptance 18)', () => {
+  it('draws the tab for a count above zero, an observed count, or an address that names it', () => {
+    expect(showUnassigned(counts([{ key: 'unassigned', observed: 0, total: 2 }]), 'needs_me')).toBe(true);
+    expect(showUnassigned(counts([{ key: 'unassigned', observed: 1, total: null }]), 'needs_me')).toBe(true);
+    expect(showUnassigned(counts([{ key: 'unassigned', observed: 0, total: 0 }]), 'needs_me')).toBe(false);
+    expect(showUnassigned(counts([]), 'needs_me')).toBe(false);
+    expect(showUnassigned(undefined, 'needs_me')).toBe(false);
+    expect(showUnassigned(undefined, 'unassigned')).toBe(true);
+  });
+});
+
+describe('recordsText (acceptance 6)', () => {
+  const line = (open: number) => ({ key: 'finance-ledger/v1' as const, needs_person: 0, held: 0, open, stopped: 0, verified: 0, verified_this_month: 0, stations: [] });
+  it('adds the open records of every line', () => {
+    expect(recordsText(counts([], { lines: [line(3), line(4)] }))).toBe('7 open records you can see');
+    expect(recordsText(counts([], { lines: [line(1)] }))).toBe('1 open record you can see');
+  });
+  it('says "at least" when limited, and is absent without counts', () => {
+    expect(recordsText(counts([], { limited: true, lines: [line(3), line(4)] }))).toBe('at least 7 open records you can see');
     expect(recordsText(undefined)).toBeUndefined();
   });
+});
 
-  it('the Filter badge counts line, project, state and waiting on, not search', () => {
-    expect(filterCount(view({ q: 'x' }))).toBe(0);
-    expect(filterCount(view({ line: 'a', project: 'C-1', state: 'waiting', waiting: 'me' }))).toBe(4);
+describe('ages and times', () => {
+  it('writes minutes, hours and days', () => {
+    expect(formatAge(30)).toBe('1m');
+    expect(formatAge(59 * 60)).toBe('59m');
+    expect(formatAge(7200)).toBe('2h');
+    expect(formatAge(3 * 86400)).toBe('3d');
   });
 
-  it('a refresh replaces page 1 and keeps later rows not now on page 1', () => {
-    const loaded = [item('1'), item('2'), item('3'), item('4')];
-    expect(mergeRefresh(loaded, 2, [item('1', { state: 'verified' }), item('3')]).map((i) => [i.id, i.state])).toEqual([
-      ['1', 'verified'],
-      ['3', 'ready'],
-      ['4', 'ready'],
-    ]);
+  it('measures the start age to the list clock, not the browser clock', () => {
+    expect(startAge(row(1, { started_at: '2026-11-24T07:00:00Z' }), '2026-11-24T09:42:00Z')).toBe('2h');
+    expect(startAge(row(1, { started_at: '2026-11-24T10:00:00Z' }), '2026-11-24T09:42:00Z')).toBe('1m');
+  });
+});
+
+describe('station bar', () => {
+  it('marks done, current by who holds it, and to-do', () => {
+    expect(miniSegments(station(3), 'action_needed')).toEqual(['d', 'd', 'p', '', '']);
+    expect(miniSegments(station(2), 'processing')).toEqual(['d', 'a', '', '', '']);
+    expect(miniSegments(station(2), 'waiting')).toEqual(['d', 'w', '', '', '']);
+    expect(miniSegments(station(2), 'ready')).toEqual(['d', 'p', '', '', '']);
+    expect(miniSegments(station(2), 'followup_needed')).toEqual(['d', 's', '', '', '']);
+    expect(miniSegments(station(2), 'cancelled')).toEqual(['d', '', '', '', '']);
+    expect(miniSegments(station(5), 'verified')).toEqual(['d', 'd', 'd', 'd', 'v']);
+  });
+
+  it('writes the station in words', () => {
+    expect(stationText(station(3), 'action_needed')).toBe('Station 3 of 5 · Approval');
+    expect(stationText(station(5), 'verified')).toBe('All 5 stations done');
+  });
+});
+
+describe('resultCount (acceptance 11)', () => {
+  it('is exact only when the server marks the total complete', () => {
+    expect(resultCount(10, true, 24, true)).toBe('10 OF 24 ITEMS');
+    expect(resultCount(24, false, 24, true)).toBe('24 ITEMS');
+    expect(resultCount(10, true, null, false)).toBe('10+ ITEMS');
+    expect(resultCount(10, false, null, false)).toBe('10 ITEMS');
+    expect(resultCount(10, true, 40, false)).toBe('10+ ITEMS');
   });
 });

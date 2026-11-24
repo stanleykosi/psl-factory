@@ -6,7 +6,6 @@ import { Button } from '@/components';
 
 import { FloorScene, type StationRef } from './scene';
 import { StationStrip } from './StationStrip';
-import { useStationWork } from './stationWork';
 import { floorLabel, type FloorProps } from './support';
 import './floor.css';
 
@@ -110,9 +109,9 @@ export default function Floor3D({ lines, onFailure }: FloorProps) {
 
   // The strip follows the pinned station, else the one under the pointer or focus; a station that left the floor lets go.
   const shown = pinned ?? preview;
-  const found = shown ? lines.find((l) => l.line === shown.line)?.stations.find((s) => s.name === shown.name) : undefined;
-  const { state, retry, showAll } = useStationWork(shown && found ? { line: shown.line, station: shown.name, count: found.count, needsPerson: found.needs_person } : null);
-  if (pinned && !lines.some((l) => l.line === pinned.line && l.stations.some((s) => s.name === pinned.name))) setPinned(null);
+  const shownLine = shown ? lines.find((l) => l.key === shown.line) : undefined;
+  const found = shownLine?.stations.find((s) => s.name === shown?.name);
+  if (pinned && !lines.some((l) => l.key === pinned.line && l.stations.some((s) => s.name === pinned.name))) setPinned(null);
 
   // Esc from the floor or the strip lets go of a pinned station.
   useEffect(() => {
@@ -131,17 +130,8 @@ export default function Floor3D({ lines, onFailure }: FloorProps) {
         <div ref={overlay} className="floor__labels" />
       </div>
       <div className="floor__bar">
-        {shown && found && state ? (
-          <StationStrip
-            line={shown.line}
-            station={shown.name}
-            count={found.count}
-            state={state}
-            pinned={pinned !== null}
-            onUnpin={() => setPinned(null)}
-            onRetry={retry}
-            onShowAll={() => void showAll()}
-          />
+        {shownLine && found ? (
+          <StationStrip title={shownLine.title} lineKey={shownLine.key} station={found} pinned={pinned !== null} onUnpin={() => setPinned(null)} />
         ) : (
           <p className="floor__readout">{HINT}</p>
         )}

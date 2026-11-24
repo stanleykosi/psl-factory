@@ -1,7 +1,8 @@
-// The shared live work list (GET /api/v1/work). Verified outputs, All exceptions and (F-63) My work read it through
-// this surface only; it imports from no screen.
+// The shared live work list (GET /api/v1/work) and counts (GET /api/v1/work/counts). Verified outputs, All exceptions
+// and My work read them through this surface only; it imports from no screen.
 export { coverageNotes, shownText } from './coverage';
 export { asLineKey, lineTitle, ownerText, stateTag, workHref } from './labels';
-export { MAX_EMPTY_PAGES, useWorkList, type WorkListQuery, type WorkListState } from './useWorkList';
-export type { LineKey, MoreState, WorkCoverage, WorkLine, WorkListFilters, WorkListPage, WorkListRow, WorkQueue, WorkState } from './types';
+export { MAX_EMPTY_PAGES, mergeRefresh, useWorkList, type WorkListQuery, type WorkListState } from './useWorkList';
+export { useWorkCounts, type WorkCountsState } from './useWorkCounts';
+export type { LineKey, MoreState, QueueCount, WorkCounts, WorkCoverage, WorkLimit, WorkLine, WorkListFilters, WorkListPage, WorkListRow, WorkQueue, WorkState } from './types';
 export { LineFilter, WorkListError, WorkListFooter, WorkListLoading } from './WorkListParts';

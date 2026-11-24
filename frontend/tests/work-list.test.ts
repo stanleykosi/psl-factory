@@ -2,7 +2,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { coverageNotes, lineTitle, MAX_EMPTY_PAGES, shownText, stateTag, useWorkList, type WorkListPage, type WorkListRow } from '@/features/work-list';
+import { coverageNotes, lineTitle, MAX_EMPTY_PAGES, mergeRefresh, shownText, stateTag, useWorkCounts, useWorkList, type WorkListPage, type WorkListRow } from '@/features/work-list';
 
 import { page as basePage, row as baseRow } from './work-list-rows';
 
@@ -215,5 +215,136 @@ describe('coverage and labels', () => {
     expect(stateTag('awaiting_reconciliation').text).toBe('Awaiting reconciliation');
     expect(stateTag('effect_uncertain').text).toBe('Effect uncertain');
     expect(stateTag('ready').text).toBe('Ready to continue');
+  });
+});
+
+describe('useWorkList: rows per page, state, totals and refresh (F-63)', () => {
+  it('sends no limit or state unless asked (Verified and Exceptions are unchanged)', async () => {
+    serve(() => json(200, page(1, [row(1)], null)));
+    const { result } = renderHook(() => useWorkList({ queue: 'verified' }));
+    await settled(result);
+    expect([...urls()[0].searchParams.keys()].sort()).toEqual(['page', 'queue']);
+  });
+
+  it('sends limit and state, and a change of either restarts from page 1', async () => {
+    serve(() => json(200, page(1, [row(1)], 2)));
+    const { result, rerender } = renderHook((props: { limit?: 10 | 20; state?: 'waiting' }) => useWorkList({ queue: 'needs_me', ...props }), { initialProps: { limit: 10 } });
+    await settled(result);
+    await act(() => result.current.loadMore());
+    expect(asked()).toEqual(['1', '2']);
+    expect(urls()[0].searchParams.get('limit')).toBe('10');
+    rerender({ limit: 20 });
+    await waitFor(() => expect(urls().at(-1)!.searchParams.get('limit')).toBe('20'));
+    expect(urls().at(-1)!.searchParams.get('page')).toBe('1');
+    rerender({ limit: 20, state: 'waiting' });
+    await waitFor(() => expect(urls().at(-1)!.searchParams.get('state')).toBe('waiting'));
+    expect(urls().at(-1)!.searchParams.get('page')).toBe('1');
+    expect(urls().at(-1)!.searchParams.get('limit')).toBe('20');
+  });
+
+  it('answers to an earlier limit are dropped', async () => {
+    let first: (r: Response) => void = () => undefined;
+    serve((url) => (url.searchParams.get('limit') === '20' ? json(200, page(1, [row(2)], null)) : new Promise<Response>((resolve) => (first = resolve))));
+    const { result, rerender } = renderHook((props: { limit: 10 | 20 }) => useWorkList({ queue: 'needs_me', ...props }), { initialProps: { limit: 10 } });
+    rerender({ limit: 20 });
+    await waitFor(() => expect(ready(result).items.map((r) => r.id)).toEqual([2]));
+    await act(async () => first(json(200, page(1, [row(1)], null))));
+    expect(ready(result).items.map((r) => r.id)).toEqual([2]);
+  });
+
+  it('total is exact only when the server marks it complete', async () => {
+    serve(() => json(200, page(1, [row(1)], null, { total: 24, total_coverage: 'complete', page_size: 10 })));
+    const complete = renderHook(() => useWorkList({ queue: 'needs_me' }));
+    await settled(complete.result);
+    expect([ready(complete.result).total, ready(complete.result).totalComplete, ready(complete.result).pageSize]).toEqual([24, true, 10]);
+    serve(() => json(200, page(1, [row(1)], null, { total: 24, total_coverage: 'incomplete' })));
+    const incomplete = renderHook(() => useWorkList({ queue: 'needs_me' }));
+    await settled(incomplete.result);
+    expect(ready(incomplete.result).totalComplete).toBe(false);
+    serve(() => json(200, page(1, [row(1)], null, { total: null, total_coverage: 'complete' })));
+    const none = renderHook(() => useWorkList({ queue: 'needs_me' }));
+    await settled(none.result);
+    expect([ready(none.result).total, ready(none.result).totalComplete]).toEqual([null, false]);
+  });
+
+  it('refresh re-reads page 1, keeps rows loaded later and drops ids now on page 1', async () => {
+    let round = 0;
+    serve((url) => {
+      const n = Number(url.searchParams.get('page'));
+      if (n === 2) return json(200, page(2, [row(3), row(4)], null));
+      return json(200, round === 0 ? page(1, [row(1), row(2)], 2) : page(1, [row(9), row(3)], 2, { as_of: '2026-11-23T11:15:00Z' }));
+    });
+    const { result } = renderHook(() => useWorkList({ queue: 'needs_me' }));
+    await settled(result);
+    await act(() => result.current.loadMore());
+    expect(ready(result).items.map((r) => r.id)).toEqual([1, 2, 3, 4]);
+    round = 1;
+    let ok = false;
+    await act(async () => {
+      ok = await result.current.refresh();
+    });
+    expect(ok).toBe(true);
+    expect(ready(result).items.map((r) => r.id)).toEqual([9, 3, 4]);
+    expect(ready(result).asOf).toBe('2026-11-23T11:15:00Z');
+    expect(urls().at(-1)!.searchParams.get('page')).toBe('1');
+  });
+
+  it('a failed refresh keeps the rows and answers false; a 401 signs out', async () => {
+    let fail: Response | undefined;
+    serve(() => fail ?? json(200, page(1, [row(1)], null)));
+    const { result } = renderHook(() => useWorkList({ queue: 'needs_me' }));
+    await settled(result);
+    fail = json(500, { code: 'server_error', message: 'x' });
+    let ok = true;
+    await act(async () => {
+      ok = await result.current.refresh();
+    });
+    expect(ok).toBe(false);
+    expect(ready(result).items.map((r) => r.id)).toEqual([1]);
+    fail = json(401, { code: 'not_signed_in', message: 'x' });
+    await act(async () => {
+      await result.current.refresh();
+    });
+    expect(result.current.state.status).toBe('error');
+  });
+
+  it('a list that is not enabled asks for nothing', async () => {
+    serve(() => json(200, page(1, [row(1)], null)));
+    const { result } = renderHook(() => useWorkList({ queue: 'unassigned', enabled: false }));
+    await act(async () => {
+      await result.current.refresh();
+    });
+    expect(urls()).toEqual([]);
+  });
+
+  it('mergeRefresh puts page 1 first and keeps later rows once', () => {
+    const items = [row(1), row(2), row(3), row(4)];
+    expect(mergeRefresh(items, 2, [row(3), row(8)]).map((r) => r.id)).toEqual([3, 8, 4]);
+  });
+});
+
+describe('useWorkCounts (F-63)', () => {
+  const body = { as_of: '2026-11-24T09:42:00Z', evaluated: 3, limited: false, verified_month: '2026-11', queues: [{ key: 'needs_me', observed: 3, total: 3 }], lines: [] };
+
+  it('reads /work/counts with no parameters and keeps the numbers when a refresh fails', async () => {
+    let fail = false;
+    serve(() => (fail ? json(500, { code: 'server_error', message: 'x' }) : json(200, body)));
+    const { result } = renderHook(() => useWorkCounts());
+    await waitFor(() => expect(result.current.state.status).toBe('ready'));
+    expect(urls()[0].pathname).toBe('/api/v1/work/counts');
+    expect([...urls()[0].searchParams.keys()]).toEqual([]);
+    fail = true;
+    let ok = true;
+    await act(async () => {
+      ok = await result.current.refresh();
+    });
+    expect(ok).toBe(false);
+    expect(result.current.state.status).toBe('ready');
+  });
+
+  it('a first read that fails is an error', async () => {
+    serve(() => json(500, { code: 'server_error', message: 'x' }));
+    const { result } = renderHook(() => useWorkCounts());
+    await waitFor(() => expect(result.current.state.status).toBe('error'));
   });
 });

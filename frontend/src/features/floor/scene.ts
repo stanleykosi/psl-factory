@@ -28,10 +28,9 @@ import {
   type Material,
 } from 'three';
 
-import { tagTone } from '@/features/overview/lines';
-import type { OverviewLine, OverviewStation } from '@/features/overview/types';
+import type { Station } from '@/features/overview/model';
 
-import { describeStation } from './support';
+import { describeStation, type SceneLine } from './support';
 
 /** Design tokens read from CSS custom properties at mount. */
 export type FloorStyle = {
@@ -59,7 +58,8 @@ const STEP = 0.16; // one key press: yaw moves 1.5 steps, pitch one
 type Machine = {
   key: string;
   line: string;
-  value: OverviewStation;
+  title: string;
+  value: Station;
   parts: Group;
   hits: Mesh[];
   body: Mesh | null;
@@ -74,7 +74,7 @@ type Mover = { mesh: Mesh; x1: number; x2: number; k: number };
 type Slat = { mesh: Mesh; k: number };
 
 const stationKey = (line: string, name: string) => `${line}\u0000${name}`;
-const shapeOf = (lines: readonly OverviewLine[]) => JSON.stringify(lines.map((l) => [l.line, l.stations.map((s) => s.name)]));
+const shapeOf = (lines: readonly SceneLine[]) => JSON.stringify(lines.map((l) => [l.key, l.stations.map((s) => s.name)]));
 const stationX = (i: number, n: number) => -SPAN / 2 + (n < 2 ? 0 : (i / (n - 1)) * SPAN);
 const frac = (x: number) => x - Math.floor(x);
 const reducedMotion = () => typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -105,7 +105,7 @@ export class FloorScene {
   private slats: Slat[] = [];
   private movers: Mover[] = [];
   private moverGroup = new Group();
-  private prev: readonly OverviewLine[] | null = null;
+  private prev: readonly SceneLine[] | null = null;
   private shape = '';
   private view = { yaw: VIEW.yaw, pitch: VIEW.pitch };
   private target = new Vector3();
@@ -195,15 +195,15 @@ export class FloorScene {
     return o;
   }
 
-  private chipFor(card: Pick<Machine, 'key' | 'line' | 'value'>, chip = document.createElement('button')) {
+  private chipFor(card: Pick<Machine, 'key' | 'title' | 'value'>, chip = document.createElement('button')) {
     const s = card.value;
     chip.type = 'button';
     const pinned = card.key === this.pinnedKey;
     chip.className = `floor__chip${s.needs_person ? ' floor__chip--person' : s.count > 0 ? '' : ' floor__chip--empty'}${pinned ? ' floor__chip--pinned' : ''}`;
     chip.setAttribute('aria-pressed', String(pinned));
     // The name starts with the visible words, then reads the station in full.
-    const shown = `${s.count} ${s.name}${s.needs_person ? ' PERSON' : ''}`;
-    chip.setAttribute('aria-label', `${shown}. ${describeStation(card.line, s)}`);
+    const shown = `${s.count} ${s.name}${s.needs_person > 0 ? ' PERSON' : ''}`;
+    chip.setAttribute('aria-label', `${shown}. ${describeStation(card.title, s)}`);
     chip.replaceChildren();
     const count = document.createElement('b');
     count.textContent = String(s.count);
@@ -262,7 +262,7 @@ export class FloorScene {
   }
 
   /** Builds the floor, every belt and every machine as given. */
-  private build(lines: readonly OverviewLine[]) {
+  private build(lines: readonly SceneLine[]) {
     this.scene.remove(this.root);
     this.disposeLamps();
     this.root = new Group();
@@ -292,9 +292,9 @@ export class FloorScene {
       label.className = 'floor__line';
       label.setAttribute('aria-hidden', 'true');
       const name = document.createElement('strong');
-      name.textContent = l.line;
+      name.textContent = l.title;
       const tag = document.createElement('span');
-      tag.className = `psl-tag psl-tag--${tagTone(l)}`;
+      tag.className = 'psl-tag psl-tag--neutral';
       tag.textContent = l.note;
       label.append(name, tag);
       this.lineTags.push(tag);
@@ -305,8 +305,9 @@ export class FloorScene {
         const parts = new Group();
         this.root.add(parts);
         const m: Machine = {
-          key: stationKey(l.line, s.name),
-          line: l.line,
+          key: stationKey(l.key, s.name),
+          line: l.key,
+          title: l.title,
           value: s,
           parts,
           hits: [],
@@ -620,7 +621,7 @@ export class FloorScene {
   };
 
   /** Shows the lines. The first call and a changed set of lines or stations rebuild; changed figures repaint their machine. */
-  update(lines: readonly OverviewLine[]) {
+  update(lines: readonly SceneLine[]) {
     const prev = this.prev;
     this.prev = lines;
     const shape = shapeOf(lines);
@@ -633,13 +634,12 @@ export class FloorScene {
     // Line notes and tones can change without a station change.
     lines.forEach((l, i) => {
       const tag = this.lineTags[i];
-      tag.className = `psl-tag psl-tag--${tagTone(l)}`;
       tag.textContent = l.note;
     });
     let changed = false;
     for (const l of lines) {
       for (const s of l.stations) {
-        const m = this.machines.get(stationKey(l.line, s.name))!;
+        const m = this.machines.get(stationKey(l.key, s.name))!;
         if (m.value.count === s.count && m.value.needs_person === s.needs_person) continue;
         m.value = s;
         this.paint(m);

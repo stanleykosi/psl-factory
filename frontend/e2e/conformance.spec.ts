@@ -51,7 +51,7 @@ test('RFP follow-up at 390: Send, Edit and the edit box are 44px targets, and En
   await expect(page.getByRole('button', { name: 'Edit' })).toBeVisible();
 });
 
-test('My work filters at 390: the line checkboxes, the Show-all link and the three Selects are 44px targets', async ({ page, context, baseURL }) => {
+test('My work filters at 390: the line checkboxes, the Show-all link and the two Selects are 44px targets', async ({ page, context, baseURL }) => {
   await context.addCookies([{ name: 'psl_mock_persona', value: 'finance_lead', url: baseURL! }]);
   await page.setViewportSize(PHONE);
   await page.goto('/my-work');
@@ -64,7 +64,6 @@ test('My work filters at 390: the line checkboxes, the Show-all link and the thr
     dialog.getByRole('button', { name: /lines$/ }),
     dialog.getByRole('combobox', { name: 'Project' }),
     dialog.getByRole('combobox', { name: 'State' }),
-    dialog.getByRole('combobox', { name: 'Waiting on' }),
   ]);
 });
 
