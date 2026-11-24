@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-63",
   "outcome": "My work on the live work list: eight tabs, counts, kind, station, reference and rows per page",
-  "state": "READY",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -81,7 +81,7 @@
       "evidence_refs": []
     },
     "integrated_qa": {
-      "status": "not_run",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -97,7 +97,7 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-63/readiness.md",
-      "status": "not_assessed",
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -139,11 +139,11 @@
   "git": {
     "repository": null,
     "task_id": "FE-CONNECT-1",
-    "base_branch": null,
-    "base_sha": null,
-    "task_branch": null,
+    "base_branch": "main",
+    "base_sha": "4a88c26b2aa399ff54f9ec6cedad65ae075ebbb8",
+    "task_branch": "fe-connect-1-my-work-live",
     "head_sha": null,
-    "worktree": null,
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a2",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -186,14 +186,22 @@
     }
   },
   "created_at": "2026-11-23T13:22:30Z",
-  "round": 0,
-  "round_limit": null,
+  "round": 1,
+  "round_limit": 5,
   "history": [
     {
       "from": "PLANNED",
       "to": "READY",
       "at": "2026-11-24T14:21:12Z",
       "round": 0,
+      "head": null,
+      "reason": null
+    },
+    {
+      "from": "READY",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T14:42:18Z",
+      "round": 1,
       "head": null,
       "reason": null
     }
@@ -211,7 +219,7 @@
     ]
   },
   "gate": {
-    "round": 0,
+    "round": 1,
     "attempts": 0,
     "verdict": null,
     "commit": null

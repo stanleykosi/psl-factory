@@ -5037,3 +5037,5 @@
 {"at":"2026-11-24T14:41:49Z","feature":"F-61","round":1,"kind":"fields","fields":{"git.ci_status":"passed"}}
 {"at":"2026-11-24T14:41:49Z","feature":"F-61","round":1,"kind":"decision","decision":"HUMAN_APPROVAL","head":"dab5f0182506","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","surface 'external-messaging' always needs a human","42 changed files exceed the auto-merge limit of 15","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
 {"at":"2026-11-24T14:41:50Z","feature":"F-61","round":1,"kind":"transition","head":"dab5f0182506","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-24T14:42:18Z","feature":"F-63","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
+{"at":"2026-11-24T14:42:20Z","feature":"F-65","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
