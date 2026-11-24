@@ -82,7 +82,7 @@ for (const [label, viewport] of [
         await expect(rows(page).locator('td:nth-child(2)')).toHaveText(['NGN 3,000,000.00', 'NGN 4,250,000.00', 'UnknownThe reviewed stage terms do not state an amount.', 'NGN 500,000.00', 'USD 1,000.00']);
         await expect(rows(page).nth(0).locator('td:nth-child(3) .money__block')).toHaveText(['INV-0398 · Delivered', 'INV-0399 · Issued']);
         await expect(rows(page).nth(1).locator('td:nth-child(4)')).toHaveText('Paid Unknown · Owed Unknown');
-        await expect(page.getByRole('complementary', { name: 'Choose an amount to see where it comes from.' })).toBeVisible();
+        await expect(page.getByRole('complementary', { name: 'Where a figure comes from' })).toBeVisible();
       }
       await expect(panel(page).locator('.money__asof')).toHaveText('As of 12 Nov 16:40');
       const text = await panel(page).innerText();

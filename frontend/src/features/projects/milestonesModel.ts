@@ -18,9 +18,10 @@ function isRow(value: unknown): value is CompletionRow {
   return isObject(value) && typeof value.title === 'string' && typeof value.state === 'string' && textOrNull(value.detail) && textOrNull(value.at) && Number.isInteger(value.record_id);
 }
 
-/** The tab's single section of recorded completions (found by being the only one, never by its title). */
+/** The tab's single section of recorded completions (found by being the only one, never by its title); no section is none recorded yet. */
 export function isCompletions(body: unknown): body is Completions {
-  if (!isObject(body) || typeof body.as_of !== 'string' || !Array.isArray(body.sections) || body.sections.length !== 1) return false;
+  if (!isObject(body) || typeof body.as_of !== 'string' || !Array.isArray(body.sections) || body.sections.length > 1) return false;
+  if (body.sections.length === 0) return true;
   const section: unknown = body.sections[0];
   return isObject(section) && Array.isArray(section.items) && section.items.every(isRow) && Number.isInteger(section.page) && typeof section.has_more === 'boolean';
 }
@@ -69,3 +70,42 @@ export const contractAmount = (item: Pick<MoneyItem, 'amount' | 'currency'>) => 
 
 /** The CHANGES column shows only when some stage has a change. */
 export const hasChanges = (items: MoneyItem[]) => items.some((item) => item.changes.length > 0);
+
+// SCR-19 Mark a milestone complete: the options read, the 201 of the write, and the words shown.
+export type CompletionOptions = operations['project_operations_milestone_options']['responses'][200]['content']['application/json'];
+export type RecordedCompletion = operations['project_operations_record_milestone']['responses'][201]['content']['application/json'];
+export type Hold = NonNullable<CompletionOptions['hold']>;
+export type ProofChoice = CompletionOptions['proofs'][number];
+
+const HOLDS: readonly unknown[] = ['baseline_required', 'proof_required', 'name_in_use'];
+
+/** The options read; a body missing a field is not drawn (no partial data). */
+export function isCompletionOptions(body: unknown): body is CompletionOptions {
+  if (!isObject(body) || !Number.isInteger(body.revision) || !Array.isArray(body.proofs)) return false;
+  const proofs = body.proofs.every((p: unknown) => isObject(p) && Number.isInteger(p.id) && typeof p.label === 'string');
+  const next = body.next_page === null || Number.isInteger(body.next_page);
+  return proofs && next && typeof body.can_complete === 'boolean' && typeof body.can_attach_pdf === 'boolean' && (body.hold === null || HOLDS.includes(body.hold));
+}
+
+/** The 201 of the write. It is not shown as "recorded"; it only names the completion to re-read. */
+export function isRecordedCompletion(body: unknown): body is RecordedCompletion {
+  return isObject(body) && Number.isInteger(body.id) && Number.isInteger(body.revision) && typeof body.name === 'string' && Number.isInteger(body.evidence_id);
+}
+
+/** Plain words for each hold; the server's own message and the raw code are never shown. */
+export const HOLD_WORDS: Record<Hold, string> = {
+  baseline_required: 'This project has no signed baseline yet. A milestone can be completed once the SOW baseline is signed.',
+  proof_required: 'There is no proof on record for this milestone yet.',
+  name_in_use: 'A completion with this name is already recorded.',
+};
+export const NO_AUTHORITY = 'You can’t mark this milestone complete.';
+
+/** The reason shown instead of the control: the hold's words, or the no-authority line when the server says no without a hold. */
+export const holdText = (options: Pick<CompletionOptions, 'can_complete' | 'hold'>): string | undefined =>
+  options.hold !== null ? HOLD_WORDS[options.hold] : options.can_complete ? undefined : NO_AUTHORITY;
+
+/** The milestone name is 1 to 200 characters once trimmed; anything else is not a milestone to complete. */
+export const usableName = (name: string | null | undefined): name is string => typeof name === 'string' && name.trim().length > 0 && name.length <= 200;
+
+/** The link from a Milestones-tab row to the page; the name is the stage label exactly as /money gives it. */
+export const completeHref = (caseId: string, name: string) => `/projects/${encodeURIComponent(caseId)}/milestones/complete?name=${encodeURIComponent(name)}`;

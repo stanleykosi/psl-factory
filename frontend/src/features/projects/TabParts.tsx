@@ -1,19 +1,19 @@
 'use client';
 
 // Pieces the three project tabs share: the states of a tab read (loading, signed out, no access, error), the footer
-// with "Show more", an amount, an owner and a row link. Nothing is computed here; values come from tabsModel.
-import Link from 'next/link';
+// with "Show more" and the as-of line. Nothing is computed here.
 import type { ReactNode } from 'react';
 
+import type { ApiError } from '@/api/errors';
 import { EmptyState, usePagedRows, When, type PageSize } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
-import { ownerText, workHref, type Owner, type ReadTab, type TabRows } from './tabsModel';
+import type { ReadTab, TabRows } from './tabsModel';
 import type { TabState } from './useProjectTab';
 
 /** What a tab shows until it has rows: null when ready. 403 and 404 look the same and leave no row text behind. */
-export function tabStateView(state: TabState<ReadTab>, { retry, signInPath }: { retry: () => void; signInPath: string }): ReactNode {
+export function tabStateView(state: { status: 'loading' } | { status: 'ready' } | { status: 'error'; error: ApiError }, { retry, signInPath }: { retry: () => void; signInPath: string }): ReactNode {
   if (state.status === 'ready') return null;
   if (state.status === 'loading') return <LoadingState />;
   const { error } = state;
@@ -38,24 +38,6 @@ export function TabNoAccess() {
       It holds records you don&rsquo;t have access to. Nothing from it is shown here.
     </EmptyState>
   );
-}
-
-/** A row's text that opens its work item only when the row carries a work_id (plain text otherwise). */
-export function RowLink({ workId, className, children }: { workId: unknown; className?: string; children: ReactNode }) {
-  const href = workHref(workId);
-  return href ? (
-    <Link href={href} className={className}>
-      {children}
-    </Link>
-  ) : (
-    <>{children}</>
-  );
-}
-
-/** The owner as the boards write it; "No owner" in signal ink when the row has none. */
-export function OwnerValue({ owner }: { owner: Owner | undefined }) {
-  const text = ownerText(owner);
-  return text === undefined ? <span className="ptabs__noowner">No owner</span> : <>{text}</>;
 }
 
 export const NONE = <>—</>;
