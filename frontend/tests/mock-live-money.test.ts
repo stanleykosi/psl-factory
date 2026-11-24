@@ -160,6 +160,8 @@ describe('the mock serves the live tabs', () => {
     expect(first.body.sections[0]).toMatchObject({ page: 1, has_more: true, total: 27 });
     expect(first.body.sections[0].items).toHaveLength(25);
     expect((await milestones('P-0102', '?page=2')).body.sections[0].items).toHaveLength(2);
-    for (const query of ['?page=3', '?page=0', '?page=x']) expect((await read(`/api/v1/projects/P-0102/milestones${query}`)).status, query).toBe(404);
+    // a page past the last is 404; an unreadable page is 422 invalid_filter, as on Registers and Actions (F-75)
+    expect((await read('/api/v1/projects/P-0102/milestones?page=3')).status).toBe(404);
+    for (const query of ['?page=0', '?page=x']) expect((await read(`/api/v1/projects/P-0102/milestones${query}`)).status, query).toBe(422);
   });
 });

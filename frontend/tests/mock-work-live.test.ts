@@ -21,11 +21,21 @@ const get = (path: string, scenario?: string) => workLive({ method: 'get', url: 
 
 describe('the live work mock', () => {
   const work = validator('/api/v1/work/{work_id}', 'get', '200');
-  it.each([4101, 4102, 4103, 4104, 4105, 4107, 4108])('work %i is a valid GET /work/{id} answer', (id) => {
+  it.each([4101, 4102, 4103, 4104, 4105, 4107, 4108, 4110, 4111, 4120, 4121, 4122, 4123])('work %i is a valid GET /work/{id} answer', (id) => {
     const [status, body] = get(`/api/v1/work/${id}`);
     expect(status).toBe(200);
     expect(work(body), JSON.stringify(work.errors)).toBe(true);
   });
+
+  it.each([['actions', 4120, { action: 'reconcile', expected_revision: 5 }, '202'], ['control', 4121, { action: 'cancel', expected_revision: 3 }, '200'], ['background', 4122, { expected_revision: 7, enabled: false }, '202']] as const)(
+    'the %s write answers a valid body',
+    (route, id, body, status) => {
+      const valid = validator(`/api/v1/work/{work_id}/${route}`, 'post', status);
+      const [code, answer] = workLive({ method: 'post', url: new URL(`/api/v1/work/${id}/${route}`, 'http://m.local'), csrfOk: true, persona: 'finance_lead', rawBytes: Buffer.from(JSON.stringify(body)) }) as [number, unknown];
+      expect(code).toBe(Number(status));
+      expect(valid(answer), JSON.stringify(valid.errors)).toBe(true);
+    },
+  );
 
   it('every work_id the delivery mock serves answers 200 as a valid work item with the row\'s line, state and reference', () => {
     const overview = deliveryRead({ pathname: '/api/v1/projects/P-0101/delivery-overview', idOf: (v: string) => v })[1] as { lines: { key: string; work_id: number | null; state: string | null; reference: string | null }[] };

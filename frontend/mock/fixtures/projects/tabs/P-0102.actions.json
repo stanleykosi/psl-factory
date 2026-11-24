@@ -1,128 +1,89 @@
 {
-  "items": [
-    {
-      "action_id": "A-0021",
-      "title": "Collect the bank sign-off",
-      "state": "open",
-      "owner": {
-        "name": "Amina Yusuf"
-      },
-      "due": {
-        "unknown": true
-      }
-    },
-    {
-      "action_id": "A-0022",
-      "title": "Rehearse the rollout",
-      "state": "open",
-      "from": {
-        "meeting": "Steering call",
-        "at": "2026-11-09"
-      },
-      "owner": {
-        "name": "Support"
-      },
-      "due": {
-        "date": "2026-11-14",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0023",
-      "title": "Close the penetration findings",
-      "state": "overdue",
-      "from": {
-        "meeting": "Security review",
-        "at": "2026-11-02"
-      },
-      "due": {
-        "date": "2026-11-05",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0024",
-      "title": "Archive the pilot data",
-      "state": "done",
-      "from": {
-        "meeting": "Pilot review",
-        "at": "2026-10-30"
-      },
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "due": {
-        "date": "2026-11-02",
-        "unknown": false
-      }
-    }
-  ],
   "as_of": "2026-11-12T15:40:00Z",
-  "actions": [
+  "sections": [
     {
-      "action_id": "A-0021",
-      "title": "Collect the bank sign-off",
-      "state": "open",
-      "owner": {
-        "name": "Amina Yusuf"
-      },
-      "due": {
-        "unknown": true
-      }
-    },
-    {
-      "action_id": "A-0022",
-      "title": "Rehearse the rollout",
-      "state": "open",
-      "from": {
-        "meeting": "Steering call",
-        "at": "2026-11-09"
-      },
-      "owner": {
-        "name": "Support"
-      },
-      "due": {
-        "date": "2026-11-14",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0023",
-      "title": "Close the penetration findings",
-      "state": "overdue",
-      "from": {
-        "meeting": "Security review",
-        "at": "2026-11-02"
-      },
-      "due": {
-        "date": "2026-11-05",
-        "unknown": false
-      }
-    },
-    {
-      "action_id": "A-0024",
-      "title": "Archive the pilot data",
-      "state": "done",
-      "from": {
-        "meeting": "Pilot review",
-        "at": "2026-10-30"
-      },
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "due": {
-        "date": "2026-11-02",
-        "unknown": false
-      }
+      "key": "meetings",
+      "title": "Project actions",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/actions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/actions",
+      "items": [
+        {
+          "title": "Collect the bank sign-off",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Amina Yusuf",
+          "at": null,
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/actions/#21",
+          "record_id": 21,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/actions/21",
+          "reference": "ACT-0021",
+          "age_days": null,
+          "origin_meeting": null
+        },
+        {
+          "title": "Rehearse the rollout",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Support",
+          "at": null,
+          "due": "2026-11-14T00:00:00Z",
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/actions/#22",
+          "record_id": 22,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/actions/22",
+          "reference": "ACT-0022",
+          "age_days": null,
+          "origin_meeting": {
+            "id": 8,
+            "reference": "Steering call",
+            "at": "2026-11-09T09:00:00Z"
+          }
+        },
+        {
+          "title": "Close the penetration findings",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Owner needed",
+          "at": null,
+          "due": "2026-11-05T00:00:00Z",
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/actions/#23",
+          "record_id": 23,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/actions/23",
+          "reference": "ACT-0023",
+          "age_days": null,
+          "origin_meeting": {
+            "id": 7,
+            "reference": "Security review",
+            "at": "2026-11-02T09:00:00Z"
+          }
+        },
+        {
+          "title": "Archive the pilot data",
+          "state": "Completed",
+          "state_code": "completed",
+          "detail": "Amina Yusuf",
+          "at": null,
+          "due": "2026-11-02T00:00:00Z",
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/actions/#24",
+          "record_id": 24,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/actions/24",
+          "reference": "ACT-0024",
+          "age_days": null,
+          "origin_meeting": {
+            "id": 6,
+            "reference": "Pilot review",
+            "at": "2026-10-30T09:00:00Z"
+          }
+        }
+      ]
     }
-  ],
-  "summary": {
-    "actions": {
-      "total": 4,
-      "overdue": 1,
-      "without_owner": 1
-    }
-  }
+  ]
 }

@@ -7,13 +7,14 @@ import type { LiveWeeklyReport } from '@/api/types';
 import { adapterFor, isPanelUrl, makeCommand, registerLineAdapter, type LineAdapter, type LineContext } from '@/features/workspace/adapter';
 import type { Section } from '@/features/workspace/labels';
 import { SectionView } from '@/features/workspace/Sections';
+import '@/features/workspace/lines';
 import { NOT_RECORDED, weeklyReportAdapter } from '@/features/workspace/weeklyReportAdapter';
 
 // @ts-expect-error plain ESM module without type declarations
 import { workLive } from '../mock/work-live.mjs';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-const ctx: LineContext = { workId: 4102, caseId: 'c1', revision: 3, caseRevision: 7 };
+const ctx: LineContext = { workId: 4102, caseId: 'c1', revision: 3, caseRevision: 7, state: 'processing' };
 const report = (id = 4102) => (workLive({ method: 'get', url: new URL(`/api/v1/work/${id}/weekly-report`, 'http://m.local'), csrfOk: true, persona: 'finance_lead' }) as [number, LiveWeeklyReport])[1];
 
 describe('the adapter interface (AC16, AC17)', () => {
@@ -27,7 +28,7 @@ describe('the adapter interface (AC16, AC17)', () => {
     };
     registerLineAdapter(fake as LineAdapter);
     const adapter = adapterFor('fake-line')!;
-    const readback = await adapter.read({ key: 'fake-line', url: '/api/v1/work/4102/fake' });
+    const readback = await adapter.read({ key: 'fake-line', url: '/api/v1/work/4102/fake' }, ctx);
     render(<>{adapter.sections(readback, ctx).map((s) => <SectionView key={s.key} section={s} level={2} />)}</>);
     expect(screen.getByRole('heading', { name: 'Fake panel' })).toBeTruthy();
     expect(screen.getByText('Hello from the line')).toBeTruthy();
@@ -40,12 +41,30 @@ describe('the adapter interface (AC16, AC17)', () => {
     expect(adapterFor('nothing-registered')).toBeUndefined();
   });
 
+  it('read() receives the line context', async () => {
+    const read = vi.fn(async () => ({ n: 1 }));
+    registerLineAdapter({ key: 'ctx-line', read, sections: () => [] } as LineAdapter);
+    await adapterFor('ctx-line')!.read({ key: 'ctx-line', url: '/api/v1/work/4102/x' }, ctx);
+    expect(read).toHaveBeenCalledWith({ key: 'ctx-line', url: '/api/v1/work/4102/x' }, ctx);
+  });
+
   it('a null token stays null, never 0; a line with no key field has no key', () => {
     const command = makeCommand({ id: 'line.act', label: 'Act', url: '/api/v1/work/1/x', tokens: { expected_revision: null, case_revision: 4 }, successStatuses: [200] });
     expect(command.idempotency).toEqual({ field: null, value: null });
     const body = command.body({});
     expect(body).toEqual({ action: 'act', expected_revision: null, case_revision: 4 });
     expect(Object.keys(body)).not.toContain('operation');
+  });
+
+  it('the descriptor\'s own fields win over inputs: action, tokens and the key cannot be overridden', () => {
+    const command = makeCommand({ id: 'line.act', label: 'Act', url: '/api/v1/work/1/x', tokens: { expected_revision: 3, case_revision: null }, keyField: 'operation', successStatuses: [200] });
+    const body = command.body({ action: 'evil', expected_revision: 99, case_revision: 98, operation: 'mine', note: 'kept' });
+    expect(body).toMatchObject({ action: 'act', expected_revision: 3, case_revision: null, operation: command.idempotency.value, note: 'kept' });
+  });
+
+  it('a body with action: null carries no action', () => {
+    const command = makeCommand({ id: 'work.background.pause', label: 'Pause', url: '/api/v1/work/1/background', tokens: { expected_revision: 7 }, action: null, successStatuses: [202] });
+    expect(command.body({ enabled: false })).toEqual({ expected_revision: 7, enabled: false });
   });
 
   it('each descriptor makes its own key, once', () => {
@@ -79,10 +98,10 @@ describe('the weekly report adapter (AC18, AC21)', () => {
 
   it('reads its panel route and is registered under weekly-report', async () => {
     expect(adapterFor('weekly-report')).toBe(weeklyReportAdapter);
-    const readback = await weeklyReportAdapter.read({ key: 'weekly-report', url: '/api/v1/work/4102/weekly-report' });
+    const readback = await weeklyReportAdapter.read({ key: 'weekly-report', url: '/api/v1/work/4102/weekly-report' }, ctx);
     expect(readback.expected_revision).toBe(3);
     expect(new URL(fetchStub.mock.calls[0][0].url).pathname).toBe('/api/v1/work/4102/weekly-report');
-    await expect(weeklyReportAdapter.read({ key: 'weekly-report', url: 'https://evil.example/api/v1/x' })).rejects.toBeTruthy();
+    await expect(weeklyReportAdapter.read({ key: 'weekly-report', url: 'https://evil.example/api/v1/x' }, ctx)).rejects.toBeTruthy();
     expect(fetchStub).toHaveBeenCalledTimes(1);
   });
 

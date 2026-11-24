@@ -1,5 +1,33 @@
 {
-  "items": [],
   "as_of": "2026-11-12T15:40:00Z",
-  "registers": []
+  "sections": [
+    {
+      "key": "issues",
+      "title": "Issues",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/issues/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/issues",
+      "items": []
+    },
+    {
+      "key": "changes",
+      "title": "Changes",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/change-versions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/change-versions",
+      "items": []
+    },
+    {
+      "key": "emergencies",
+      "title": "Emergency changes",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/emergency-changes/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/emergency-changes",
+      "items": []
+    },
+    {
+      "key": "rfp",
+      "title": "Bid requests",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/received-bids/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/received-bids",
+      "items": []
+    }
+  ]
 }

@@ -1,360 +1,322 @@
 // @vitest-environment jsdom
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { setImmediate as realImmediate } from 'node:timers';
-
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { setCsrfToken } from '@/api/client';
 import { NotificationsPage } from '@/features/alerts/NotificationsPage';
-import { AppShell } from '@/shell/AppShell';
 
-import { isRoleDashboard, roleDashboard } from './bell-feed';
+import { alert, body, hex, json, settle, until } from './alerts-helpers';
 
-// @ts-expect-error plain ESM module without type declarations
-import { createAlertsMock } from '../mock/alerts.mjs';
-// @ts-expect-error plain ESM module without type declarations
-import { OPENAPI_PATH } from '../mock/server.mjs';
+// /notifications (SCR-15) on the live 1.24.0 shapes: grouping, links, paging, mark-read and states.
+const nav = vi.hoisted(() => ({ push: vi.fn() }));
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/notifications',
+  useRouter: () => ({ push: nav.push, replace: vi.fn(), prefetch: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(),
+}));
 
-// next/navigation: the search params live in a small store that router.replace updates, like the app router.
-const nav = vi.hoisted(() => {
-  const listeners = new Set<() => void>();
-  let params = new URLSearchParams();
-  const set = (search: string) => {
-    params = new URLSearchParams(search);
-    window.history.replaceState(null, '', `/notifications${search}`);
-    listeners.forEach((l) => l());
-  };
-  const router = {
-    replace: vi.fn((url: string) => set(new URL(url, 'http://localhost').search)),
-    push: vi.fn(),
-    prefetch: vi.fn(),
-  };
-  return { listeners, get: () => params, set, router };
-});
-vi.mock('next/navigation', async () => {
-  const { useSyncExternalStore } = await import('react');
-  const subscribe = (cb: () => void) => {
-    nav.listeners.add(cb);
-    return () => nav.listeners.delete(cb);
-  };
-  return {
-    usePathname: () => '/notifications',
-    useRouter: () => nav.router,
-    useSearchParams: () => useSyncExternalStore(subscribe, nav.get),
-  };
-});
-
-const fixtures = join(__dirname, '../mock');
-const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8'));
-const me = JSON.parse(readFileSync(join(fixtures, 'fixtures/me.finance_lead.json'), 'utf8'));
-const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
-
-type Call = { method: string; url: URL; csrf: string | null };
-let mock: { handle: (args: object) => { status: number; body: unknown } };
-let scenario: string;
+type Call = { method: string; url: URL; csrf: string | null; raw: string };
 let calls: Call[];
-/** Per-test override: return a Response to replace the mock's answer, or undefined to use it. */
-let hook: (call: Call) => Response | Promise<Response | undefined> | undefined;
-
-function fromMock(call: Call) {
-  const operationId = call.url.pathname.endsWith('/read') ? 'E-NOTIFICATION-READ' : 'E-NOTIFICATIONS';
-  const r = mock.handle({ operationId, url: call.url, raw: '', persona: 'finance_lead', cookies: { psl_mock_alerts: scenario } });
-  return json(r.status, r.body);
-}
+/** The answer to a call; the default is page 1 of `list`. */
+let answer: (call: Call) => Response | Promise<Response>;
+let list: ReturnType<typeof body>;
 
 beforeEach(() => {
-  mock = createAlertsMock({ openapi });
-  scenario = 'board';
+  setCsrfToken('csrf-1');
   calls = [];
-  hook = () => undefined;
-  nav.router.replace.mockClear();
-  nav.router.push.mockClear();
-  nav.set('');
+  nav.push.mockClear();
+  list = body([
+    alert({ n: 1, group: 'action', title: 'Invoice review', agent: 'chidi' }),
+    alert({ n: 2, group: 'action', read: true, agent: 'tola' }),
+    alert({ n: 3, group: 'update', agent: null, at: null, title: 'Assistant reply' }),
+    alert({ n: 4, group: 'update', django_url: '/reminders/9/', api_url: null, title: 'Reminder' }),
+  ]);
+  answer = () => json(200, list);
   vi.stubGlobal(
     'fetch',
     vi.fn(async (request: Request) => {
-      const url = new URL(request.url);
-      if (url.pathname === '/api/v1/me') return json(200, me);
-      if (isRoleDashboard(request)) return roleDashboard();
-      const call = { method: request.method, url, csrf: request.headers.get('X-CSRFToken') };
+      const call = { method: request.method, url: new URL(request.url), csrf: request.headers.get('X-CSRFToken'), raw: request.method === 'POST' ? await request.text() : '' };
       calls.push(call);
-      return (await hook(call)) ?? fromMock(call);
+      return answer(call);
     }),
   );
 });
 afterEach(() => {
   vi.unstubAllGlobals();
+  setCsrfToken(null);
 });
 
-async function until(check: () => void, tries = 100) {
-  for (let i = 0; ; i++) {
-    try {
-      check();
-      return;
-    } catch (error) {
-      if (i >= tries) throw error;
-    }
-    await act(async () => {
-      await new Promise((r) => realImmediate(r));
-    });
-  }
-}
-
-const rows = () => [...document.querySelectorAll('ul[aria-label="Alerts"] > li')];
+const gets = () => calls.filter((c) => c.method === 'GET');
 const posts = () => calls.filter((c) => c.method === 'POST');
-const lists = () => calls.filter((c) => c.method === 'GET');
+const rows = () => [...document.querySelectorAll('.alerts-list > li')];
 
-async function open(search = '') {
-  nav.set(search);
-  const result = render(
-    <AppShell>
-      <NotificationsPage />
-    </AppShell>,
-  );
-  await until(() => expect(screen.queryByText('Loading…')).toBeNull());
-  return result;
+async function open() {
+  const view = render(<NotificationsPage />);
+  await until(() => expect(screen.queryByRole('heading', { name: /^Needs you/ })).toBeTruthy());
+  return view;
 }
 
-describe('list (SCR-15-desktop)', () => {
-  it('board: header, toolbar, count and four rows in order with avatars, meta lines and NEW', async () => {
+describe('the list', () => {
+  it('groups by `group` with loaded counts, the as-of line, the summary and the loaded and unread line', async () => {
     await open();
-    const main = document.querySelector('main')!;
-    expect(main.querySelector('.alerts-eyebrow')!.textContent).toBe('NOTIFICATIONS');
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Notifications');
-    expect(screen.getByRole('link', { name: 'Alert settings' }).getAttribute('href')).toBe('/settings/alerts');
-    expect(screen.getByRole('searchbox', { name: 'Search' }).getAttribute('placeholder')).toBe('Search notifications');
-    const filter = screen.getByRole('button', { name: 'Filter' });
-    expect(filter.getAttribute('aria-expanded')).toBe('false');
-    expect(main.querySelector('.psl-resultcount')!.textContent).toBe('4 ALERTS');
-    expect(screen.getByText(', 1 unread').className).toBe('cmp-sr');
+    expect([...document.querySelectorAll('h2')].map((h) => h.textContent)).toEqual(['Needs you, 2', 'For information, 2']);
+    expect(document.querySelector('.alerts-summary')!.textContent).toBe('Today, 23 Nov: 3 need you, 2 new updates, 1 older unread.');
+    expect(document.querySelector('.alerts-asof')!.textContent).toBe('As of 11:42 WAT. 4 loaded, 3 unread.');
+    expect(rows().map((r) => r.querySelector('.alerts-text')!.textContent)).toEqual(['Invoice review', 'Invoice review 2', 'Assistant reply', 'Reminder']);
+    expect(gets().map((c) => c.url.search)).toEqual(['?page=1']);
+  });
 
-    expect(rows().map((r) => [r.querySelector('.alerts-text')!.textContent, r.querySelector('.alerts-meta')!.textContent, r.querySelector('.psl-tag')?.lastChild?.textContent ?? ''])).toEqual([
-      ['Invoice for Lagoon Health is waiting for your review', 'Chidi · WhatsApp and email · 10:42', 'NEW'],
-      ['The UAT response for Lagoon Health is due tomorrow', 'Tola · Email · 09:00 daily digest', ''],
-      ['October payroll has 2 problems for HR', 'Zainab · In app only (you are not HR)', ''],
-      ['Milestone 1 invoice was verified', 'Chidi · In app · yesterday', ''],
+  it('shows agent and time when the alert has them and neither, nor a placeholder, when it does not', async () => {
+    await open();
+    const [first, , third, fourth] = rows();
+    expect(first.querySelector('.alerts-meta')!.textContent).toBe('Chidi · 12 Nov');
+    expect(first.querySelector('.alerts-sub')!.textContent).toBe('Ojo Foods · INV-0001');
+    expect(first.querySelector('.psl-avatar img, .psl-avatar svg, .psl-avatar')).toBeTruthy();
+    expect(third.querySelector('.alerts-meta')).toBeNull();
+    expect(third.querySelector('.psl-avatar')!.textContent).toBe('');
+    expect(fourth.querySelector('.alerts-meta')!.textContent).toBe('Chidi · 12 Nov');
+    expect(third.textContent).not.toMatch(/earlier|unknown|—/i);
+  });
+
+  it('has no search box, agent filter, Filter button, unread filter or total, and sends no q, agent or unread', async () => {
+    await open();
+    expect(screen.queryByRole('search')).toBeNull();
+    expect(screen.queryByRole('searchbox')).toBeNull();
+    expect(screen.queryByRole('button', { name: /filter/i })).toBeNull();
+    expect(document.body.textContent).not.toMatch(/\d+ ALERTS?\b/);
+    for (const call of calls) expect([...call.url.searchParams.keys()]).toEqual(['page']);
+  });
+
+  it('opens each row at its typed link and never at the retired Django page', async () => {
+    await open();
+    const hrefs = [...document.querySelectorAll('.alerts-list a')].map((a) => a.getAttribute('href'));
+    expect(hrefs).toEqual(['/work/1', '/work/2', '/work/3']);
+    expect(document.querySelector('a[href*="/accounts/"]')).toBeNull();
+    expect(document.querySelector('a[href^="http"], a[href^="//"], a[href^="javascript"]')).toBeNull();
+  });
+
+  it('a hostile link is not a link: no href, and a Mark as read button while unread', async () => {
+    list = body([
+      alert({ n: 1, api_url: '//evil.example/x', django_url: 'https://evil.example/work/1/' }),
+      alert({ n: 2, api_url: 'javascript:alert(1)', django_url: 'javascript:alert(1)', read: true }),
+      alert({ n: 3, api_url: '/api/v1/work/a/b', django_url: '/work/%2e%2e/' }),
     ]);
-    expect(rows().map((r) => r.querySelector('img')!.getAttribute('src'))).toEqual(['/agents/chidi.png', '/agents/tola.png', '/agents/zainab.png', '/agents/chidi.png']);
-    expect(rows().map((r) => r.querySelector('img')!.getAttribute('alt'))).toEqual(['', '', '', '']);
-    expect(rows()[0].querySelector('.psl-avatar')!.className).toBe('psl-avatar psl-avatar--chidi psl-avatar--40');
-    expect(rows().map((r) => r.classList.contains('alerts-row--unread'))).toEqual([true, false, false, false]);
-    expect(rows()[0].querySelector('.psl-tag')!.className).toContain('psl-tag--neutral');
-    const links = rows().map((r) => r.querySelector('a')!);
-    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/work/W-1001', '/work/W-1002', '/work/W-1099', '/work/W-1006']);
-    expect(links[0].textContent).toBe('Invoice for Lagoon Health is waiting for your review, Chidi · WhatsApp and email · 10:42, NEW');
-    expect(links[1].textContent).toBe('The UAT response for Lagoon Health is due tomorrow, Tola · Email · 09:00 daily digest');
+    render(<NotificationsPage />);
+    await until(() => expect(rows()).toHaveLength(3));
+    expect(document.querySelectorAll('.alerts-list a')).toHaveLength(0);
+    expect(screen.getAllByRole('button', { name: /^Mark as read/ })).toHaveLength(2);
   });
 
-  it('the first read sends limit=10 and no other parameter', async () => {
-    await open();
-    expect(Object.fromEntries(lists()[0].url.searchParams)).toEqual({ limit: '10' });
+  it('empty: "No alerts", no group headings, and the summary still shows', async () => {
+    list = body([]);
+    render(<NotificationsPage />);
+    await until(() => expect(screen.queryByText('No alerts')).toBeTruthy());
+    expect(document.querySelectorAll('h2')).toHaveLength(0);
+    expect(document.querySelector('.alerts-summary')).toBeTruthy();
+  });
+});
+
+describe('Load more', () => {
+  const page = (n: number, from: number, count: number, next: number | null) =>
+    body(Array.from({ length: count }, (_, i) => alert({ n: from + i, group: 'update' })), { page: n, next_page: next, unread: 52 });
+
+  it('requests next_page, appends without duplicates, and goes away at next_page null', async () => {
+    answer = (call) => {
+      const p = call.url.searchParams.get('page');
+      if (p === '2') return json(200, page(2, 24, 25, 3)); // 24 and 25 repeat the last two rows of page 1
+      if (p === '3') return json(200, page(3, 49, 5, null));
+      return json(200, page(1, 1, 25, 2));
+    };
+    render(<NotificationsPage />);
+    await until(() => expect(rows()).toHaveLength(25));
+    expect(document.querySelector('.alerts-asof')!.textContent).toContain('25 loaded, 52 unread');
+    fireEvent.click(screen.getByRole('button', { name: 'Load more' }));
+    await until(() => expect(rows()).toHaveLength(48));
+    fireEvent.click(screen.getByRole('button', { name: 'Load more' }));
+    await until(() => expect(rows()).toHaveLength(53));
+    expect(screen.queryByRole('button', { name: 'Load more' })).toBeNull();
+    expect(gets().map((c) => c.url.search)).toEqual(['?page=1', '?page=2', '?page=3']);
+    expect(new Set(rows().map((r) => r.querySelector('.alerts-text')!.textContent)).size).toBe(53);
+    expect(document.querySelector('.alerts-asof')!.textContent).toContain('53 loaded');
   });
 
-  it('an unknown agent gets a neutral circle and its key as the name', async () => {
-    hook = (call) => {
-      if (call.method !== 'GET') return undefined;
-      return json(200, { items: [{ id: 'N-9', work_id: 'W-1', agent: 'kemi', text: 'Hello', at: new Date().toISOString(), read: true }], as_of: new Date().toISOString(), total: 1 });
+  it('a failed page keeps the rows, says so and retries the same page', async () => {
+    let fail = true;
+    answer = (call) => {
+      if (call.url.searchParams.get('page') === '2') return fail ? json(500, { code: 'server_error', message: 'Down.' }) : json(200, page(2, 26, 3, null));
+      return json(200, page(1, 1, 25, 2));
+    };
+    render(<NotificationsPage />);
+    await until(() => expect(rows()).toHaveLength(25));
+    fireEvent.click(screen.getByRole('button', { name: 'Load more' }));
+    await until(() => expect(screen.queryByText('Couldn’t load more alerts. Try again.')).toBeTruthy());
+    expect(rows()).toHaveLength(25);
+    fail = false;
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    await until(() => expect(rows()).toHaveLength(28));
+    expect(gets().map((c) => c.url.search)).toEqual(['?page=1', '?page=2', '?page=2']);
+    expect(screen.queryByText('Couldn’t load more alerts. Try again.')).toBeNull();
+  });
+});
+
+describe('opening and marking read', () => {
+  it('an unread alert: POST {} with the CSRF token, then the work; the unread count drops by one only after the 200', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    answer = async (call) => {
+      if (call.method === 'POST') {
+        await gate;
+        return json(200, { id: hex(1), read: true });
+      }
+      return json(200, list);
     };
     await open();
-    expect(rows()[0].querySelector('.psl-avatar')!.className).toBe('psl-avatar psl-avatar--40');
-    expect(rows()[0].querySelector('img')).toBeNull();
-    expect(rows()[0].querySelector('.alerts-meta')!.textContent).toMatch(/^kemi · \d\d:\d\d$/);
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 ALERT');
-    expect(screen.queryByText(/unread/)).toBeNull();
+    fireEvent.click(rows()[0].querySelector('a')!, { button: 0 });
+    await settle();
+    expect(document.querySelector('.alerts-asof')!.textContent).toContain('3 unread');
+    expect(nav.push).not.toHaveBeenCalled();
+    release();
+    await until(() => expect(nav.push).toHaveBeenCalledWith('/work/1'));
+    expect(posts().map((c) => [c.url.pathname, c.csrf, c.raw])).toEqual([[`/api/v1/notifications/${hex(1)}/read`, 'csrf-1', '{}']]);
+    expect(document.querySelector('.alerts-asof')!.textContent).toContain('2 unread');
+    expect(rows()[0].classList.contains('alerts-row--unread')).toBe(false);
   });
-});
 
-describe('opening an alert', () => {
-  it('an unread alert: one POST with X-CSRFToken, then /work/W-1001', async () => {
+  it('a read alert sends no POST and a second click sends no second one', async () => {
+    answer = (call) => (call.method === 'POST' ? json(200, { id: hex(1), read: true }) : json(200, list));
     await open();
-    fireEvent.click(rows()[0].querySelector('a')!);
-    fireEvent.click(rows()[0].querySelector('a')!);
-    await until(() => expect(nav.router.push).toHaveBeenCalledWith('/work/W-1001'));
-    expect(posts().map((c) => [c.url.pathname, c.csrf])).toEqual([['/api/v1/notifications/N-0001/read', 'mock-csrf-finance_lead']]);
+    fireEvent.click(rows()[1].querySelector('a')!, { button: 0 });
+    await settle();
+    expect(posts()).toHaveLength(0);
+    fireEvent.click(rows()[0].querySelector('a')!, { button: 0 });
+    fireEvent.click(rows()[0].querySelector('a')!, { button: 0 });
+    await until(() => expect(nav.push).toHaveBeenCalled());
+    expect(posts()).toHaveLength(1);
   });
 
-  for (const [label, failure] of [
-    ['500', () => json(500, { code: 'server_error', message: 'Something broke.' })],
-    ['a network error', () => Promise.reject(new TypeError('Failed to fetch'))],
-  ] as const) {
-    it(`mark-read failing with ${label} still navigates, sends one POST and keeps NEW`, async () => {
-      hook = (call) => (call.method === 'POST' ? (failure() as Response | Promise<Response>) : undefined);
-      const { unmount } = await open();
-      fireEvent.click(rows()[0].querySelector('a')!);
-      await until(() => expect(nav.router.push).toHaveBeenCalledWith('/work/W-1001'));
-      expect(posts()).toHaveLength(1);
-      expect(rows()[0].querySelector('.psl-tag')!.lastChild!.textContent).toBe('NEW');
-      unmount();
+  for (const status of [500, 503]) {
+    it(`a ${status} leaves the row unread, says "Couldn’t mark as read", and still goes to the work`, async () => {
+      answer = (call) => (call.method === 'POST' ? json(status, { code: 'server_error', message: 'Down.' }) : json(200, list));
       await open();
-      expect(rows()[0].querySelector('.psl-tag')!.lastChild!.textContent).toBe('NEW');
-      expect(posts()).toHaveLength(1);
+      fireEvent.click(rows()[0].querySelector('a')!, { button: 0 });
+      await until(() => expect(nav.push).toHaveBeenCalledWith('/work/1'));
+      expect(rows()[0].classList.contains('alerts-row--unread')).toBe(true);
+      expect(within(rows()[0] as HTMLElement).getByRole('status').textContent).toBe('Couldn’t mark as read. Try again.');
+      expect(document.querySelector('.alerts-asof')!.textContent).toContain('3 unread');
+      // retry: the same row posts again
+      fireEvent.click(rows()[0].querySelector('a')!, { button: 0 });
+      await until(() => expect(posts()).toHaveLength(2));
     });
   }
 
-  it('after a successful mark-read the list on return shows no NEW', async () => {
-    const { unmount } = await open();
-    fireEvent.click(rows()[0].querySelector('a')!);
-    await until(() => expect(nav.router.push).toHaveBeenCalled());
-    unmount();
-    await open();
-    expect(rows()[0].querySelector('.psl-tag')).toBeNull();
-  });
-
-  it('a read alert and a modifier-click on an unread one send no POST', async () => {
-    await open();
-    fireEvent.click(rows()[3].querySelector('a')!, { ctrlKey: true });
-    fireEvent.click(rows()[0].querySelector('a')!, { metaKey: true });
-    fireEvent.click(rows()[0].querySelector('a')!, { button: 1 });
-    await until(() => expect(lists().length).toBeGreaterThan(0));
-    expect(posts()).toEqual([]);
-    expect(nav.router.push).not.toHaveBeenCalled();
-  });
-});
-
-describe('search and Filter', () => {
-  it('typing narrows by q (300 ms); the URL holds it; the requests carry only v7 parameters', async () => {
-    await open();
-    fireEvent.change(screen.getByRole('searchbox', { name: 'Search' }), { target: { value: 'payroll' } });
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 350));
+  for (const status of [403, 404]) {
+    it(`a ${status} says the alert is no longer available, refreshes the list and does not open it`, async () => {
+      answer = (call) => (call.method === 'POST' ? json(status, { code: 'not_found', message: 'Gone.' }) : json(200, list));
+      await open();
+      fireEvent.click(rows()[0].querySelector('a')!, { button: 0 });
+      await until(() => expect(gets()).toHaveLength(2));
+      await until(() => expect(screen.queryByText('This alert is no longer available.')).toBeTruthy());
+      expect(nav.push).not.toHaveBeenCalled();
     });
-    await until(() => expect(window.location.search).toBe('?q=payroll'));
-    await until(() => expect(rows()).toHaveLength(1));
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('1 ALERT');
-    expect(Object.fromEntries(lists().at(-1)!.url.searchParams)).toEqual({ limit: '10', q: 'payroll' });
-  });
+  }
 
-  it('Filter: Agent Chidi and Unread only apply on Show results; the hint reads "1 unread"', async () => {
+  it('a stale session token says to try again, changes nothing and does not open the work', async () => {
+    answer = (call) => {
+      if (call.method === 'POST') return json(403, { code: 'csrf_failed', message: 'Reload.' });
+      if (call.url.pathname === '/api/v1/session') return json(200, { csrf_token: 'csrf-2', signed_in: true, next_url: '/' });
+      return json(200, list);
+    };
     await open();
-    fireEvent.click(screen.getByRole('button', { name: 'Filter' }));
-    const dialog = screen.getByRole('dialog', { name: 'Filter' });
-    expect(within(dialog).getAllByRole('radio').map((r) => r.closest('label')!.textContent)).toEqual(['Any agent', 'Tola', 'Chidi', 'Zainab']);
-    expect(within(dialog).getByRole('checkbox').closest('label')!.textContent).toBe('Unread only1 unread');
-    fireEvent.click(within(dialog).getByRole('radio', { name: 'Chidi' }));
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Show results' }));
-    await until(() => expect(rows()).toHaveLength(2));
-    expect(window.location.search).toBe('?agent=chidi');
-    expect(screen.getByRole('button', { name: /^Filter\s*1\s*on$/ })).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: /^Filter\s*1\s*on$/ }));
-    fireEvent.click(within(screen.getByRole('dialog')).getByRole('checkbox'));
-    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Show results' }));
-    await until(() => expect(rows()).toHaveLength(1));
-    expect(Object.fromEntries(lists().at(-1)!.url.searchParams)).toEqual({ limit: '10', agent: 'chidi', unread: 'true' });
-    expect(screen.getByRole('button', { name: /^Filter\s*2\s*on$/ })).toBeTruthy();
+    fireEvent.click(rows()[0].querySelector('a')!, { button: 0 });
+    await until(() => expect(screen.queryByText(/Your session was refreshed\. Try again/)).toBeTruthy());
+    expect(nav.push).not.toHaveBeenCalled();
+    expect(posts()).toHaveLength(1);
   });
 
-  it('Esc discards the draft', async () => {
+  it('a row with no link has Mark as read, which marks it read in place', async () => {
+    answer = (call) => (call.method === 'POST' ? json(200, { id: hex(4), read: true }) : json(200, list));
     await open();
-    fireEvent.click(screen.getByRole('button', { name: 'Filter' }));
-    fireEvent.click(screen.getByRole('radio', { name: 'Tola' }));
-    fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
-    expect(screen.queryByRole('dialog')).toBeNull();
-    expect(nav.router.replace).not.toHaveBeenCalled();
+    const button = within(rows()[3] as HTMLElement).getByRole('button', { name: /^Mark as read/ });
+    fireEvent.click(button);
+    await until(() => expect(rows()[3].classList.contains('alerts-row--unread')).toBe(false));
+    expect(posts().map((c) => c.url.pathname)).toEqual([`/api/v1/notifications/${hex(4)}/read`]);
+    expect(within(rows()[3] as HTMLElement).queryByRole('button', { name: /^Mark as read/ })).toBeNull();
+    expect(nav.push).not.toHaveBeenCalled();
   });
 
-  it('no results: "No alerts match" and "Clear search and filters" restores the list', async () => {
-    await open('?q=zzz');
-    expect(screen.getByRole('heading', { name: 'No alerts match' })).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Clear search and filters' }));
-    await until(() => expect(rows()).toHaveLength(4));
-    expect(window.location.search).toBe('');
+  it('a 401 on the mark-read shows the signed-out state', async () => {
+    answer = (call) => (call.method === 'POST' ? json(401, { code: 'unauthenticated', message: 'Sign in.' }) : json(200, list));
+    await open();
+    fireEvent.click(rows()[0].querySelector('a')!, { button: 0 });
+    await until(() => expect(screen.queryByText(/signed out/i)).toBeTruthy());
+    expect(gets()).toHaveLength(1);
+  });
+
+  it('a Ctrl click is a normal link: no POST, no push', async () => {
+    await open();
+    fireEvent.click(rows()[0].querySelector('a')!, { button: 0, ctrlKey: true });
+    await settle();
+    expect(posts()).toHaveLength(0);
+    expect(nav.push).not.toHaveBeenCalled();
   });
 });
 
 describe('states', () => {
-  it('loading shows LoadingState and no rows', async () => {
-    let release!: () => void;
-    const gate = new Promise<void>((r) => (release = r));
-    hook = async (call) => {
-      await gate;
-      return fromMock(call);
-    };
-    nav.set('');
-    render(
-      <AppShell>
-        <NotificationsPage />
-      </AppShell>,
-    );
-    // The page's list and the shell's alert bell (F-15), both held at the gate.
-    await until(() => expect(calls.length).toBe(2));
-    expect(screen.getByRole('status').textContent).toBe('Loading…');
-    expect(rows()).toHaveLength(0);
-    release();
-    await until(() => expect(rows()).toHaveLength(4));
+  it('loading shows the skeleton', async () => {
+    answer = () => new Promise<Response>(() => {});
+    render(<NotificationsPage />);
+    await until(() => expect(screen.queryByText('Loading…')).toBeTruthy());
   });
 
-  it('empty: "No alerts yet." with the settings link and "0 ALERTS"', async () => {
-    scenario = 'empty';
-    await open();
-    expect(document.querySelector('.psl-empty h3')!.textContent).toBe('No alerts yet.');
-    expect(screen.getByRole('link', { name: 'Alert settings' })).toBeTruthy();
-    expect(document.querySelector('.psl-resultcount')!.textContent).toBe('0 ALERTS');
-  });
-
-  it('error: the card with its reference; Try again re-reads the same view', async () => {
-    let fail = true;
-    hook = () => (fail ? json(404, { code: 'not_found', message: 'We could not find that record.' }) : undefined);
-    await open();
-    const card = screen.getByRole('alert');
-    expect(card.textContent).toBe(
-      'We couldn’t load your alerts. Your work is safe; nothing was changed. Reference not_found for support.',
-    );
-    fail = false;
+  it('a 500 shows the error card; Try again reads page 1 again', async () => {
+    answer = () => json(500, { code: 'server_error', message: 'Down.' });
+    render(<NotificationsPage />);
+    await until(() => expect(screen.queryByText(/We couldn’t load your alerts/)).toBeTruthy());
+    expect(document.body.textContent).toContain('Reference server_error for support.');
+    answer = () => json(200, list);
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
     await until(() => expect(rows()).toHaveLength(4));
+    expect(gets()).toHaveLength(2);
   });
 
-  it('a failure after a success says when the list was last loaded', async () => {
-    await open();
-    hook = () => Promise.reject(new TypeError('offline'));
-    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'x' } });
-    fireEvent.submit(screen.getByRole('search'));
-    await until(() => expect(screen.getByRole('alert').textContent).toContain('Last loaded 11:00. Reference network_error for support.'));
+  it('a 403 and a network failure show the error card', async () => {
+    answer = () => json(403, { code: 'forbidden', message: 'No.' });
+    const view = render(<NotificationsPage />);
+    await until(() => expect(screen.queryByText(/We couldn’t load your alerts/)).toBeTruthy());
+    view.unmount();
+    answer = () => Promise.reject(new TypeError('network'));
+    render(<NotificationsPage />);
+    await until(() => expect(screen.queryByText(/We couldn’t load your alerts/)).toBeTruthy());
   });
 
-  it('many: Show more loads rows 11-20 then 21-25 and goes; a failed Show more keeps the 10 rows', async () => {
-    scenario = 'many';
-    await open();
-    expect(rows()).toHaveLength(10);
-    hook = () => json(500, { code: 'server_error', message: 'Broke.' });
-    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
-    await until(() => expect(screen.getByText('We couldn’t load more. Choose Show more to try again.')).toBeTruthy());
-    expect(rows()).toHaveLength(10);
-    hook = () => undefined;
-    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
-    await until(() => expect(rows()).toHaveLength(20));
-    expect(lists().at(-1)!.url.searchParams.get('cursor')).toBe('o10');
-    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
-    await until(() => expect(rows()).toHaveLength(25));
-    expect(screen.queryByRole('button', { name: /^Show (more|\d+ more)$/ })).toBeNull();
-    expect(lists().at(-1)!.url.searchParams.get('cursor')).toBe('o20');
+  it('a 400 or 422 on the page shows the error card', async () => {
+    answer = () => json(400, { code: 'invalid_query', message: 'No.' });
+    render(<NotificationsPage />);
+    await until(() => expect(screen.queryByText(/We couldn’t load your alerts/)).toBeTruthy());
   });
 
-  it('401 shows the signed-out state with the current path and search as next', async () => {
-    hook = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
-    await open('?q=pay');
-    await until(() => expect(screen.getByRole('link', { name: 'Sign in' }).getAttribute('href')).toBe('/sign-in?next=%2Fnotifications%3Fq%3Dpay'));
-  });
-});
-
-describe('absent proposal fields are never invented (bare)', () => {
-  it('no search, Filter, count or unread text; meta is agent and time', async () => {
-    scenario = 'bare';
-    await open();
-    expect(rows().map((r) => r.querySelector('.alerts-meta')!.textContent)).toEqual(['Chidi · 10:42', 'Tola · 08:30', 'Zainab · 08:10', 'Chidi · yesterday']);
-    expect(screen.queryByRole('search')).toBeNull();
-    expect(screen.queryByRole('button', { name: /Filter/ })).toBeNull();
-    expect(document.body.textContent).not.toMatch(/ALERTS?|unread/);
-    expect(rows()[0].querySelector('.psl-tag')!.lastChild!.textContent).toBe('NEW');
+  it('a 401 shows the signed-out state and sends nothing more', async () => {
+    answer = () => json(401, { code: 'unauthenticated', message: 'Sign in.' });
+    render(<NotificationsPage />);
+    await until(() => expect(screen.queryByText(/signed out/i)).toBeTruthy());
+    await settle();
+    expect(calls).toHaveLength(1);
   });
 
-  it('filters in the URL without total are dropped and the list is read once more', async () => {
-    scenario = 'bare';
-    await open('?q=pay&agent=chidi');
-    await until(() => expect(rows()).toHaveLength(4));
-    expect(nav.router.replace).toHaveBeenCalledWith('/notifications', { scroll: false });
-    // The page's two reads, with the shell's alert bell (F-15) reading the default page between them.
-    expect(lists().map((c) => c.url.search)).toEqual(['?limit=10&q=pay&agent=chidi', '', '?limit=10']);
+  it('a body with no items array is a load error, never "No alerts"', async () => {
+    answer = () => json(200, { as_of: '2026-11-23T10:42:00Z', page: 1, next_page: null, unread: 0 });
+    render(<NotificationsPage />);
+    await until(() => expect(screen.queryByText(/We couldn’t load your alerts/)).toBeTruthy());
+    expect(screen.queryByText('No alerts')).toBeNull();
+  });
+
+  it('a body with items that are not an array, or with no unread number, is a load error', async () => {
+    answer = () => json(200, { ...list, items: null });
+    const view = render(<NotificationsPage />);
+    await until(() => expect(screen.queryByText(/We couldn’t load your alerts/)).toBeTruthy());
+    view.unmount();
+    answer = () => json(200, { ...list, unread: undefined });
+    render(<NotificationsPage />);
+    await until(() => expect(screen.queryByText(/We couldn’t load your alerts/)).toBeTruthy());
   });
 });
