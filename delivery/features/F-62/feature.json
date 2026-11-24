@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-62",
   "outcome": "Verified outputs and All exceptions read from live GET /work, through one shared work-list adapter",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -118,7 +118,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "PMO delivery acceptance (D-180 lighter panel)",
-      "snapshot_ref": "6730a7e7829fa8be3efcd2021a24b86c46df375d",
+      "snapshot_ref": "7b8bad85508f7df1152e3c1c2be2d1bf26c962d8",
       "evidence_refs": [
         "delivery/features/F-62/round-1/acceptance-pmo.md"
       ]
@@ -126,11 +126,13 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-62/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), recorded by the lane A coordinator",
+      "authority": "accepted in batch, delegated under D-184 (the design engineer's batch answer D-182, 23 Nov 2026)",
+      "snapshot_ref": "7b8bad85508f7df1152e3c1c2be2d1bf26c962d8",
+      "evidence_refs": [
+        "delivery/features/F-62/round-1/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -459,9 +461,9 @@
     "task_branch": "fe-connect-1-verified-and-exceptions",
     "head_sha": "7b8bad85508f7df1152e3c1c2be2d1bf26c962d8",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a2",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/106",
+    "pr_number": 106,
+    "pr_author": "hunchoweb",
     "designated_approver": null,
     "ci_status": "not_run",
     "human_approval": "pending",
@@ -905,6 +907,14 @@
       "at": "2026-11-23T17:31:03Z",
       "round": 1,
       "head": "6730a7e7829fa8be3efcd2021a24b86c46df375d",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-24T09:40:44Z",
+      "round": 1,
+      "head": "7b8bad85508f7df1152e3c1c2be2d1bf26c962d8",
       "reason": null
     }
   ],

@@ -27,3 +27,11 @@ VERDICT: PASS
 - Unknown counts are still never shown as 0. `total: null` is not rendered, and the code that shows counts is untouched.
 
 Findings: none new. TECH-1-1 to TECH-1-3 stand, all non-blocking.
+
+## Delta re-check (7b8bad85)
+
+Verdict: pass. Findings: none new.
+
+- Lane C's handler is unchanged. `git diff 3b7df6cc 7b8bad85 -- frontend/mock/work-live.mjs frontend/mock/start-live.mjs` is empty. The only change in 7b8bad85 is 3 lines in `mock/live-work.mjs` and 4 in `mock/server.mjs`.
+- F-62 owns only its own ids. `ownsLiveWorkItem` matches only the verified rows (401 to 420) and exception rows (301 to 320) from `verifiedRows` and `exceptionRows`. The route is limited to GET and `/api/v1/work/<digits>`. Every other integer id falls through to F-85's handler.
+- The unknown-id 404 holds. An id outside those two lists is not claimed by F-62, so lane C's 404 for unknown ids and for 4106 still applies. `tests/mock-work-live.test.ts` is untouched.
