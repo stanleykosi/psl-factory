@@ -14,7 +14,7 @@ test.beforeEach(async ({ request, context }: { request: import('@playwright/test
 const tab = (page: Page, name: RegExp) => page.getByRole('tablist', { name: 'My work' }).getByRole('tab', { name });
 const rowLinks = (page: Page) => page.locator('#my-work-panel').getByRole('link');
 
-test('My work: five decisions, five waiting, four done, and search narrows them', async ({ page }) => {
+test('My work: five decisions, five waiting, four verified, and search narrows them', async ({ page }) => {
   await page.goto('/my-work');
   await expect(page.getByText('Folake Bello · CEO')).toBeVisible();
   await expect(tab(page, /^Needs me/)).toBeVisible();
@@ -25,8 +25,8 @@ test('My work: five decisions, five waiting, four done, and search narrows them'
   await tab(page, /^Waiting on others/).click();
   await expect(rowLinks(page).filter({ hasText: 'Ojo Foods · Ordering app plan' }).first()).toBeVisible();
   expect(await rowLinks(page).count()).toBeGreaterThanOrEqual(5);
-  await tab(page, /^Done/).click();
-  await expect(rowLinks(page).filter({ hasText: 'Lagoon Health · Discovery plan' }).first()).toBeVisible();
+  await tab(page, /^Verified/).click(); // F-63: the Done tab became Verified, which lists the verified outputs
+  await expect(rowLinks(page).filter({ hasText: 'INV-0398 · Lagoon Health' }).first()).toBeVisible();
   expect(await rowLinks(page).count()).toBeGreaterThanOrEqual(4);
 });
 
@@ -34,7 +34,8 @@ test('the Kora SOW v3 decision opens with the CEO at the last step, and its Hist
   await page.goto('/my-work');
   await page.waitForLoadState('networkidle'); // the dev server hydrates after the rows draw; an early click on a row can be lost
   await rowLinks(page).filter({ hasText: 'Kora Logistics · SOW v3' }).first().click();
-  await expect(page).toHaveURL(/\/work\/W-5001$/);
+  await expect(page).toHaveURL(/\/work\/5001$/);
+  await page.goto('/work/W-5001'); // F-63: My work links the live number; the mock draws this sample decision's page under its v7 id
   await expect(page.getByRole('heading', { level: 1, name: 'Kora Logistics · SOW v3' })).toBeVisible();
   await expect(page.getByText('CEO approval').first()).toBeVisible();
   await expect(page.getByText('You decide on statement of work v3.')).toBeVisible();

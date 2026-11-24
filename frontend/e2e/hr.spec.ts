@@ -26,8 +26,8 @@ test('My work has rows in all three queues, and search narrows them', async ({ p
   await tab(page, /^Waiting on others/).click();
   await expect(rowLinks(page).filter({ hasText: 'Payroll correction' }).first()).toBeVisible();
   expect(await rowLinks(page).count()).toBeGreaterThanOrEqual(3);
-  await tab(page, /^Done/).click();
-  await expect(rowLinks(page).filter({ hasText: 'Leaver record' }).first()).toBeVisible();
+  await tab(page, /^Verified/).click(); // F-63: the Done tab became Verified, which lists the verified outputs
+  await expect(rowLinks(page).filter({ hasText: 'INV-0398 · Lagoon Health' }).first()).toBeVisible();
   expect(await rowLinks(page).count()).toBeGreaterThanOrEqual(2);
 });
 
