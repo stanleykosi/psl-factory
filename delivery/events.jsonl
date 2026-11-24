@@ -4834,3 +4834,5 @@
 {"at":"2026-11-24T13:45:56Z","feature":"F-113","round":3,"kind":"finding","action":"add","finding":"PMO-3-1","by":"pmo-acceptance","severity":"medium","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-24T13:45:56Z","feature":"F-113","round":3,"kind":"finding","action":"add","finding":"PMO-3-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
 {"at":"2026-11-24T13:45:57Z","feature":"F-62","round":1,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"156996538dc28d1fdd1412c93023d8fa69a51def","merge_decision.pre_merge_sync":{"base_sha":"8692cf873dc18b64962f40885193e07f8f0d7c29","checks_rerun":"passed"},"merge_decision.merged_by":"hunchoweb (lane A coordinator under D-180, delegated)"}}
+{"at":"2026-11-24T13:46:40Z","feature":"F-113","round":3,"kind":"fields","fields":{"git.pr_url":"https://github.com/stanleykosi/psl-factory/pull/109","git.pr_number":109}}
+{"at":"2026-11-24T13:46:41Z","feature":"F-113","round":3,"kind":"transition","head":"df2e09f45516","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}

@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-113",
   "outcome": "The Delivery tab shows the project's six delivery lines from the live overview",
-  "state": "INTEGRATED_QA",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -136,27 +136,33 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA, round 3 (test data only)",
+      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "evidence_refs": [
+        "delivery/features/F-113/round-3/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance, round 3",
+      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "evidence_refs": [
+        "delivery/features/F-113/round-3/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-113/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
+      "authority": "carried over under D-188 (sync with main only, plus round 3 test data); D-187 (LD-Q2: every recommended spec option accepted) and D-195 (\"Sign all, keep amber\"); D-184 (batch-approved board changes count as product acceptance)",
+      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "evidence_refs": [
+        "delivery/features/F-113/round-3/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -937,6 +943,75 @@
           "head": "df2e09f4551626e0e97153c73d924118ceb5546c"
         }
       ]
+    },
+    {
+      "id": "QA-3-1",
+      "round": 3,
+      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/mock/work-live.mjs:71` (`delivery()` helper) gives 2504 (action_needed) and 2505 (ready) the text \"No further step is needed yet.\", which contradicts the state. Expected: a next-step sentence that matches the state. Actual: generic text. Schema-valid and not asserted by any test. Fix in a later mock pass; same note as TECH-3-1.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-3/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T13:43:41Z",
+          "head": "df2e09f4551626e0e97153c73d924118ceb5546c"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-1",
+      "round": 3,
+      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "owner": "pmo",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Base diff check. Coordinator ran `git diff --name-only 8692cf873dc18b64962f40885193e07f8f0d7c29 df2e09f4551626e0e97153c73d924118ceb5546c` in the lane-d worktree; output saved at `/private/tmp/claude-501/-Users-Hunchoo-psl-factory/f3d2f47a-b311-4962-a74a-1c6348f1d696/scratchpad/f113-base-diff.txt` (14 lines, read by PMO). Result: scope confirmed, no out-of-scope path. Closed by this file, not carried.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T13:45:56Z",
+          "head": "df2e09f4551626e0e97153c73d924118ceb5546c"
+        }
+      ]
+    },
+    {
+      "id": "PMO-3-2",
+      "round": 3,
+      "snapshot_ref": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "owner": "pmo",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Record sync (carried from PMO-2-1). `feature.json` acceptance criterion 3 still reads \"Open goes to /work/{work_id}\" and \"click Open\". The spec and the product decision say \"click the row title\" (D-195). Also `feature.json` `operation_ids` is empty, though the readiness scope names `delivery_overview`. Expected: both records match the spec and readiness. Actual: stale in `feature.json` only. Fix at the next record sync.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-113/round-3/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T13:45:56Z",
+          "head": "df2e09f4551626e0e97153c73d924118ceb5546c"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1081,8 +1156,8 @@
     "task_branch": "fe-connect-1-delivery-overview",
     "head_sha": "df2e09f4551626e0e97153c73d924118ceb5546c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d",
-    "pr_url": null,
-    "pr_number": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/109",
+    "pr_number": 109,
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "not_run",
@@ -1233,6 +1308,22 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-24T13:41:41Z",
+      "round": 3,
+      "head": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-24T13:43:41Z",
+      "round": 3,
+      "head": "df2e09f4551626e0e97153c73d924118ceb5546c",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-24T13:46:41Z",
       "round": 3,
       "head": "df2e09f4551626e0e97153c73d924118ceb5546c",
       "reason": null
