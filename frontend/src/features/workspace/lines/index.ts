@@ -2,5 +2,6 @@
 // registerLineAdapter call) here, in its own commit.
 import { registerLineAdapter, type LineAdapter } from '../adapter';
 import { weeklyReportAdapter } from '../weeklyReportAdapter';
+import '@/features/issue-followup/issueFollowupAdapter'; // F-111 (lane D): self-registers on import
 
 registerLineAdapter(weeklyReportAdapter as LineAdapter);
