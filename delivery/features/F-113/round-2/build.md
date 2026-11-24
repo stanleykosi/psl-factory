@@ -7,11 +7,11 @@ LANE: full
 - Root cause of UX-1-1, UI-1-1 and UI-1-2: my row classes (`delivery__row`, `delivery__title` and so on) collided with older, unused rules of the same names in `project-tabs.css`, which overrode my grid and padding. The tab now uses its own `dlvov__*` classes in the new `dlvov.css` (old `delivery.css` removed).
 - Row layout now follows the board: number box, title with reference beneath, tag with "Updated <date>" beneath it on the right, inside the panel's 14px inset. Phone: one compact line (title, tag) with reference and date beneath; number box hidden as on the mobile board.
 - The row title is now the link to `/work/{work_id}` (the API supplies the target). The separate "Open" link is removed, so spec AC3 ("click Open") is met by clicking the title; spec line 80-ish still says "Open" and should be reworded by the coordinator. The panel head is the board's "The six delivery lines, in order"; the spec does not word it differently.
-- `fidelity-exceptions.json` written (proposal, pending design engineer). The fidelity re-run is NOT done (see Blocked).
+- `fidelity-exceptions.json` written (proposal, pending design engineer). Fidelity re-run done once on the production build (after the heavy-lock build finished); results under Validation.
 
 ## Changes
 - `frontend/src/features/projects/DeliveryTab.tsx`, new `dlvov.css` (replaces `delivery.css`), `frontend/tests/delivery-tab.test.tsx`.
-- `delivery/features/F-113/fidelity-exceptions.json`: 28 exceptions in F-14's format, each with `approved_by: "builder proposal, pending design engineer"` and a spec reason: the 3 OF 6 DONE tag and DLV-0052 (DC-3, D-182), Tola card and its texts, NEXT card, the Release to Closure sub-nav strip (Question 3 a, D-187), "Open the handover", the not-started Closure link, and frame items (breadcrumb with fixture project name, shell persona, PM tag, Planning tab from live tabs[]). `visual_waivers` is empty until the scores exist.
+- `delivery/features/F-113/fidelity-exceptions.json`: 28 exceptions in F-14's format, each with `approved_by: "builder proposal, pending design engineer"` and a spec reason: the 3 OF 6 DONE tag and DLV-0052 (DC-3, D-182), Tola card and its texts, NEXT card, the Release to Closure sub-nav strip (Question 3 a, D-187), "Open the handover", the not-started Closure link, and frame items (breadcrumb with fixture project name, shell persona, PM tag, Planning tab from live tabs[]). `visual_waivers` has the two D-83 waivers (75.4 and 78.7), also pending the design engineer.
 
 ## Fixes
 - UX-1-1 | tag and date no longer overlap; own class names | 6636f0eb
@@ -29,7 +29,12 @@ Unchanged from round 1 except AC3: the started row's title link goes to `/work/2
 ## Validation
 - `npx vitest run tests/delivery-model.test.ts tests/delivery-tab.test.tsx tests/projects-journey.test.tsx tests/projects-model.test.ts`: 86 pass. `eslint` on the changed folders: clean.
 - Full gate, full vitest: not run by me (coordinator queues the gate).
-- Fidelity: not run.
+- Fidelity (one run, production build, Next 4990 / mock 4991, with the exceptions file; reports and side-by-side images in `round-2/fidelity/`):
+  - SCR-43 desktop 1440: coverage 100% after exceptions (54.2% raw), visual 75.4, moved 3, extra 7. Under 90, so it relies on the proposed D-83 waiver (visual >= 70).
+  - SCR-43 mobile 390: coverage 100% after exceptions (50% raw), visual 78.7, moved 1, extra 9. Same waiver.
+  - Side-by-sides read: rows are aligned, tag and date no longer overlap, rows sit inside the panel inset, phone rows are one compact line with reference and date beneath. The side-panel exception needed the empty name `""` (the tool's key), fixed in the file; the desktop figure above is from the re-run after that.
+  - The remaining gap is the hidden Tola and NEXT cards, sub-nav strip, per-row gate sentences, handover/archive swap, and the frame header (all in the exceptions or waiver reasons).
+- Servers I started on 4990 and 4991 are stopped.
 
 ## Blocked
-Only the fidelity re-run. It needs a production build (`heavy-lock.sh run lane-d -- env API_ORIGIN=http://127.0.0.1:4991 npm run build`). The heavy-lock queue had 8 tickets ahead of mine (the oldest from 00:57Z) and the build had not started after about 30 minutes. The coordinator can run the tool after that build, on 4990/4991, with `--exceptions delivery/features/F-113/fidelity-exceptions.json`. The visual waivers (D-83) need the scores, so they are not written yet. A build ticket from lane-d may still be queued; it is harmless but will build `frontend/.next` when its turn comes. No servers of mine are running.
+None. Open for the design engineer: sign the proposed exceptions and the two D-83 visual waivers in `delivery/features/F-113/fidelity-exceptions.json`.

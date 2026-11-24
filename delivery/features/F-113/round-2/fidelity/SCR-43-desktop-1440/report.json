@@ -1,0 +1,1157 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T02:58:49.367Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-43-desktop.dc.html",
+  "boardName": "SCR-43-desktop.dc.html",
+  "pageUrl": "http://127.0.0.1:4990/projects/00000000-0000-4000-8000-000000000101/delivery",
+  "viewport": {
+    "width": 1440,
+    "height": 1000
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-113/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 75.4 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 54.2,
+    "coverageWithExceptions": 100,
+    "visual": 75.4
+  },
+  "visual": {
+    "score": 75.4,
+    "allCellsScore": 84.6,
+    "width": 1440,
+    "height": 1000,
+    "boardHeight": 1000,
+    "pageHeight": 1000,
+    "cell": 12,
+    "contentCells": 6331,
+    "mismatchedCells": 1556
+  },
+  "coverage": {
+    "total": 48,
+    "found": 26,
+    "coverage": 54.2,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 80,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 516,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 801
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 829
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "PROJECTS",
+        "pageName": "PROJECTS",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 86,
+          "w": 61,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Tamarind Loans · loan origination",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Tamarind Loans · loan origination\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [
+          "text size 32px on the board, 36px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 651,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 123,
+          "w": 1264,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 831,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 182,
+          "w": 637,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 184,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Delivery",
+        "pageName": "Delivery",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 266,
+          "y": 176,
+          "w": 87,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 176,
+          "y": 184,
+          "w": 87,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones 4",
+        "pageName": "Milestones",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 352,
+          "y": 176,
+          "w": 129,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 262,
+          "y": 184,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents 3",
+        "pageName": "Documents",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 482,
+          "y": 176,
+          "w": 133,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 366,
+          "y": 184,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 615,
+          "y": 176,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 473,
+          "y": 184,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers 2",
+        "pageName": "Registers",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 691,
+          "y": 176,
+          "w": 120,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 549,
+          "y": 184,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Actions 5",
+        "pageName": "Actions",
+        "pageRole": "tab",
+        "similarity": 91,
+        "looks": [],
+        "boardBox": {
+          "x": 811,
+          "y": 176,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 643,
+          "y": 184,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Overview",
+        "pageName": "Overview",
+        "pageRole": "link",
+        "similarity": 100,
+        "note": "a link on the page, a tab on the board",
+        "looks": [
+          "weight 600 on the board, 400 on the page",
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "background #1F2427 on the board, none on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 242,
+          "w": 85,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "THE SIX DELIVERY LINES, IN ORDER",
+        "pageName": "THE SIX DELIVERY LINES, IN ORDER",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 300,
+          "w": 898,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 252,
+          "w": 1260,
+          "h": 43
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Release gates",
+        "pageName": "Release gates",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page"
+        ],
+        "boardBox": {
+          "x": 152,
+          "y": 364,
+          "w": 646,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 152,
+          "y": 322,
+          "w": 1083,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Go-live acceptance",
+        "pageName": "Go-live acceptance",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page"
+        ],
+        "boardBox": {
+          "x": 152,
+          "y": 425,
+          "w": 633,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 152,
+          "y": 388,
+          "w": 1085,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Hypercare",
+        "pageName": "Hypercare",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page"
+        ],
+        "boardBox": {
+          "x": 152,
+          "y": 486,
+          "w": 586,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 152,
+          "y": 453,
+          "w": 1083,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Archive",
+        "pageName": "Archive",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page"
+        ],
+        "boardBox": {
+          "x": 152,
+          "y": 547,
+          "w": 594,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 152,
+          "y": 585,
+          "w": 1083,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Handover to Support",
+        "pageName": "Handover to Support",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #1F2427 on the board, #2459D6 on the page"
+        ],
+        "boardBox": {
+          "x": 152,
+          "y": 608,
+          "w": 599,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 152,
+          "y": 519,
+          "w": 1060,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance's confirmation.",
+        "pageName": "Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance's confirmation.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 104,
+          "y": 729,
+          "w": 870,
+          "h": 17
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 763,
+          "w": 1232,
+          "h": 20
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "key": "text: Tunde Bello · PMO",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "exception": {
+          "reason": "The shell shows the signed-in persona and the alerts bell; the board is drawn signed in as Tunde Bello.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS / TAMARIND LOANS / DELIVERY",
+        "key": "text: PROJECTS / TAMARIND LOANS / DELIVERY",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": {
+          "reason": "The project frame draws its own breadcrumb (Projects / <project title>); the fixture project is Lagoon Health, not the board's Tamarind Loans.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DELIVERY · 3 OF 6 DONE",
+        "key": "text: DELIVERY · 3 OF 6 DONE",
+        "container": "main",
+        "boardBox": {
+          "x": 1076,
+          "y": 133,
+          "w": 154,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Spec Summary and Out of scope, DC-3/D-182: nothing is counted or derived; the API has no done count.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM TUNDE BELLO",
+        "key": "text: PM TUNDE BELLO",
+        "container": "main",
+        "boardBox": {
+          "x": 1238,
+          "y": 133,
+          "w": 114,
+          "h": 21
+        },
+        "exception": {
+          "reason": "The delivery overview carries no project manager; the project frame owns the header and shows the PM on the Journey tab.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Planning",
+        "key": "tab: Planning",
+        "container": "tablist",
+        "boardBox": {
+          "x": 176,
+          "y": 176,
+          "w": 90,
+          "h": 44
+        },
+        "exception": {
+          "reason": "The tab bar is built from the live tabs[] of the project; the board's Planning tab belongs to another feature.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Delivery lines",
+        "key": "tablist: Delivery lines",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 242,
+          "w": 1264,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Spec Out of scope: the line sub-navigation (Overview, Release, Go-live ...) stays hidden until those screens exist (Question 3 a, D-187).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Release",
+        "key": "tab: Release",
+        "container": "tablist",
+        "boardBox": {
+          "x": 177,
+          "y": 242,
+          "w": 74,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Go-live",
+        "key": "tab: Go-live",
+        "container": "tablist",
+        "boardBox": {
+          "x": 255,
+          "y": 242,
+          "w": 69,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Hypercare",
+        "key": "tab: Hypercare",
+        "container": "tablist",
+        "boardBox": {
+          "x": 328,
+          "y": 242,
+          "w": 89,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Archive",
+        "key": "tab: Archive",
+        "container": "tablist",
+        "boardBox": {
+          "x": 421,
+          "y": 242,
+          "w": 71,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Handover",
+        "key": "tab: Handover",
+        "container": "tablist",
+        "boardBox": {
+          "x": 496,
+          "y": 242,
+          "w": 85,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Closure",
+        "key": "tab: Closure",
+        "container": "tablist",
+        "boardBox": {
+          "x": 585,
+          "y": 242,
+          "w": 72,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Closure",
+        "key": "link: Closure",
+        "container": "main",
+        "boardBox": {
+          "x": 152,
+          "y": 669,
+          "w": 449,
+          "h": 19
+        },
+        "exception": {
+          "reason": "A not-started line has no link (spec Row fields: null work_id means no link); closure has no work in the fixture.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "(side panel)",
+        "key": "complementary:",
+        "container": "main",
+        "boardBox": {
+          "x": 1012,
+          "y": 298,
+          "w": 340,
+          "h": 503
+        },
+        "exception": {
+          "reason": "The Tola card and the NEXT card are hidden: no source for Tola's check or a Next sentence (spec Out of scope, D-182; Question 3 a, D-187).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Checked where delivery stands",
+        "key": "text: Checked where delivery stands",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1070,
+          "y": 310,
+          "w": 202,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Tola card hidden (D-182, Question 3 a).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola · PMO agent · done",
+        "key": "text: Tola · PMO agent · done",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1070,
+          "y": 328,
+          "w": 202,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Tola card hidden (D-182, Question 3 a).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DONE",
+        "key": "text: DONE",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1287,
+          "y": 316,
+          "w": 49,
+          "h": 21
+        },
+        "exception": {
+          "reason": "Tag of the hidden Tola card (D-182, Question 3 a).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Checked 12 Apr 09:00 Ask Tola",
+        "key": "text: Checked 12 Apr 09:00 Ask Tola",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1014,
+          "y": 576,
+          "w": 336,
+          "h": 36
+        },
+        "exception": {
+          "reason": "Tola card footer hidden; the page draws its own 'Checked <as_of>' line under the rows.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Ask Tola",
+        "key": "link: Ask Tola",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1285,
+          "y": 586,
+          "w": 51,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Tola card hidden (D-182, Question 3 a).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "NEXT",
+        "key": "text: NEXT",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1014,
+          "y": 630,
+          "w": 336,
+          "h": 37
+        },
+        "exception": {
+          "reason": "NEXT card hidden: no 'Next' sentence source (D-182, Question 3 a).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Record what Support needs to close the 2 handover gaps.",
+        "key": "text: Record what Support needs to close the 2 handover gaps.",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 681,
+          "w": 308,
+          "h": 42
+        },
+        "exception": {
+          "reason": "NEXT card sentence hidden (D-182).",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the handover",
+        "key": "link: Open the handover",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 735,
+          "w": 308,
+          "h": 50
+        },
+        "exception": {
+          "reason": "Spec Conflicts with the boards: per-row links replace the button; no start or next-step control from the overview.",
+          "approved_by": "builder proposal, pending design engineer"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Link \"PROJECTS\"",
+        "kind": "Link",
+        "name": "PROJECTS",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 86,
+          "w": 61,
+          "h": 15
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Tab \"Overview\"",
+        "kind": "Tab",
+        "name": "Overview",
+        "boardBox": {
+          "x": 88,
+          "y": 242,
+          "w": 85,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        },
+        "reasons": [
+          "order: on the board it comes after Tab \"Actions 5\"; on the page it comes after Link \"Projects\"",
+          "across the page: left on the board (9% across), left on the page (33% across)",
+          "inside the tabs on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Link \"Archive\"",
+        "kind": "Link",
+        "name": "Archive",
+        "boardBox": {
+          "x": 152,
+          "y": 547,
+          "w": 594,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 152,
+          "y": 585,
+          "w": 1083,
+          "h": 21
+        },
+        "reasons": [
+          "order: on the board it comes after Link \"Hypercare\"; on the page it comes after Link \"Handover to Support\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "container": "navigation",
+        "pageBox": {
+          "x": 602,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 970,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Account menu: Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1018,
+          "y": 19,
+          "w": 161,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS / LAGOON HEALTH",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Delivery",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 250,
+          "w": 1264,
+          "h": 580
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Checked 23 Nov 2026 · 10:00 WAT",
+        "container": "main",
+        "pageBox": {
+          "x": 104,
+          "y": 794,
+          "w": 1232,
+          "h": 20
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

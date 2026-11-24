@@ -107,7 +107,7 @@
     },
     {
       "role": "complementary",
-      "name": "(side panel)",
+      "name": "",
       "category": "hidden by spec",
       "reason": "The Tola card and the NEXT card are hidden: no source for Tola's check or a Next sentence (spec Out of scope, D-182; Question 3 a, D-187).",
       "approved_by": "builder proposal, pending design engineer"
@@ -169,5 +169,16 @@
       "approved_by": "builder proposal, pending design engineer"
     }
   ],
-  "visual_waivers": []
+  "visual_waivers": [
+    {
+      "board": "SCR-43-desktop",
+      "approved_by": "builder proposal, pending design engineer",
+      "reason": "Line screen under the standing waiver D-83: coverage 97.9% before the side-panel exception and 100% after it, visual 75.4 (>= 70). The remainder is the removed Tola and NEXT cards, the sub-nav strip and per-row gate sentences (D-182, Question 3 a, D-187), handover and archive swapped (Question 2 a), and the frame's own header. For the design engineer to sign."
+    },
+    {
+      "board": "SCR-43-mobile",
+      "approved_by": "builder proposal, pending design engineer",
+      "reason": "Line screen under the standing waiver D-83: coverage 100% after exceptions, visual 78.7 (>= 70). The remainder is the removed DLV header line and 'Open the handover' button (D-182, spec Conflicts), the state words from the API state in place of board sentences, and the frame's own header. For the design engineer to sign."
+    }
+  ]
 }
