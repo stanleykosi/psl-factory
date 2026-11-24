@@ -11,7 +11,7 @@ F-113's product decisions are board changes the design engineer answered in ques
 Recorded by the lane D coordinator under D-184 ("accepted in batch, delegated under D-184"). This is not a fresh review of the running screen by the design engineer. D-184 says they check merged screens on port 3000 afterwards, and anything they dislike becomes a fix.
 
 ## Not covered
-- A live started row (QA-2-1). The qa-seed project's six lines are all not_started. PMO's condition: run `seed_delivery_demo` (listed in the merge batch, not run unasked) and look at one started row live.
+- A live started row (QA-2-1): unproven live. The qa-seed project's six lines are all not_started. `seed_delivery_demo --username qa-seed` on 55433 (run by the main coordinator, 24 Nov) fails before creating anything with "Capture a current separate SOW and PRD signature packet": it depends on commercial seed data that isn't there, and seed commands aren't chained. The started row is proved on the mock and on a replay of the live overview JSON only.
 - PMO-2-1: feature.json still holds the old AC3 wording ("click Open"). spec.md carries the D-195 wording.
 
 ## Findings
