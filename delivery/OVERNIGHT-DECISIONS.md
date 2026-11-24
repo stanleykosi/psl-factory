@@ -546,3 +546,14 @@ Asked whether everything can be connected today, the design engineer chose "Demo
 - **Coordinator:** a separate local demo database (`psl_demo`) seeded with the backend's own demo seed commands. Django serves it on 127.0.0.1:8040, and a second app preview (`app-live`) points `API_ORIGIN` at it. The design engineer's mock app on port 3000 stays as it is.
 
 Review rules (D-180), approvals and money and sign-in merges are unchanged.
+
+## D-202 (24 Nov 2026): demo-path batch answered
+The design engineer answered three batch questions in chat:
+- **Board questions: "Accept all recs".** Each item takes its first, recommended option as written in `delivery/connect/questions-batch.md`. This covers F-63 My work Q1 to Q7, F-67 Q1 to Q4, F-78 batch 5 (option 1, accept all) and the F-64 extras (lane A visual waivers Q2: keep the counter, the link and the footnote).
+- **Design sign-offs: "Sign all".** These are signed:
+  - lane A visual waivers Q1 (F-64, five boards), Q3 (F-60 phone set-up, with its two input values the tool can't read) and Q4 (F-61, four boards);
+  - F-71 B33 (all 10 exceptions as drafted) and B34 (items 1, 2 and 3: sample content, NGN, and a visual waiver for the six SCR-12/SCR-38 runs);
+  - F-119 LD-Q5 (28 exceptions and two D-83 visual waivers, 78.8 desktop and 76.6 phone) and LD-Q6 (keep "saved").
+- **Issues and cash forecast: "Ship simpler for demo".**
+  - F-111 ships read-only as built: a plain reload message instead of the per-section Try again, an amber banner, Blocks as plain text, and the frame's next-step line. F-95 replaces these later.
+  - F-103 ships without its proof link and month actuals, and its `Extra` slot is dropped. Both return on F-87.
