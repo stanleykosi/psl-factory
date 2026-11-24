@@ -5155,3 +5155,20 @@
 {"at":"2026-11-24T15:46:55Z","feature":"F-65","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":347.7,"commit":"15ad8e8b0d20"}
 {"at":"2026-11-24T15:47:04Z","feature":"F-78","round":1,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":443.3,"commit":"ef3b2d8409b2"}
 {"at":"2026-11-24T15:47:25Z","feature":"F-65","round":1,"kind":"transition","head":"15ad8e8b0d20","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-24T15:48:07Z","feature":"F-111","round":2,"kind":"fields","fields":{"git.ci_status":"passed"}}
+{"at":"2026-11-24T15:48:08Z","feature":"F-111","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"30143e1a4f93","findings":{"TECH-2-1":"low"},"written_at":"2026-11-24T15:47:27Z"}
+{"at":"2026-11-24T15:48:08Z","feature":"F-111","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"30143e1a4f93","findings":{"QA-2-1":"medium","QA-2-2":"low","QA-2-3":"low","QA-2-4":"low"},"written_at":"2026-11-24T15:41:28Z"}
+{"at":"2026-11-24T15:48:08Z","feature":"F-111","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"8a5c09fe624b","findings":{"PMO-2-1":"medium","PMO-2-2":"low"},"written_at":"2026-11-24T15:31:31Z"}
+{"at":"2026-11-24T15:48:08Z","feature":"F-111","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), accepted in batch, delegated under D-184","commit":"30143e1a4f93","written_at":"2026-11-24T15:48:06Z"}
+{"at":"2026-11-24T15:48:08Z","feature":"F-111","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"30143e1a4f93","findings":{"UX-2-1":"low","UX-2-2":"low"},"written_at":"2026-11-24T15:47:26Z"}
+{"at":"2026-11-24T15:48:08Z","feature":"F-111","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"30143e1a4f93","findings":{"UI-2-1":"","UI-2-2":"","UI-2-3":"low"},"written_at":"2026-11-24T15:47:39Z"}
+{"at":"2026-11-24T15:48:08Z","feature":"F-111","round":2,"kind":"finding","action":"add","finding":"PMO-2-1","by":"pmo-acceptance","severity":"medium","owner":"integration","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-24T15:48:08Z","feature":"F-111","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"low","owner":"frontend","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-24T15:49:09Z","feature":"F-61","round":1,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-24T15:49:09Z","feature":"F-119","round":5,"kind":"transition","head":"53c24b19059e","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-24T15:49:10Z","feature":"F-61","round":1,"kind":"fields","fields":{"git.merge_status":"merged"}}
+{"at":"2026-11-24T15:49:11Z","feature":"F-61","round":1,"kind":"fields","fields":{"git.merge_sha":"90748de39df2315efb0b8b1abe72604bb551af0b"}}
+{"at":"2026-11-24T15:49:12Z","feature":"F-61","round":1,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"b839dfaac775","findings":{"TECH-1-1":"medium","TECH-1-2":"low"},"written_at":"2026-11-24T15:38:07Z"}
+{"at":"2026-11-24T15:49:12Z","feature":"F-61","round":1,"kind":"transition","head":"d5ebf991cbce","reason":"Design engineer in chat to the coordinator (D-203): \"Merge now, fix after\"","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-24T15:49:13Z","feature":"F-61","round":1,"kind":"transition","head":"d5ebf991cbce","reason":"merged by coordinator as 90748de3 (#112)","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-24T15:49:14Z","feature":"F-61","round":1,"kind":"transition","head":"d5ebf991cbce","reason":"on main 90748de3; LA-4 and live alert-creation proof are follow-ups (D-203)","from":"MERGED","to":"DONE"}

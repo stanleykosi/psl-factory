@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-61",
   "outcome": "Alerts list, drawer and alert settings on the live API",
-  "state": "AWAITING_USER_APPROVAL",
+  "state": "DONE",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -84,7 +84,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "reviewer-technical",
-      "snapshot_ref": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
+      "snapshot_ref": "b839dfaac7756f1b15facc8fb3e7adb2c14fab15",
       "evidence_refs": [
         "delivery/features/F-61/round-1/review-technical.md"
       ]
@@ -387,9 +387,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -401,16 +401,16 @@
     "base_branch": "main",
     "base_sha": "f355d33908d66468082b5cadac12aaf6dd6b09ce",
     "task_branch": "fe-alerts-live-alerts-and-settings",
-    "head_sha": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
+    "head_sha": "d5ebf991cbcee12015ea453433b8f0b69108081c",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a-f61",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/112",
     "pr_number": 112,
     "pr_author": "hunchoweb",
     "designated_approver": null,
     "ci_status": "passed",
-    "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "human_approval": "approved",
+    "merge_status": "merged",
+    "merge_sha": "90748de39df2315efb0b8b1abe72604bb551af0b",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/alerts-bell.spec.ts",
@@ -554,6 +554,30 @@
       "round": 1,
       "head": "dab5f01825066cb85627bf0f427f27ef29e7d3ef",
       "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-24T15:49:12Z",
+      "round": 1,
+      "head": "d5ebf991cbcee12015ea453433b8f0b69108081c",
+      "reason": "Design engineer in chat to the coordinator (D-203): \"Merge now, fix after\""
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-24T15:49:13Z",
+      "round": 1,
+      "head": "d5ebf991cbcee12015ea453433b8f0b69108081c",
+      "reason": "merged by coordinator as 90748de3 (#112)"
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-24T15:49:14Z",
+      "round": 1,
+      "head": "d5ebf991cbcee12015ea453433b8f0b69108081c",
+      "reason": "on main 90748de3; LA-4 and live alert-creation proof are follow-ups (D-203)"
     }
   ],
   "routing": {
