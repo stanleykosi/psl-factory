@@ -39,7 +39,7 @@ import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
 import { monthEnd } from './finance.mjs';
 import { invoices } from './invoices.mjs';
-import { COUNTS_PATH, floorRead, OVERVIEW_PATH } from './overview.mjs';
+import { COUNTS_PATH, floorRead, OVERVIEW_PATH, ownsFloorCounts } from './overview.mjs';
 import { resetResponses, RESPONSE_OPERATIONS, responseRoute } from './response.mjs';
 import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { createLineRuns } from './line-runs.mjs';
@@ -355,7 +355,8 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       // F-62: the work list's own rows (live-work.mjs) answer their item read before F-85's handler, which owns every other integer id.
       if (method === 'get' && /^\/api\/v1\/work\/\d+$/.test(url.pathname) && ownsLiveWorkItem(Number(url.pathname.split('/')[4]))) { const r = liveWorkItem({ id: Number(url.pathname.split('/')[4]) }); return send(res, r.status, r.body); }
       // F-63: the live queue counts (live-work.mjs). The scenario cookie answers 401, 403 or 500 here as it does on the list.
-      if (method === 'get' && url.pathname === '/api/v1/work/counts') {
+      // The factory floor (F-65, overview.mjs) answers the same path for the ceo persona and whenever a psl_mock_overview variant is named.
+      if (method === 'get' && url.pathname === '/api/v1/work/counts' && !ownsFloorCounts(parseCookies(req.headers.cookie))) {
         const cookies = parseCookies(req.headers.cookie);
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
