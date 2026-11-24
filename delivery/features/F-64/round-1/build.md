@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 714580f7340dde93c2b581ed1c2cf9e92c5a6d41
+COMMIT: 7318a3fc23558a60d535835417ef644a320f22bf
 BUILDER: builder
 LANE: full
 
@@ -65,8 +65,14 @@ Open items, none hidden by an exception: the amount "₦4,250,000.00" is on the 
 ## Fix after the 1.24.0 merge
 Decide test fixtures (decision read, work, history) and mock/live-decide.mjs brought to the 1.24.0 shapes (new required fields only; assertions unchanged). Typecheck: only the three tests/shell-live.test.tsx errors remain (F-68 hotfix on main, not touched). tests/decide.test.tsx and tests/mock-live-decide.test.ts: 69 passed; eslint clean on the changed files. Building the 1.24.0 decision-chain parts is left to a follow-up.
 
+## Merge of origin/main e2f44656 (F-85)
+Conflicts in mock/server.mjs (imports: both kept), src/api/types.ts (both alias blocks kept) and tests/next-config.test.ts (django_url allowlist: union). Lane C files unchanged. Mock routing: F-85's work-live.mjs matches every integer work id, so the F-64 hook now sits before it and owns only work ids 17 to 19 plus the task routes and queue=decisions; the 41xx work items still answer from work-live.mjs. Evidence picker: F-85's EvidencePicker uploads a file to a case (returns an upload_id); F-64's picker chooses one already-recorded review_evidence item (evidence_id). Different jobs, so F-64 keeps its own radio list and does not reuse lane C's. Checks after the merge: tsc clean; decide, mock-live-decide, mock-work-live, live-work-item, work-item, work-item-board, next-config tests 238 passed; eslint clean on mock, decide and decide.test. Full vitest not run here (left to the gate).
+
 ## Blocked
 Not blocked.
 
 ## Coordinator merge of main (after 9d157d98)
 - Merged origin/main e6c24e70 (API 1.26.0, green on its own) as 714580f7. No conflicts, package-lock.json unchanged, `npx tsc --noEmit` 0 errors. The shell-live errors are gone with main.
+
+## Coordinator merge of main 3b7df6cc (F-86 Start work)
+- Merged as 7318a3fc. One conflict, in tests/next-config.test.ts: both allowed-file lists were kept (the decision desk mock and test, and F-86's LineChooser, start-live.mjs and start-work-live.test.tsx). That test passes, and `npx tsc --noEmit` reports 0 errors.
