@@ -169,9 +169,9 @@ export function AssignPmDrawer({ caseId, reloadList, onClose, pathname }: Props)
   } else if (view.kind === 'done') {
     body = (
       <div ref={doneRef} tabIndex={-1} role="status" className="rfp-assign__body">
-        <Callout kind="success">
+        <p className="rfp-assign__done">
           <strong>PM assigned: {view.label}.</strong>
-        </Callout>
+        </p>
         {view.listed === null && <p className="psl-hint">{ASSIGN_PM_TEXT.listRefresh}</p>}
         <NextSteps steps={view.data.next_steps} />
         {closeButton}

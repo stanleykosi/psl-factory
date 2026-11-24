@@ -302,13 +302,15 @@ describe('the source (1, 2, 4, 8, 11, 15, 20)', () => {
   });
 
   it('the page has no upload limits, accept attribute, date comparison on received_at or duplicate check', () => {
-    expect(grep(['PROOF_TYPES|PROOF_MAX_BYTES|accept=|\\.size *[<>]', 'src/features/start-work'])).toBe('');
-    expect(grep(['received_at', 'src/features/start-work'])).toBe('');
-    expect(grep(['rfp_reference|duplicate', 'src/features/start-work'])).toBe('');
+    // F-88: the live received-RFP line (SCR-23) is its own file and does carry its file limits and fields; the generic form does not
+    const apart = '--exclude=receivedBid.tsx';
+    expect(grep([apart, 'PROOF_TYPES|PROOF_MAX_BYTES|accept=|\\.size *[<>]', 'src/features/start-work'])).toBe('');
+    expect(grep([apart, 'received_at', 'src/features/start-work'])).toBe('');
+    expect(grep([apart, 'rfp_reference|duplicate', 'src/features/start-work'])).toBe('');
   });
 
   it('the CSS adds no colour literal, and src hardcodes no field name of this line beyond labels', () => {
     expect(grep(['#[0-9a-fA-F]{3,8}\\b|rgb\\(|hsl\\(', 'src/features/start-work/start-work.css'])).toBe('');
-    expect(grep(['deadline_|submission_', 'src/features/start-work'])).toBe('');
+    expect(grep(['--exclude=receivedBid.tsx', 'deadline_|submission_', 'src/features/start-work'])).toBe('');
   });
 });

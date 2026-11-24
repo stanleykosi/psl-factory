@@ -321,9 +321,9 @@ function OwnDrawer({ onBack, onClose, pathname }: { onBack: () => void; onClose:
         <div ref={doneRef} tabIndex={-1} role="status" className="sw-stack">
           {receipt ? (
             <>
-              <Callout kind="success">
+              <p className="sw-logged">
                 <strong>RFP logged.</strong>
-              </Callout>
+              </p>
               <dl className="sw-receipt">
                 <dt>Reference</dt>
                 <dd>{receipt.reference}</dd>
