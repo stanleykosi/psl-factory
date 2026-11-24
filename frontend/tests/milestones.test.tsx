@@ -459,3 +459,33 @@ describe('phone (390)', () => {
     expect([...panel().querySelectorAll('.ptabs__card')][2].textContent).toContain('CHANGED · CHG-0007');
   });
 });
+
+describe('F-78: Mark complete entry', () => {
+  const OPTIONS = { revision: 5, proofs: [], next_page: null, can_complete: true, can_attach_pdf: true, hold: null };
+  const entry = (body: unknown) => (url: URL) => (url.pathname.endsWith('/milestones/completions') ? json(200, body) : undefined);
+  const links = () => [...panel().querySelectorAll('a')].filter((a) => a.textContent!.startsWith('Mark complete'));
+
+  it('shows the link only on uncompleted rows, to the page with the encoded name, when can_complete is true', async () => {
+    respond = entry(OPTIONS);
+    await open('P-0101');
+    await until(() => expect(links().length).toBeGreaterThan(0));
+    const hrefs = links().map((a) => a.getAttribute('href'));
+    expect(hrefs.every((h) => h!.includes('/milestones/complete?name='))).toBe(true);
+    expect(panel().textContent).not.toContain('Mark complete for Kick-off');
+  });
+
+  it('can_complete false with a hold shows one reason and no link', async () => {
+    respond = entry({ ...OPTIONS, can_complete: false, hold: 'baseline_required' });
+    await open('P-0101');
+    await until(() => expect(text()).toContain('This project has no signed baseline yet.'));
+    expect(links()).toHaveLength(0);
+    expect(text()).not.toContain('baseline_required');
+  });
+
+  it('a failed options read leaves the table and completions as they were', async () => {
+    respond = (url) => (url.pathname.endsWith('/milestones/completions') ? json(500, { code: 'server_error', message: 'x' }) : undefined);
+    await open('P-0101');
+    expect(links()).toHaveLength(0);
+    expect(rowsOf().length).toBeGreaterThan(0);
+  });
+});
