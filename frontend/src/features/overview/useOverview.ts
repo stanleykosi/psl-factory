@@ -2,23 +2,23 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { api, call } from '@/api/client';
+import { call, liveApi } from '@/api/client';
 import { ApiError, networkError } from '@/api/errors';
 
-import type { Overview } from './types';
+import type { Overview, WorkCounts } from './types';
 
 export const POLL_MS = 15_000;
 
 export type OverviewState =
   | { status: 'loading' }
-  | { status: 'ready'; data: Overview }
+  | { status: 'ready'; data: Overview; counts: WorkCounts | null }
   | { status: 'signed_out' }
   | { status: 'not_open'; error: ApiError }
   | { status: 'error'; error: ApiError; lastAsOf?: string };
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
 
-/** E-OVERVIEW as returned, kept current by D-UPDATES r2 polling. 401, 403 and 404 stop the polling. */
+/** GET /overview and GET /work/counts, read together and kept current by polling. 401 on either, and 403 or 404 on /overview, stop the polling; counts failing otherwise leaves `counts` null. */
 export function useOverview() {
   const [state, setState] = useState<OverviewState>({ status: 'loading' });
   const seq = useRef(0);
@@ -33,12 +33,14 @@ export function useOverview() {
     const mine = ++seq.current;
     inFlight.current += 1;
     try {
-      const data = await call(api.GET('/api/v1/overview'));
+      const [read, counted] = await Promise.allSettled([call(liveApi.GET('/api/v1/overview')), call(liveApi.GET('/api/v1/work/counts'))]);
       if (mine < applied.current || stopped.current) return;
+      if (read.status === 'rejected') throw read.reason;
+      if (counted.status === 'rejected' && asApiError(counted.reason).kind === 'unauthenticated') throw counted.reason;
       applied.current = mine;
       lastSuccess.current = Date.now();
-      lastAsOf.current = data.as_of;
-      setState({ status: 'ready', data });
+      lastAsOf.current = read.value.as_of;
+      setState({ status: 'ready', data: read.value, counts: counted.status === 'fulfilled' ? counted.value : null });
     } catch (error) {
       if (mine < applied.current || stopped.current) return;
       applied.current = mine;

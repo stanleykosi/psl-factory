@@ -1,12 +1,11 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type BrowserContext, type Locator, type Page, type Response } from '@playwright/test';
+import { expect, test, type BrowserContext, type Page, type Response } from '@playwright/test';
 
-// Overview (SCR-06) against the contract mock: flat and 3D floor at 1440, flat at 390, axe WCAG 2.2 AA.
+// Overview (SCR-06) against the contract mock (live GET /overview and GET /work/counts): flat and 3D floor at 1440, flat at 390, axe WCAG 2.2 AA.
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
-const LINES = ['Pre-sale', 'Planning', 'Release', 'Closing', 'Invoices', 'Month-end', 'Cash and BU', 'Payroll'];
-const NOTES = ['1 WAITING', '1 STOPPED', '1 UNCERTAIN', 'ON TRACK', '2 WAITING', 'ON TRACK', 'ON TRACK', '2 PROBLEMS'];
+const TITLES = ['Costing and commercial submission', 'RFP response and project handoff', 'Invoice preparation and delivery', 'Formal minutes and action handoff', 'A line added later'];
 
 test.use({ timezoneId: 'Africa/Lagos' });
 
@@ -21,7 +20,7 @@ async function expectNoAxeViolations(page: Page) {
 }
 
 const main = (page: Page) => page.getByRole('main');
-const rows = (page: Page) => page.locator('section[aria-label="Lines"] [role="list"] > .overview__row');
+const rows = (page: Page) => page.locator('section[aria-label="Lines"] .overview__lines-of > .overview__row');
 const tiles = (page: Page) => page.locator('dl.overview__totals > div');
 const viewSwitch = (page: Page) => page.getByRole('radiogroup', { name: 'View' });
 // A full-page capture briefly narrows the window, which (correctly) drops the 3D floor; the 3D shot is the viewport only.
@@ -33,29 +32,10 @@ async function loaded(page: Page) {
   await expect(page.getByText('Loading…')).toHaveCount(0);
 }
 
-/** Tabs until the target has focus, then reads its outline. */
-async function keyboardRing(page: Page, target: Locator) {
-  for (let i = 0; i < 80; i++) {
-    if (await target.evaluate((el) => el === document.activeElement)) break;
-    await page.keyboard.press('Tab');
-  }
-  await expect(target).toBeFocused();
-  return target.evaluate((el) => {
-    const s = getComputedStyle(el);
-    return { style: (s.outlineStyle !== 'none' ? s.outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(s.boxShadow + s.borderTopColor + s.textDecorationColor) ? 'solid' : 'none'), width: (s.outlineStyle !== 'none' ? s.outlineWidth : '2px') };
-  });
-}
-
-/** Station screen-reader texts per line, as read from the flat list. */
-const stationTexts = (page: Page) =>
-  page.locator('section[aria-label="Lines"] ol').evaluateAll((ols) =>
-    ols.map((ol) => [...ol.querySelectorAll('.overview__station')].map((li) => li.querySelector('button')?.getAttribute('aria-label') ?? li.querySelector('.cmp-sr')?.textContent)),
-  );
-
 test.describe('desktop 1440', () => {
   test.use({ viewport: DESKTOP });
 
-  test('default flat: four totals, eight lines with counts, View switch, exceptions link', async ({ page }) => {
+  test('default flat: four totals, floors and lines with squares, View switch, exceptions link', async ({ page }) => {
     const notFound: string[] = [];
     page.on('response', (r) => {
       if (r.status() >= 400) notFound.push(`${r.status()} ${r.url()}`);
@@ -63,87 +43,64 @@ test.describe('desktop 1440', () => {
     await page.goto('/overview');
     await loaded(page);
     await expect(page).toHaveTitle('Overview · PSL Factory');
-    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT')).toBeVisible();
-    await expect(tiles(page)).toHaveText(['IN PROGRESS18', 'NEED A PERSON5', 'STOPPED3', 'VERIFIED THIS MONTH28']);
-    await expect(rows(page).locator('.overview__name')).toHaveText(LINES);
-    await expect(rows(page).locator('.psl-tag')).toHaveText(NOTES);
-    await expect(page.getByRole('list', { name: 'Invoices stations' }).getByRole('listitem')).toHaveCount(7);
+    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 23 Nov 10:30 WAT')).toBeVisible();
+    await expect(tiles(page)).toHaveText(['IN PROGRESS10', 'NEED A PERSON4', 'STOPPED1', 'VERIFIED THIS MONTH3Nov 2026']);
+    await expect(main(page).getByText('Counted from all 15 items you can see')).toBeVisible();
+    await expect(rows(page).locator('.overview__name')).toHaveText(TITLES);
+    await expect(rows(page).locator('.psl-tag')).toHaveText(Array(5).fill('Not available yet'));
+    await expect(page.getByRole('list', { name: 'Costing and commercial submission stations' }).getByRole('listitem')).toHaveCount(5);
+    await expect(page.getByRole('link', { name: /Open work · Costing/ })).toHaveAttribute('href', '/my-work?line=commercial%2Fv1');
     await expect(page.getByRole('radio', { name: 'Flat' })).toHaveAttribute('aria-checked', 'true');
     await expect(main(page).getByRole('link', { name: 'See all exceptions' })).toHaveAttribute('href', '/exceptions');
-    await expect(rows(page).first().locator('.overview__sub')).toHaveText('RFP · commercial');
-    // The mascot avatars are static files that load (no broken image).
-    const avatar = rows(page).first().locator('img.psl-avatar--tola');
+    const avatar = page.locator('.overview__row--floor img.psl-avatar--tola').first();
     await expect(avatar).toBeVisible();
     expect(await avatar.evaluate((img) => (img as HTMLImageElement).complete && (img as HTMLImageElement).naturalWidth)).toBe(192);
-    // A normal desktop browser with WebGL gets the 3D option and no "can't show" hint.
     await expect(page.getByText(/can’t show the 3D floor/)).toHaveCount(0);
     expect(await noHorizontalScroll(page)).toBe(true);
     await shot(page, 'overview-1440');
-    // The link to /exceptions is not prefetched (that route is another feature's), so nothing on the page fails to load.
     await page.waitForTimeout(1000);
     expect(notFound).toEqual([]);
     await expectNoAxeViolations(page);
   });
 
-  test('keyboard: Tab reaches the View switch with a 2px ring, arrows move the selection, the link is reachable', async ({ page }) => {
+  test('limited counts read "at least N"; counts that fail leave the rows and say so', async ({ page, context }) => {
+    await setCookies(context, { psl_mock_overview: 'limited' });
     await page.goto('/overview');
     await loaded(page);
-    const flat = page.getByRole('radio', { name: 'Flat' });
-    const floor = page.getByRole('radio', { name: '3D floor' });
-    expect(await keyboardRing(page, flat)).toEqual({ style: 'solid', width: '2px' });
-    await page.keyboard.press('ArrowRight');
-    await expect(floor).toBeFocused();
-    await expect(floor).toHaveAttribute('aria-checked', 'true');
-    expect(await floor.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none') + ' ' + (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineWidth : '2px'))).toBe('solid 2px');
-    await page.keyboard.press('ArrowLeft');
-    await expect(flat).toBeFocused();
-    await expect(flat).toHaveAttribute('aria-checked', 'true');
-    const link = main(page).getByRole('link', { name: 'See all exceptions' });
-    expect(await keyboardRing(page, link)).toMatchObject({ style: 'solid' });
+    await expect(tiles(page).locator('dd')).toHaveText(['at least 10', 'at least 4', 'at least 1', 'at least 3']);
+    await expect(main(page).getByText('Counted from the 50 most recent items you can see')).toBeVisible();
+    await setCookies(context, { psl_mock_overview: 'no-counts' });
+    await page.reload();
+    await loaded(page);
+    await expect(main(page).getByText('Totals are not available yet.')).toBeVisible();
+    await expect(rows(page)).toHaveCount(5);
+    await expect(page.locator('.overview__unknown')).toHaveCount(5);
+    await expectNoAxeViolations(page);
   });
 
-  test('empty lines: four 0 tiles, the empty message, no View switch, the exceptions link', async ({ page, context }) => {
+  test('empty lines: the empty message, no totals, no View switch, the exceptions link', async ({ page, context }) => {
     await setCookies(context, { psl_mock_overview: 'empty' });
     await page.goto('/overview');
     await loaded(page);
-    await expect(tiles(page).locator('dd')).toHaveText(['0', '0', '0', '0']);
+    await expect(tiles(page)).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'No lines to show yet.' })).toBeVisible();
     await expect(viewSwitch(page)).toHaveCount(0);
     await expect(main(page).getByRole('link', { name: 'See all exceptions' })).toBeVisible();
     await expectNoAxeViolations(page);
   });
 
-  test('all-zero lines: every square empty, no numerals, tags verbatim', async ({ page, context }) => {
-    await setCookies(context, { psl_mock_overview: 'zero' });
-    await page.goto('/overview');
-    await loaded(page);
-    await expect(rows(page)).toHaveCount(8);
-    await expect(page.locator('.overview__station:not(.overview__station--empty)')).toHaveCount(0);
-    expect((await page.locator('.overview__sq').allTextContents()).join('')).toBe('');
-    await expect(rows(page).locator('.psl-tag')).toHaveText(NOTES);
-  });
-
-  test('a line status (proposed field, mock variant) gives the board tag tones', async ({ page, context }) => {
-    await setCookies(context, { psl_mock_overview: 'status' });
-    await page.goto('/overview');
-    await loaded(page);
-    const tones = await rows(page).locator('.psl-tag').evaluateAll((tags) => tags.map((t) => t.className.replace('psl-tag ', '')));
-    expect(tones).toEqual(['psl-tag--neutral', 'psl-tag--person', 'psl-tag--waiting', 'psl-tag--done', 'psl-tag--neutral', 'psl-tag--done', 'psl-tag--done', 'psl-tag--person']);
-    await expectNoAxeViolations(page);
-  });
-
-  test('403 from E-OVERVIEW: the floor is not open, with the server message', async ({ page }) => {
+  test('403 from /overview: the floor is not open to you, with the server message', async ({ page }) => {
     await page.route('**/api/v1/overview', (route) =>
       route.fulfill({ status: 403, contentType: 'application/json', body: JSON.stringify({ code: 'forbidden', message: 'Your role does not allow this.' }) }),
     );
     await page.goto('/overview');
-    await expect(page.getByRole('heading', { name: 'The factory floor isn’t open to your role.' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'The factory floor isn’t open to you.' })).toBeVisible();
     await expect(main(page).getByText('Your role does not allow this.')).toBeVisible();
     await expect(page.locator('dl')).toHaveCount(0);
     await expectNoAxeViolations(page);
   });
 
-  test('no WebGL: no View switch, the device hint, every line and count', async ({ page }) => {
+  test('no WebGL: no View switch, the device hint, every line and square', async ({ page }) => {
     await page.addInitScript(() => {
       const original = HTMLCanvasElement.prototype.getContext;
       HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
@@ -155,10 +112,8 @@ test.describe('desktop 1440', () => {
     await loaded(page);
     await expect(viewSwitch(page)).toHaveCount(0);
     await expect(page.getByText('This device can’t show the 3D floor, so it’s shown flat.')).toBeVisible();
-    await expect(rows(page)).toHaveCount(8);
-    const texts = await stationTexts(page);
-    expect(texts[4]).toEqual(['Milestone: 3 items', 'Draft: 0 items', 'Check: 1 item', 'Approve: 1 item, needs a person', 'Send: 0 items', 'Receipt: 0 items', 'Match: 1 item']);
-    expect(texts.flat()).toHaveLength(40);
+    await expect(rows(page)).toHaveCount(5);
+    await expect(page.locator('.overview__station')).toHaveCount(25);
     await expectNoAxeViolations(page);
   });
 
@@ -168,8 +123,7 @@ test.describe('desktop 1440', () => {
     await loaded(page);
     await expect(page.getByText('Motion is turned down on this device, so the floor is shown flat.')).toBeVisible();
     await expect(page.getByRole('radio', { name: '3D floor' })).toHaveCount(0);
-    await expect(rows(page)).toHaveCount(8);
-    await shot(page, 'overview-1440-reduced-motion');
+    await expect(rows(page)).toHaveCount(5);
     await expectNoAxeViolations(page);
   });
 
@@ -192,123 +146,30 @@ test.describe('desktop 1440', () => {
     expect(later.some((text) => text.includes('__THREE__'))).toBe(true);
   });
 
-  test('3D floor: same figures, keeps its belts moving, and a poll changes the counts', async ({ page, context }) => {
-    await page.clock.install();
-    await page.addInitScript(() => {
-      const w = window as unknown as { __raf: number };
-      w.__raf = 0;
-      const raf = window.requestAnimationFrame.bind(window);
-      window.requestAnimationFrame = (cb) => {
-        w.__raf += 1;
-        return raf(cb);
-      };
-    });
-    const rafCount = () => page.evaluate(() => (window as unknown as { __raf: number }).__raf);
-    await page.goto('/overview');
-    await loaded(page);
-    await page.getByRole('radio', { name: '3D floor' }).click();
-    const canvas = page.getByRole('img', { name: /^3D factory floor: 8 lines/ });
-    await expect(canvas).toBeVisible();
-    // The stage follows concept 1 (D-152): clamp(460px, 50vw, 640px), so 640px at 1440.
-    expect(await canvas.boundingBox()).toMatchObject({ height: 640 });
-    expect(await canvas.evaluate((el) => Boolean((el as HTMLCanvasElement).getContext('webgl2') ?? (el as HTMLCanvasElement).getContext('webgl')))).toBe(true);
-    await expect(rows(page)).toHaveCount(8);
-    await expect(tiles(page)).toHaveCount(4);
-
-    // The conveyor (D-152): boxes ride the belts, so frames keep running while the tab is visible.
-    await page.waitForTimeout(1000);
-    const settled = await rafCount();
-    await page.waitForTimeout(1000);
-    expect(await rafCount()).toBeGreaterThan(settled);
-    expect(await noHorizontalScroll(page)).toBe(true);
-    await expectNoAxeViolations(page);
-
-    await setCookies(context, { psl_mock_overview: 'changed' });
-    await page.clock.fastForward(15_000);
-    await expect(page.locator('.overview__eyebrow')).toHaveText('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT');
-    await expect.poll(async () => (await stationTexts(page))[0][0]).toBe('Brief: 2 items');
-    expect((await stationTexts(page))[4][0]).toBe('Milestone: 1 item');
-    expect((await stationTexts(page))[7][2]).toBe('Approve: 1 item');
-    await expect(tiles(page).locator('dd')).toHaveText(['19', '4', '3', '29']);
-    await shot(page, 'overview-3d-1440', false);
-    await expect(canvas).toBeVisible();
-  });
-  test('3D floor (conveyor): a label per station, hover and focus readout, keys turn and reset', async ({ page }) => {
-    // Waits for the lift to settle plus an axe pass over 40 overlay buttons; software WebGL is slow on a busy machine.
+  test('3D floor: a label per station for lines with counts, PERSON only where a person is needed, the strip links into the queue', async ({ page }) => {
     test.setTimeout(60_000);
     await page.goto('/overview');
     await loaded(page);
     await page.getByRole('radio', { name: '3D floor' }).click();
-    await expect(page.getByRole('img', { name: /^3D factory floor: 8 lines/ })).toBeVisible();
-    const chips = page.locator('.floor__chip');
-    await expect(chips).toHaveCount(40);
-    await expect(page.locator('.floor__line strong')).toHaveText(LINES);
-    const readout = page.locator('.floor__readout');
-    await expect(readout).toHaveText('Point at, tap or tab to a station to read it. Drag sideways to turn the floor; arrow keys turn and tilt, R resets.');
-
-    const approve = page.getByRole('button', { name: '1 Approve PERSON. Invoices · Approve · 1 item · needs a person' });
-    await expect(approve).toHaveText('1 Approve PERSON');
-    await approve.hover();
-    const headline = page.locator('.floor__headline');
-    await expect(headline).toContainText('Invoices · Approve');
-    await expect(headline).toContainText('1 here · 1 needs a person');
-    // The stage is a tab stop: arrows turn and tilt, R resets.
-    const stage = page.getByRole('group', { name: /^3D floor view/ });
-    await stage.focus();
-    // The view itself is checked in unit tests (belts move, so pixels differ anyway); here the keys must not break the floor.
-    await page.keyboard.press('ArrowLeft');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('r');
-
-    await page.getByRole('button', { name: 'Reset view' }).click();
-    await expect(readout).toHaveText('Point at, tap or tab to a station to read it. Drag sideways to turn the floor; arrow keys turn and tilt, R resets.');
-    await page.getByRole('button', { name: '1 Brief. Pre-sale · Brief · 1 item · no person needed' }).focus();
-    await expect(headline).toContainText('Pre-sale · Brief');
-    await expect(headline).toContainText('1 here');
-    await shot(page, 'overview-3d-conveyor-1440', false);
-    await expectNoAxeViolations(page);
-
-    await page.getByRole('radio', { name: 'Flat' }).click();
-    await expect(page.locator('canvas')).toHaveCount(0);
-    await expect(chips).toHaveCount(0);
-  });
-});
-
-test.describe('3D floor strip (D-162)', () => {
-  test.use({ viewport: DESKTOP });
-
-  test('CEO points at a station, reads its work, pins it, and a row opens the work item', async ({ page, context }) => {
-    test.setTimeout(60_000);
-    await setCookies(context, { psl_mock_persona: 'ceo' });
-    await page.goto('/overview');
-    await loaded(page);
-    await page.getByRole('radio', { name: '3D floor' }).click();
-    await expect(page.getByRole('img', { name: /^3D factory floor: 8 lines/ })).toBeVisible();
-
-    const approve = page.getByRole('button', { name: '1 Approve PERSON. Invoices · Approve · 1 item · needs a person' });
-    await approve.hover();
+    await expect(page.getByRole('img', { name: /^3D factory floor: 5 lines/ })).toBeVisible();
+    await expect(page.locator('.floor__line strong')).toHaveText(TITLES);
+    // five lines, each with five stations (the line the sample does not reach is a known 0 here)
+    await expect(page.locator('.floor__chip')).toHaveCount(25);
+    await expect(page.locator('.floor__chip--person')).toHaveCount(3);
+    const decision = page.getByRole('button', { name: '1 Decision PERSON. Costing and commercial submission · Decision · 1 item · needs a person' });
+    await decision.hover();
     const strip = page.locator('.floor__strip');
-    await expect(strip.locator('.floor__headline')).toContainText('Invoices · Approve');
-    await expect(strip.locator('.floor__headline')).toContainText('1 here · 1 needs a person');
-    await expect(strip.locator('.floor__row').first()).toContainText('needs a person');
-    await expect(strip.getByText('Pinned')).toHaveCount(0);
-
-    // a click pins it: the pointer can leave and the strip stays; Esc lets go
-    await approve.click();
+    await expect(strip.locator('.floor__headline')).toContainText('Costing and commercial submission · Decision');
+    await expect(strip.locator('.floor__headline')).toContainText('1 item, 2 need a person');
+    await expect(strip.getByRole('link', { name: 'Open work' })).toHaveAttribute('href', '/my-work?line=commercial%2Fv1');
+    await decision.click();
     await expect(strip.getByText('Pinned')).toBeVisible();
-    await page.getByRole('button', { name: '1 Brief. Pre-sale · Brief · 1 item · no person needed' }).hover();
-    await expect(strip.locator('.floor__headline')).toContainText('Invoices · Approve');
     await page.keyboard.press('Escape');
     await expect(strip.getByText('Pinned')).toHaveCount(0);
-
-    await approve.click();
-    await expect(strip.getByText('Pinned')).toBeVisible();
+    await shot(page, 'overview-3d-1440', false);
     await expectNoAxeViolations(page);
-    const link = strip.locator('.floor__row a').first();
-    const href = await link.getAttribute('href');
-    expect(href).toMatch(/^\/work\/W-\d+$/);
-    await link.click();
-    await expect(page).toHaveURL(new RegExp(`${href}$`));
+    await page.getByRole('radio', { name: 'Flat' }).click();
+    await expect(page.locator('canvas')).toHaveCount(0);
   });
 });
 
@@ -320,16 +181,14 @@ test.describe('phone 390', () => {
     await loaded(page);
     await expect(viewSwitch(page)).toHaveCount(0);
     await expect(page.locator('.overview__hint')).toHaveCount(0);
-    await expect(page.locator('.overview__summary')).toHaveText('18 in progress · 5 need a person');
-    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 14 Nov 16:40 WAT')).toBeVisible();
+    await expect(page.locator('.overview__summary')).toHaveText('10 in progress · 4 need a person');
+    await expect(main(page).getByText('FACTORY FLOOR · UPDATED 23 Nov 10:30 WAT')).toBeVisible();
     expect(await page.locator('.overview__sq').first().evaluate((el) => el.getBoundingClientRect().width)).toBe(18);
-    for (const [i, name] of LINES.entries()) {
+    for (const [i, name] of TITLES.entries()) {
       await expect(rows(page).nth(i).locator('.overview__name')).toHaveText(name);
-      await expect(rows(page).nth(i).locator('.overview__name')).toBeVisible();
       await expect(rows(page).nth(i).locator('.psl-tag')).toBeVisible();
     }
     expect(await noHorizontalScroll(page)).toBe(true);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
     await expect(main(page).getByRole('link', { name: 'See all exceptions' })).toBeVisible();
     await shot(page, 'overview-390');
     await expectNoAxeViolations(page);

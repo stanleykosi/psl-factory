@@ -1,7 +1,6 @@
 'use client';
 
 // SCR-17 sign-in (default and error states). One sign-in, one wrong-details message: the page never says which part was wrong.
-import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 
 import { call, csrfHeader, liveApi, refreshSession, setCsrfToken } from '@/api/client';
@@ -9,8 +8,9 @@ import { ApiError } from '@/api/errors';
 import { Button, Callout, Checkbox, Loading, Skeleton, TextField, useIsPhone } from '@/components';
 import { safeNext } from '@/shell/signInNext';
 
+import { BrandColumn } from './BrandColumn';
 import './sign-in.css';
-import { useSignOut } from './useSignOut';
+import { NotAdmittedBody, useAfterSignIn } from './useAfterSignIn';
 
 type Phase = 'loading' | 'unready' | 'ready' | 'not-admitted';
 
@@ -27,12 +27,6 @@ export function signInProblem(error: unknown): string {
 const queryNext = () => safeNext(new URLSearchParams(window.location.search).get('next'));
 
 export function SignInView() {
-  const router = useRouter();
-  // The session read starts once per visit, whatever the router object does between renders.
-  const routerRef = useRef(router);
-  useEffect(() => {
-    routerRef.current = router;
-  });
   const phone = useIsPhone();
   const [phase, setPhase] = useState<Phase>('loading');
   const [username, setUsername] = useState('');
@@ -45,16 +39,8 @@ export function SignInView() {
   const passwordRef = useRef<HTMLInputElement>(null);
   const signingIn = useRef(false);
 
-  // After a sign-in (or a visit while signed in): a person with no open work stays here; everyone else goes on.
-  const afterSignIn = useCallback(async (destination: string | null) => {
-    try {
-      const onboarding = await call(liveApi.GET('/api/v1/me/onboarding'));
-      if (!onboarding.admitted) return setPhase('not-admitted');
-    } catch {
-      // The frame shows its own states.
-    }
-    routerRef.current.replace(destination ?? '/');
-  }, []);
+  const notAdmitted = useCallback(() => setPhase('not-admitted'), []);
+  const afterSignIn = useAfterSignIn(notAdmitted);
 
   const prepare = useCallback(async () => {
     setPhase('loading');
@@ -66,8 +52,6 @@ export function SignInView() {
       setPhase('unready');
     }
   }, [afterSignIn]);
-
-  const { signOut, busy: signingOut } = useSignOut(() => void prepare());
 
   useEffect(() => {
     // One session read per visit; the effect only starts the request.
@@ -102,21 +86,6 @@ export function SignInView() {
     }
   }
 
-  const brand = (
-    <aside className="signin-brand psl-on-dark">
-      <span className="signin-wordmark">PSL FACTORY</span>
-      <div className="signin-agents" aria-hidden="true">
-        {/* eslint-disable-next-line @next/next/no-img-element -- fixed mascot assets from public/agents */}
-        <img src="/agents/tola-idle.png" alt="" height={220} />
-        {/* eslint-disable-next-line @next/next/no-img-element -- fixed mascot assets from public/agents */}
-        <img src="/agents/chidi-idle.png" alt="" height={210} />
-        {/* eslint-disable-next-line @next/next/no-img-element -- fixed mascot assets from public/agents */}
-        <img src="/agents/zainab-idle.png" alt="" height={215} />
-      </div>
-      <p className="signin-tagline">Work you can see moving, from first draft to verified.</p>
-    </aside>
-  );
-
   let body;
   if (phase === 'loading') {
     body = (
@@ -139,15 +108,7 @@ export function SignInView() {
       </div>
     );
   } else if (phase === 'not-admitted') {
-    body = (
-      <div className="signin-form">
-        <h1 className="signin-title">Sign in</h1>
-        <Callout kind="info">You’re signed in, but no work is open to you yet. Ask your administrator.</Callout>
-        <Button kind="secondary" size="lg" busy={signingOut} busyLabel="Signing out…" onClick={() => void signOut()}>
-          Sign out
-        </Button>
-      </div>
-    );
+    body = <NotAdmittedBody onSignedOut={() => void prepare()} />;
   } else {
     body = (
       <form className="signin-form" method="post" noValidate onSubmit={(event) => void submit(event)}>
@@ -193,7 +154,7 @@ export function SignInView() {
 
   return (
     <main className="signin">
-      {brand}
+      <BrandColumn />
       {body}
     </main>
   );

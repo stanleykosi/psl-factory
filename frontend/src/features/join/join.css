@@ -1,0 +1,9 @@
+/* Account set-up (SCR-17). Reuses the sign-in layout; tokens only. */
+.join-welcome { margin: 0; }
+.join-valid { margin: 0; color: var(--ink-muted); }
+.join-note { margin: 0; color: var(--ink-muted); }
+.join-form .psl-btn--block { align-self: stretch; }
+.join-link { align-self: flex-start; }
+.join-done-title:focus { outline: none; }
+/* The board draws the read-only email as a white bordered input like the others; it stays read-only. */
+.join-form .psl-input[readonly] { background: var(--surface); border-color: var(--ink); }

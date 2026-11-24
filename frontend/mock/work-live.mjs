@@ -12,7 +12,7 @@
 // null revision (reconcile and cancel listed), 4111 nothing listed, 4123 lists adopt_profile and release_invoice (never drawn).
 // Write scenarios answer only the three write routes, so the re-read still works: w403, w403csrf, w409 (the item moves on to
 // a higher revision), w422, w429, w503, w500, wdrop (the connection is cut after the write ran). `ready` makes a reconcile find the item ready.
-export const WORK_LIVE_PATH = /^\/api\/v1\/work\/(\d+)(\/history|\/weekly-report|\/actions|\/control|\/background)?$/;
+export const WORK_LIVE_PATH = /^\/api\/v1\/work\/(\d+)(\/history|\/tracking|\/weekly-report|\/actions|\/control|\/background)?$/;
 export const CASE_FILES_PATH = /^\/api\/v1\/cases\/([^/]+)\/(files|files\/(\d+)\/drafts|file-drafts\/(\d+)\/review)$/;
 
 const CASE = '6c2f1d3e-1a4b-4b8e-9d0a-0a1b2c3d4e5f';
@@ -43,7 +43,7 @@ const item = (id, patch) => ({
   updated_at: NOW,
   django_url: `/work/${id}/`,
   api_url: `/api/v1/work/${id}`,
-  // API 1.24.0 fields; the page draws none of them yet (tracking, facts and reference are a later feature)
+  // API 1.26.0 fields: reference, agent and tracking_url feed the header, the agent card and the tracking read (F-91)
   reference: null,
   started_at: '2026-11-20T09:00:00Z',
   verified_at: null,
@@ -82,27 +82,30 @@ const WORK = {
   2503: delivery(2503, 'delivery-hypercare/v1', 'Hypercare', 'verified', 'Verified', 'HYP-0062', '2026-11-18T10:00:00Z'),
   2504: delivery(2504, 'delivery-handover/v1', 'Handover to Support', 'action_needed', 'Action needed', 'HND-0048', '2026-11-20T10:00:00Z'),
   2505: delivery(2505, 'delivery-archive/v1', 'Archive', 'ready', 'Ready', 'ARC-0130', '2026-11-19T10:00:00Z'),
-  4101: item(4101, { title: 'Invoice for Lagoon Health', line: 'invoice', state: 'verified', status_label: 'Verified', next_step: 'Nothing more to do.', output_url: '/api/v1/work/4101/output' }),
+  4101: item(4101, { title: 'Invoice for Lagoon Health', line: 'invoice', state: 'verified', status_label: 'Verified', next_step: 'Nothing more to do.', output_url: '/api/v1/work/4101/output', reference: 'INV-0412', agent: 'Chidi', verified_at: '2026-11-22T16:40:00Z', tracking_url: '/api/v1/work/4101/tracking' }),
   4102: item(4102, {
     state: 'processing',
     status_label: 'Processing',
     next_step: 'The agent is drafting the update. You will be asked to review it.',
     current_activity: { label: 'Drafting the weekly update', watching: true },
     progress: { status: 'drafting', updated_at: NOW },
+    agent: 'Tola',
+    tracking_url: '/api/v1/work/4102/tracking',
     panels: [{ key: 'weekly-report', url: '/api/v1/work/4102/weekly-report', contract_path: null }],
   }),
   4103: item(4103, {
     state: 'waiting',
     status_label: 'Waiting for a decision',
     next_step: 'Review the draft and approve or return it.',
+    tracking_url: '/api/v1/work/4103/tracking',
     tasks: [
       { id: 9101, kind: 'review', role: 'PMO Lead', status: 'open', revision: 2, claimed_by_you: false, can_claim: false, can_decide: true, verdicts: ['approve', 'return'], url: '/api/v1/tasks/9101' },
       { id: 9102, kind: 'approval', role: 'Finance Lead', status: 'open', revision: 1, claimed_by_you: false, can_claim: false, can_decide: false, verdicts: [], url: '/api/v1/tasks/9102' },
     ],
   }),
-  4104: item(4104, { state: 'setup_needed', status_label: 'Setup needed', owner: null, blocker: 'A policy value is missing.', next_step: 'Ask the PMO Lead to set the value.', revision: null, case_revision: null }),
+  4104: item(4104, { state: 'setup_needed', status_label: 'Setup needed', owner: null, blocker: 'A policy value is missing.', next_step: 'Ask the PMO Lead to set the value.', revision: null, case_revision: null, tracking_url: '/api/v1/work/4104/tracking' }),
   4105: item(4105, { state: 'action_needed', status_label: 'Action needed', revision: null, department_handoff_url: '/handoff/4105' }),
-  4107: item(4107, { state: 'waiting', status_label: 'Waiting', panels: [{ key: 'weekly-report', url: '/api/v1/work/4107/weekly-report', contract_path: null }, { key: 'forecast', url: '/api/v1/work/4107/forecast', contract_path: null }] }),
+  4107: item(4107, { state: 'waiting', status_label: 'Waiting', tracking_url: '/api/v1/work/4107/tracking', panels: [{ key: 'weekly-report', url: '/api/v1/work/4107/weekly-report', contract_path: null }, { key: 'forecast', url: '/api/v1/work/4107/forecast', contract_path: null }] }),
   4108: item(4108, { state: 'verified', status_label: 'Verified' }),
   4110: item(4110, { state: 'awaiting_reconciliation', status_label: 'Awaiting reconciliation', revision: null, actions: ['reconcile'], available_control: ['cancel'] }),
   4111: item(4111, { state: 'ready', status_label: 'Ready' }),
@@ -158,16 +161,62 @@ const REPORTS = {
   4107: REPORT({}),
 };
 
+// F-91: GET /work/{id}/tracking. 4102 processing, 4101 verified, 4103 a decision waiting (reviewed unknown), 4104 stuck with one
+// station unknown; 4107 answers 503 and 4105 has no tracking_url.
+const STATION_NAMES = { intake: 'Intake', execution: 'Execution', decision: 'Decision', delivery: 'Delivery', verified: 'Verified' };
+const stationsOf = (rows) => rows.map(([key, status, owner], i) => ({ key, name: STATION_NAMES[key], position: i + 1, status, owner }));
+const FACTS_NONE = { drafted: false, reviewed: false, approved: false, sent: false, receipt: false, verified: false };
+const trackingOf = (id, stations, facts, patch = {}) => {
+  const list = stationsOf(stations);
+  return {
+    work_id: id,
+    as_of: NOW,
+    next_step: WORK[id].next_step,
+    blocker: WORK[id].blocker,
+    owner: WORK[id].owner,
+    station: list.find((s) => s.status === 'current') ?? list[list.length - 1],
+    stations: list,
+    started_at: '2026-11-20T09:00:00Z',
+    started_by: 'Tunde Bello',
+    verified_at: null,
+    facts: { ...FACTS_NONE, ...facts },
+    worker_history_url: `/api/v1/work/${id}/history?kind=worker`,
+    decision_history_url: `/api/v1/work/${id}/history?kind=decision`,
+    evidence_history_url: `/api/v1/work/${id}/history?kind=evidence`,
+    can_record_delivery_observation: false,
+    delivery_observation_url: null,
+    uncertain_effects: [],
+    last_activity: null,
+    ...patch,
+  };
+};
+const TRACKING = {
+  4101: () =>
+    trackingOf(4101, [['intake', 'recorded', 'Tunde Bello'], ['execution', 'recorded', 'Chidi'], ['decision', 'recorded', 'Ada Okafor'], ['delivery', 'recorded', null], ['verified', 'recorded', null]], { drafted: true, reviewed: true, approved: true, sent: true, receipt: true, verified: true }, { verified_at: '2026-11-22T16:40:00Z' }),
+  4102: () =>
+    trackingOf(4102, [['intake', 'recorded', 'Tunde Bello'], ['execution', 'current', 'Tola'], ['decision', 'pending', null], ['delivery', 'pending', null], ['verified', 'pending', null]], { drafted: null }, { last_activity: { kind: 'worker', status: 'drafting', at: NOW, agent_process: 'weekly report draft', evidence_id: null } }),
+  4103: () =>
+    trackingOf(4103, [['intake', 'recorded', 'Tunde Bello'], ['execution', 'recorded', 'Tola'], ['decision', 'current', 'Ada Okafor'], ['delivery', 'pending', null], ['verified', 'pending', null]], { drafted: true, reviewed: null }),
+  4104: () =>
+    trackingOf(4104, [['intake', 'recorded', null], ['execution', 'current', null], ['decision', 'unknown', null], ['delivery', 'pending', null], ['verified', 'pending', null]], {}, { owner: null }),
+};
+
 const HISTORY_ROWS = [
   { at: '2026-11-23T08:00:00Z', station: 'draft', status: 'completed', actor_kind: 'worker', entry_id: 301, actor: 'Chidi', evidence_id: 11 },
   { at: '2026-11-23T07:30:00Z', station: 'review', status: 'approved', task_id: 9101, actor_kind: 'person', entry_id: 302, actor: 'Kemi Adebayo', reason: 'Figures agree with the ledger.', evidence_id: null },
   { at: '2026-11-23T07:00:00Z', station: 'odd_station', status: 'odd_status', actor_kind: 'worker', entry_id: 303, evidence_id: null },
 ];
 const kindOf = { worker: (r) => r.station === 'draft', decision: (r) => r.station === 'review', evidence: (r) => r.evidence_id != null };
-function historyOf(id, kind) {
-  if (id === 4108) return Array.from({ length: 30 }, (_, i) => ({ at: new Date(Date.parse(NOW) - i * 60000).toISOString(), station: 'draft', status: 'completed', actor_kind: 'worker', entry_id: 400 + i }));
-  if (id === 4101) return kind ? HISTORY_ROWS.filter(kindOf[kind] ?? (() => true)) : HISTORY_ROWS;
-  return kind && kindOf[kind] ? HISTORY_ROWS.filter(kindOf[kind]) : HISTORY_ROWS;
+// 4101 with no filter has 60 changes in two pages of 30; `before` is the entry id of the last row of the page before.
+const MORE_ROWS = Array.from({ length: 57 }, (_, i) => ({ at: new Date(Date.parse(NOW) - (i + 2) * 3600000).toISOString(), station: 'draft', status: 'completed', actor_kind: 'worker', entry_id: 299 - i, actor: 'Chidi', evidence_id: null }));
+function historyOf(id, kind, before) {
+  if (id === 4108) return { items: Array.from({ length: 30 }, (_, i) => ({ at: new Date(Date.parse(NOW) - i * 60000).toISOString(), station: 'draft', status: 'completed', actor_kind: 'worker', entry_id: 400 + i })), next_before: null };
+  if (kind && kindOf[kind]) return { items: HISTORY_ROWS.filter(kindOf[kind]), next_before: null };
+  if (id !== 4101) return { items: HISTORY_ROWS, next_before: null };
+  const all = [...HISTORY_ROWS, ...MORE_ROWS];
+  const rest = before === null ? all : all.filter((r) => r.entry_id < before);
+  const items = rest.slice(0, 30);
+  return { items, next_before: rest.length > 30 ? items[items.length - 1].entry_id : null };
 }
 
 let uploads = 0;
@@ -227,7 +276,13 @@ export function workLive({ method, url, scenario, csrfOk, persona, rawBytes }) {
     if (read[2] === '/history') {
       const kind = url.searchParams.get('kind');
       if (kind && !['worker', 'decision', 'evidence'].includes(kind)) return send(400, BODIES[400]);
-      return send(200, { items: historyOf(id, kind), as_of: NOW, next_before: null });
+      const before = url.searchParams.get('before');
+      if (before !== null && !/^\d+$/.test(before)) return send(400, BODIES[400]);
+      return send(200, { ...historyOf(id, kind, before === null ? null : Number.parseInt(before, 10)), as_of: NOW });
+    }
+    if (read[2] === '/tracking') {
+      if (id === 4107) return send(503, BODIES[503]);
+      return TRACKING[id] ? send(200, TRACKING[id]()) : send(404, BODIES[404]);
     }
     return REPORTS[id] ? send(200, REPORTS[id]) : send(404, BODIES[404]);
   }

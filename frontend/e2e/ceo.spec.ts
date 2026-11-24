@@ -68,7 +68,7 @@ test('Overview: the factory floor is populated', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1, name: 'Factory floor' })).toBeVisible();
   await expect(page.getByText('Loading…')).toHaveCount(0);
   await expect(page.locator('dl.overview__totals > div')).toHaveCount(4);
-  await expect(page.locator('section[aria-label="Lines"] [role="list"] > .overview__row').first()).toBeVisible();
+  await expect(page.locator('section[aria-label="Lines"] .overview__lines-of > .overview__row').first()).toBeVisible();
 });
 
 test('the Notifications page lists CEO alerts that open the items, and the bell counts the unread', async ({ page }) => {
