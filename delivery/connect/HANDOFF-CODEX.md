@@ -87,11 +87,11 @@ PR bodies and commits must have **no AI co-author and no "Generated with" footer
 
 ## 7. State of every feature in flight (as of 21:00 WAT, 24 Nov)
 
-**Main is `eb100065`. A MERGE FREEZE is on until F-87 lands**, because F-87 conflicts with F-111's change to `LiveWorkItemView.tsx`.
+**Update, 21:00 WAT: F-87 is merged (main `1e78793f`, #113) and the merge freeze is lifted.** F-87 is DONE. Lanes waiting on F-87 (F-91, F-115, F-117, F-69, F-121, F-122, and F-103's proof link) can go ahead. **F-75 (PR #118, head d5c20396)** is next: sync main once, keep every allow-list line, run CI and the diff-only re-check, then merge under D-180/D-184. Each lane's exact resume steps are in `merge-batch.md` under "Lane X, for Codex".
 
 | Feature | Branch, worktree | State | Next step |
 |---|---|---|---|
-| **F-87** work item actions (SCR-02). Lanes A, B and D wait on it. | `fe-connect-1-work-item-controls`, `lane-c`. PR #113, last approved head `f296a554`. | AWAITING_USER_APPROVAL. Merge approved by the design engineer (D-203: "Accept and merge"). PMO-3-1 is recorded as accepted risk. | Merge `origin/main`, resolve `frontend/src/features/work-item/live/LiveWorkItemView.tsx` (keep F-111's issue-followup wiring and F-87's Actions slot), push, gate, D-200, quick technical re-check, then merge #113 and advance APPROVED, MERGED and DONE. Then lift the freeze. |
+| ~~F-87~~ **DONE, merged 1e78793f (#113).** Work item actions (SCR-02). | `fe-connect-1-work-item-controls`, `lane-c`. PR #113, last approved head `f296a554`. | AWAITING_USER_APPROVAL. Merge approved by the design engineer (D-203: "Accept and merge"). PMO-3-1 is recorded as accepted risk. | Merge `origin/main`, resolve `frontend/src/features/work-item/live/LiveWorkItemView.tsx` (keep F-111's issue-followup wiring and F-87's Actions slot), push, gate, D-200, quick technical re-check, then merge #113 and advance APPROVED, MERGED and DONE. Then lift the freeze. |
 | F-91 station track and facts | `fe-connect-1-work-item-tracking`, `lane-c2`, stacked on F-87 | IMPLEMENTING | Sync onto main after F-87 lands, then finish the build. |
 | F-63 My work (SCR-01) | `fe-connect-1-my-work-live`, `lane-a2` | IMPLEMENTING round 1 | Merge F-88 in and restore the assign flow in place of its placeholder. D-202 answered every question with the recommended option. |
 | F-65 factory floor (SCR-06) | `fe-connect-1-factory-floor-live`, `lane-a4` | IMPLEMENTING round 2 (phone fixes) | Desktop waiver and legend wording are signed. The phone visual (60.6) is under the floor: fix the build's own differences, or waive it once the UI reviewer confirms none remain. |
@@ -133,4 +133,4 @@ Other follow-ups:
 2. Run `git status` in every lane worktree. The Claude lane sessions may have stopped mid-step, so commit and push any coherent work, or note what's half done.
 3. `git -C /Users/Hunchoo/psl-factory-main pull`, then run `feature.py ... next <id>` for each feature in section 7 to confirm its state.
 4. Ask the design engineer two things: whether D-207 applies to you, and to confirm the delegated merges of F-62, F-71 and F-88.
-5. Land F-87 first (section 7), then lift the freeze and carry on down the table.
+5. F-87 is already in. Land F-75 (#118), then carry on down the table, using the "Lane X, for Codex" resume lines in `merge-batch.md`.
