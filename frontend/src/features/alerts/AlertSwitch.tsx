@@ -2,22 +2,12 @@
 
 import { Button } from '@/components';
 
-type Props = { name: string; on: boolean; locked: boolean; onToggle: () => void };
+type Props = { name: string; on: boolean; onToggle: () => void; describedBy?: string };
 
-/** An on/off switch drawn as on SCR-15 settings. A native button, so Space and Enter toggle; locked never toggles. */
-export function AlertSwitch({ name, on, locked, onToggle }: Props) {
+/** An on/off switch drawn as on SCR-15 settings. A native button, so Space and Enter toggle. */
+export function AlertSwitch({ name, on, onToggle, describedBy }: Props) {
   return (
-    <Button
-      kind="bare"
-      role="switch"
-      aria-checked={on}
-      aria-label={name}
-      aria-disabled={locked || undefined}
-      className={`alerts-switch${on ? ' is-on' : ''}${locked ? ' is-locked' : ''}`}
-      onClick={() => {
-        if (!locked) onToggle();
-      }}
-    >
+    <Button kind="bare" role="switch" aria-checked={on} aria-label={name} aria-describedby={describedBy} className={`alerts-switch${on ? ' is-on' : ''}`} onClick={onToggle}>
       <span className="alerts-switch__knob" aria-hidden="true" />
     </Button>
   );
