@@ -1,0 +1,517 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T13:35:54.821Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-12-mobile.dc.html",
+  "boardName": "SCR-12-mobile.dc.html",
+  "pageUrl": "http://127.0.0.1:4970/projects/P-0101/money",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": null,
+  "pass": false,
+  "passReasons": [
+    "14 board item(s) are missing from the page and are not approved exceptions (coverage 36.4% with exceptions, needs 100%).",
+    "Visual match 82 is below 90."
+  ],
+  "scores": {
+    "coverage": 36.4,
+    "coverageWithExceptions": 36.4,
+    "visual": 82
+  },
+  "visual": {
+    "score": 82,
+    "allCellsScore": 84,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 999,
+    "cell": 12,
+    "contentCells": 2082,
+    "mismatchedCells": 375
+  },
+  "coverage": {
+    "total": 22,
+    "found": 8,
+    "coverage": 36.4,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · billing",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Lagoon Health · billing\" on the board, \"Lagoon Health · patient app\" on the page",
+        "looks": [
+          "text size 24px on the board, 22px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 26
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 24
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 108,
+          "w": 374,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 108,
+          "w": 358,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 18,
+          "y": 110,
+          "w": 84,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 110,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones",
+        "pageName": "Milestones",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 102,
+          "y": 110,
+          "w": 103,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 104,
+          "y": 110,
+          "w": 104,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents",
+        "pageName": "Documents",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 205,
+          "y": 110,
+          "w": 107,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 208,
+          "y": 110,
+          "w": 108,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 312,
+          "y": 110,
+          "w": 75,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 316,
+          "y": 110,
+          "w": 75,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers",
+        "pageName": "Registers",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 387,
+          "y": 110,
+          "w": 93,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 391,
+          "y": 110,
+          "w": 94,
+          "h": 44
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Project",
+        "key": "link: ← Project",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 64,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Stage 1 · kick-off",
+        "key": "text: Stage 1 · kick-off",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 182,
+          "w": 330,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦3,000,000",
+        "key": "text: ₦3,000,000",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 207,
+          "w": 330,
+          "h": 20
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verified 03 Nov",
+        "key": "text: Verified 03 Nov",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 233,
+          "w": 330,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Stage 2 · UAT",
+        "key": "text: Stage 2 · UAT",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 290,
+          "w": 330,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000",
+        "key": "text: ₦4,250,000",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 315,
+          "w": 330,
+          "h": 20
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Awaiting Finance decision",
+        "key": "text: Awaiting Finance decision",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 341,
+          "w": 330,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Stage 3 · go-live",
+        "key": "text: Stage 3 · go-live",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 398,
+          "w": 330,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000",
+        "key": "text: ₦4,250,000",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 423,
+          "w": 330,
+          "h": 20
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Held · owner needed",
+        "key": "text: Held · owner needed",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 449,
+          "w": 330,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Stage 4 · hypercare",
+        "key": "text: Stage 4 · hypercare",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 506,
+          "w": 330,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Unknown",
+        "key": "text: Unknown",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 531,
+          "w": 330,
+          "h": 20
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Not yet due · amount set at go-live",
+        "key": "text: Not yet due · amount set at go-live",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 557,
+          "w": 330,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Tap an amount to see where it comes from",
+        "key": "link: Tap an amount to see where it comes from",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 600,
+          "w": 358,
+          "h": 18
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Projects",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 67,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Money",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 168,
+          "w": 358,
+          "h": 815
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tap an amount to see where it comes from",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 932,
+          "w": 358,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "As of 12 Nov 16:40",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 965,
+          "w": 358,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Demo controls",
+        "container": "page",
+        "pageBox": {
+          "x": 312,
+          "y": 712,
+          "w": 66,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Demo",
+        "container": "complementary",
+        "pageBox": {
+          "x": 312,
+          "y": 712,
+          "w": 66,
+          "h": 44
+        }
+      }
+    ],
+    "unexcepted": 14
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
