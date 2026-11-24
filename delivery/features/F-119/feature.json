@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-119",
   "outcome": "A person records the project retrospective as a saved version and sees where it stands in the closure checklist",
-  "state": "BLOCKED",
+  "state": "CHANGES_REQUESTED",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -1283,14 +1283,30 @@
         "delivery/features/F-119/round-5/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T15:41:03Z",
           "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T15:57:02Z",
+          "refs": [
+            "9d9b149c0eee33789567d9006229314f1224d6d0",
+            "delivery/features/F-119/round-6/build.md"
+          ],
+          "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "9d9b149c0eee33789567d9006229314f1224d6d0",
+        "delivery/features/F-119/round-6/build.md"
       ]
     }
   ],
@@ -1538,7 +1554,7 @@
     "base_branch": "main",
     "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-delivery-closure-retrospective",
-    "head_sha": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+    "head_sha": "9d9b149c0eee33789567d9006229314f1224d6d0",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d2",
     "pr_url": null,
     "pr_number": null,
@@ -1740,6 +1756,14 @@
       "round": 5,
       "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
       "reason": "rework budget used after round 5; D-206 (design engineer: 'Allow round 6') grants a sixth round, but the tool has no settable round limit"
+    },
+    {
+      "from": "BLOCKED",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T15:57:01Z",
+      "round": 5,
+      "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+      "reason": "D-206: UX-5-1 fix within round 5"
     }
   ],
   "routing": {
@@ -1760,9 +1784,5 @@
     "verdict": "PASS",
     "commit": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
   },
-  "blocked": {
-    "from": "CHANGES_REQUESTED",
-    "reason": "rework budget used after round 5; D-206 (design engineer: 'Allow round 6') grants a sixth round, but the tool has no settable round limit",
-    "at": "2026-11-24T15:50:48Z"
-  }
+  "blocked": null
 }

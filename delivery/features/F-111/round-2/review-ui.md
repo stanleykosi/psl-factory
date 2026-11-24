@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 30143e1a4f9376200d9fc6f89797ff57e97a3b54
+COMMIT: 698c74e87d6b51a3b85829a455e34a1a883a3453
 REVIEWER: reviewer-ui
 AUTHORITY: UI design reviewer
 
 ## Summary
+- D-193 sync-only re-check of 698c74e8 (merge of origin/main 90748de3, #115 and #112 F-61 alerts, onto 30143e1a): `git diff --stat 30143e1a 698c74e8` touches 43 files, none of them in the shared design system, tokens, shell chrome or work item frame except `frontend/src/shell/AppShell.tsx` (3 lines: bell props wiring, `unread`/`need` derived from the feed; no markup or class change). The issue line's work item frame (LiveWorkItemView, work-item.css) imports no changed file. `alerts.css` and `AlertsDrawer.tsx` load only for the alerts drawer and alerts pages, and the drawer is closed on the work item boards; its restyled rows and the new summary/as-of lines do not render there. No CSS or component file the issue line uses changed. VERDICT stays PASS; signed D-203 fidelity result stands, fidelity not re-run, no servers started.
 - D-193 sync-only re-check of 30143e1a (from 8a5c09fe): the merged F-71/F-64 range changes decide.css, money.css and project-tabs.css, but the issue route does not import them. A live work id (/work/5101) draws LiveWorkItemView, which imports work-item.css and no changed file; the shared components, shell, workspace, styles and tokens are unchanged, and psl-unknown changes are scoped under .ptabs__ms and .ptabs__card. VERDICT stays PASS; signed D-203 fidelity result stands, fidelity not re-run.
 - UI-1-1 and UI-1-2 verified. UI-1-3 (amber banner) and UI-1-4 (frame next-step line) are accepted risk under D-202: counted as exceptions, not findings.
 - Fidelity run, 8 SCR-30 boards, with the builder's 57-entry fidelity-exceptions.json. The tool still FAILs every board: visual is 74.8 to 84.4 (needs 90, so D-83 waivers are required), and after the exceptions fix coverage is 100% on all eight.

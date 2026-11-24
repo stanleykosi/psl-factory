@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 30143e1a4f9376200d9fc6f89797ff57e97a3b54
+COMMIT: 698c74e87d6b51a3b85829a455e34a1a883a3453
 REVIEWER: qa
 AUTHORITY: integrated QA, round 2
 
 ## Summary
+- D-193 sync-only re-check of 698c74e8 (coordinator merge of origin/main 90748de3, #115 checks.sh and #112 F-61 alerts; the only conflict was the next-config allowlist, which keeps main's list plus `issues.mjs`): `npx vitest run tests/issue-followup.test.tsx tests/mock-issues-live.test.ts tests/next-config.test.ts` run once in the lane-d frontend worktree gave 3 files, 37 tests, all passed. No servers started, no Railway tools used. Earlier journey evidence from 30143e1a carries forward; QA-2-4 remains unproven live.
 - D-193 sync-only re-check of head 30143e1a (coordinator merge of origin/main 4fd055ce, F-71 and F-64): `npx vitest run tests/issue-followup.test.tsx tests/mock-issues-live.test.ts tests/next-config.test.ts tests/mock-live-decide.test.ts` in the lane-d frontend worktree gave 4 files, 48 tests, all passed. No servers started, no Railway tools used. Earlier journey evidence carries forward; QA-2-4 remains unproven live. GitHub checks on 30143e1a are reported separately by the coordinator.
 - Mock stack (next dev 4990 pid 11835, mock 4991 pid 11834, API_ORIGIN 4991; both stopped by recorded pid) walked as pmo_lead with a browser script at 1440 and 390: fixtures 5101 to 5108 plus scenario cookies 401, 403, 404, 429, 503, csrf_failed. No horizontal overflow on any page and no non-GET request on any page.
 - Success states match the spec: 5101 (ISS-0233, HIGH, IN PROGRESS, Engineering, Raised 20 Nov 09:30, 3 days, Blocks Go-live as text), 5102 (banner "No response since 09 Nov", Asked with receipt, Reminder "No receipt yet", Reminder due, Escalate by, "Escalation goes to PMO lead"), 5103 (no-owner sentence once, Raised and Age "Not recorded", no severity, no Owner fact, "No message has been sent to the owner."), 5104 (Verified, RESOLVED, "UAT (planned)", never says Closed).
