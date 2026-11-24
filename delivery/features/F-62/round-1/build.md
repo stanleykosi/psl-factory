@@ -75,3 +75,6 @@ One run, production build (API_ORIGIN baked at build), finance_lead, `round-1/fi
 
 ## Blocked
 Not blocked.
+
+## Coordinator re-check on 7b8bad85 (after the mock route-order fix)
+- `delivery/checks.sh` through heavy-lock in lane-a2: exit 0, 159 files / 3776 tests, lint, typecheck and build.
