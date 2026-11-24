@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-88",
   "outcome": "Log a received RFP and assign its accountable PM through the live API",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -80,6 +80,18 @@
       "at": "2026-11-24T03:28:09Z",
       "seconds": 638.4,
       "evidence_ref": "delivery/features/F-88/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T13:30:20Z",
+      "seconds": 9.0,
+      "evidence_ref": "delivery/features/F-88/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -512,26 +524,12 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
-      ".github/workflows/frontend-checks.yml",
-      "delivery/checks.sh",
-      "frontend/e2e/document-review.spec.ts",
       "frontend/e2e/rfp-assign.spec.ts",
-      "frontend/mock/documents.mjs",
-      "frontend/mock/fixtures/documents/review-2901.json",
-      "frontend/mock/fixtures/documents/review-2901.publication.json",
       "frontend/mock/received-bids.mjs",
       "frontend/mock/server.mjs",
       "frontend/mock/start-live.mjs",
-      "frontend/src/features/documents/DocumentParts.tsx",
-      "frontend/src/features/documents/DocumentReview.tsx",
-      "frontend/src/features/documents/ReviewControls.tsx",
-      "frontend/src/features/documents/document-review.css",
-      "frontend/src/features/documents/documentModel.ts",
-      "frontend/src/features/documents/useDocument.ts",
-      "frontend/src/features/documents/useReview.ts",
       "frontend/src/features/my-work/MyWork.tsx",
       "frontend/src/features/my-work/model.ts",
-      "frontend/src/features/projects/DocumentsTab.tsx",
       "frontend/src/features/rfp/AssignPmDrawer.tsx",
       "frontend/src/features/rfp/UnassignedBids.tsx",
       "frontend/src/features/rfp/proposals.ts",
@@ -544,13 +542,8 @@
       "frontend/src/features/start-work/lines/receivedBid.tsx",
       "frontend/src/features/start-work/start-work.css",
       "frontend/tests/assign-pm.test.tsx",
-      "frontend/tests/document-review-model.test.ts",
-      "frontend/tests/document-review.test.tsx",
-      "frontend/tests/hypercare.test.tsx",
-      "frontend/tests/mock-live-document-review.test.ts",
       "frontend/tests/my-work.test.tsx",
       "frontend/tests/next-config.test.ts",
-      "frontend/tests/project-tabs.test.tsx",
       "frontend/tests/received-bid.test.tsx",
       "frontend/tests/rfp-assign.test.tsx",
       "frontend/tests/rfp-intake-mock.test.ts",
@@ -630,6 +623,14 @@
       "round": 2,
       "head": "bdeee685f982b58e4a1acb7c1915ca2ce853e5f6",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T13:30:44Z",
+      "round": 2,
+      "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "reason": null
     }
   ],
   "routing": {
@@ -646,9 +647,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "eacdc7045a458039ad42eb19ea5852cc411578df"
   },
   "blocked": null
 }
