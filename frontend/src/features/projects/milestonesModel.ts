@@ -18,9 +18,10 @@ function isRow(value: unknown): value is CompletionRow {
   return isObject(value) && typeof value.title === 'string' && typeof value.state === 'string' && textOrNull(value.detail) && textOrNull(value.at) && Number.isInteger(value.record_id);
 }
 
-/** The tab's single section of recorded completions (found by being the only one, never by its title). */
+/** The tab's single section of recorded completions (found by being the only one, never by its title); no section is none recorded yet. */
 export function isCompletions(body: unknown): body is Completions {
-  if (!isObject(body) || typeof body.as_of !== 'string' || !Array.isArray(body.sections) || body.sections.length !== 1) return false;
+  if (!isObject(body) || typeof body.as_of !== 'string' || !Array.isArray(body.sections) || body.sections.length > 1) return false;
+  if (body.sections.length === 0) return true;
   const section: unknown = body.sections[0];
   return isObject(section) && Array.isArray(section.items) && section.items.every(isRow) && Number.isInteger(section.page) && typeof section.has_more === 'boolean';
 }

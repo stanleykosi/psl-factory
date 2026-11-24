@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { call, liveApi } from '@/api/client';
 import { ApiError, UNEXPECTED_MESSAGE } from '@/api/errors';
 
-import { isCompletion, isCompletionOptions, isCompletions, type Completion, type CompletionOptions, type CompletionRow } from './milestonesModel';
+import { isCompletion, isCompletionOptions, isCompletions, type Completion, type CompletionOptions, type CompletionSection, type CompletionRow } from './milestonesModel';
 import type { Money } from './moneyModel';
 import { asApiError, readMoney } from './useMoney';
 
@@ -77,8 +77,8 @@ export function useMilestones(caseId: string) {
     try {
       const data = await readCompletions(caseId, 1);
       if (mine !== completionsSeq.current) return;
-      const section = data.sections[0];
-      setCompletions({ status: 'ready', rows: section.items, page: section.page, hasMore: section.has_more, asOf: data.as_of });
+      const section = data.sections[0] as CompletionSection | undefined;
+      setCompletions({ status: 'ready', rows: section?.items ?? [], page: section?.page ?? 1, hasMore: section?.has_more ?? false, asOf: data.as_of });
     } catch (error) {
       if (mine !== completionsSeq.current) return;
       setCompletions({ status: 'error', error: asApiError(error) });
@@ -92,8 +92,8 @@ export function useMilestones(caseId: string) {
     try {
       const data = await readCompletions(caseId, completions.page + 1);
       if (mine !== completionsSeq.current) return;
-      const section = data.sections[0];
-      setCompletions((prev) => (prev.status !== 'ready' ? prev : { ...prev, rows: [...prev.rows, ...section.items], page: section.page, hasMore: section.has_more }));
+      const section = data.sections[0] as CompletionSection | undefined;
+      setCompletions((prev) => (prev.status !== 'ready' ? prev : { ...prev, rows: [...prev.rows, ...(section?.items ?? [])], page: section?.page ?? prev.page, hasMore: section?.has_more ?? false }));
       setMore('idle');
     } catch (error) {
       if (mine !== completionsSeq.current) return;

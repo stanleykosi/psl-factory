@@ -191,6 +191,17 @@ describe('Milestones (SCR-38) on the live reads', () => {
     expect(panel().querySelectorAll('.ptabs__completion')).toHaveLength(2);
   });
 
+  it('QA-3-2: sections: [] from the live API reads as no recorded completions, not an error', async () => {
+    respond = (url) => {
+      if (!url.pathname.endsWith('/milestones')) return undefined;
+      const r = projectTab({ url, persona }) as { body: object };
+      return json(200, { ...r.body, sections: [] });
+    };
+    await open('P-0101');
+    expect(within(panel()).getByText('No completions recorded yet.')).toBeTruthy();
+    expect(text()).not.toContain('couldn’t load the recorded completions');
+  });
+
   it('a row without who recorded it says so', async () => {
     await open('P-0102');
     expect(panel().querySelectorAll('.ptabs__completion')[0].textContent).toContain('Recorded by: not shown');
