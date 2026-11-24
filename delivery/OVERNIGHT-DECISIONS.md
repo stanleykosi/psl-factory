@@ -577,3 +577,15 @@ The design engineer: "can we continue with the other task and leave demo for now
 - Each lane finishes what is in flight (F-88, F-87, F-61, F-111, F-119, F-75, F-63, F-65, F-78 and F-103), then takes its remaining features in its own runbook order (LANES.md), including the parked ones.
 - The `psl_demo` database and the `demo-backend` and `app-live` launch configs stay in place for later. The demo-seed note for the backend developer is in `delivery/connect/note-to-backend-demo-seed.md` on the main checkout.
 - D-202 and D-203 answers, review rules (D-180) and merge approvals are unchanged.
+
+## D-206 (24 Nov 2026): F-119 gets a sixth fix round
+F-119 used all five rounds. UX-5-1 is still blocking but low: on phone, tabbing into "Lessons for next projects" leaves the box half under the fixed Save bar, which misses WCAG 2.4.11. The design engineer chose "Allow round 6". F-119 gets one more build round to fix UX-5-1, with the same re-checks before QA, PMO and merge.
+
+## D-207 (24 Nov 2026): the coordinator approves risky merges, except database ones
+The design engineer, in chat: "for any risky action, i give you permission to approve except it has something to do with db approve any other task".
+- **The coordinator now approves** what D-180 used to batch: merges of risky features (sign-in, payments and money screens, security, product-decision surfaces), accepted risks and design sign-offs. Each is recorded in the feature's decision.md as "approved by the coordinator under D-207", citing the evidence.
+- **Still goes to the design engineer:**
+  - anything to do with the database: migrations, data-migration surfaces, direct database writes, seed or policy activation in any database;
+  - anything on Railway or in production (D-196, which also needs the backend developer's agreement);
+  - business rules, approvers or amounts that only PSL can supply.
+- **Lanes still never record a human approval themselves.** They send the head sha, and the coordinator records and merges.
