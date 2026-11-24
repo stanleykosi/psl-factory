@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 9a110b1de3376866467c4c06531efca790478589
+COMMIT: 5086ecf920a9bcfcff763520b0a0e5596d8a4684
 BUILDER: builder
 LANE: full
 
@@ -63,3 +63,9 @@ Notes for the coordinator: (a) the v7 mock item 4107 in `mock/work-live.mjs` use
 
 ## Coordinator: D-202 (24 Nov)
 The design engineer, in chat (relayed by the main coordinator): "Ship simpler for demo". F-103 ships without the proof link and month actuals: drop the `Extra` slot (commits 22187535 and 8a01fc7a, plus ForecastExtra.tsx and useForecastActuals.ts). Add them back on F-87's `Actions` slot after F-87 merges. It builds after F-119 frees a worktree (D-197: two worktrees).
+
+## Builder: D-202 update (24 Nov)
+- Dropped under D-202: the `Extra` slot (revert of 22187535; the `Extra` and readback part of 8a01fc7a reverted, the one-line forecast adapter import in LiveWorkItemView.tsx kept), `ForecastExtra.tsx`, `useForecastActuals.ts`, the month mapper (`monthSections`, `monthKeys`, `monthIsCut`, the cut-list sentence), the mock's actuals and observation routes and month data, their unit and mock tests, and the e2e tests for proof and month actuals. `LiveForecastMonth` stays in `api/types.ts` for F-87.
+- Dropped acceptance criteria, waiting for F-87's `Actions` slot: 8 (proof link), 12, 13, 14 (month actuals). Criterion 20 loses the actuals boards.
+- Merged origin/main (5b60a572) with every conflict kept on both sides (mock/server.mjs imports and routes, LiveWorkItemView.tsx adapter imports). The next-config allowlist needed no proxy entry (no downloads now); `tests/next-config.test.ts` got one line, `forecast-live.mjs`, because the mock item carries the contract-required `django_url`.
+- Checked: `node --check mock/server.mjs`, `tsc --noEmit`, forecast tests, mock-forecast test and next-config test (30 passed). No build, full vitest, gate or e2e run. No `mock/finance*` or payments fixture touched. No servers started.

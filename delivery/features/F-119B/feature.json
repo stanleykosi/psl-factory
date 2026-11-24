@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-119B",
   "outcome": "F-119's closure and retrospective, with UX-5-1 fixed",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-DELIVERY-CLOSURE"
   ],
@@ -78,11 +78,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
+      "evidence_refs": [
+        "delivery/features/F-119B/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -108,18 +110,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer",
+      "snapshot_ref": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
+      "evidence_refs": [
+        "delivery/features/F-119B/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (F-119B round 2; static review of `git diff 9d9b149c 48221d25`; no server started, fidelity tool not re-run under D-202)",
+      "snapshot_ref": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
+      "evidence_refs": [
+        "delivery/features/F-119B/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -136,7 +142,7 @@
         "delivery/features/F-119B/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -153,11 +159,25 @@
           ],
           "head": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T19:32:52Z",
+          "refs": [
+            "Read the new walk: it loops Tab until focus leaves the form (fail) or reaches the bar (pass, 80-step cap), polls each stop until its bottom is at or above the bar top +1 (Save in the bar is exempt), and asserts `elementFromPoint` hit for every in-form stop. Two forms are walked: empty (7 stops, asserted > 6) and 2002 with a carried decision (asserted more stops than the first). Decision text, supporting-file select and Remove are inside the form before Save on phone, so they are walked. Builder's 27/27 e2e run on this head is the evidence; not re-run by me."
+          ],
+          "head": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "48221d25"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Read the new walk: it loops Tab until focus leaves the form (fail) or reaches the bar (pass, 80-step cap), polls each stop until its bottom is at or above the bar top +1 (Save in the bar is exempt), and asserts `elementFromPoint` hit for every in-form stop. Two forms are walked: empty (7 stops, asserted > 6) and 2002 with a carried decision (asserted more stops than the first). Decision text, supporting-file select and Remove are inside the form before Save on phone, so they are walked. Builder's 27/27 e2e run on this head is the evidence; not re-run by me."
       ]
     },
     {
@@ -173,7 +193,7 @@
         "delivery/features/F-119B/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -190,11 +210,25 @@
           ],
           "head": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T19:32:52Z",
+          "refs": [
+            "`RetroForm.tsx`: `frame` ref; `cancelAnimationFrame(frame.current)` before each new `requestAnimationFrame` in `clearOfBar`; `useEffect(() => () => cancelAnimationFrame(frame.current), [])` on unmount. Phone-only guard and the `el.contains(target)` early return are unchanged."
+          ],
+          "head": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "48221d25"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`RetroForm.tsx`: `frame` ref; `cancelAnimationFrame(frame.current)` before each new `requestAnimationFrame` in `clearOfBar`; `useEffect(() => () => cancelAnimationFrame(frame.current), [])` on unmount. Phone-only guard and the `el.contains(target)` early return are unchanged."
       ]
     },
     {
@@ -210,7 +244,7 @@
         "delivery/features/F-119B/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -227,11 +261,71 @@
           ],
           "head": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T19:32:52Z",
+          "refs": [
+            "Read the recorded discrimination run in `round-2/build.md`: the new test fails at 53c24b19 at \"empty form step 1\" with the poll timing out (bottom 775.25 against bar top 762), which is the expected failure for code without the focus handler and with fixed 110px padding. Not re-run by me (copy and servers are out of scope for this round)."
+          ],
+          "head": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "48221d25"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Read the recorded discrimination run in `round-2/build.md`: the new test fails at 53c24b19 at \"empty form step 1\" with the poll timing out (bottom 775.25 against bar top 762), which is the expected failure for code without the focus handler and with fixed 110px padding. Not re-run by me (copy and servers are out of scope for this round)."
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
+      "owner": "product",
+      "severity": "low",
+      "blocking": false,
+      "summary": "AC 24's parenthetical names \"the decisions and follow-up controls\" as reached by Tab from the first box to Save. The walk covers the decisions. The follow-up controls are `ActionForm` in `RetrospectiveView.tsx` (~L177), rendered only when the form is not shown (`!(form && editing)`), so they never coexist with `.retro__savebar` and cannot be drawn under it. The criterion text and the test scope disagree. Expected: product or the spec owner confirms that follow-up controls are out of the bar check (or the criterion is reworded), and the spec records it. Actual: no test on `ActionForm` controls; no occlusion path exists today. Path: `frontend/e2e/retrospective.spec.ts` (walk, ~L413-462), `frontend/src/features/retrospective/RetrospectiveView.tsx:168-185`, `delivery/features/F-119B/spec.md` AC 24.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119B/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T19:32:52Z",
+          "head": "48221d25fe73354c183109e18cfaaa5c621ae4d1"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-2",
+      "round": 2,
+      "snapshot_ref": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The walk starts by focusing \"What went well\" with `preventScroll` at scroll 0 and then presses Tab, so the starting box itself is never hit-tested. At scroll 0 it is almost certainly clear of the bar, but AC 24 says \"from the first box\". Expected: run the same poll and `elementFromPoint` assertion on the starting box before the first Tab. Actual: the first assertion is on the second stop. Path: `frontend/e2e/retrospective.spec.ts` (`walk` start, `field(page, 'What went well').evaluate(...focus...)`).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119B/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T19:32:52Z",
+          "head": "48221d25fe73354c183109e18cfaaa5c621ae4d1"
+        }
       ]
     }
   ],
@@ -425,6 +519,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-24T17:47:55Z",
+      "round": 2,
+      "head": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-24T19:32:58Z",
       "round": 2,
       "head": "48221d25fe73354c183109e18cfaaa5c621ae4d1",
       "reason": null
