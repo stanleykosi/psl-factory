@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-75",
   "outcome": "Registers and Actions tabs read the live sectioned project tab",
-  "state": "IN_REVIEW",
+  "state": "IMPLEMENTING",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -151,8 +151,341 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "integration",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "`git merge-tree` of bfcad616 against current main (4fd055ce) reports text conflicts in `frontend/mock/project-tabs.mjs`, `TabParts.tsx`, `tabsModel.ts`, `tests/demo-mock.test.ts`, `mock-project-tabs.test.ts`, `next-config.test.ts`, `project-tabs-model.test.ts` and `project-tabs.test.tsx`. Resolve with these specifics. (a) `TabParts.tsx`: main deleted `AmountValue` and its `amountText` and `Unknown` imports, while F-75 kept them. Delete them, or the build breaks on the removed `amountText` in `tabsModel.ts`. F-75 deleted `OwnerValue`, which main kept; nothing uses it once the F-75 tabs land, so delete it and `ownerText` and `Owner`. Main's `tabStateView(TabState<ReadTab>)` accepts the structural state F-75 passes, so keep F-75's wider signature. (b) `tabsModel.ts`: after the merge `ReadTab` should shrink to `documents`, and `registers` and `actions` should leave `ROW_CHECKS`, `TabRows`, `RegisterRow` and `ActionRow`. (c) `mock/project-tabs.mjs`: main dropped the `cookies` parameter and the `fixtureFor(caseId, tab, cookies)` argument, but F-75's `sectionsTab` still passes `cookies`. Drop it, or `fixtureFor` gets an extra argument. Main's milestones branch answers 404 `invalid_query` on a bad `page`, F-75's answers 422 `invalid_filter`. Both are mocks of one live operation, so pick one on merge (422 matches the live contract). (d) Keep both sides of the tests. Main's `next-config` allow-list and F-75's both extend the same line, so union them.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-technical.md"
+      ],
+      "raised_by": "technical reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`tests/project-sections.test.tsx:241` (\"a failed Show more keeps every row..., Retry loads page 2\") timed out in my four-file parallel run, which took 125s with 4 isolated workers. It passed alone in 20s. Under load the `until` helper's budget is tight. It is a flake risk, not a logic fault; consider a longer `until` timeout for that case.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-technical.md"
+      ],
+      "raised_by": "technical reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`ActionsTab.tsx` `ActionOwner` shows \"Owner needed\" when `detail` is null as well as when the server says so. The contract says `detail` is the owner name or \"Owner needed\", so null should not occur. If it did, an unknown owner would read as \"unassigned\". Low risk; render \"\u2014\" or Unknown for null if the contract ever allows it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-technical.md"
+      ],
+      "raised_by": "technical reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "technical reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Focus after \"Show more\" (spec acceptance 21: focus moves to the first new row). Observed on P-0102 Issues with `psl_mock_persona=pm`: at 390 the button disappears and `document.activeElement` is BODY, so a keyboard or screen-reader user loses their place in the list; at 1440 focus lands on a DIV (the table frame), not the first new row. The builder disclosed this in build.md (`useFocusAfterMore`, rows have no links, phone cards get no focus move), but it is not a recorded spec deviation. Expected: focus on the first newly added row/card (make it focusable with tabindex -1, or keep focus on a stable element), at both widths. Actual: focus lost (phone) or on the frame (desktop). Path: `frontend/src/features/projects/RegistersTab.tsx` and `ActionsTab.tsx` via `useFocusAfterMore`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-ux.md"
+      ],
+      "raised_by": "ux-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ux-reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The note \"Severity is set by the PM. Closing an issue needs QA and the PM; there is no separate approval.\" shows under Changes, Emergencies and RFPs too (seen for `pmo_lead` on Changes), where it does not apply. The spec keeps the note as drawn, so this is polish: show it only under Issues.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-ux.md"
+      ],
+      "raised_by": "ux-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ux-reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "A closed issue (ISS-0221, \"Closed by QA and PM\") shows \"Owner needed\" in signal ink, which reads as an open task on finished work. It follows the spec rule (null owner on Issues reads \"Owner needed\"); consider plain \"\u2014\" when the state is closed. Product call, not a spec break.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-ux.md"
+      ],
+      "raised_by": "ux-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ux-reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "(d) SCR-11 desktop table column order differs from the board. Board: ISSUE, WHAT, SEVERITY, OWNER, STATE, AGE (AGE right-aligned last). Built: ISSUE, WHAT, SEVERITY, OWNER, AGE, STATE (tool: misplaced \"Table column STATE\" and \"AGE\", and the cells under them). spec.md line 86 lists AGE before STATE, but the board is the spec; swap the two columns in frontend/src/features/projects/RegistersTab.tsx (and keep AGE right-aligned) and correct the spec line.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "design engineer (exception or waiver)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "(a) accepted hides or changes in spec \"Conflicts with the boards\", for the exceptions file: (1) text \"PM \u00b7 Tunde Bello\" and \"Engineering (recorded by PM)\" on SCR-11 desktop and mobile, and \"Engineering (recorded by PM)\" and \"Client \u00b7 Lagoon Health\" on SCR-29 (Conflict 1, owner role and marks; the page shows the name only); (2) text \"OVERDUE\" row tags on SCR-29 mobile (two) and the three OVERDUE state tags on SCR-29 desktop (Conflict 2; the page shows OPEN etc.); (3) text \"\u25a0\u25a0\u25a0\", \"\u25a0\u25a0\u25a1MEDIUM\", \"\u25a0\u25a0\u25a1\" and \"\u25a0\u25a1\u25a1\" on SCR-11 mobile are severity glyph text merged with the changed owner line, same cause as (1); (4) severity \"Critical\" shown as a neutral tag where the board draws Medium (Conflict 5, plus fixture choice); (5) Escalations never drawn (Conflict 6, no board item); (6) per-register columns with dashes (Conflict 7). Page-size choice (Conflict 3) and row links (Conflict 4) are not board items the tool flags.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "design engineer (exception or waiver)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "(a, spec gap) button \"Filter\" next to the search box on SCR-11 desktop and mobile and SCR-29 desktop and mobile is missing. spec.md puts filters under \"Out of scope\" (B-14, no option catalogue) but not under \"Conflicts with the boards\", so the exceptions file needs this entry and the spec list should gain it. Also text \"Actions come from confirmed minutes. Changing an owner or due date is recorded with your name.\" on SCR-29 desktop: the page keeps the first sentence only (the second describes a write that is out of scope); same treatment.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "design engineer (exception or waiver)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "(b) board sample values live data cannot carry: SCR-11 desktop and mobile \"Waiting on Engineering \u00b7 Engineering (recorded by PM)\" and \"Closed by QA and PM \u00b7 PM \u00b7 Tunde Bello\" cards (fixture owners and states differ); the sample \"Medium\" severity on ISS-0229; the closed issue ISS-0221 shows \"Owner needed\" because the fixture owner is null (fixture could carry an owner); SCR-29 desktop header \"3 OVERDUE\" (fixture counts give 2); \"No owner\" on the board reads \"Owner needed\" live; board state words DONE/OVERDUE against live COMPLETED, IN PROGRESS, PAUSED; sample due dates and rows (the board has 7 rows, the fixture 9: extra \"Book go-live call\" with no meeting, \"Review the hypercare rota\", \"Send the release notes draft\"); SCR-29 mobile \"Tunde Bello \u00b7 due 04 Nov\", \"No owner \u00b7 due Unknown\" and \"Engineering (recorded by PM) \u00b7 due 15 Nov\" differ in text from the fixture rows; the \"Unknown\" due is the amber tag per spec where the board draws bold amber text.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "design engineer (exception or waiver)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "(c) frame or shell items owned elsewhere (ProjectJourney tab bar, project header, app shell, F-70/lane A): heading \"Issues, changes and RFPs\" and eyebrow \"REGISTERS \u00b7 LAGOON HEALTH\" (page shows the project title and a Projects / Lagoon Health breadcrumb); mobile heading \"Issues \u00b7 3\" and \"Lagoon Health\" (page 22 to 36px project title); subline \"PM Tunde Bello \u00b7 Route A from RFP-0031\" (page \"PM Tunde Bello \u00b7 Route A\"); count badges on the Milestones 4, Documents 6, Registers 6, Actions 9 project tabs (page has none); extra tab \"Delivery\"; mobile project-tab strip positions of Milestones, Documents, Money and the clipped Registers tab; mobile \"\u2190 Project\" back link text (\"\u2190 Projects\" built); nav items \"Overview\", \"Setup\", the alerts bell, the account menu \"Ada Okafor \u00b7 Finance Lead\" against the board's \"Tunde Bello \u00b7 PMO\"; the \"Start work\" and \"More ways to start\" button-versus-link roles; \"Back to Projects\" banner; the \"Demo controls\" panel and \"Demo\" button; the Next dev indicator. Extras added by this feature that the boards do not draw and the spec approves: \"As of <time>\" line, the mobile register switch with count badges (board mobile shows no register switch; spec acceptance 1 and 3 require it), the AGE on mobile issue cards.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Mobile Registers: the board mobile has no register switch row and shows no age on cards; the built page adds both per the spec. Confirm with the design engineer that this addition is wanted on SCR-11 mobile (taste, no block).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-75/round-1/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T15:39:01Z",
+          "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "technical reviewer",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+          "evidence_refs": [
+            "delivery/features/F-75/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-75/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "ux-reviewer",
+          "authority": "UX reviewer",
+          "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+          "evidence_refs": [
+            "delivery/features/F-75/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "ui-reviewer",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+          "evidence_refs": [
+            "delivery/features/F-75/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -173,7 +506,7 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "4a88c26b2aa399ff54f9ec6cedad65ae075ebbb8",
+    "base_sha": "f355d33908d66468082b5cadac12aaf6dd6b09ce",
     "task_branch": "fe-connect-1-registers-actions-tabs",
     "head_sha": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b2",
@@ -243,7 +576,7 @@
     }
   },
   "created_at": "2026-11-23T13:22:09Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -269,6 +602,22 @@
       "round": 1,
       "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
       "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T15:39:01Z",
+      "round": 1,
+      "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T15:39:02Z",
+      "round": 2,
+      "head": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9",
+      "reason": null
     }
   ],
   "routing": {
@@ -284,10 +633,10 @@
     ]
   },
   "gate": {
-    "round": 1,
-    "attempts": 3,
-    "verdict": "PASS",
-    "commit": "bfcad616bcb0a7d43a339ba6f4ba1ba67681eeb9"
+    "round": 2,
+    "attempts": 0,
+    "verdict": null,
+    "commit": null
   },
   "blocked": null
 }

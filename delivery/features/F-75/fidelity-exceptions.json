@@ -1,0 +1,153 @@
+{
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "PM · Tunde Bello",
+      "reason": "Hidden: the owner role and the \"recorded by PM\" mark; live sends the name only (spec Conflicts 1, B-13, D-182).",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "category": "spec hides (D-182)"
+    },
+    {
+      "role": "text",
+      "name": "Engineering (recorded by PM)",
+      "reason": "Hidden: the owner role and the \"recorded by PM\" mark; live sends the name only (spec Conflicts 1, B-13, D-182).",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "category": "spec hides (D-182)"
+    },
+    {
+      "role": "text",
+      "name": "Waiting on Engineering · Engineering (recorded by PM)",
+      "reason": "Hidden: the owner role and the \"recorded by PM\" mark; live sends the name only (spec Conflicts 1, B-13, D-182). The card text differs by the role and mark only.",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "category": "spec hides (D-182)"
+    },
+    {
+      "role": "text",
+      "name": "Closed by QA and PM · PM · Tunde Bello",
+      "reason": "Hidden: the owner role and the \"recorded by PM\" mark; live sends the name only (spec Conflicts 1, B-13, D-182). The card text differs by the role only.",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "category": "spec hides (D-182)"
+    },
+    {
+      "role": "text",
+      "name": "Engineering (recorded by PM) · due 15 Nov",
+      "reason": "Hidden: the owner role and the \"recorded by PM\" mark; live sends the name only (spec Conflicts 1, B-13, D-182).",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "category": "spec hides (D-182)"
+    },
+    {
+      "role": "text",
+      "name": "■■■",
+      "reason": "Severity glyph text is read together with the owner line on the phone cards; the owner role and mark are hidden (spec Conflicts 1, D-182), so the merged text differs. Severity itself is drawn.",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "category": "spec hides (D-182)"
+    },
+    {
+      "role": "text",
+      "name": "■■□MEDIUM",
+      "reason": "Severity glyph text is read together with the owner line on the phone cards; the owner role and mark are hidden (spec Conflicts 1, D-182), so the merged text differs. Severity itself is drawn.",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "category": "spec hides (D-182)"
+    },
+    {
+      "role": "text",
+      "name": "■■□",
+      "reason": "Severity glyph text is read together with the owner line on the phone cards; the owner role and mark are hidden (spec Conflicts 1, D-182), so the merged text differs. Severity itself is drawn.",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "category": "spec hides (D-182)"
+    },
+    {
+      "role": "text",
+      "name": "■□□",
+      "reason": "Severity glyph text is read together with the owner line on the phone cards; the owner role and mark are hidden (spec Conflicts 1, D-182), so the merged text differs. Severity itself is drawn.",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "category": "spec hides (D-182)"
+    },
+    {
+      "role": "text",
+      "name": "OVERDUE",
+      "reason": "Hidden: the OVERDUE row tag; live gives overdue only as a section total, shown in the header (spec Conflicts 2, D-182).",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "category": "spec hides (D-182)"
+    },
+    {
+      "role": "button",
+      "name": "Filter",
+      "reason": "Hidden: the Filter button; the tab has no option catalogue for state, owner or severity (B-14, spec Out of scope, G-SCR11-1).",
+      "approved_by": "pending design engineer (questions-batch B35)",
+      "category": "no field"
+    },
+    {
+      "role": "text",
+      "name": "Actions come from confirmed minutes. Changing an owner or due date is recorded with your name.",
+      "reason": "Shortened: the page keeps \"Actions come from confirmed minutes.\"; the second sentence describes a write that is out of scope.",
+      "approved_by": "pending design engineer (questions-batch B35)",
+      "category": "no field"
+    },
+    {
+      "role": "text",
+      "name": "No owner · due Unknown",
+      "reason": "Sample wording: live reads \"Owner needed\" for an action with no owner (spec, display rule); the due is the amber Unknown tag.",
+      "approved_by": "pending design engineer (questions-batch B35)",
+      "category": "sample value"
+    },
+    {
+      "role": "text",
+      "name": "REGISTERS · LAGOON HEALTH",
+      "category": "frame item",
+      "reason": "Conflicts 9: the F-07 project header (breadcrumb, project title) stays on every tab.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "link",
+      "name": "← Project",
+      "category": "frame item",
+      "reason": "Conflicts 16 (and 6): phone back link and title wording belong to the shared frame, which shows 'Back to Projects'; the changed phone board's different frame is not copied.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "link",
+      "name": "← Projects",
+      "category": "frame item",
+      "reason": "Conflicts 16: phone back link wording belongs to the shared frame ('Back to Projects').",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Tunde Bello · PMO",
+      "reason": "Frame: the account menu shows the signed-in person (shell, lane A); the board names a sample person and role.",
+      "approved_by": "pending design engineer (questions-batch B35)",
+      "category": "frame item"
+    },
+    {
+      "role": "tab",
+      "name": "Registers",
+      "reason": "Frame: the phone project-tab strip scrolls sideways and clips the Registers tab (ProjectTabs, F-70).",
+      "approved_by": "pending design engineer (questions-batch B35)",
+      "category": "frame item"
+    }
+  ],
+  "extras_not_gating": [
+    {
+      "what": "Escalations are never drawn; live returns the section, the boards have no item for it (spec Conflicts 6)",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)"
+    },
+    {
+      "what": "Changes, Emergencies and RFPs use the Issues columns with dashes where live has no value (spec Conflicts 7)",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)"
+    },
+    {
+      "what": "Severity Critical is its own neutral tag where the board draws High, Medium or Low (spec Conflicts 5)",
+      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)"
+    },
+    {
+      "what": "As-of line, the phone register switch with count badges and the AGE on phone issue cards are added by the spec and are not on the boards",
+      "approved_by": "pending design engineer (questions-batch B35)"
+    },
+    {
+      "what": "Board sample rows, owners, states and counts (7 actions, 3 overdue, DONE and OVERDUE words) differ from the live-shape fixtures; the amber Unknown is the tag the spec draws",
+      "approved_by": "pending design engineer (questions-batch B35)"
+    }
+  ],
+  "visual_waivers": []
+}
