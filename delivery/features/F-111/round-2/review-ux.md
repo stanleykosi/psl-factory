@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 8a5c09fe624b12c209c2a70cb1f75c8a38238586
+COMMIT: 30143e1a4f9376200d9fc6f89797ff57e97a3b54
 REVIEWER: reviewer-ux
 AUTHORITY: UX reviewer
 
 ## Summary
+- D-193 sync-only re-check of 30143e1a (merge of origin/main 4fd055ce: F-71 money and milestones tabs, F-64 decision desk): none of the issue follow-up journey files changed (work item frame, issue line, issues.mjs and the 51xx routes, live-work and work-live mocks, issue-followup adapter). server.mjs live-decide routes only own work ids 17 to 19 and task ids, so the 51xx reads are unaffected. The shared DecisionRows and AmountValue used by WorkItemOverview moved to decide-v7 with identical content (247 lines, diffed against 8a5c09fe), and decide/format.ts re-exports an identical file. VERDICT stays PASS; no new findings. No servers started and no browser walk repeated.
 - Walked mock fixtures 5101 to 5108 as the PMO Lead at 1440 and 390 (next dev 4990, mock 4991, both stopped). No horizontal overflow at 390, no write control, no banned string.
 - Round 1 findings checked: UX-1-2, UX-1-4 and UX-1-5 are fixed. UX-1-6 is accepted by the builder but the spec text is not yet updated (non-blocking, below). UX-1-1 and UX-1-3 are accepted risk under D-202 and not re-raised.
 

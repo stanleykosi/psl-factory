@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 8a5c09fe624b12c209c2a70cb1f75c8a38238586
+COMMIT: 30143e1a4f9376200d9fc6f89797ff57e97a3b54
 REVIEWER: reviewer-ui
 AUTHORITY: UI design reviewer
 
 ## Summary
+- D-193 sync-only re-check of 30143e1a (from 8a5c09fe): the merged F-71/F-64 range changes decide.css, money.css and project-tabs.css, but the issue route does not import them. A live work id (/work/5101) draws LiveWorkItemView, which imports work-item.css and no changed file; the shared components, shell, workspace, styles and tokens are unchanged, and psl-unknown changes are scoped under .ptabs__ms and .ptabs__card. VERDICT stays PASS; signed D-203 fidelity result stands, fidelity not re-run.
 - UI-1-1 and UI-1-2 verified. UI-1-3 (amber banner) and UI-1-4 (frame next-step line) are accepted risk under D-202: counted as exceptions, not findings.
 - Fidelity run, 8 SCR-30 boards, with the builder's 57-entry fidelity-exceptions.json. The tool still FAILs every board: visual is 74.8 to 84.4 (needs 90, so D-83 waivers are required), and after the exceptions fix coverage is 100% on all eight.
 - Coverage with exceptions: desktop default 97.1, overdue 96.4, no-owner 92.3, verified 96.2; all four phone boards 100.

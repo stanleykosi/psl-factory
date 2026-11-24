@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 8a5c09fe624b12c209c2a70cb1f75c8a38238586
+COMMIT: 30143e1a4f9376200d9fc6f89797ff57e97a3b54
 REVIEWER: reviewer-technical
 AUTHORITY: technical reviewer (lead), round 2
 
 ## Summary
+- D-193 sync-only re-check of main merge 30143e1a (origin/main 4fd055ce, #114 F-71 and #111 F-64) against 8a5c09fe: `frontend/mock/server.mjs` keeps the F-111 issue route (GET `/api/v1/work/51xx`, `issues.mjs`, before the decide block) and the F-64 decide block (`ownsLiveDecide`, owns `/api/v1/work/17-19` and `/api/v1/tasks/*`). No overlap: F-111 claims only 51xx and is GET-only; decide's work-id check falls through for other ids; the F-71 milestone GET sits after both. Resets for issues and live decide are both present. `frontend/tests/next-config.test.ts`: every entry from 8a5c09fe is still in `allowed`; the merge adds `money-model.test.ts`, `milestones-model.test.ts`, `decide.test.tsx`, `live-decide.mjs`, and the projects regex widens to `projects/money/` and `projects/tabs/`. Non-blocking: `ownsLiveDecide` owns any `/api/v1/tasks/*` id; only `work-live.mjs` names those urls, as fixture strings, so nothing is shadowed today. No new blocking issue.
 - TECH-1-1 is fixed: `django_url` is back in every work fixture in `frontend/mock/issues.mjs`, the next-config allowlist names `issues.mjs` with the reason, and `tests/mock-issues-live.test.ts` validates the work item and the four issue reads for every fixture against `contracts/psl-factory.openapi.json`.
 - TECH-1-4 and TECH-1-5 are fixed (planned wording, `allowedActions()` removed; no callers remain).
 - Both main-merge conflicts kept both sides: `mock/server.mjs` has the F-111 issue route and reset plus main's F-62 line, and `tests/next-config.test.ts` has main's allowlist and comment plus `issues.mjs`.

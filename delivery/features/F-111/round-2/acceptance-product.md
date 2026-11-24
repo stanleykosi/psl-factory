@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 8a5c09fe624b12c209c2a70cb1f75c8a38238586
+COMMIT: 30143e1a4f9376200d9fc6f89797ff57e97a3b54
 REVIEWER: design engineer (hunchoweb), accepted in batch, delegated under D-184
 AUTHORITY: D-187 (LD-Q2: every recommended spec option accepted), D-202 ("Ship simpler for demo"), D-203 ("Sign all", LD-Q7); D-184 (batch-approved board changes count as product acceptance)
 
@@ -10,6 +10,9 @@ F-111's product decisions are board changes the design engineer answered in ques
 - D-203, "Sign all" (LD-Q7): the 57 fidelity exceptions and eight D-83 visual waivers in `delivery/features/F-111/fidelity-exceptions.json` are signed.
 
 Recorded by the lane D coordinator under D-184 ("accepted in batch, delegated under D-184"). This is not a fresh review of the running screen by the design engineer. D-184 says they check merged screens on port 3000 afterwards, and anything they dislike becomes a fix.
+
+## Carried over
+Carried over under D-188 to 30143e1a, the D-193 pre-merge sync with origin/main 4fd055ce (#114 F-71, #111 F-64). The sync touched two shared test files where F-111 has entries, `mock/server.mjs` and `tests/next-config.test.ts`. Both conflicts kept both sides. Nothing the page shows and no product decision changed. Technical, UX, UI and QA re-checked on 30143e1a, and CI passed.
 
 ## Not covered
 - Live issue follow-up (QA-2-4): the local database has no project issue, so no issue follow-up work item could be opened or started live. No seed command was run. Proved on the mock and against the 1.26 contract only.

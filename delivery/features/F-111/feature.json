@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-111",
   "outcome": "The issue workspace shows a live project issue, read only (SCR-30 part 1)",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -109,7 +109,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead), round 2",
-      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-technical.md"
       ]
@@ -118,32 +118,36 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "integrated QA, round 2",
-      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-qa.md"
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance, round 2 (delivery acceptance only; client/product acceptance, merge and release keep their own authorities)",
+      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-111/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
+      "authority": "D-187 (LD-Q2: every recommended spec option accepted), D-202 (\"Ship simpler for demo\"), D-203 (\"Sign all\", LD-Q7); D-184 (batch-approved board changes count as product acceptance)",
+      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "UX reviewer",
-      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-ux.md"
       ]
@@ -152,7 +156,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer",
-      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "snapshot_ref": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
       "evidence_refs": [
         "delivery/features/F-111/round-2/review-ui.md"
       ]
@@ -1116,6 +1120,52 @@
           "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
         }
       ]
+    },
+    {
+      "id": "PMO-2-1",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "integration",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "AC17 and the live journey are unproved (QA-2-4): the local database has no project issue and no seed was run. The authority is D-203 and the product acceptance's \"Not covered\" note. Before the demo, seed one issue, start its follow-up work item and compare the page with the three live reads for reference, severity, status, age, owner, timeline row count and message count. Record the result in `BUILD-TESTS.md` or the merge batch. If the live page disagrees, raise it as a fix and do not hide it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T15:48:08Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
+        }
+      ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Open non-blocking findings travel with the merge and need an owner so they are not lost: TECH-1-6, TECH-2-1, UX-1-6, UX-2-1 (spec text for AC9), UX-2-2, UI-2-1 (exception name \"\" for the side panel), UI-2-2 (add a \"NEXT\" exception), UI-2-3, QA-2-1 to QA-2-3. UI-2-1 and UI-2-2 are changes to `fidelity-exceptions.json` for the design engineer. QA-2-1 (a 404 on only the detail or messages read replaces the whole panel) is the most visible and belongs with F-95.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T15:48:08Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -1197,13 +1247,13 @@
     "base_branch": "main",
     "base_sha": "4fd055ce825ee3b11bd6d24b4549fbc0f5efec55",
     "task_branch": "fe-connect-1-issue-reads",
-    "head_sha": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+    "head_sha": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/116",
     "pr_number": 116,
     "pr_author": null,
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -1316,6 +1366,14 @@
       "at": "2026-11-24T15:30:24Z",
       "round": 2,
       "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-24T15:51:18Z",
+      "round": 2,
+      "head": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
       "reason": null
     }
   ],

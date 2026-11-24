@@ -1,9 +1,10 @@
 VERDICT: PASS
-COMMIT: 8a5c09fe624b12c209c2a70cb1f75c8a38238586
+COMMIT: 30143e1a4f9376200d9fc6f89797ff57e97a3b54
 REVIEWER: pmo-acceptance
 AUTHORITY: PMO delivery acceptance, round 2 (delivery acceptance only; client/product acceptance, merge and release keep their own authorities)
 
 ## Summary
+- D-193 sync-only re-check of 30143e1a (merge of origin/main 4fd055ce, #114 F-71 and #111 F-64; base_sha 4fd055ce; no protected path). The round-2 gate PASS above was on 8a5c09fe. On 30143e1a the re-check relies on GitHub `frontend-checks` PASS (`round-2/checks-sync.log`), technical, UX, UI and QA PASS on 30143e1a (their round-2 files), and product acceptance carried over under D-188 (`round-2/acceptance-product.md`). The two shared-test conflicts (`mock/server.mjs`, `tests/next-config.test.ts`) kept both sides and touch no F-111 scope. PR #116 checks and CLEAN mergeability are coordinator-reported; this PMO pass did not re-query GitHub.
 - Scope held: the nine changed files (e2e, mock, adapter, model, `LiveWorkItemView.tsx` one-line import, three test files) are all issue-followup read work for FE-CONNECT-1 (SCR-30). No write, no `workspace` change, no other feature's files. The feature has no operation IDs.
 - No blocking finding is open. Round 1's blocking findings are VERIFIED (TECH-1-1, UI-1-1, UI-1-2) or ACCEPTED_RISK under named authority (TECH-1-2, UX-1-1, UI-1-3, UI-1-4 under D-202, which is in `delivery/OVERNIGHT-DECISIONS.md` at line 550). UI-1-5 and UI-1-6 are accepted under D-203 (line 561), and `fidelity-exceptions.json` holds the 57 exceptions and eight D-83 waivers.
 - Gate PASS on 8a5c09fe (round 2 attempt 1). Technical, UX, UI and QA passed on the same head. Product acceptance is recorded in `round-2/acceptance-product.md` under D-184, with the stated limit that it is a batch acceptance and not a fresh screen review.
