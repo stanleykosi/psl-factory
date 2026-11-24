@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 71e65c9565280619ffa6cccec8a36b0e71a893b4
+COMMIT: 7c649b84af3bde62700faec01c1aa8474a6f229d
 BUILDER: builder
 LANE: full
 
@@ -70,3 +70,9 @@ None (round 1).
 - B-9: a compare read exists for two versions of the same report (changed, added, removed, unchanged sections); weekly report review returns draft-only section notes. Compare and "changed since" can return.
 - B-10: `/publication` gives findings and `review_status`; the returner's name, time and reason still need a review-history projection (not available).
 - B-11: answer confirms `delegated:false` for an ordinary reviewer; the preview's decision token suffix (ordinary vs delegated) may carry a delegated route, so `decisions[]` entries may need parsing. F-72 keeps `delegated:false`.
+
+## Coordinator sync after the build (23 to 24 Nov)
+- The builder's last commit was 71e65c95. The lane coordinator then merged origin/main twice, with no F-72 code change:
+  - 9ad522fe: merge of main e6c24e70 (API 1.26.0 with the backend's own fixture fix). No conflicts.
+  - 7c649b84: merge of main e2f44656 (F-85, live work item and evidence picker). One conflict, in the `tests/next-config.test.ts` django_url allow-list, resolved by keeping both sides' entries (F-85's `work-live.mjs` and F-72's document-review fixtures).
+- After the sync, typecheck is clean and the F-72 tests pass: document-review, mock-live-document-review, document-review-model and next-config, 78/78. Gate attempt 4 PASSED on 7c649b84 (D-190 raised the attempt limit to 6).

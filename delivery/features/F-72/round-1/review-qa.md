@@ -1,0 +1,19 @@
+VERDICT: PASS
+COMMIT: 81a9bb9f021d125b3c0f55234434deb93977ec7e
+REVIEWER: qa
+AUTHORITY: integrated QA (lighter panel, D-180)
+
+## Summary
+- D-188 sync-only re-check of 3b7df6cc (F-86, PR #103) merged into the branch, 81a9bb9f; the earlier evidence below was gathered at 7c649b84 and is carried forward. `git diff 7c649b84 81a9bb9f --stat` lists 32 files, all Start work (src/features/start-work, mock/start-live.mjs, mock/server.mjs, start-work and rfp-intake tests and e2e, assistant, issue-detail, hr.spec) plus one line in tests/next-config.test.ts. No file under src/features/documents, the Documents tab, mock/documents.mjs or the document-review tests changed. The server.mjs hunk adds only the F-86 start-live routes (Start work reads and the weekly start, behind `liveStart`); none touch document-review paths. The next-config hunk only adds LineChooser.tsx, start-live.mjs and start-work-live.test.tsx to the django_url allow-list beside F-72's document-review entries. Coordinator reports typecheck clean, 78/78 on the four document and next-config suites, and the full delivery/checks.sh on 81a9bb9f PASSED (158 files, 3751 tests, build OK). I ran no servers and no tests in this re-check.
+- MOCK: `node scripts/dev.mjs` (mock 4971, Next dev 4970), `e2e/document-review.spec.ts` run alone through a scratch Playwright config pointed at the running dev servers: 11 of 11 passed (desktop 1440 and phone 390, axe WCAG 2.2 AA included).
+- MOCK, own phone walk at 390 (script, not committed): approve with a note sent one POST `{expected_revision:7, verdict:approve, delegated:false, note}` and showed "You approved v2"; return with a note showed "Add a note to record your decision." on an empty note, then one POST with `verdict:return` and "You returned v2"; with `server-error` the uncertain notice showed, exactly 1 POST after 3 s (no auto-resend), Try again only re-read (still 1 POST); with `stale` the 409 callout showed, the sheet closed, the reopened sheet still held "Keep this note.", and the second press sent revision 8 (bodies 7 then 8) and showed "You approved v2".
+- LIVE (Django 8010 on the local DB, Next 4970 with API_ORIGIN at Django): no document version exists for any account. qa-seed has 1 project with `document-versions` empty; live-lead and live-multi have 2 projects and `document-versions` answers 404; live-none has none. Document-review ids 1 to 59 and 2901 on the qa-seed project all answered 404, as did the largest id. So the live read, live approve and the live Return were NOT run; nothing was recorded live.
+- LIVE not-found: signed in as qa-seed in a browser, `/projects/<qa-seed case>/documents/1` and `/2901` show "You can't open this document" with the "NOT OPEN TO YOU" tag, no server text, at 390 and 1440. Ids `abc` and `0` send no request. No POST was sent. Live wrong-user and wrong-tenant reads (live-lead and live-none on qa-seed's project) answered 404, the same as a missing version.
+- Unproved: the real document-review GET and POST shape against a live version (contract-level only), the live 409 and 5xx on the write, and live approve/return with a real revision.
+
+## Findings
+- QA-1-1 | non-blocking | low | frontend | The visible "Audience" label appears twice on the ready page, at 390 and 1440: the panel heading `h2.psl-panel__head` "Audience" and a row label `span.docrev__checklabel` "Audience" under it. Only one is a heading. Expected one mention. Seen in `DocumentReview.tsx` audience panel.
+- QA-1-2 | non-blocking | low | frontend | Uncertain state at 390: the bar's Approve and Return are disabled while the notice shows, as the spec says. No sheet is open, and Try again is the only live action. The buttons show disabled with no stated reason beyond the notice above them. Acceptable; noted for the UX note only.
+
+## Verified
+None. Round 1 has no fixes to retest.
