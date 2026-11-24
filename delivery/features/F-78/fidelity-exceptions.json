@@ -152,7 +152,7 @@
     },
     {
       "what": "Disabled grey \"Mark complete\" until a proof and the confirmation are chosen; the board draws every input filled (state difference).",
-      "approved_by": "pending: not covered by the B36 answer, which signed the hold case only. This is the SCR-19 form state before proof and confirmation are chosen; under holds the build shows no button (round-2 UI review). Raised again with the coordinator."
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B36 follow-up): signed as a board state difference. The disabled submit before a proof and the tick is correct behaviour and stays; the fidelity run captures the ready state (proof chosen, tick set) to compare like with like."
     }
   ],
   "visual_waivers": []
