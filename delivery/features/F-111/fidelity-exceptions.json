@@ -5,399 +5,441 @@
       "name": "Tunde Bello · PMO",
       "category": "lane C frame",
       "reason": "The frame draws its own signed-in persona and header; the board's side panel holds the hidden write forms (below).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "PROJECTS / LAGOON HEALTH / ISSUES / ISS-0233",
       "category": "lane C frame",
       "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "link",
       "name": "PROJECTS",
       "category": "lane C frame",
       "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "link",
       "name": "LAGOON HEALTH",
       "category": "lane C frame",
       "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "■■■HIGH",
       "category": "option accepted (D-187)",
       "reason": "The board draws a bar glyph beside High; the page draws the live severity word in a tag (spec mapping: severity as sent, no glyph).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "■■■",
       "category": "option accepted (D-187)",
       "reason": "The board draws a bar glyph beside High; the page draws the live severity word in a tag (spec mapping: severity as sent, no glyph).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "FIX IN TESTING",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 1 Option A: the tag shows the live words (Open, In Progress, Resolved, Closed); the other words are banners and the work-state tag.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "09 Nov",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "complementary",
       "name": "",
       "category": "lane C frame",
       "reason": "The frame draws its own signed-in persona and header; the board's side panel holds the hidden write forms (below). (Entry name is \"\", the tool's key for the unnamed side panel; UI-2-1.)",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "OWNER FOLLOW-UP",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Update type",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Update",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Fix verified on 2 of 3 models; third model test tomorrow.",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "link",
       "name": "Post update",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "The owner can acknowledge, start and report progress. Severity, resolution and closing stay in the issue register (closing needs QA and the PM).",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Tola · PMO agent This issue is blocking go-live. I'll remind the owner if there's no update by 13 Nov.",
       "category": "hidden by spec",
       "reason": "Tola's note and steps have no live source (DC-3, D-182, D-185); the spec hides them.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Tola",
       "category": "hidden by spec",
       "reason": "Tola's note and steps have no live source (DC-3, D-182, D-185); the spec hides them.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "PROJECTS / LAGOON HEALTH / REGISTERS / ISSUES / ISS-0240",
       "category": "lane C frame",
       "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "OWNER NEEDED",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 1 Option A: the tag shows the live words (Open, In Progress, Resolved, Closed); the other words are banners and the work-state tag.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "tablist",
       "name": "Project",
       "category": "lane C frame",
       "reason": "The project tab bar belongs to lane C's frame (spec Q4: no change here); the work item page draws none.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "tab",
       "name": "Journey",
       "category": "lane C frame",
       "reason": "The project tab bar belongs to lane C's frame (spec Q4: no change here); the work item page draws none.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "tab",
       "name": "Milestones 4",
       "category": "lane C frame",
       "reason": "The project tab bar belongs to lane C's frame (spec Q4: no change here); the work item page draws none.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "tab",
       "name": "Documents 6",
       "category": "lane C frame",
       "reason": "The project tab bar belongs to lane C's frame (spec Q4: no change here); the work item page draws none.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "tab",
       "name": "Money",
       "category": "lane C frame",
       "reason": "The project tab bar belongs to lane C's frame (spec Q4: no change here); the work item page draws none.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "tab",
       "name": "Registers 6",
       "category": "lane C frame",
       "reason": "The project tab bar belongs to lane C's frame (spec Q4: no change here); the work item page draws none.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "tab",
       "name": "Actions 9",
       "category": "lane C frame",
       "reason": "The project tab bar belongs to lane C's frame (spec Q4: no change here); the work item page draws none.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Tola can't follow this issue up: it has no owner.",
       "category": "hidden by spec",
       "reason": "Tola's note and steps have no live source (DC-3, D-182, D-185); the spec hides them.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Set an owner in the issue register; follow-up starts straight away.",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "link",
       "name": "Set an owner",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "PROJECTS / LAGOON HEALTH / REGISTERS / ISSUES / ISS-0233",
       "category": "lane C frame",
       "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "NO RESPONSE · 3 DAYS",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 1 Option A: the tag shows the live words (Open, In Progress, Resolved, Closed); the other words are banners and the work-state tag.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Engineering (the owner) hasn't acknowledged ISS-0233 since Tola asked on 09 Nov. It blocks go-live.",
       "category": "hidden by spec",
       "reason": "Tola's note and steps have no live source (DC-3, D-182, D-185); the spec hides them.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Record the owner's reply when it comes, or raise an escalation.",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "link",
       "name": "Record a reply",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "link",
       "name": "Raise an escalation",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "FOLLOW-UP VERIFIED",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 1 Option A: the tag shows the live words (Open, In Progress, Resolved, Closed); the other words are banners and the work-state tag.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Tola's investigation and the owner's updates are recorded and verified. The issue itself is still open; closing it is done in the issue register by QA and the PM.",
       "category": "hidden by spec",
       "reason": "Tola's note and steps have no live source (DC-3, D-182, D-185); the spec hides them.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "When the fix is verified on all 3 models, close the issue in the register.",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "link",
       "name": "Open the issue register",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "link",
       "name": "← Registers",
       "category": "lane C frame",
       "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "11 Nov 16:40",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Owner update",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Fix is in testing on 3 older Android models.",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "10 Nov 09:15",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Owner acknowledged",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Engineering (recorded by PM) took it.",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "09 Nov 18:02",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Tola investigated",
       "category": "hidden by spec",
       "reason": "Tola's note and steps have no live source (DC-3, D-182, D-185); the spec hides them.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Found 14 failed logins, all Android 9 or older, since release 1.4.",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "link",
       "name": "Post an update",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 2 and Question 4: write controls and forms (owner update, record a reply, set an owner, raise an escalation, register link) are F-111B or SCR-50; hidden until then.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "link",
       "name": "← Project",
       "category": "lane C frame",
       "reason": "The breadcrumb and back link come from lane C's work item frame (spec Q4); the page shows its own crumb and \"← Queue\".",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "ISS-0240",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "ISS-0240 has no owner, so nobody can be chased.",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Engineering hasn't acknowledged since 09 Nov.",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "DONE",
       "category": "option accepted (D-187)",
       "reason": "Spec Question 1 Option A: the tag shows the live words (Open, In Progress, Resolved, Closed); the other words are banners and the work-state tag.",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "Updates recorded. Closing the issue is separate.",
       "category": "sample data",
       "reason": "The board's sample wording, dates and rows are fixture text; the page draws the live values it is served, and \"recorded by PM\" and Tola rows have no live source (spec Question 4).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
     },
     {
       "role": "text",
       "name": "NEXT",
       "category": "lane C frame",
       "reason": "SCR-30 no-owner desktop draws a NEXT card heading; the frame prints the work item's own next-step line instead. Accepted for the demo under D-202 (frame next step), replaced by F-95 (UI-2-2).",
-      "approved_by": "builder proposal, pending design engineer"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)"
+    }
+  ],
+  "visual_waivers": [
+    {
+      "board": "SCR-30-desktop",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)",
+      "reason": "Line screen under the standing waiver D-83: coverage 100% after exceptions, visual 74.8 (>= 70) on head 8a5c09fe. The remainder is the frame's facts list, the amber banner and the frame next-step line (accepted for the demo under D-202, replaced by F-95), and the hidden write side panel (F-111B)."
+    },
+    {
+      "board": "SCR-30-desktop-overdue",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)",
+      "reason": "Line screen under the standing waiver D-83: coverage 100% after exceptions, visual 77.6 (>= 70) on head 8a5c09fe. The remainder is the frame's facts list, the amber banner and the frame next-step line (accepted for the demo under D-202, replaced by F-95), and the hidden write side panel (F-111B)."
+    },
+    {
+      "board": "SCR-30-desktop-no-owner",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)",
+      "reason": "Line screen under the standing waiver D-83: coverage 100% after exceptions, visual 84.4 (>= 70) on head 8a5c09fe. The remainder is the frame's facts list, the amber banner and the frame next-step line (accepted for the demo under D-202, replaced by F-95), and the hidden write side panel (F-111B)."
+    },
+    {
+      "board": "SCR-30-desktop-verified",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)",
+      "reason": "Line screen under the standing waiver D-83: coverage 100% after exceptions, visual 83.6 (>= 70) on head 8a5c09fe. The remainder is the frame's facts list, the amber banner and the frame next-step line (accepted for the demo under D-202, replaced by F-95), and the hidden write side panel (F-111B)."
+    },
+    {
+      "board": "SCR-30-mobile",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)",
+      "reason": "Line screen under the standing waiver D-83: coverage 100% after exceptions, visual 76.5 (>= 70) on head 8a5c09fe. The remainder is the frame's facts list, the amber banner and the frame next-step line (accepted for the demo under D-202, replaced by F-95), and the hidden write side panel (F-111B)."
+    },
+    {
+      "board": "SCR-30-mobile-overdue",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)",
+      "reason": "Line screen under the standing waiver D-83: coverage 100% after exceptions, visual 76.9 (>= 70) on head 8a5c09fe. The remainder is the frame's facts list, the amber banner and the frame next-step line (accepted for the demo under D-202, replaced by F-95), and the hidden write side panel (F-111B)."
+    },
+    {
+      "board": "SCR-30-mobile-no-owner",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)",
+      "reason": "Line screen under the standing waiver D-83: coverage 100% after exceptions, visual 75.1 (>= 70) on head 8a5c09fe. The remainder is the frame's facts list, the amber banner and the frame next-step line (accepted for the demo under D-202, replaced by F-95), and the hidden write side panel (F-111B)."
+    },
+    {
+      "board": "SCR-30-mobile-verified",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-203 \"Sign all\" (LD-Q7, relayed by the main coordinator)",
+      "reason": "Line screen under the standing waiver D-83: coverage 100% after exceptions, visual 76.8 (>= 70) on head 8a5c09fe. The remainder is the frame's facts list, the amber banner and the frame next-step line (accepted for the demo under D-202, replaced by F-95), and the hidden write side panel (F-111B)."
     }
   ]
 }

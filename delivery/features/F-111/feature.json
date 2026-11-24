@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-111",
   "outcome": "The issue workspace shows a live project issue, read only (SCR-30 part 1)",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -106,11 +106,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead), round 2",
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -136,18 +138,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer",
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer",
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -164,7 +170,7 @@
         "delivery/features/F-111/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -181,11 +187,25 @@
           ],
           "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:59:07Z",
+          "refs": [
+            "`frontend/mock/issues.mjs:18` serves `django_url: /work/{id}/`; `tests/mock-issues-live.test.ts` (Ajv, strict, against the 1.26.0 contract) passes 12 of 12; allowlist entry carries the reason; the merge kept both sides in `next-config.test.ts` and `server.mjs`."
+          ],
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "mock django_url restored, allowlist entry, contract check"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`frontend/mock/issues.mjs:18` serves `django_url: /work/{id}/`; `tests/mock-issues-live.test.ts` (Ajv, strict, against the 1.26.0 contract) passes 12 of 12; allowlist entry carries the reason; the merge kept both sides in `next-config.test.ts` and `server.mjs`."
       ]
     },
     {
@@ -269,7 +289,7 @@
         "delivery/features/F-111/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -286,11 +306,25 @@
           ],
           "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:59:07Z",
+          "refs": [
+            "`frontend/src/features/issue-followup/model.ts:96` reads \"UAT (planned)\" and \"completion (planned)\" with the stage word, per spec line 43; no \"planned UAT\" duplication."
+          ],
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "planned wording"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`frontend/src/features/issue-followup/model.ts:96` reads \"UAT (planned)\" and \"completion (planned)\" with the stage word, per spec line 43; no \"planned UAT\" duplication."
       ]
     },
     {
@@ -306,7 +340,7 @@
         "delivery/features/F-111/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -323,11 +357,25 @@
           ],
           "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:59:07Z",
+          "refs": [
+            "`allowedActions()` is gone from `model.ts`; grep finds no caller in `src`, `tests` or `e2e`."
+          ],
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "`allowedActions()` removed"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`allowedActions()` is gone from `model.ts`; grep finds no caller in `src`, `tests` or `e2e`."
       ]
     },
     {
@@ -568,7 +616,7 @@
         "delivery/features/F-111/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -585,11 +633,25 @@
           ],
           "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:59:07Z",
+          "refs": [
+            "/work/5101 and the other states: Blocks (\"Go-live\") is the last row of the one facts block with Reference to Age. Still a vertical list, not the strip (see layout note)."
+          ],
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "Blocks moved into the facts"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "/work/5101 and the other states: Blocks (\"Go-live\") is the last row of the one facts block with Reference to Age. Still a vertical list, not the strip (see layout note)."
       ]
     },
     {
@@ -605,7 +667,7 @@
         "delivery/features/F-111/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -622,11 +684,25 @@
           ],
           "head": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:59:07Z",
+          "refs": [
+            "5101, 5102, 5107 Chasing rows read \"Asked \u00b7 Sent / Receipt recorded ...\" and \"Reminder \u00b7 Sent / No receipt yet\"; no \"Time unknown\"."
+          ],
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "\"Time unknown\" gone from Chasing"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "5101, 5102, 5107 Chasing rows read \"Asked \u00b7 Sent / Receipt recorded ...\" and \"Reminder \u00b7 Sent / No receipt yet\"; no \"Time unknown\"."
       ]
     },
     {
@@ -710,15 +786,26 @@
         "delivery/features/F-111/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T02:05:31Z",
           "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer (hunchoweb), relayed by the main coordinator",
+          "at": "2026-11-24T14:59:06Z",
+          "refs": [
+            "delivery/features/F-111/fidelity-exceptions.json"
+          ],
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+          "reason": "design engineer D-203 \"Sign all\" (LD-Q7): all 57 exceptions and eight D-83 visual waivers signed in fidelity-exceptions.json"
         }
-      ]
+      ],
+      "risk_authority": "D-203"
     },
     {
       "id": "UI-1-6",
@@ -733,13 +820,162 @@
         "delivery/features/F-111/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "ACCEPTED_RISK",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T02:05:31Z",
           "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        },
+        {
+          "action": "accept-risk",
+          "by": "design engineer (hunchoweb), relayed by the main coordinator",
+          "at": "2026-11-24T14:59:06Z",
+          "refs": [
+            "delivery/features/F-111/fidelity-exceptions.json"
+          ],
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+          "reason": "design engineer D-203 \"Sign all\" (LD-Q7): all 57 exceptions and eight D-83 visual waivers signed in fidelity-exceptions.json"
+        }
+      ],
+      "risk_authority": "D-203"
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`frontend/tests/next-config.test.ts:108` matches the allowlist with `file.endsWith('issues.mjs')`, a suffix match that would also admit any future file whose name ends in `issues.mjs`. Same pattern as the existing entries; tighten to a path match when next touched.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:59:07Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-1",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "spec",
+      "severity": "low",
+      "blocking": false,
+      "summary": "AC 9 and the Allowed actions row still say a control whose flag is true is drawn disabled. The build draws nothing, and the design engineer accepted this reading in round 1. Edit the spec text to say nothing is drawn until F-111B.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T14:59:07Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
+        }
+      ]
+    },
+    {
+      "id": "UX-2-2",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "5103 still shows the frame's \"Next step. Wait for the owner to update the issue.\" directly above the banner \"Choose an owner for this issue.\" These conflict. This is the frame next-step line accepted under D-202 (UI-1-4), so it is noted only.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T14:59:07Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "low",
+      "severity": "",
+      "blocking": false,
+      "summary": "design engineer | The \"(side panel)\" board item (role complementary, empty name) is missing on all four desktop boards and not matched by the exception file: the entry is named \"(side panel)\", but the tool's real name for it is the empty string. Change that entry's name to \"\" (it is hidden write forms, so keep it in the file). Not a page defect.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:59:07Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "low",
+      "severity": "",
+      "blocking": false,
+      "summary": "design engineer | SCR-30-desktop-no-owner draws a \"NEXT\" heading that is missing from the page and has no exception. The builder shows the no-owner sentence once and skips the Next section (UX-1-4 fix), so the heading and its Set an owner action are not drawn. Add an exception \"text / NEXT\" (category: UX-1-4, text shown once; Set an owner is already excepted). Alternatively draw a Next heading.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:59:07Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Acknowledged / Not acknowledged line is a heading-less bordered panel (for example \"Not acknowledged yet\" on 5102, \"Acknowledged ... Owner replied by email\" on 5101) between What has happened and Chasing. Reads as a stray box. Give it a heading or fold it into the facts.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:59:07Z",
+          "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
         }
       ]
     }
@@ -924,6 +1160,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-24T14:31:43Z",
+      "round": 2,
+      "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-24T14:59:17Z",
       "round": 2,
       "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
       "reason": null

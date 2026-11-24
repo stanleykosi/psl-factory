@@ -54,3 +54,6 @@ The design engineer, in chat (relayed by the main coordinator): "Ship simpler fo
 - Merged origin/main (F-85/F-86/F-72/F-62/F-125/F-113, D-199 workflow). Conflicts in `mock/server.mjs` (kept my issue route block and main's F-62 live-work line) and `tests/next-config.test.ts` (kept main's allowlist and comment, added `issues.mjs` and F-111). The adapter import is still one line in `LiveWorkItemView.tsx`.
 - `node --check mock/server.mjs` ok; `tsc --noEmit` clean; issue-followup, mock-issues-live and next-config tests: 37 passed.
 - `fidelity-exceptions.json`: 57 items, every missing board item of the eight round-1 reports is covered, all `approved_by` "builder proposal, pending design engineer".
+
+## Coordinator: D-203 (24 Nov)
+The design engineer, in chat, relayed by the main coordinator: LD-Q7 "Sign all". All 57 exceptions and the eight D-83 visual waivers (desktop 74.8, 77.6, 84.4 and 83.6; phone 76.5, 76.9, 75.1 and 76.8) are signed in `fidelity-exceptions.json`. UI-1-5 and UI-1-6 are closed as accepted under D-203.
