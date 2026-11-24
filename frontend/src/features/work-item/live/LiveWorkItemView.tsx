@@ -12,7 +12,6 @@ import { Breadcrumb, buttonClass, Button, Callout, EmptyState, formatDayTime, Se
 import { adapterFor, type LineContext, type PanelRef } from '@/features/workspace/adapter';
 import type { Section } from '@/features/workspace/labels';
 import { SectionView } from '@/features/workspace/Sections';
-import '@/features/forecast/forecastAdapter';
 import '@/features/workspace/weeklyReportAdapter';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
@@ -123,7 +122,7 @@ function Header({ item, base, tab }: { item: LiveWorkItem; base: string; tab: 'o
 /** One panel through its adapter; a key with no adapter has nothing to draw and is left out. */
 function PanelView({ panel, ctx, version }: { panel: PanelRef; ctx: LineContext; version: string }) {
   const adapter = adapterFor(panel.key);
-  const [state, setState] = useState<{ status: 'loading' } | { status: 'error' } | { status: 'ready'; sections: Section[]; readback: unknown }>({ status: 'loading' });
+  const [state, setState] = useState<{ status: 'loading' } | { status: 'error' } | { status: 'ready'; sections: Section[] }>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
   const { workId, caseId, revision, caseRevision } = ctx;
 
@@ -133,7 +132,7 @@ function PanelView({ panel, ctx, version }: { panel: PanelRef; ctx: LineContext;
     adapter
       .read(panel)
       .then((readback) => {
-        if (active) setState({ status: 'ready', sections: adapter.sections(readback, { workId, caseId, revision, caseRevision }), readback });
+        if (active) setState({ status: 'ready', sections: adapter.sections(readback, { workId, caseId, revision, caseRevision }) });
       })
       .catch(() => {
         if (active) setState({ status: 'error' });
@@ -168,7 +167,6 @@ function PanelView({ panel, ctx, version }: { panel: PanelRef; ctx: LineContext;
       {state.sections.map((section) => (
         <SectionView key={section.key} section={section} level={2} />
       ))}
-      {adapter.Extra && <adapter.Extra readback={state.readback} ctx={ctx} />}
     </>
   );
 }
