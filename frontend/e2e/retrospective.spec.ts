@@ -368,10 +368,22 @@ test.describe('phone 390 save bar', () => {
     await page.goto(PAGE('2001'));
     await ready(page);
     const save = page.getByRole('button', { name: 'Save retrospective' });
-    const box = (await save.boundingBox())!;
-    // the bar is on screen without scrolling, full width, at the bottom
-    expect(box.y + box.height).toBeGreaterThan(844 - 80);
-    expect(box.width).toBeGreaterThan(300);
+    const bar = page.locator('.retro__savebar');
+    const at = async () => (await bar.boundingBox())!;
+    // the bar is the last element of the form, after Decisions, as wide as the screen, at its foot
+    expect(await page.locator('form:has(.retro__savebar)').evaluate((form) => form.lastElementChild?.classList.contains('retro__savebar'))).toBe(true);
+    expect(await page.evaluate(() => { const form = document.querySelector('form:has(.retro__savebar)')!; const h = [...form.querySelectorAll('p')].find((p) => p.textContent === 'Decisions')!; return !!(h.compareDocumentPosition(document.querySelector('.retro__savebar')!) & Node.DOCUMENT_POSITION_FOLLOWING); })).toBe(true);
+    let box = await at();
+    expect(Math.abs(box.width - 390)).toBeLessThanOrEqual(1);
+    expect(Math.abs(box.x)).toBeLessThanOrEqual(1);
+    expect(Math.abs(box.y + box.height - 844)).toBeLessThanOrEqual(1);
+    // still pinned at the end of the page, and the last field is clear of it
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    box = await at();
+    expect(Math.abs(box.y + box.height - 844)).toBeLessThanOrEqual(1);
+    const add = (await page.getByRole('button', { name: 'Add a decision' }).boundingBox())!;
+    expect(add.y + add.height).toBeLessThanOrEqual(box.y);
+    await page.evaluate(() => window.scrollTo(0, 0));
     await field(page, 'What went well').fill('x');
     await choose(page, 'Notes file', 'Test plan v2');
     await page.getByRole('textbox', { name: 'Reference' }).fill('Retrospective 2026-11-21');
@@ -380,7 +392,8 @@ test.describe('phone 390 save bar', () => {
     await expect(message).toBeVisible();
     await message.scrollIntoViewIfNeeded();
     const m = (await message.boundingBox())!;
-    const b = (await save.boundingBox())!;
-    expect(m.y + m.height).toBeLessThanOrEqual(b.y);
+    expect(m.y + m.height).toBeLessThanOrEqual((await at()).y);
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    expect((await message.boundingBox())!.y).toBeLessThan((await at()).y);
   });
 });

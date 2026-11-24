@@ -150,13 +150,8 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
         </Callout>
       )}
 
-      <div className="retro__actions retro__savebar">
-        <Button type="submit" kind="primary" size="lg" className="retro__save" busy={busy} busyLabel="Saving…" disabled={disabled} reason={reasonText}>
-          {first ? 'Save retrospective' : 'Save new version'}
-        </Button>
-      </div>
 
-      <div className="retro__stack">
+      <div className="retro__stack retro__decisions">
         <p className="retro__heading">Decisions</p>
         {draft.decisions.map((row, at) => (
           <div key={row.key} className="retro__decision">
@@ -195,6 +190,11 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
         </span>
       </div>
 
+      <div className="retro__actions retro__savebar">
+        <Button type="submit" kind="primary" size="lg" className="retro__save" busy={busy} busyLabel="Saving…" disabled={disabled} reason={reasonText}>
+          {first ? 'Save retrospective' : 'Save new version'}
+        </Button>
+      </div>
     </form>
   );
 }
