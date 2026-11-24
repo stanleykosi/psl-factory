@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 9204573002b006e49df2b30cba9a82843745a545
+COMMIT: 67314929e5dd7b386dfc97494c7dbcfc0f87df9a
 REVIEWER: reviewer-ui
 AUTHORITY: UI design reviewer (lighter panel, D-180)
 
@@ -18,6 +18,7 @@ None.
 
 - UI-MERGE | verified | Merge delta 811465d8 into 98eb07bb, diff-only (no servers, no fidelity run). range-diff 8692cf87..eacdc704 against 811465d8..98eb07bb shows all six F-88 commits identical (=). Main added a "Verified outputs" link row under the My work heading (my-work.css .my-work__verified, MyWork.tsx) and a non-v7 row guard; it also added work-list, verified, exceptions and project-tab styles. None of these touch the Assign PM or Log RFP drawers, the shared Start work shell, global styles or the Unassigned tab rows. The new link sits above the tabs on token spacing with a min-height control token, so the Unassigned tab is unchanged apart from one extra line above it. The round-2 verdict stands.
 - UI-MERGE-2 | verified | Second merge delta, f355d339 into 92045730, diff-only. range-diff 811465d8..98eb07bb against f355d339..92045730 shows all six F-88 commits identical (=). F-64 and #115 changed only api/types.ts and the decide and decide-v7 features (decide.css and its components). None of these are in My work, the Start work shell, the Assign PM or Log RFP drawers, shared components or global styles, so the drawers and the Unassigned tab are unaffected. The round-2 verdict stands.
+- UI-MERGE-3 | verified | Third merge delta, 90748de3 into 67314929, diff-only. range-diff f355d339..92045730 against 90748de3..67314929 shows all six F-88 commits identical (=). F-61 changed the alerts feature (alerts.css and its components, api/alerts.ts) and one data-only edit in shell/AppShell.tsx (bell unread and need-count). No layout, CSS or shared-component change reaches the Assign PM or Log RFP drawers or the Unassigned tab. The round-2 verdict stands.
 
 ## Notes
 - On the 390 sheet the eyebrow is not shown; the phone sheet shows the title and "Step 2 of 2 · change line" from the shared Start work shell. Taste or shared-shell matter, not new in F-88.

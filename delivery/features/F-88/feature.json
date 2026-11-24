@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-88",
   "outcome": "Log a received RFP and assign its accountable PM through the live API",
-  "state": "PR_OPEN",
+  "state": "AWAITING_USER_APPROVAL",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -99,7 +99,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead), lighter panel D-180",
-      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
+      "snapshot_ref": "67314929e5dd7b386dfc97494c7dbcfc0f87df9a",
       "evidence_refs": [
         "delivery/features/F-88/round-2/review-technical.md"
       ]
@@ -108,7 +108,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "integrated QA (lighter D-180 panel)",
-      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
+      "snapshot_ref": "67314929e5dd7b386dfc97494c7dbcfc0f87df9a",
       "evidence_refs": [
         "delivery/features/F-88/round-2/review-qa.md"
       ]
@@ -117,7 +117,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "PMO delivery acceptance (delivery only; product acceptance, merge and release keep their own authorities)",
-      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
+      "snapshot_ref": "67314929e5dd7b386dfc97494c7dbcfc0f87df9a",
       "evidence_refs": [
         "delivery/features/F-88/round-2/acceptance-pmo.md"
       ]
@@ -128,7 +128,7 @@
       "status": "passed",
       "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
       "authority": "D-182, D-183, D-187 and D-198 (batch answers); D-184 (batch-approved board changes count as product acceptance)",
-      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
+      "snapshot_ref": "67314929e5dd7b386dfc97494c7dbcfc0f87df9a",
       "evidence_refs": [
         "delivery/features/F-88/round-2/acceptance-product.md"
       ]
@@ -137,7 +137,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "reviewer-ux (lighter panel, D-180)",
-      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
+      "snapshot_ref": "67314929e5dd7b386dfc97494c7dbcfc0f87df9a",
       "evidence_refs": [
         "delivery/features/F-88/round-2/review-ux.md"
       ]
@@ -146,7 +146,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer (lighter panel, D-180)",
-      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
+      "snapshot_ref": "67314929e5dd7b386dfc97494c7dbcfc0f87df9a",
       "evidence_refs": [
         "delivery/features/F-88/round-2/review-ui.md"
       ]
@@ -813,9 +813,9 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "f355d33908d66468082b5cadac12aaf6dd6b09ce",
+    "base_sha": "90748de39df2315efb0b8b1abe72604bb551af0b",
     "task_branch": "fe-connect-1-received-rfp-assign-pm",
-    "head_sha": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
+    "head_sha": "67314929e5dd7b386dfc97494c7dbcfc0f87df9a",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c2",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/110",
     "pr_number": 110,
@@ -823,8 +823,8 @@
     "designated_approver": null,
     "ci_status": "passed",
     "human_approval": "pending",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "merge_status": "merged",
+    "merge_sha": "397cdd497448f38e0ed88f20978adc4280975ebd",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/rfp-assign.spec.ts",
@@ -883,11 +883,11 @@
       "surface 'product-decision' always needs a human",
       "24 changed files exceed the auto-merge limit of 15"
     ],
-    "decided_for_head_sha": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
-    "merged_by": null,
+    "decided_for_head_sha": "67314929e5dd7b386dfc97494c7dbcfc0f87df9a",
+    "merged_by": "lane C coordinator (gh as hunchoweb), routine merge delegated under D-180/D-184, PR #110",
     "pre_merge_sync": {
-      "base_sha": null,
-      "checks_rerun": "not_run"
+      "base_sha": "90748de39df2315efb0b8b1abe72604bb551af0b",
+      "checks_rerun": "passed"
     }
   },
   "created_at": "2026-11-23T13:22:29Z",
@@ -964,6 +964,14 @@
       "at": "2026-11-24T14:18:40Z",
       "round": 2,
       "head": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-24T16:09:59Z",
+      "round": 2,
+      "head": "67314929e5dd7b386dfc97494c7dbcfc0f87df9a",
       "reason": null
     }
   ],

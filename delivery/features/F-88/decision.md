@@ -19,3 +19,6 @@ The change stays inside readiness's Scope and the spec's lanes. No Assumption is
 
 ## For the human
 Nothing is needed before merge. After merge, check the two drawers on port 3000. Files: /Users/Hunchoo/psl-factory-main/delivery/features/F-88/round-2/acceptance-product.md and round-2/review-qa.md.
+
+## Human approval
+Delegated under D-180 (routine: medium risk; product decisions batch-answered under D-184 from D-182, D-183, D-187 and D-198). Merged by the lane C coordinator as 397cdd49 at head 67314929 on 24 Nov 2026; listed in merge-batch.md under "Merged under delegation: confirm". git.human_approval is left for the confirmation.

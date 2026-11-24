@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 9204573002b006e49df2b30cba9a82843745a545
+COMMIT: 67314929e5dd7b386dfc97494c7dbcfc0f87df9a
 REVIEWER: reviewer-ux
 AUTHORITY: reviewer-ux (lighter panel, D-180)
 
@@ -11,6 +11,7 @@ AUTHORITY: reviewer-ux (lighter panel, D-180)
 
 - Merge delta (D-193, diff-only, no servers): range-diff 8692cf87..eacdc704 vs 811465d8..98eb07bb shows all 6 F-88 commits equal. Main touched only My work (F-125: live rows without a known kind now show the error state; a "Verified outputs" link under the heading, 44px target). Start work, Log RFP and Assign PM are untouched. The Unassigned tab reads its own list (UnassignedBids), not /work, so the F-125 guard does not reach it; the new link is hidden from no persona and does not change the tab order of F-88 controls. My earlier verdict stands.
 - Merge delta 2 (D-193, diff-only, no servers): range-diff 811465d8..98eb07bb vs f355d339..92045730 shows all 6 F-88 commits equal. Main added F-64 (decide desk under features/decide and decide-v7, mock live-decide, e2e decide specs) and checks.sh; none of it touches start-work, rfp, or My work, so Start work, Log RFP, the Unassigned tab and Assign PM are unchanged. Verdict stands.
+- Merge delta 3 (D-193, diff-only, no servers): range-diff f355d339..92045730 vs 90748de3..67314929 shows every F-88 commit equal. Main added F-61 alerts; outside the alerts feature it only changes the bell counts in shell/AppShell.tsx (3 lines). Start work, Log RFP, the Unassigned tab and Assign PM are untouched. Verdict stands.
 
 ## Findings
 - UX-2-1 | non-blocking | low | frontend | The chooser splits the lines into runs around the unavailable ones, and each run is a radio group with the same hidden legend "Lines you can start", so assistive tech hears the same group name twice. Expected a distinct name per run, or one group. `frontend/src/features/start-work/LineChooser.tsx:137`.
