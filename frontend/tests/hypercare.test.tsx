@@ -434,7 +434,8 @@ describe('no success before the re-read (AC 11, shared fix 2)', () => {
       release(json(200, item('W-3101.next')));
     });
     await waitFor(() => expect(ws().getByText('OBS-0013')).toBeTruthy());
-    expect(notices()).toContain('Done: Log an observation.');
+    // the toast renders after the re-read settles; wait for it rather than reading the same tick
+    await waitFor(() => expect(notices()).toContain('Done: Log an observation.'));
   });
 });
 
