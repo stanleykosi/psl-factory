@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-113",
   "outcome": "The Delivery tab shows the project's six delivery lines from the live overview",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -662,7 +662,7 @@
         "delivery/features/F-113/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -679,11 +679,27 @@
           ],
           "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T08:56:39Z",
+          "refs": [
+            "delivery/features/F-113/round-2/review-ui.md",
+            "delivery/features/F-113/fidelity-exceptions.json"
+          ],
+          "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+          "reason": "exceptions file written (round 2) and signed by the design engineer under D-195"
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "exceptions file written, pending design engineer"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "delivery/features/F-113/round-2/review-ui.md",
+        "delivery/features/F-113/fidelity-exceptions.json"
       ]
     },
     {
@@ -962,6 +978,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-24T03:17:39Z",
+      "round": 2,
+      "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-24T08:57:51Z",
       "round": 2,
       "head": "6636f0eb7b4ae40ec93e12d35c6e3a8b7b2d9753",
       "reason": null

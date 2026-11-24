@@ -63,7 +63,7 @@ A value outside this list shows "UNKNOWN" (neutral), never a guess.
 ### Row fields
 - Reference: `reference`, or empty (a dash is not drawn; leave the slot empty) when null.
 - Date: `updated_at` as "Updated 25 Mar" (day and short month, local format used by the other projects tabs). Null leaves it empty, never "today" or 0.
-- Link: when `work_id` and `work_url` are set the row is a link "Open" to `/work/{work_id}`. Build the href from `work_id`, not from `work_url`. Null `work_id` means no link.
+- Link: when `work_id` and `work_url` are set the row title is the link to `/work/{work_id}` (D-195). Build the href from `work_id`, not from `work_url`. Null `work_id` means no link.
 - `as_of` is shown once under the list as "Checked <date time>".
 - Nothing else is shown per row: no gate label ("RELEASE READY · 25 MAR"), no `detail` sentence except the closure reason below.
 
@@ -92,7 +92,7 @@ Add a mock answer for `delivery_overview` (project fixture `P-0101`): lines 1 to
 ## Acceptance criteria
 1. `GET /projects/{uuid}/delivery-overview` is requested exactly once when `/projects/{uuid}/delivery` opens — verify: network log on Next 4990 (proxied to Django 8030) shows one request, 200.
 2. Six rows appear in the order release, go-live, hypercare, handover, archive, closure, even when the fixture returns them shuffled — verify: unit test on `deliveryModel.ts` with shuffled lines; page shows 01 to 06 in order.
-3. A started row shows title, reference, state tag and "Updated <date>", and "Open" goes to `/work/{work_id}` — verify: mock 4991 project P-0101, click Open on Release gates, URL is `/work/<id>`.
+3. A started row shows title, reference, state tag and "Updated <date>", and the row title links to `/work/{work_id}` — verify: mock 4991 project P-0101, click the row title on Release gates, URL is `/work/<id>`. (Reworded under D-195: the separate "Open" link was removed to match the board.)
 4. A not-started row shows NOT STARTED with no reference, no date and no link, and no "0" or "Unknown" placeholder text in those slots — verify: second fixture project (all six `not_started`); page text contains no link in any row.
 5. Every `state` value in the contract maps to the table's tag text; an unlisted value shows UNKNOWN — verify: unit test over all 11 states plus null plus a made-up value.
 6. The page does not show "of 6 done", a DLV file number, gate wording such as "RELEASE READY", or a Tola check or "Next" sentence — verify: page text search on the P-0101 fixture finds none.

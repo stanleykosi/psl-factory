@@ -148,7 +148,7 @@
     "base_branch": "main",
     "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-connect-1-cash-forecast-reads",
-    "head_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
+    "head_sha": "9a110b1de3376866467c4c06531efca790478589",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d4",
     "pr_url": null,
     "pr_number": null,
@@ -159,7 +159,20 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/cash-forecast-live.spec.ts",
+      "frontend/mock/forecast-live.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/src/api/types.ts",
+      "frontend/src/features/forecast/ForecastExtra.tsx",
+      "frontend/src/features/forecast/forecastAdapter.ts",
+      "frontend/src/features/forecast/labels.ts",
+      "frontend/src/features/forecast/useForecastActuals.ts",
+      "frontend/src/features/work-item/live/LiveWorkItemView.tsx",
+      "frontend/src/features/workspace/adapter.ts",
+      "frontend/tests/forecast-live.test.tsx",
+      "frontend/tests/mock-forecast-live.test.ts"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
