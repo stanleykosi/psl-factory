@@ -137,7 +137,8 @@ const NO_FINANCE = 'Contract amounts, invoices and payments aren’t available t
 describe('Milestones (SCR-38) on the live reads', () => {
   it('P-0101: contract stages only, in the order sent, numbered where they have a position, two reads, no CHANGES column', async () => {
     await open('P-0101');
-    expect(reads().sort()).toEqual(['/milestones', '/money']);
+    // F-78: the third read is the Mark complete entry's options read
+    expect(reads().sort()).toEqual(['/milestones', '/milestones/completions', '/money']);
     expect(screen.getByRole('tab', { name: /^Milestones/ }).getAttribute('aria-selected')).toBe('true');
     expect([...document.querySelectorAll('thead th')].map((th) => th.textContent)).toEqual(['MILESTONE', 'CONTRACT AMOUNT', 'COMPLETION', 'INVOICE', 'PAID']);
     const rows = rowsOf();
@@ -406,7 +407,7 @@ describe('errors and paging', () => {
     expect(panel().querySelectorAll('.ptabs__completion')).toHaveLength(25);
     await press('Show more');
     await until(() => expect(panel().querySelectorAll('.ptabs__completion')).toHaveLength(27));
-    expect(reads().filter((r) => r.startsWith('/milestones'))).toEqual(['/milestones', '/milestones?page=2']);
+    expect(reads().filter((r) => r.startsWith('/milestones') && r !== '/milestones/completions')).toEqual(['/milestones', '/milestones?page=2']);
     expect(within(panel()).queryByRole('button', { name: 'Show more' })).toBeNull();
     await until(() => expect(document.activeElement).toBe(panel().querySelectorAll('.ptabs__completion')[25]));
   });
