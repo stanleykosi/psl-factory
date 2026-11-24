@@ -84,7 +84,7 @@ Lane C: worktrees `/Users/Hunchoo/psl-factory-worktrees/lane-c` and `lane-c2`; p
 | F-85 | DONE | e2f44656 (#101) | — |
 | F-86 | DONE | 3b7df6cc (#103) | — |
 | F-88 | merged, awaiting the design engineer's confirmation | 397cdd49 (#110) | Coordinator records human_approval, then APPROVED → MERGED → DONE (merge evidence already recorded). |
-| F-87 | AWAITING_USER_APPROVAL, all lenses PASS on the head | 3af9c1dc (#113) | Coordinator merges under D-207: `gh pr merge 113 --squash --match-head-commit 3af9c1dc75c5de9224ef957711b15cf7974c3aab`, then records the merge. If main moves first, sync once, set D-200, CI-gate, and get a quick technical re-check. |
+| F-87 | DONE (merged by the coordinator under D-207) | 1e78793f (#113) | — |
 | F-91 | IMPLEMENTING round 1, stacked on F-87 (lane-c2, branch fe-connect-1-work-item-tracking) | WIP commit (see round-1/build.md) | Finish the build, then merge main once F-87 is in (base becomes main), gate, then review (technical, UX, UI), QA, PMO. Spec: station track, six facts, agent card (LC-Q24 note), reference, paged history. |
 | F-95 | PLANNED | — | Lane D's four frame seams (F-111 round-2 build.md): per-section Try again, banner tone, line next-step override, link-capable fact. Readiness → spec → build after F-87 is on main. |
 | F-89 | READY (spec on 1.24.0; D-183 LC-Q14/Q16) | — | Build after F-87 is on main: weekly report review and correct via `weeklyReportAdapter.Actions`. |
