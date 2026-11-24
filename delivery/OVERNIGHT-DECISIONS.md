@@ -606,3 +606,4 @@ The weekly Claude limit was at 76%, and the design engineer wants a demo this we
   3. mapping the PMO Lead role to `milestone.complete` (LB-2).
   Synthetic policy is activated only in the local `psl_demo` database. Nothing touches Railway or production (D-196 is unchanged).
 - **Order:** finish the eight nearly-done features (F-75, F-78, F-119B, F-103, F-91, F-63, F-65, F-60), then the backend demo changes, then a demo walk on `app-live`.
+- **Amendment (same evening):** the D-193 re-checks after a main sync still happen, as cheap diff-only re-checks by each lens's own reviewer agent (Haiku or Sonnet). The coordinator may not re-point a reviewer's file at a new head without that reviewer checking it; the permission check refused that, correctly, as undermining oversight.
