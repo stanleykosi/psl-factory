@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-125",
   "outcome": "/my-work shows its existing error state on live rows instead of crashing",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -52,7 +52,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T02:56:34Z",
+      "seconds": 649.9,
+      "evidence_ref": "delivery/features/F-125/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -221,6 +234,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T02:56:49Z",
+      "round": 1,
+      "head": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "reason": null
     }
   ],
   "routing": {
@@ -237,9 +258,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "a0eb67073f7a675f3a1436fbd62b855b8a44161d"
   },
   "blocked": null
 }

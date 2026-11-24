@@ -27,6 +27,20 @@
       "category": "data wording",
       "reason": "The board's duration is replaced by the invitation's real `expires_at` (A-54: no universal 72 hours; D-182 Q5 a).",
       "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "text",
+      "name": "+234 802 *** 1190",
+      "category": "removed content",
+      "reason": "G-SCR17-5: the WhatsApp number value is left out with its field; no operation exists in 1.24.0 (D-182 Q2 a).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
+    },
+    {
+      "role": "text",
+      "name": "We'll send a code to check it. You can change this later.",
+      "category": "removed content",
+      "reason": "G-SCR17-5: the sentence about the WhatsApp code is left out with its field; no operation exists in 1.24.0 (D-182 Q2 a).",
+      "approved_by": "design engineer, 23 Nov 2026, D-182"
     }
   ]
 }
