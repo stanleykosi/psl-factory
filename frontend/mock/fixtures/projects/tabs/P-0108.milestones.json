@@ -1,0 +1,35 @@
+{
+  "case_id": "00000000-0000-4000-8000-000000000108",
+  "tab": "milestones",
+  "as_of": "2026-11-12T15:40:00Z",
+  "sections": [
+    {
+      "key": "completions",
+      "title": "Recorded completions",
+      "items": [
+        {
+          "title": "Kick-off",
+          "state": "Completion recorded",
+          "state_code": "recorded",
+          "detail": "Tunde Bello",
+          "at": "2026-10-27T10:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "reference": null,
+          "record_id": 3101,
+          "age_days": null,
+          "origin_meeting": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/milestones/",
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/milestones/3101"
+        }
+      ],
+      "page": 1,
+      "has_more": false,
+      "django_url": "/projects/00000000-0000-4000-8000-000000000108/milestones/",
+      "api_url": null,
+      "total": 1,
+      "counts": null
+    }
+  ]
+}
