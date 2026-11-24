@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-64",
   "outcome": "SCR-03 Decision desk on the live API: read the invoice or accounting review, claim it, record approve, return or reject",
-  "state": "IMPLEMENTING",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -123,15 +123,29 @@
       "at": "2026-11-24T09:57:41Z",
       "seconds": 1195.7,
       "evidence_ref": "delivery/features/F-64/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 2,
+      "commit": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T13:58:29Z",
+      "seconds": 204.3,
+      "evidence_ref": "delivery/features/F-64/round-2/checks.md"
     }
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical (lighter panel, D-180)",
+      "snapshot_ref": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "evidence_refs": [
+        "delivery/features/F-64/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -157,18 +171,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "evidence_refs": [
+        "delivery/features/F-64/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer",
+      "snapshot_ref": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "evidence_refs": [
+        "delivery/features/F-64/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -185,7 +203,7 @@
         "delivery/features/F-64/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -202,11 +220,25 @@
           ],
           "head": "ec939861a647cc4a8e62d795394263c13a08b2e6",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:59:48Z",
+          "refs": [
+            "Stale 1440 side-by-side: table with \"VERSION 2 \u00b7 REPLACED\" and \"VERSION 3 \u00b7 CURRENT\" headers, row headers, changed row tinted, board-like padding. The tool no longer lists the table or headers as missing."
+          ],
+          "head": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "fa18b1b4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Stale 1440 side-by-side: table with \"VERSION 2 \u00b7 REPLACED\" and \"VERSION 3 \u00b7 CURRENT\" headers, row headers, changed row tinted, board-like padding. The tool no longer lists the table or headers as missing."
       ]
     },
     {
@@ -222,7 +254,7 @@
         "delivery/features/F-64/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -239,11 +271,25 @@
           ],
           "head": "ec939861a647cc4a8e62d795394263c13a08b2e6",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:59:48Z",
+          "refs": [
+            "Stale 390 side-by-side: grey one-line \"Invoice v2 \u00b7 amount / REPLACED\", then one current card with Amount and To rows and unchanged/changed tags, as on the board. Mobile stale is 100% with exceptions. The mock's recipient and amount differ from the board sample; that is data."
+          ],
+          "head": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "fa18b1b4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Stale 390 side-by-side: grey one-line \"Invoice v2 \u00b7 amount / REPLACED\", then one current card with Amount and To rows and unchanged/changed tags, as on the board. Mobile stale is 100% with exceptions. The mock's recipient and amount differ from the board sample; that is data."
       ]
     },
     {
@@ -259,7 +305,7 @@
         "delivery/features/F-64/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -276,11 +322,25 @@
           ],
           "head": "ec939861a647cc4a8e62d795394263c13a08b2e6",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:59:48Z",
+          "refs": [
+            "Not-yours 390 side-by-side: the Waiting cell spans the remaining width, no white gap (visual 92.6). The Add comment bar is pinned at the bottom in the build, as on the board; the side-by-side capture was cropped at 844 high and does not show the pinned bar."
+          ],
+          "head": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "fa18b1b4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Not-yours 390 side-by-side: the Waiting cell spans the remaining width, no white gap (visual 92.6). The Add comment bar is pinned at the bottom in the build, as on the board; the side-by-side capture was cropped at 844 high and does not show the pinned bar."
       ]
     },
     {
@@ -296,7 +356,7 @@
         "delivery/features/F-64/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -313,11 +373,25 @@
           ],
           "head": "ec939861a647cc4a8e62d795394263c13a08b2e6",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:59:48Z",
+          "refs": [
+            "Build.md and the re-run: the done \"What happens next\" panel is an aside named by its heading; the tool no longer lists it."
+          ],
+          "head": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "fa18b1b4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "Build.md and the re-run: the done \"What happens next\" panel is an aside named by its heading; the tool no longer lists it."
       ]
     },
     {
@@ -333,7 +407,7 @@
         "delivery/features/F-64/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -350,11 +424,25 @@
           ],
           "head": "ec939861a647cc4a8e62d795394263c13a08b2e6",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T13:59:48Z",
+          "refs": [
+            "The duplicate sub-line is gone on stale and not-yours (title drawn once)."
+          ],
+          "head": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "fa18b1b4"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "The duplicate sub-line is gone on stale and not-yours (title drawn once)."
       ]
     },
     {
@@ -458,9 +546,9 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "8f562602199901411810dd1f845dfc39145cb323",
+    "base_sha": "156996538dc28d1fdd1412c93023d8fa69a51def",
     "task_branch": "fe-connect-1-decision-desk",
-    "head_sha": "ec939861a647cc4a8e62d795394263c13a08b2e6",
+    "head_sha": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a4",
     "pr_url": null,
     "pr_number": null,
@@ -472,204 +560,11 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
-      "BUILD-BACKLOG.json",
-      "BUILD-DECISIONS.md",
-      "BUILD-LOG.md",
-      "BUILD-STATE.md",
-      "BUILD-TESTS.md",
-      "HANDOFF.md",
-      "adapters/costing.py",
-      "adapters/finance.py",
-      "adapters/openrouter.py",
-      "adapters/payroll_spreadsheet.py",
-      "apps/agents/assistant.py",
-      "apps/agents/assistant_images.py",
-      "apps/agents/assistant_models.py",
-      "apps/agents/assistant_views.py",
-      "apps/agents/migrations/0023_assistant_images_and_finished_at.py",
-      "apps/agents/specialist_memory.py",
-      "apps/core/alerts.py",
-      "apps/core/factory_api/accounting.py",
-      "apps/core/factory_api/accounts.py",
-      "apps/core/factory_api/agents.py",
-      "apps/core/factory_api/archive_files.py",
-      "apps/core/factory_api/assets.py",
-      "apps/core/factory_api/bank_payments.py",
-      "apps/core/factory_api/bid_assignments.py",
-      "apps/core/factory_api/bid_pricing.py",
-      "apps/core/factory_api/bid_requirements.py",
-      "apps/core/factory_api/bid_responses.py",
-      "apps/core/factory_api/bid_submission.py",
-      "apps/core/factory_api/clients.py",
-      "apps/core/factory_api/closure.py",
-      "apps/core/factory_api/commands.py",
-      "apps/core/factory_api/commercial.py",
-      "apps/core/factory_api/delivery.py",
-      "apps/core/factory_api/documents.py",
-      "apps/core/factory_api/emergency.py",
-      "apps/core/factory_api/engagements.py",
-      "apps/core/factory_api/escalations.py",
-      "apps/core/factory_api/finance_operations.py",
-      "apps/core/factory_api/go_live_replies.py",
-      "apps/core/factory_api/hr_handoffs.py",
-      "apps/core/factory_api/hypercare.py",
-      "apps/core/factory_api/intake.py",
-      "apps/core/factory_api/issue_communications.py",
-      "apps/core/factory_api/issues.py",
-      "apps/core/factory_api/leadership_reports.py",
-      "apps/core/factory_api/ledger.py",
-      "apps/core/factory_api/meeting_records.py",
-      "apps/core/factory_api/minutes.py",
-      "apps/core/factory_api/notifications.py",
-      "apps/core/factory_api/payroll_sources.py",
-      "apps/core/factory_api/planning.py",
-      "apps/core/factory_api/project_operations.py",
-      "apps/core/factory_api/received_bids.py",
-      "apps/core/factory_api/reminders.py",
-      "apps/core/factory_api/role_work.py",
-      "apps/core/factory_api/schedule_work.py",
-      "apps/core/factory_api/setup.py",
-      "apps/core/factory_api/staff_access.py",
-      "apps/core/factory_api/support_replies.py",
-      "apps/core/factory_api/urls.py",
-      "apps/core/factory_api/weekly_reports.py",
-      "apps/core/factory_api/work.py",
-      "apps/core/factory_api/work_proofs.py",
-      "apps/core/factory_api/work_tracking.py",
-      "apps/core/factory_api/workspaces.py",
-      "apps/core/management/commands/work_approval_routes.py",
-      "apps/core/project_journey.py",
-      "apps/core/setup_rules.py",
-      "apps/core/workbench.py",
-      "apps/documents/delivery.py",
-      "apps/finance/bank_receipt_capture.py",
-      "apps/finance/bank_receipt_views.py",
-      "apps/finance/cash.py",
-      "apps/finance/forecast.py",
-      "apps/finance/month_end.py",
-      "apps/finance/payments_overview.py",
-      "apps/finance/payroll_working.py",
-      "apps/finance/performance_calculation.py",
-      "apps/finance/project_money.py",
-      "apps/finance/reminders.py",
-      "apps/identity/factory_access.py",
-      "apps/identity/intake.py",
-      "apps/identity/migrations/0021_current_pmo_direct_planning.py",
-      "apps/identity/role_work_views.py",
-      "apps/identity/staff_account_views.py",
-      "apps/pmo/approval_routing.py",
-      "apps/pmo/archive_transfer.py",
-      "apps/pmo/costing.py",
-      "apps/pmo/delivery.py",
-      "apps/pmo/delivery_closure.py",
-      "apps/pmo/emergencies.py",
-      "apps/pmo/emergency_models.py",
-      "apps/pmo/leadership_project_scope.py",
-      "apps/pmo/leadership_reporting.py",
-      "apps/pmo/migrations/0085_emergency_outcome_impact.py",
-      "apps/pmo/migrations/0086_leadership_period_owner.py",
-      "apps/pmo/models.py",
-      "apps/pmo/reporting.py",
-      "apps/pmo/rfp_followup.py",
-      "apps/pmo/rfp_fresh_intake.py",
-      "apps/pmo/rfp_submission_artifacts.py",
-      "apps/pmo/services.py",
-      "apps/policy/delegation_views.py",
-      "apps/workflows/factory.py",
-      "apps/workflows/factory_coordinator_views.py",
-      "apps/workflows/factory_delivery.py",
-      "apps/workflows/factory_emergency.py",
-      "apps/workflows/factory_engagement_views.py",
-      "apps/workflows/factory_execution.py",
-      "apps/workflows/factory_execution_views.py",
-      "apps/workflows/factory_fresh_bid_views.py",
-      "apps/workflows/factory_go_live_milestone.py",
-      "apps/workflows/factory_intake_views.py",
-      "apps/workflows/factory_invoice_review.py",
-      "apps/workflows/factory_leadership.py",
-      "apps/workflows/factory_models.py",
-      "apps/workflows/factory_receipt_recovery_views.py",
-      "apps/workflows/factory_rfp.py",
-      "apps/workflows/factory_rfp_adjustments.py",
-      "apps/workflows/factory_rfp_pricing.py",
-      "apps/workflows/factory_views.py",
-      "apps/workflows/migrations/0102_work_status_timestamp.py",
-      "apps/workflows/migrations/0103_leadership_department_scope.py",
-      "apps/workflows/migrations/0104_leadership_current_information.py",
-      "apps/workflows/services.py",
-      "config/urls.py",
-      "contracts/psl-factory.openapi.json",
-      "delivery/connect/README.md",
-      "delivery/connect/backend-answers-2026-11-23.md",
-      "delivery/connect/backend-answers-by-screen-2026-11-23.md",
-      "delivery/connect/backend-answers.md",
-      "docs/runbooks/railway.md",
-      "frontend/e2e/ceo.spec.ts",
       "frontend/e2e/decide-board.spec.ts",
       "frontend/e2e/decide.spec.ts",
-      "frontend/e2e/delivery-hypercare.spec.ts",
-      "frontend/e2e/delivery-release.spec.ts",
-      "frontend/e2e/demo.spec.ts",
-      "frontend/e2e/document-review.spec.ts",
-      "frontend/e2e/hr.spec.ts",
-      "frontend/e2e/project-tabs.spec.ts",
-      "frontend/e2e/projects.spec.ts",
-      "frontend/e2e/rfp-intake.spec.ts",
-      "frontend/e2e/start-work-ppe-forecast.spec.ts",
-      "frontend/e2e/start-work-proof.spec.ts",
-      "frontend/e2e/start-work.spec.ts",
-      "frontend/e2e/work-item-live.spec.ts",
-      "frontend/mock/demo-projects.mjs",
-      "frontend/mock/documents.mjs",
-      "frontend/mock/fixtures/E-PROJECT.json",
-      "frontend/mock/fixtures/documents/review-2901.json",
-      "frontend/mock/fixtures/documents/review-2901.publication.json",
-      "frontend/mock/fixtures/me.admin.json",
-      "frontend/mock/fixtures/me.ceo.json",
-      "frontend/mock/fixtures/me.finance_lead.json",
-      "frontend/mock/fixtures/me.hr.json",
-      "frontend/mock/fixtures/me.hr_lead.json",
-      "frontend/mock/fixtures/me.none.json",
-      "frontend/mock/fixtures/me.pm.json",
-      "frontend/mock/fixtures/me.pmo_lead.json",
-      "frontend/mock/fixtures/projects/P-0101.json",
-      "frontend/mock/fixtures/projects/P-0102.json",
-      "frontend/mock/fixtures/projects/P-0103.json",
-      "frontend/mock/fixtures/projects/P-0104.json",
-      "frontend/mock/fixtures/projects/P-0105.json",
-      "frontend/mock/fixtures/projects/P-0106.json",
-      "frontend/mock/fixtures/projects/P-0107.json",
-      "frontend/mock/fixtures/projects/P-0108.json",
-      "frontend/mock/fixtures/projects/P-0109.json",
-      "frontend/mock/fixtures/projects/P-0110.json",
-      "frontend/mock/fixtures/projects/P-0111.json",
-      "frontend/mock/fixtures/projects/P-0112.json",
-      "frontend/mock/fixtures/projects/P-0113.json",
-      "frontend/mock/fixtures/projects/P-0114.json",
-      "frontend/mock/fixtures/projects/P-0115.json",
-      "frontend/mock/fixtures/projects/P-0116.json",
-      "frontend/mock/fixtures/projects/P-0117.json",
-      "frontend/mock/fixtures/projects/P-0118.json",
-      "frontend/mock/fixtures/projects/P-0119.json",
-      "frontend/mock/fixtures/projects/P-0120.json",
-      "frontend/mock/fixtures/projects/P-0121.json",
-      "frontend/mock/fixtures/projects/P-0122.json",
-      "frontend/mock/fixtures/projects/P-0123.json",
-      "frontend/mock/fixtures/projects/P-0124.json",
-      "frontend/mock/fixtures/projects/P-0125.json",
-      "frontend/mock/fixtures/projects/list.json",
       "frontend/mock/live-decide.mjs",
-      "frontend/mock/project-tabs.mjs",
-      "frontend/mock/projects.mjs",
       "frontend/mock/server.mjs",
-      "frontend/mock/start-live.mjs",
-      "frontend/mock/work-live.mjs",
-      "frontend/src/api/live-schema.d.ts",
       "frontend/src/api/types.ts",
-      "frontend/src/app/work/[id]/(item)/history/page.tsx",
-      "frontend/src/app/work/[id]/(item)/layout.tsx",
-      "frontend/src/app/work/[id]/(item)/page.tsx",
-      "frontend/src/features/assistant/AssistantFrame.tsx",
       "frontend/src/features/decide-v7/DecideStates.tsx",
       "frontend/src/features/decide-v7/DecisionContent.tsx",
       "frontend/src/features/decide-v7/format.ts",
@@ -688,127 +583,11 @@
       "frontend/src/features/decide/presentation.ts",
       "frontend/src/features/decide/useDecision.ts",
       "frontend/src/features/decide/useLiveDecision.ts",
-      "frontend/src/features/documents/DocumentParts.tsx",
-      "frontend/src/features/documents/DocumentReview.tsx",
-      "frontend/src/features/documents/ReviewControls.tsx",
-      "frontend/src/features/documents/document-review.css",
-      "frontend/src/features/documents/documentModel.ts",
-      "frontend/src/features/documents/useDocument.ts",
-      "frontend/src/features/documents/useReview.ts",
-      "frontend/src/features/projects/DeliveryTab.tsx",
-      "frontend/src/features/projects/DocumentsTab.tsx",
-      "frontend/src/features/projects/MoreFooter.tsx",
-      "frontend/src/features/projects/ProjectJourney.tsx",
-      "frontend/src/features/projects/ProjectTabContent.tsx",
-      "frontend/src/features/projects/ProjectTabs.tsx",
-      "frontend/src/features/projects/ProjectsList.tsx",
-      "frontend/src/features/projects/model.ts",
-      "frontend/src/features/projects/projects.css",
-      "frontend/src/features/projects/useProject.ts",
-      "frontend/src/features/sign-in/sign-in.css",
-      "frontend/src/features/start-work/LineChooser.tsx",
-      "frontend/src/features/start-work/LineForm.tsx",
-      "frontend/src/features/start-work/ProjectPicker.tsx",
-      "frontend/src/features/start-work/RecordPicker.tsx",
-      "frontend/src/features/start-work/SourcePicker.tsx",
-      "frontend/src/features/start-work/StartUpload.tsx",
-      "frontend/src/features/start-work/StartWorkDrawer.tsx",
-      "frontend/src/features/start-work/intake.ts",
-      "frontend/src/features/start-work/labels.ts",
-      "frontend/src/features/start-work/lines/index.ts",
-      "frontend/src/features/start-work/lines/weeklyReport.tsx",
-      "frontend/src/features/start-work/start-work.css",
-      "frontend/src/features/start-work/types.ts",
-      "frontend/src/features/start-work/useStart.ts",
-      "frontend/src/features/start-work/useStartWork.ts",
-      "frontend/src/features/work-item/live/LiveWorkItemView.tsx",
-      "frontend/src/features/work-item/live/model.ts",
-      "frontend/src/features/work-item/live/useLiveHistory.ts",
-      "frontend/src/features/work-item/live/useLiveWorkItem.ts",
-      "frontend/src/features/work-item/work-item.css",
-      "frontend/src/features/workspace/EvidencePicker.tsx",
-      "frontend/src/features/workspace/adapter.ts",
-      "frontend/src/features/workspace/evidence.ts",
-      "frontend/src/features/workspace/weeklyReportAdapter.ts",
-      "frontend/src/styles/shell.css",
-      "frontend/tests/assistant.test.tsx",
-      "frontend/tests/ceo-mock.test.ts",
       "frontend/tests/decide-board.test.tsx",
       "frontend/tests/decide.test.tsx",
-      "frontend/tests/delivery-hypercare-mock.test.ts",
-      "frontend/tests/delivery-overview.test.tsx",
-      "frontend/tests/delivery-release-mock.test.ts",
-      "frontend/tests/demo-mock.test.ts",
-      "frontend/tests/destinations.ts",
-      "frontend/tests/document-review-model.test.ts",
-      "frontend/tests/document-review.test.tsx",
-      "frontend/tests/engagement-planning-mock.test.ts",
-      "frontend/tests/engagement-planning.test.tsx",
-      "frontend/tests/evidence.test.tsx",
-      "frontend/tests/issue-detail.test.tsx",
-      "frontend/tests/line-adapter.test.tsx",
-      "frontend/tests/live-work-item.test.tsx",
-      "frontend/tests/mock-contract.test.ts",
       "frontend/tests/mock-live-decide.test.ts",
-      "frontend/tests/mock-live-document-review.test.ts",
-      "frontend/tests/mock-live-projects.test.ts",
-      "frontend/tests/mock-projects.test.ts",
-      "frontend/tests/mock-work-live.test.ts",
-      "frontend/tests/money.test.tsx",
       "frontend/tests/next-config.test.ts",
-      "frontend/tests/no-success-callouts.test.ts",
-      "frontend/tests/project-tabs.test.tsx",
-      "frontend/tests/projects-journey.test.tsx",
-      "frontend/tests/projects-model.test.ts",
-      "frontend/tests/projects.test.tsx",
-      "frontend/tests/rfp-intake.test.tsx",
-      "frontend/tests/shell-live.test.tsx",
-      "frontend/tests/start-work-intake.test.ts",
-      "frontend/tests/start-work-live.test.tsx",
-      "frontend/tests/start-work-ppe-forecast.test.tsx",
-      "frontend/tests/start-work-prefill.test.tsx",
-      "frontend/tests/start-work-proof.test.tsx",
-      "frontend/tests/start-work.test.tsx",
-      "frontend/tests/support-handover-mock.test.ts",
-      "frontend/tests/weekly.test.tsx",
-      "handoffs/nextjs/README.md",
-      "handoffs/nextjs/live-schema.d.ts",
-      "handoffs/nextjs/psl-factory.openapi.json",
-      "legacy_ui/templates/base.html",
-      "legacy_ui/templates/design/month_end_overview.html",
-      "scripts/railway-worker.sh",
-      "tests/helpers.py",
-      "tests/settlement_helpers.py",
-      "tests/test_account_delivery.py",
-      "tests/test_bank_receipt_capture.py",
-      "tests/test_closure_preparation.py",
-      "tests/test_controlled_documents.py",
-      "tests/test_department_assistant.py",
-      "tests/test_design_reminders_staff.py",
-      "tests/test_factory_accounting_intake.py",
-      "tests/test_factory_api.py",
-      "tests/test_factory_delivery.py",
-      "tests/test_factory_emergency.py",
-      "tests/test_factory_go_live.py",
-      "tests/test_factory_handover.py",
-      "tests/test_factory_issues.py",
-      "tests/test_factory_rfp_pricing.py",
-      "tests/test_finance_performance.py",
-      "tests/test_frontend_connection.py",
-      "tests/test_go_live_milestone.py",
-      "tests/test_handover_publish.py",
-      "tests/test_issue_messages.py",
-      "tests/test_leadership_project_scope.py",
-      "tests/test_minutes_migration.py",
-      "tests/test_payroll_api_cutover.py",
-      "tests/test_railway_review_regressions.py",
-      "tests/test_railway_worker.py",
-      "tests/test_rfp_answers.py",
-      "tests/test_rfp_loss_proof.py",
-      "tests/test_role_scoped_work.py",
-      "tests/test_specialist_loop.py",
-      "tests/test_statement_ppe_migrations.py",
-      "tests/test_support_channel_workers.py"
+      "frontend/tests/no-success-callouts.test.ts"
     ]
   },
   "parallel_execution": {
@@ -884,6 +663,22 @@
       "round": 2,
       "head": "7318a3fc23558a60d535835417ef644a320f22bf",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T13:58:41Z",
+      "round": 2,
+      "head": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-24T13:59:49Z",
+      "round": 2,
+      "head": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "reason": null
     }
   ],
   "routing": {
@@ -900,9 +695,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 1,
-    "verdict": "FAIL",
-    "commit": "ec939861a647cc4a8e62d795394263c13a08b2e6"
+    "attempts": 2,
+    "verdict": "PASS",
+    "commit": "9b921ea707826cf3528dcc32da1c10f17e26ed90"
   },
   "blocked": null
 }

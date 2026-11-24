@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-61",
   "outcome": "Alerts list, drawer and alert settings on the live API",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -81,11 +81,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "reviewer-technical",
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -111,28 +113,81 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "reviewer-ux",
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (lighter panel, D-180)",
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer, round 1 (lighter panel, D-180)",
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-security.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "A 422 `action_unavailable` on a stale revision shows the server text only, with no Reload. The draft keeps the old revision, so every Save fails until the person reloads the page by hand. The kind is `invalid` (src/api/errors.ts:25), so AlertSettingsPage.tsx:87 skips the stale branch at line 86. Expected, once backend LA-4 confirms 422 as intended: treat `e.code === 'action_unavailable'` like `stale` and show the Reload notice. Add a unit test for it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:54:22Z",
+          "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "owner": "backend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "LA-4: the contract's 409 `stale` for `POST /me/alert-preferences` differs from the live 422 `action_unavailable`. Backend or integration should confirm which one is meant and align the spec or the API.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T13:54:22Z",
+          "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -266,6 +321,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-24T13:53:07Z",
+      "round": 1,
+      "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-24T13:54:35Z",
       "round": 1,
       "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
       "reason": null

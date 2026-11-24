@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: ec939861a647cc4a8e62d795394263c13a08b2e6
+COMMIT: 9b921ea707826cf3528dcc32da1c10f17e26ed90
 BUILDER: builder
 LANE: full
 
@@ -18,6 +18,9 @@ LANE: full
 - UI-1-4 | fa18b1b4 | the done "What happens next" panel is an aside with its heading as the name (complementary landmark); the tool no longer lists it
 - UI-1-5 | fa18b1b4 | the sub-line is left out when the work title equals the task label; it still shows when they differ
 - (contrast, from my own e2e run) | ec939861 | phone replaced line: opacity removed so it passes axe contrast
+
+## Merge of origin/main 15699653 (F-62, F-125, F-72, D-199)
+One conflict, mock/server.mjs: both hooks kept. F-64's decide hook runs first and owns work ids 17 to 19, the task routes and queue=decisions; F-62's work-list item hook owns only its own ids (301 to 320, 401 to 420); lane C's work-live handler keeps every other integer id. No id overlaps. Checked singly after the merge: tsc clean; decide, mock-live-decide, exceptions-mock, work-item, live-work-item and mock-work-live tests 163 passed. No full suite (D-199, the gate runs on GitHub Actions).
 
 ## Not done
 - UI-1-6 (extra elements: "0 / 2000" counter, "Open the work item" under the comment, shorter footnote): left as is. Removing the counter drops the limit cue and the other two are copy the spec added; for the design engineer to confirm.
