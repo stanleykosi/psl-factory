@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-75",
   "outcome": "Registers and Actions tabs read the live sectioned project tab",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -128,11 +128,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa-reviewer",
+      "authority": "integrated QA reviewer",
+      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -144,11 +146,13 @@
     "product_acceptance": {
       "required": true,
       "assessment_reason": "delivery/features/F-75/readiness.md",
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "design engineer (hunchoweb), recorded by the lane B coordinator; B35 signed by the main coordinator under D-207",
+      "authority": "accepted in batch, delegated under D-184 (D-182 \"Hide, accept all recs\", 23 Nov 2026); fidelity sign-offs approved by the coordinator under D-207 (B35, 24 Nov 2026)",
+      "snapshot_ref": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "evidence_refs": [
+        "delivery/features/F-75/round-2/acceptance-product.md"
+      ]
     },
     "ux": {
       "status": "passed",
@@ -834,6 +838,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-24T16:11:48Z",
+      "round": 2,
+      "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-24T16:24:48Z",
       "round": 2,
       "head": "286b41057cb2df45c6d577f7d2f4a203d8dd7fa5",
       "reason": null
