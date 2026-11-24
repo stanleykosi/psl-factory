@@ -144,7 +144,7 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       await loaded(page);
       const main = page.locator('main#main');
       await expect(main.getByText('Actual 6 · Out')).toBeVisible();
-      await expect(main.getByText('Actual 5 · In')).toBeVisible();
+      await expect(main.getByText('Actual 5 · In').first()).toBeVisible();
       await expect(main.getByText('Not verified')).toBeVisible();
       await expect(main.getByText('Showing the first rows only. The rest isn’t available here.')).toBeVisible();
       await expect(main.getByText(/show more/i)).toHaveCount(0);
