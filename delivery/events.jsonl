@@ -5408,3 +5408,7 @@
 {"at":"2026-11-24T21:30:51Z","feature":"F-78","round":4,"kind":"fields","fields":{"git.pr_number":120}}
 {"at":"2026-11-24T21:30:51Z","feature":"F-78","round":4,"kind":"fields","fields":{"git.merge_status":"merged"}}
 {"at":"2026-11-24T21:30:51Z","feature":"F-78","round":4,"kind":"fields","fields":{"git.merge_sha":"f7aa20574a162a7777750a4c76c2bf527fb47c1e"}}
+{"at":"2026-11-24T21:30:52Z","feature":"F-78","round":4,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa-reviewer","commit":"86e1a6cfc20e","written_at":"2026-11-24T21:29:51Z"}
+{"at":"2026-11-24T21:34:59Z","feature":"F-119B","round":2,"kind":"fields","fields":{"git.pr_number":119}}
+{"at":"2026-11-24T21:34:59Z","feature":"F-119B","round":2,"kind":"fields","fields":{"git.merge_status":"merged"}}
+{"at":"2026-11-24T21:34:59Z","feature":"F-119B","round":2,"kind":"fields","fields":{"git.merge_sha":"eddc1dc1d8f950d555ffbdf298b66b8f716e44c4"}}
