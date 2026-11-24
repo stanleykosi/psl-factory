@@ -34,6 +34,20 @@ Still missing after exceptions, by class:
 - UI-2-2 | non-blocking | low | design engineer (exception or waiver) | UI-1-5, carried over: amounts read "NGN 3,000,000.00" where the boards draw "₦3,000,000". The spec requires the currency code from the item, so this is intended. It needs an approved exception; there is no way to match the board without dropping the code. Raising it again in the exceptions file closes the 6 elements.
 - UI-2-3 | non-blocking | medium | design engineer (exception or waiver) | Visual score is 79.2 to 82.7 on all six runs (needs 90). It stays under 90 because of accepted hides (Chidi card, report title, "Mark milestone N complete") and spec-approved additions the boards do not draw: INVOICE and PAID columns, Recorded completions and Proof buttons, non-stage rows, Due lines, the limited callout, plus live rows in place of the sample ones. My side-by-side reading found no remaining styling difference of the build's own (type, colour, borders, table and card surfaces, header all match). Waive the 90 for this feature, or redraw the boards to the live shape.
 
+## Re-score with the signed exceptions (D-202)
+Re-run once on the same head and server, with the 46-entry `fidelity-exceptions.json` (output in scratchpad `fid3/<board>-<width>/`, `fid3/scores.txt` not written; table from `fid3/out.txt`). Coverage with exceptions is 100% on all six runs and nothing is unexcepted. The tool still prints FAIL because it does not read `visual_waivers`; visual is waived in the signed file for each run.
+
+| Board | Width | Coverage with exceptions | Visual | Visual waived |
+|---|---|---|---|---|
+| SCR-12-desktop | 1440 | 100% | 80.8 | yes (D-202) |
+| SCR-12-mobile | 390 | 100% | 82.0 | yes |
+| SCR-38-desktop | 1440 | 100% | 81.4 | yes |
+| SCR-38-desktop-changed | 1440 | 100% | 82.7 | yes |
+| SCR-38-mobile | 390 | 100% | 79.2 | yes |
+| SCR-38-mobile-changed | 390 | 100% | 81.4 | yes |
+
+UI-2-1, UI-2-2 and UI-2-3 are settled by the design engineer's signature and are closed. The Notes above stand.
+
 ## Notes
 - Phone Money cards show "Unknown" in the monospace face and larger than on desktop (bold sans). It is still the same brown and is the only Unknown style on that screen; the Milestones phone cards use bold sans. Taste, not blocking; worth aligning if the design engineer cares.
 - Phone Money "Tap an amount to see where it comes from" is plain text where the board draws a link. It does nothing as a link on the board either way (the sheet opens from the amounts). Offered for the exceptions file with UI-2-1.
@@ -44,3 +58,4 @@ Still missing after exceptions, by class:
 - UI-1-2 | verified | money-ok-1440.png and ms-ok-1440.png: "NGN 2,000,000.00", "NGN 500,000.00" and "NGN 250,000.00" each stay whole; Paid and Owed break only between the two. Same at 390 (money-ok-390.png, ms-ok-390.png).
 - UI-1-3 | verified | money-ok-1440.png: the panel shows the header "Where a figure comes from" and "Choose an amount to see where it comes from." as its body, with no empty box. With a figure chosen (money-figure-1440.png) the panel shows the source list.
 - UI-1-4 | verified | ms-ok-1440.png and the phone cards (fid2/SCR-38-mobile/side-by-side.png): "Unknown" is bold brown text, no yellow tag, same as Money; Paid Unknown, Owed Unknown and "+ the change · change amount Unknown" all match.
+- UI-1-1 | verified | fid3 re-run on cfc3c462 with the signed 46-entry exceptions file: coverage with exceptions 100% on all six runs, 0 unexcepted; visual 79.2 to 82.7 waived per run under D-202 (`visual_waivers`). Side-by-side reading found no difference of the build's own.

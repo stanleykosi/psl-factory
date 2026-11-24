@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-71",
   "outcome": "Money and Milestones tabs on the live project API",
-  "state": "IN_REVIEW",
+  "state": "INTEGRATED_QA",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -144,11 +144,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead), lighter panel (D-180)",
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -174,18 +176,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer (lighter panel, D-180)",
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "ui-reviewer",
+      "authority": "UI design reviewer",
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -392,7 +398,7 @@
         "delivery/features/F-71/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -409,11 +415,25 @@
           ],
           "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:27:25Z",
+          "refs": [
+            "MoneyTab.tsx adds a document keydown listener only when `phone && selectedKey !== undefined`, calls `router.replace` to the Money path, and removes the listener on cleanup. The test blurs focus, fires Escape on the body and expects the replace call. Running alongside the sheet's own handler is harmless; both do the same replace."
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cfc3c462"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "MoneyTab.tsx adds a document keydown listener only when `phone && selectedKey !== undefined`, calls `router.replace` to the Money path, and removes the listener on cleanup. The test blurs focus, fires Escape on the body and expects the replace call. Running alongside the sheet's own handler is harmless; both do the same replace."
       ]
     },
     {
@@ -429,7 +449,7 @@
         "delivery/features/F-71/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -446,11 +466,25 @@
           ],
           "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:27:25Z",
+          "refs": [
+            "A visually hidden h2 on Money (\"Billing by contract stage\", desktop and phone) and on Milestones (\"Contract milestones\", only when stages exist). The tests find both by level 2 role and name, plus \"Recorded completions\". Heading order is sound."
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cfc3c462"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "A visually hidden h2 on Money (\"Billing by contract stage\", desktop and phone) and on Milestones (\"Contract milestones\", only when stages exist). The tests find both by level 2 role and name, plus \"Recorded completions\". Heading order is sound."
       ]
     },
     {
@@ -466,7 +500,7 @@
         "delivery/features/F-71/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -483,11 +517,25 @@
           ],
           "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:27:25Z",
+          "refs": [
+            "`aria-expanded` is false before any press and true on the pressed row only after the proof loads; other rows stay false. The test covers both."
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cfc3c462"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`aria-expanded` is false before any press and true on the pressed row only after the proof loads; other rows stay false. The test covers both."
       ]
     },
     {
@@ -503,7 +551,7 @@
         "delivery/features/F-71/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -520,11 +568,25 @@
           ],
           "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T14:27:25Z",
+          "refs": [
+            "fid3 re-run on cfc3c462 with the signed 46-entry exceptions file: coverage with exceptions 100% on all six runs, 0 unexcepted; visual 79.2 to 82.7 waived per run under D-202 (`visual_waivers`). Side-by-side reading found no difference of the build's own."
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "not code"
+      ],
+      "verified_by": "ui-reviewer",
+      "verification_refs": [
+        "fid3 re-run on cfc3c462 with the signed 46-entry exceptions file: coverage with exceptions 100% on all six runs, 0 unexcepted; visual 79.2 to 82.7 waived per run under D-202 (`visual_waivers`). Side-by-side reading found no difference of the build's own."
       ]
     },
     {
@@ -540,7 +602,7 @@
         "delivery/features/F-71/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -557,11 +619,25 @@
           ],
           "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:27:25Z",
+          "refs": [
+            "MoneyCells.tsx wraps each of Paid and Owed in `.money__fig`; money.css sets `white-space: nowrap` on `.money__fig`, `.money__amountlink` and `.money__amount`. The test checks the fig text (`Paid NGN 2,000,000.00 \u00b7`, `Owed NGN 500,000.00`) and the CSS rule. The Unknown row still reads `Paid Unknown \u00b7 Owed Unknown` with no zero pattern. Layout itself not checked in a browser (builder states this too)."
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cfc3c462"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "MoneyCells.tsx wraps each of Paid and Owed in `.money__fig`; money.css sets `white-space: nowrap` on `.money__fig`, `.money__amountlink` and `.money__amount`. The test checks the fig text (`Paid NGN 2,000,000.00 \u00b7`, `Owed NGN 500,000.00`) and the CSS rule. The Unknown row still reads `Paid Unknown \u00b7 Owed Unknown` with no zero pattern. Layout itself not checked in a browser (builder states this too)."
       ]
     },
     {
@@ -577,7 +653,7 @@
         "delivery/features/F-71/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -594,11 +670,25 @@
           ],
           "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:27:25Z",
+          "refs": [
+            "The idle Explanation renders the prompt as the panel body and the head is \"Where a figure comes from\"; the test asserts both and that the body text is exactly the prompt. No empty box remains."
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cfc3c462"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The idle Explanation renders the prompt as the panel body and the head is \"Where a figure comes from\"; the test asserts both and that the body text is exactly the prompt. No empty box remains."
       ]
     },
     {
@@ -614,7 +704,7 @@
         "delivery/features/F-71/round-1/review-ui.md"
       ],
       "raised_by": "ui-reviewer",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -631,11 +721,25 @@
           ],
           "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:27:25Z",
+          "refs": [
+            "project-tabs.css restyles `.psl-unknown` inside `.ptabs__ms` and `.ptabs__card` to bold plain text. The test asserts the text is exactly \"Unknown\", is not inside `.psl-tag`, and the CSS rule exists. The rule only changes style, not content."
+          ],
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "cfc3c462"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "project-tabs.css restyles `.psl-unknown` inside `.ptabs__ms` and `.ptabs__card` to bold plain text. The test asserts the text is exactly \"Unknown\", is not inside `.psl-tag`, and the CSS rule exists. The rule only changes style, not content."
       ]
     },
     {
@@ -658,6 +762,98 @@
           "by": "ui-reviewer",
           "at": "2026-11-24T13:48:49Z",
           "head": "3df5462d49c464d12d789486760215fb1df62304"
+        }
+      ]
+    },
+    {
+      "id": "TECH-2-1",
+      "round": 2,
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "MilestonesTab.tsx: aria-expanded is true once a proof has loaded or failed (any state other than loading). It is false while loading. The state says \"shown\", not \"open\", which matches the test. A second press re-reads rather than collapsing; consistent with the round 1 design, but the button then reports expanded while pressing it does not collapse. Consider a follow-up if the proof gets a hide action.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:27:25Z",
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "owner": "design engineer (exception or waiver)",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Board sample values and wording that live data cannot carry are still counted missing: the (a) list above, 15 to 20 elements per run. Approve them as exceptions in `delivery/features/F-71/fidelity-exceptions.json` (the file matches by role and name, so each exact board text needs its own entry), or accept them as sample content. Coverage is 100% only once they are listed. Spec-recorded copy differences that are not in the file yet: \"Not yet\" against \"Not completed\" (spec line 197), \"Done 27 Oct \u00b7 proof\" as \"Done <date>\" plus Proof button (spec 21, D-185), and the lead sentence (spec Conflicts 3). Reports: `fid2/*/report.json` under `coverage.missing`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T14:27:25Z",
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "owner": "design engineer (exception or waiver)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "UI-1-5, carried over: amounts read \"NGN 3,000,000.00\" where the boards draw \"\u20a63,000,000\". The spec requires the currency code from the item, so this is intended. It needs an approved exception; there is no way to match the board without dropping the code. Raising it again in the exceptions file closes the 6 elements.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T14:27:25Z",
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-3",
+      "round": 2,
+      "snapshot_ref": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "owner": "design engineer (exception or waiver)",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Visual score is 79.2 to 82.7 on all six runs (needs 90). It stays under 90 because of accepted hides (Chidi card, report title, \"Mark milestone N complete\") and spec-approved additions the boards do not draw: INVOICE and PAID columns, Recorded completions and Proof buttons, non-stage rows, Due lines, the limited callout, plus live rows in place of the sample ones. My side-by-side reading found no remaining styling difference of the build's own (type, colour, borders, table and card surfaces, header all match). Waive the 90 for this feature, or redraw the boards to the live shape.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-71/round-2/review-ui.md"
+      ],
+      "raised_by": "ui-reviewer",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "ui-reviewer",
+          "at": "2026-11-24T14:27:25Z",
+          "head": "cfc3c462382095787d1edf2bbda089f7140d28cc"
         }
       ]
     }
@@ -880,6 +1076,14 @@
       "from": "IMPLEMENTING",
       "to": "IN_REVIEW",
       "at": "2026-11-24T14:01:52Z",
+      "round": 2,
+      "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "INTEGRATED_QA",
+      "at": "2026-11-24T14:27:25Z",
       "round": 2,
       "head": "cfc3c462382095787d1edf2bbda089f7140d28cc",
       "reason": null

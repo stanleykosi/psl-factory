@@ -1,0 +1,1260 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T14:25:53.199Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-38-desktop-changed.dc.html",
+  "boardName": "SCR-38-desktop-changed.dc.html",
+  "pageUrl": "http://localhost:4970/projects/P-0101/milestones",
+  "viewport": {
+    "width": 1440,
+    "height": 860
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-71/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "Every board item is on the page or approved as an exception (100%).",
+    "Visual match 82.7 is below 90.",
+    "8 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 78.6,
+    "coverageWithExceptions": 100,
+    "visual": 82.7
+  },
+  "visual": {
+    "score": 82.7,
+    "allCellsScore": 88,
+    "width": 1440,
+    "height": 860,
+    "boardHeight": 860,
+    "pageHeight": 1201,
+    "cell": 12,
+    "contentCells": 6001,
+    "mismatchedCells": 1038
+  },
+  "coverage": {
+    "total": 42,
+    "found": 33,
+    "coverage": 78.6,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 80,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 516,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 539
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1144
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS / LAGOON HEALTH",
+        "pageName": "PROJECTS / LAGOON HEALTH",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "PROJECTS",
+        "pageName": "PROJECTS",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 86,
+          "w": 61,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Lagoon Health · patient app",
+        "pageName": "Lagoon Health · patient app",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 34px on the board, 36px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 1264,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 123,
+          "w": 1264,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PM Tunde Bello · Route A from RFP-0031",
+        "pageName": "PM Tunde Bello · Route A",
+        "pageRole": "text",
+        "similarity": 85,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 176,
+          "w": 1264,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 250,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "pageName": "Project",
+        "pageRole": "tablist",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 214,
+          "w": 654,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 182,
+          "w": 550,
+          "h": 48
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "pageName": "Journey",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 216,
+          "w": 86,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 184,
+          "w": 86,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones 4",
+        "pageName": "Milestones",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 176,
+          "y": 216,
+          "w": 129,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 176,
+          "y": 184,
+          "w": 103,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents 6",
+        "pageName": "Documents",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 305,
+          "y": 216,
+          "w": 133,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 279,
+          "y": 184,
+          "w": 107,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "pageName": "Money",
+        "pageRole": "tab",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 438,
+          "y": 216,
+          "w": 76,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 386,
+          "y": 184,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers 6",
+        "pageName": "Registers",
+        "pageRole": "tab",
+        "similarity": 93,
+        "looks": [],
+        "boardBox": {
+          "x": 514,
+          "y": 216,
+          "w": 120,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 462,
+          "y": 184,
+          "w": 94,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Actions 9",
+        "pageName": "Actions",
+        "pageRole": "tab",
+        "similarity": 91,
+        "looks": [],
+        "boardBox": {
+          "x": 634,
+          "y": 216,
+          "w": 108,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 556,
+          "y": 184,
+          "w": 82,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Table",
+        "role": "table",
+        "name": "",
+        "pageName": "Milestones",
+        "pageRole": "table",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 284,
+          "w": 1260,
+          "h": 192
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 290,
+          "w": 1260,
+          "h": 352
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "MILESTONE",
+        "pageName": "MILESTONE",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 90,
+          "y": 284,
+          "w": 154,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 290,
+          "w": 139,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "CONTRACT AMOUNT",
+        "pageName": "CONTRACT AMOUNT",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 244,
+          "y": 284,
+          "w": 735,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 229,
+          "y": 290,
+          "w": 252,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "COMPLETION",
+        "pageName": "COMPLETION",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 979,
+          "y": 284,
+          "w": 135,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 481,
+          "y": 290,
+          "w": 252,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "CHANGES",
+        "pageName": "CHANGES",
+        "pageRole": "columnheader",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1114,
+          "y": 284,
+          "w": 236,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 1148,
+          "y": 290,
+          "w": 202,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "1 · Kick-off",
+        "pageName": "1 · Kick-off",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 700 on the page"
+        ],
+        "boardBox": {
+          "x": 90,
+          "y": 319,
+          "w": 154,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 328,
+          "w": 139,
+          "h": 115
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦3,000,000.00",
+        "pageName": "NGN 3,000,000.00",
+        "pageRole": "text",
+        "similarity": 86,
+        "looks": [
+          "capitals on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 244,
+          "y": 319,
+          "w": 735,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 229,
+          "y": 328,
+          "w": 252,
+          "h": 115
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1114,
+          "y": 319,
+          "w": 236,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1148,
+          "y": 443,
+          "w": 202,
+          "h": 54
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "2 · UAT sign-off",
+        "pageName": "2 · UAT sign-off",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 700 on the page"
+        ],
+        "boardBox": {
+          "x": 90,
+          "y": 358,
+          "w": 154,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 443,
+          "w": 139,
+          "h": 54
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000.00",
+        "pageName": "NGN 4,250,000.00",
+        "pageRole": "text",
+        "similarity": 89,
+        "looks": [
+          "capitals on the page, not on the board"
+        ],
+        "boardBox": {
+          "x": 244,
+          "y": 358,
+          "w": 735,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 229,
+          "y": 443,
+          "w": 252,
+          "h": 54
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1114,
+          "y": 358,
+          "w": 236,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 1148,
+          "y": 328,
+          "w": 202,
+          "h": 115
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "3 · Go-live",
+        "pageName": "3 · Go-live",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [
+          "weight 400 on the board, 700 on the page"
+        ],
+        "boardBox": {
+          "x": 90,
+          "y": 397,
+          "w": 154,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 497,
+          "w": 139,
+          "h": 105
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "4 · Hypercare",
+        "pageName": "Hypercare",
+        "pageRole": "text",
+        "similarity": 88,
+        "looks": [
+          "weight 400 on the board, 700 on the page"
+        ],
+        "boardBox": {
+          "x": 90,
+          "y": 436,
+          "w": 154,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 602,
+          "w": 139,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "pageName": "—",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 1114,
+          "y": 436,
+          "w": 236,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 1148,
+          "y": 602,
+          "w": 202,
+          "h": 39
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "key": "text: Tunde Bello · PMO",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "exception": {
+          "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Done 27 Oct",
+        "key": "text: Done 27 Oct",
+        "container": "table",
+        "boardBox": {
+          "x": 979,
+          "y": 319,
+          "w": 135,
+          "h": 40
+        },
+        "exception": {
+          "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Done 11 Nov",
+        "key": "text: Done 11 Nov",
+        "container": "table",
+        "boardBox": {
+          "x": 979,
+          "y": 358,
+          "w": 135,
+          "h": 39
+        },
+        "exception": {
+          "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000.00 + the change · change amount Unknown until a SOW amendment is signed",
+        "key": "text: ₦4,250,000.00 + the change · change amount Unknown until a SOW amendment is signed",
+        "container": "table",
+        "boardBox": {
+          "x": 244,
+          "y": 397,
+          "w": 735,
+          "h": 39
+        },
+        "exception": {
+          "reason": "Hidden: the amount_note under the contract amount; only missing_reason shows, and only when the amount is null (spec Conflicts 5, D-182).",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Not yet",
+        "key": "text: Not yet",
+        "container": "table",
+        "boardBox": {
+          "x": 979,
+          "y": 397,
+          "w": 135,
+          "h": 39
+        },
+        "exception": {
+          "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "CR-0031 · SMS reminders",
+        "key": "link: CR-0031 · SMS reminders",
+        "container": "table",
+        "boardBox": {
+          "x": 1128,
+          "y": 408,
+          "w": 163,
+          "h": 18
+        },
+        "exception": {
+          "reason": "Changed: change text shows as \"<reference> · <note>\" text, not a link to a work item; live has no work item link (spec Conflicts 7, D-182).",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Unknown",
+        "key": "text: Unknown",
+        "container": "table",
+        "boardBox": {
+          "x": 244,
+          "y": 436,
+          "w": 735,
+          "h": 39
+        },
+        "exception": {
+          "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Not yet",
+        "key": "text: Not yet",
+        "container": "table",
+        "boardBox": {
+          "x": 979,
+          "y": 436,
+          "w": 135,
+          "h": 39
+        },
+        "exception": {
+          "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "CR-0031 added work to milestone 3. The original ₦4,250,000.00 stands; the change's amount is Unknown until a SOW amendment with it is signed, and it isn't guessed.",
+        "key": "text: CR-0031 added work to milestone 3. The original ₦4,250,000.00 stands; the change's amount is Unknown until a SOW amendment with it is signed, and it isn't guessed.",
+        "container": "main",
+        "boardBox": {
+          "x": 128,
+          "y": 508,
+          "w": 1055,
+          "h": 21
+        },
+        "exception": {
+          "reason": "The board draws ₦ and a rounded sample amount; the page shows the record's currency code and full amount, e.g. \"NGN 3,000,000.00\", as the spec requires (round-2/review-ui.md UI-2-2, was UI-1-5).",
+          "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 2, relayed by the main coordinator)"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Text \"PROJECTS / LAGOON HEALTH\"",
+        "kind": "Text",
+        "name": "PROJECTS / LAGOON HEALTH",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Link \"PROJECTS\"",
+        "kind": "Link",
+        "name": "PROJECTS",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 58,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 86,
+          "w": 61,
+          "h": 15
+        },
+        "reasons": [
+          "inside the main area on the board, inside the top navigation on the page"
+        ]
+      },
+      {
+        "label": "Text \"PM Tunde Bello · Route A from RFP-0031\"",
+        "kind": "Text",
+        "name": "PM Tunde Bello · Route A from RFP-0031",
+        "boardBox": {
+          "x": 88,
+          "y": 176,
+          "w": 1264,
+          "h": 18
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 250,
+          "w": 1264,
+          "h": 18
+        },
+        "reasons": [
+          "order: on the board it comes after Heading \"Lagoon Health · patient app\"; on the page it comes after Tab \"Actions 9\""
+        ]
+      },
+      {
+        "label": "Table column \"COMPLETION\"",
+        "kind": "Table column",
+        "name": "COMPLETION",
+        "boardBox": {
+          "x": 979,
+          "y": 284,
+          "w": 135,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 481,
+          "y": 290,
+          "w": 252,
+          "h": 38
+        },
+        "reasons": [
+          "across the page: right on the board (73% across), middle on the page (42% across)"
+        ]
+      },
+      {
+        "label": "Main area \"\"",
+        "kind": "Main area",
+        "name": "",
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 539
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1144
+        },
+        "reasons": [
+          "order: on the board it comes after Table column \"CHANGES\"; on the page it comes after Text \"3 · Go-live\""
+        ]
+      },
+      {
+        "label": "Text \"—\"",
+        "kind": "Text",
+        "name": "—",
+        "boardBox": {
+          "x": 1114,
+          "y": 319,
+          "w": 236,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1148,
+          "y": 443,
+          "w": 202,
+          "h": 54
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"₦3,000,000.00\"; on the page it comes after Text \"₦4,250,000.00\""
+        ]
+      },
+      {
+        "label": "Table \"\"",
+        "kind": "Table",
+        "name": "",
+        "boardBox": {
+          "x": 90,
+          "y": 284,
+          "w": 1260,
+          "h": 192
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 290,
+          "w": 1260,
+          "h": 352
+        },
+        "reasons": [
+          "inside the table frame on the board, inside a section on the page"
+        ]
+      },
+      {
+        "label": "Text \"—\"",
+        "kind": "Text",
+        "name": "—",
+        "boardBox": {
+          "x": 1114,
+          "y": 358,
+          "w": 236,
+          "h": 39
+        },
+        "pageBox": {
+          "x": 1148,
+          "y": 328,
+          "w": 202,
+          "h": 115
+        },
+        "reasons": [
+          "order: on the board it comes after Text \"₦4,250,000.00\"; on the page it comes after Text \"₦3,000,000.00\""
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 430,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Setup",
+        "container": "navigation",
+        "pageBox": {
+          "x": 602,
+          "y": 0,
+          "w": 65,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 970,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Account menu: Ada Okafor · Finance Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1018,
+          "y": 19,
+          "w": 161,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 1264,
+          "h": 18
+        }
+      },
+      {
+        "kind": "tabpanel",
+        "role": "tabpanel",
+        "name": "Milestones",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 250,
+          "w": 1264,
+          "h": 896
+        }
+      },
+      {
+        "kind": "Section",
+        "role": "region",
+        "name": "Milestones",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 288,
+          "w": 1264,
+          "h": 356
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "INVOICE",
+        "container": "table",
+        "pageBox": {
+          "x": 733,
+          "y": 290,
+          "w": 164,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Table column",
+        "role": "columnheader",
+        "name": "PAID",
+        "container": "table",
+        "pageBox": {
+          "x": 896,
+          "y": 290,
+          "w": 252,
+          "h": 38
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Recorded completions",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 663,
+          "w": 145,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "As of 12 Nov 16:40",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 1086,
+          "w": 1264,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Milestones and amounts come from the signed SOW. Completing a milestone is the PM’s fact; invoicing and payment are Finance’s, and each is shown separately.",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 1126,
+          "w": 1264,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "Demo controls",
+        "container": "page",
+        "pageBox": {
+          "x": 1362,
+          "y": 808,
+          "w": 66,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Demo",
+        "container": "complementary",
+        "pageBox": {
+          "x": 1362,
+          "y": 808,
+          "w": 66,
+          "h": 40
+        }
+      }
+    ],
+    "unexcepted": 0
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}
