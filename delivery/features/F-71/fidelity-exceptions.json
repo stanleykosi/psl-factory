@@ -4,61 +4,355 @@
       "role": "text",
       "name": "Chidi · Finance agent I can explain any figure here. Ask me",
       "reason": "Hidden: the agent card with \"Ask me about any figure here\"; a figure key is not a conversation parameter (spec Conflicts 3, B-20, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B33)"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)",
+      "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "Chidi",
       "reason": "Hidden: the agent card with \"Ask me about any figure here\"; a figure key is not a conversation parameter (spec Conflicts 3, B-20, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B33)"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)",
+      "category": "spec hides (D-182)"
     },
     {
       "role": "link",
       "name": "Ask me",
       "reason": "Hidden: the agent card with \"Ask me about any figure here\"; a figure key is not a conversation parameter (spec Conflicts 3, B-20, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B33)"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)",
+      "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "REPORT · LAGOON HEALTH · PROJECT MONEY",
       "reason": "Hidden: the report title heading (E-REPORT title) (spec Conflicts 3, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B33)"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)",
+      "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "INV-0398 · verified",
       "reason": "Changed: shown as the invoice reference plus the invoice's own status text, not one composed status (spec Conflicts 4, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B33)"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)",
+      "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "INV-0412 · awaiting Finance decision",
       "reason": "Changed: shown as the invoice reference plus the invoice's own status text, not one composed status (spec Conflicts 4, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B33)"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)",
+      "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "Part paid · ₦500,000.00 owed",
       "reason": "Hidden: the explicit paid status word and the owed amount worked per stage; shown as \"Paid <amount> · Owed <amount>\" from the money read (spec Conflicts 1 and 11, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B33)"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)",
+      "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "₦4,250,000.00 + the change · change amount Unknown until a SOW amendment is signed",
       "reason": "Hidden: the amount_note under the contract amount; only missing_reason shows, and only when the amount is null (spec Conflicts 5, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B33)"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)",
+      "category": "spec hides (D-182)"
     },
     {
       "role": "link",
       "name": "Mark milestone 3 complete",
       "reason": "Hidden: the milestone-level \"Mark milestone N complete\" button stays out (SCR-19) (spec Conflicts 6, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B33)"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)",
+      "category": "spec hides (D-182)"
     },
     {
       "role": "link",
       "name": "CR-0031 · SMS reminders",
       "reason": "Changed: change text shows as \"<reference> · <note>\" text, not a link to a work item; live has no work item link (spec Conflicts 7, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B33)"
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B33, relayed by the main coordinator)",
+      "category": "spec hides (D-182)"
+    },
+    {
+      "role": "text",
+      "name": "Every figure links to the record it came from. Unknown amounts are shown as Unknown, never as 0.",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "link",
+      "name": "₦3,000,000",
+      "category": "NGN currency code",
+      "reason": "The board draws ₦ and a rounded sample amount; the page shows the record's currency code and full amount, e.g. \"NGN 3,000,000.00\", as the spec requires (round-2/review-ui.md UI-2-2, was UI-1-5).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 2, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Verified 03 Nov",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Finance tracks",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Stage 2 · UAT",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "link",
+      "name": "₦4,250,000",
+      "category": "NGN currency code",
+      "reason": "The board draws ₦ and a rounded sample amount; the page shows the record's currency code and full amount, e.g. \"NGN 3,000,000.00\", as the spec requires (round-2/review-ui.md UI-2-2, was UI-1-5).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 2, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Awaiting Finance decision",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "—",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Held · owner needed",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Stage 4 · hypercare",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Not yet due · amount set at go-live",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Where ₦4,250,000 comes from",
+      "category": "board sample content and NGN",
+      "reason": "Board sample amount drawn with ₦ (the page shows the currency code from the record, as the spec requires) combined with sample status wording live data does not carry (round-2/review-ui.md UI-2-1, UI-2-2).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1 and 2, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Signed SOW v2, stage table, row 2 SOW-0198 v2",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Stage terms v1, active since 30 Jun RULE · stage terms",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Milestone 2 completion, recorded by Tunde Bello HB-M2",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "link",
+      "name": "← Project",
+      "category": "frame item",
+      "reason": "Conflicts 16 (and 6): phone back link and title wording belong to the shared frame, which shows 'Back to Projects'; the changed phone board's different frame is not copied. Carried from F-25/F-26, the v7 builds of SCR-38/SCR-12.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "Stage 1 · kick-off",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "₦3,000,000",
+      "category": "NGN currency code",
+      "reason": "The board draws ₦ and a rounded sample amount; the page shows the record's currency code and full amount, e.g. \"NGN 3,000,000.00\", as the spec requires (round-2/review-ui.md UI-2-2, was UI-1-5).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 2, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "₦4,250,000",
+      "category": "NGN currency code",
+      "reason": "The board draws ₦ and a rounded sample amount; the page shows the record's currency code and full amount, e.g. \"NGN 3,000,000.00\", as the spec requires (round-2/review-ui.md UI-2-2, was UI-1-5).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 2, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Stage 3 · go-live",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Unknown",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "link",
+      "name": "Tap an amount to see where it comes from",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Tunde Bello · PMO",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Done 27 Oct",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Done 11 Nov",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Not yet",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "CR-0031 added work to milestone 3. The original ₦4,250,000.00 stands; the change's amount is Unknown until a SOW amendment with it is signed, and it isn't guessed.",
+      "category": "NGN currency code",
+      "reason": "The board draws ₦ and a rounded sample amount; the page shows the record's currency code and full amount, e.g. \"NGN 3,000,000.00\", as the spec requires (round-2/review-ui.md UI-2-2, was UI-1-5).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 2, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Done 27 Oct · proof",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Done 11 Nov · client UAT sign-off",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "₦4,250,000.00",
+      "category": "NGN currency code",
+      "reason": "The board draws ₦ and a rounded sample amount; the page shows the record's currency code and full amount, e.g. \"NGN 3,000,000.00\", as the spec requires (round-2/review-ui.md UI-2-2, was UI-1-5).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 2, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Not yet · amount set at go-live",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    },
+    {
+      "role": "link",
+      "name": "← Projects",
+      "category": "frame item",
+      "reason": "Conflicts 16: phone back link wording belongs to the shared frame ('Back to Projects'). Carried from F-25/F-26, the v7 builds of SCR-38/SCR-12.",
+      "approved_by": "design engineer, 16 Nov 2026 — D-104"
+    },
+    {
+      "role": "text",
+      "name": "₦3,000,000.00 · Done 27 Oct · proof",
+      "category": "board sample content and NGN",
+      "reason": "Board sample amount drawn with ₦ (the page shows the currency code from the record, as the spec requires) combined with sample status wording live data does not carry (round-2/review-ui.md UI-2-1, UI-2-2).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1 and 2, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "₦4,250,000.00 · Done 11 Nov · client UAT sign-off",
+      "category": "board sample content and NGN",
+      "reason": "Board sample amount drawn with ₦ (the page shows the currency code from the record, as the spec requires) combined with sample status wording live data does not carry (round-2/review-ui.md UI-2-1, UI-2-2).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1 and 2, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "₦4,250,000.00 · Not yet",
+      "category": "board sample content and NGN",
+      "reason": "Board sample amount drawn with ₦ (the page shows the currency code from the record, as the spec requires) combined with sample status wording live data does not carry (round-2/review-ui.md UI-2-1, UI-2-2).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1 and 2, relayed by the main coordinator)"
+    },
+    {
+      "role": "text",
+      "name": "Unknown · Not yet · amount set at go-live",
+      "category": "board sample content",
+      "reason": "Board sample value or wording that live data does not carry (invoice status words, stage names, source rows, dates, names, \"—\" cells), or one of the spec's recorded copy differences (lead sentence, \"Not yet\" against \"Not completed\", \"Done <date>\" plus a Proof button) (round-2/review-ui.md UI-2-1).",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 1, relayed by the main coordinator)"
+    }
+  ],
+  "visual_waivers": [
+    {
+      "board": "SCR-12-desktop",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 3, relayed by the main coordinator)",
+      "reason": "Visual 80.8 on head cfc3c462 (needs 90). The gap is accepted hides (Chidi card, report title, \"Mark milestone N complete\") and spec-approved additions (INVOICE and PAID columns, Recorded completions, non-stage rows); the reviewer found no styling difference of the build's own (round-2/review-ui.md UI-2-3)."
+    },
+    {
+      "board": "SCR-12-mobile",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 3, relayed by the main coordinator)",
+      "reason": "Visual 82.0 on head cfc3c462 (needs 90). The gap is accepted hides (Chidi card, report title, \"Mark milestone N complete\") and spec-approved additions (INVOICE and PAID columns, Recorded completions, non-stage rows); the reviewer found no styling difference of the build's own (round-2/review-ui.md UI-2-3)."
+    },
+    {
+      "board": "SCR-38-desktop",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 3, relayed by the main coordinator)",
+      "reason": "Visual 81.4 on head cfc3c462 (needs 90). The gap is accepted hides (Chidi card, report title, \"Mark milestone N complete\") and spec-approved additions (INVOICE and PAID columns, Recorded completions, non-stage rows); the reviewer found no styling difference of the build's own (round-2/review-ui.md UI-2-3)."
+    },
+    {
+      "board": "SCR-38-desktop-changed",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 3, relayed by the main coordinator)",
+      "reason": "Visual 82.7 on head cfc3c462 (needs 90). The gap is accepted hides (Chidi card, report title, \"Mark milestone N complete\") and spec-approved additions (INVOICE and PAID columns, Recorded completions, non-stage rows); the reviewer found no styling difference of the build's own (round-2/review-ui.md UI-2-3)."
+    },
+    {
+      "board": "SCR-38-mobile",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 3, relayed by the main coordinator)",
+      "reason": "Visual 79.2 on head cfc3c462 (needs 90). The gap is accepted hides (Chidi card, report title, \"Mark milestone N complete\") and spec-approved additions (INVOICE and PAID columns, Recorded completions, non-stage rows); the reviewer found no styling difference of the build's own (round-2/review-ui.md UI-2-3)."
+    },
+    {
+      "board": "SCR-38-mobile-changed",
+      "approved_by": "design engineer (hunchoweb), 24 Nov 2026, D-202 \"Sign all\" (B34 item 3, relayed by the main coordinator)",
+      "reason": "Visual 81.4 on head cfc3c462 (needs 90). The gap is accepted hides (Chidi card, report title, \"Mark milestone N complete\") and spec-approved additions (INVOICE and PAID columns, Recorded completions, non-stage rows); the reviewer found no styling difference of the build's own (round-2/review-ui.md UI-2-3)."
     }
   ]
 }
