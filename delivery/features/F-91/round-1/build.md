@@ -41,8 +41,8 @@ None (round 1).
 ## Validation
 - vitest: live-work-tracking (27), live-work-item, mock-work-live all pass. tsc --noEmit and eslint on live/ clean.
 - Playwright (E2E_PORT=4982 MOCK_PORT=4983): work-item-tracking and work-item-live, 26 passed.
-- Full `npm test` via heavy-lock was started and NOT finished or checked. It may still be running and holding lane-c's lock; I had no recorded PID for it, so I did not kill it.
+- Full `npm test` via heavy-lock finished after the handover: 164 files, 3908 tests, all passed, on the pushed head. The lock is released.
 - Servers: Django 8021 and Next 4982 stopped by recorded PID.
 
 ## Blocked
-Handover: the full npm test result is unknown. The next owner should run it once through heavy-lock, inspect the saved screenshots, and decide on the fidelity run. Possible flake: focus-on-first-new-row test once failed under load; now waits for focus.
+Handover only: the next owner should inspect the saved screenshots, and decide on the fidelity run. Possible flake: focus-on-first-new-row test once failed under load; now waits for focus.
