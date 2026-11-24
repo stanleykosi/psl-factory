@@ -1,0 +1,173 @@
+{
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "PROJECTS / TAMARIND LOANS / DELIVERY",
+      "category": "frame item",
+      "reason": "The project frame draws its own breadcrumb (Projects / <project title>); the fixture project is Lagoon Health, not the board's Tamarind Loans.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Tunde Bello · PMO",
+      "category": "frame item",
+      "reason": "The shell shows the signed-in persona and the alerts bell; the board is drawn signed in as Tunde Bello.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "DELIVERY · 3 OF 6 DONE",
+      "category": "hidden by spec",
+      "reason": "Spec Summary and Out of scope, DC-3/D-182: nothing is counted or derived; the API has no done count.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "DLV-0052",
+      "category": "hidden by spec",
+      "reason": "Spec Out of scope: no DLV file reference; the API has none.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "DLV-0052 · 3 OF 6 DONE",
+      "category": "hidden by spec",
+      "reason": "As DLV-0052 and 3 OF 6 DONE: no file number, no count (DC-3, D-182).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "PM TUNDE BELLO",
+      "category": "frame item",
+      "reason": "The delivery overview carries no project manager; the project frame owns the header and shows the PM on the Journey tab.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Planning",
+      "category": "frame item",
+      "reason": "The tab bar is built from the live tabs[] of the project; the board's Planning tab belongs to another feature.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tablist",
+      "name": "Delivery lines",
+      "category": "hidden by spec",
+      "reason": "Spec Out of scope: the line sub-navigation (Overview, Release, Go-live ...) stays hidden until those screens exist (Question 3 a, D-187).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Release",
+      "category": "hidden by spec",
+      "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Go-live",
+      "category": "hidden by spec",
+      "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Hypercare",
+      "category": "hidden by spec",
+      "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Archive",
+      "category": "hidden by spec",
+      "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Handover",
+      "category": "hidden by spec",
+      "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "tab",
+      "name": "Closure",
+      "category": "hidden by spec",
+      "reason": "Line sub-navigation strip is hidden (Question 3 a, D-187); its pages belong to F-113B to F-119.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "Closure",
+      "category": "hidden by spec",
+      "reason": "A not-started line has no link (spec Row fields: null work_id means no link); closure has no work in the fixture.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "complementary",
+      "name": "(side panel)",
+      "category": "hidden by spec",
+      "reason": "The Tola card and the NEXT card are hidden: no source for Tola's check or a Next sentence (spec Out of scope, D-182; Question 3 a, D-187).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Checked where delivery stands",
+      "category": "hidden by spec",
+      "reason": "Tola card hidden (D-182, Question 3 a).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Tola · PMO agent · done",
+      "category": "hidden by spec",
+      "reason": "Tola card hidden (D-182, Question 3 a).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "DONE",
+      "category": "hidden by spec",
+      "reason": "Tag of the hidden Tola card (D-182, Question 3 a).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Checked 12 Apr 09:00 Ask Tola",
+      "category": "hidden by spec",
+      "reason": "Tola card footer hidden; the page draws its own 'Checked <as_of>' line under the rows.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "Ask Tola",
+      "category": "hidden by spec",
+      "reason": "Tola card hidden (D-182, Question 3 a).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "NEXT",
+      "category": "hidden by spec",
+      "reason": "NEXT card hidden: no 'Next' sentence source (D-182, Question 3 a).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Record what Support needs to close the 2 handover gaps.",
+      "category": "hidden by spec",
+      "reason": "NEXT card sentence hidden (D-182).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "Open the handover",
+      "category": "hidden by spec",
+      "reason": "Spec Conflicts with the boards: per-row links replace the button; no start or next-step control from the overview.",
+      "approved_by": "builder proposal, pending design engineer"
+    }
+  ],
+  "visual_waivers": []
+}

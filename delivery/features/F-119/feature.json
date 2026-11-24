@@ -71,7 +71,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "de279c08b01dca4c09872c4a4eb68a25c71e6ad4",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T01:30:06Z",
+      "seconds": 722.2,
+      "evidence_ref": "delivery/features/F-119/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -288,9 +301,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "de279c08b01dca4c09872c4a4eb68a25c71e6ad4"
   },
   "blocked": null
 }

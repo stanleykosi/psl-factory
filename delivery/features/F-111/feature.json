@@ -66,7 +66,32 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "cdb22e4034c0257ef60b12595d572ab0e405ac27",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-23T22:26:28Z",
+      "seconds": 1067.4,
+      "evidence_ref": "delivery/features/F-111/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 2,
+      "commit": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T01:37:32Z",
+      "seconds": 436.3,
+      "evidence_ref": "delivery/features/F-111/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -113,8 +138,479 @@
       "evidence_refs": []
     }
   },
-  "findings": [],
-  "prior_review_records": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "`frontend/mock/issues.mjs:18` drops `django_url` from the served work item. Expected: the contract's `WorkItem` lists `django_url` as required (`contracts/psl-factory.openapi.json`, `/api/v1/work/{work_id}` 200; also `frontend/src/api/live-schema.d.ts`), and the spec says fixture shapes are the contract. Actual: every other required field matches the 1.26.0 schemas for the work item, the follow-up, the detail and the messages, including nested `blocked_milestone`, `receipt`, `timing` and `acknowledgement`. Only `django_url` is missing, and build.md says the mock follows the live shapes. The removal was made to pass `frontend/tests/next-config.test.ts:104`, whose allowlist names only `work-live.mjs` as the mock that must carry the required field. Nothing catches the drift: `issues.mjs` is untyped JS, and no schema test covers the issue reads, unlike `tests/mock-live-projects.test.ts`. Runtime impact is nil: no `src` or test reads `django_url` on the work item. Expected fix: restore `django_url: \\`/work/${id}/\\`` in `issues.mjs`; add `issues.mjs` to the guard's allowlist with the reason the comment gives for `work-live.mjs`; add an Ajv check of the work item and the four issue-read bodies against the contract, as `mock-live-projects.test.ts` does. The allowlist edit is a test-file change for the coordinator to see; the guard's purpose (no legacy page link) is unchanged.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend (lane C dependency: an F-87 `Actions` slot, or a section retry in `workspace`)",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "`frontend/src/features/issue-followup/model.ts:46` prints \"Try again shortly.\" for 429, 503 and read-limited errors, but no Try again control is drawn. Spec \"Section states\" and AC11: each such state carries a Try again, and Try again re-reads only the failed read. Spec Q2 Option A: a write control is hidden when its flag is false and drawn disabled when true. Actual: no control is drawn; `allowedActions()` (`model.ts:51`) is used only by unit tests. build.md marks AC9 and AC11 partial. Copy that promises a retry with no retry is a user-facing defect. Expected: either the frame gains the slot and the adapter wires the control, or the coordinator and product record an accepted spec change before merge. Do not only hide the copy.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend (lane C for `refPath`)",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`model.ts:101` links Blocks to `/projects/{case_id}`. Spec's Blocks row and AC1 name the milestone route as the link target. The deviation is recorded in build.md, so the coordinator can accept it for this round.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-4",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`model.ts:32`: the `state` kind has no \"Logged\" word (spec: \"Logged\" or \"Status changed\"). `model.ts:97`: the planned milestone reads \"UAT (planned UAT)\"; spec says \"planned UAT\". Align the wording.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-5",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`allowedActions()` (`model.ts:51`) is exported and used only by tests until F-111B. Drop it until F-111B, or keep it with its caller named.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "TECH-1-6",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Spec AC15 asks for a fake-timer test of polling. None exists in `tests/issue-followup.test.tsx`. The adapter has no timers (polling is F-85's `PanelView`); the coordinator decides whether the test lives with F-85 or here.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-1",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "AC 11 and the Section states say a failed detail read shows the mapped message with Try again, and that Try again re-reads only the failed read. /work/5107 shows \"What has happened\" with only \"Try again shortly.\" and no button, so the person cannot recover without reloading the page. build.md names this gap and blames the shared frame. Fix it in the adapter, or lane C adds a retry slot and the spec records the deviation as approved. src/features/issue-followup/model.ts.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-2",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Chasing rows show \"Time unknown\" on the right for every request and reminder. The messages items carry no time, so this is a placeholder with no information. Spec: draw no placeholder for data that is not supplied. Drop the right-hand cell when there is no time.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-3",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The Blocks fact is a separate box with a muted, non-bold label that doesn't match the other facts. It links to /projects/{case_id}, not the milestones route as the spec's mapping says. The \"Open the issue register\" link is also missing. build.md discloses the frame limit. Needs a lane C dependency, or the spec must record the deviation.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-4",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "In 5103 (no owner), \"Choose an owner for this issue.\" appears three times (banner, Next, page Next step) and no control to choose an owner is drawn. Writes are F-111B, so the page tells the person to do something they can't do yet. Show the text once. The F-111B gap is accepted as it stands.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-5",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The timeline reads \"Owner acknowledged \u00b7 Acknowledged\", which says the same thing twice. The separate acknowledgement line repeats the timeline row (\"Acknowledged 20 Nov 11:00\"). Drop the repeated status word when it matches the label.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UX-1-6",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "AC 9 says a control whose allowed flag is true is drawn disabled. No control is drawn at all, which is the plain read-only reading (Question 2 option B) and creates no dead end. Record it as approved in the spec.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "The Blocks fact is drawn as a separate panel under a thick rule, away from Reference, Severity, Status, Owner, Raised and Age (all four states, both widths; for example /work/5101). The board puts Owner, Raised, Age and Blocks in one strip, with Blocks as the highlighted (red-tinted) cell. Keep Blocks in the same facts block as the others; the highlight can be skipped if the shared Section cannot carry it (then list that as an exception). Source: the `facts` / blocks section order in `frontend/src/features/issue-followup/model.ts`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "\"Time unknown\" is printed on the right of every Asked and Reminder row in Chasing (5101, 5102, 5107), next to a \"Receipt recorded ...\" line. The spec's Chasing mapping lists kind, status, receipt word and finding, and says never to show placeholders; the message item has no time field. Remove the right-hand \"Time unknown\", or show the receipt time there only when it exists.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Banner tone. On 5102 and 5103 the board draws a red-tinted alert (warning icon, red text) for no response and no owner; the build shows a plain line (5102 \"No response since 09 Nov\" in the unstyled section) and an amber banner (5103). Use the same alert tone the board draws (the shared red alert style), or ask the design engineer to accept amber.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-4",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The frame heading says \"Waiting ... Next step. Wait for the owner to update the issue.\" above the adapter's own banner on 5102, 5103 and 5104, which contradicts it (\"Chase the owner\", \"Choose an owner\", \"Nothing more to do\" next to \"The fix was confirmed\"). Two competing next-step lines is a visible inconsistency. This is frame text (lane C); the adapter should make its own lead consistent or lane C should take `next_action` as the frame next step. Route to the coordinator; raise as a dependency on lane C if the builder cannot change it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-5",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Exceptions to list in `fidelity-exceptions.json` (hidden by spec, D-182/D-185, Q4, or F-111B writes): Tola card and Tola text; \"OWNER FOLLOW-UP\" side panel with Update type, Update, the textarea sample text, \"Post update\" and its helper sentence; \"Record a reply\", \"Raise an escalation\", \"Set an owner\", \"Post an update\" and the NEXT-panel button; \"(recorded by PM)\" and \"Tola investigated\" / \"Owner update\" timeline rows; board status words \"FIX IN TESTING\", \"NO RESPONSE \u00b7 3 DAYS\", \"OWNER NEEDED\" and \"FOLLOW-UP VERIFIED\" (Q1 A); the dated \"09 Nov\" raised value and sample times (fixture data differs); the \"(side panel)\" landmark. Needs the design engineer's approval; not defects.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    },
+    {
+      "id": "UI-1-6",
+      "round": 1,
+      "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "owner": "design engineer",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Frame items (lane C, not this feature) to list as exceptions: breadcrumb \"MY WORK / PMO_ISSUES / WORK 5101\" against \"PROJECTS / LAGOON HEALTH / ISSUES / ISS-0233\" (note it shows the raw line key \"PMO_ISSUES\" and a work number); the project tab bar (Journey, Milestones, Documents, Money, Registers, Actions) absent on the overdue, no-owner and verified boards; \"\u2190 Registers\" / \"\u2190 Project\" back links shown as \"\u2190 Queue\"; the Overview / History switch, alerts bell, account menu and \"Waiting / With ... / Updated ...\" line, the severity tag as a table row instead of a tag next to the title, and the status as a row instead of the title tag.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-111/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T02:05:31Z",
+          "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3"
+        }
+      ]
+    }
+  ],
+  "prior_review_records": [
+    {
+      "round": 1,
+      "reviews": {
+        "technical": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead), round 1",
+          "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+          "evidence_refs": [
+            "delivery/features/F-111/round-1/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-111/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer",
+          "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+          "evidence_refs": [
+            "delivery/features/F-111/round-1/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+          "evidence_refs": [
+            "delivery/features/F-111/round-1/review-ui.md"
+          ]
+        }
+      }
+    }
+  ],
   "run_controls": {
     "unattended_execution_enabled": false,
     "time_budget": null,
@@ -137,7 +633,7 @@
     "base_branch": "main",
     "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-connect-1-issue-reads",
-    "head_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
+    "head_sha": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d3",
     "pr_url": null,
     "pr_number": null,
@@ -148,7 +644,15 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": []
+    "changed_paths": [
+      "frontend/e2e/issue-followup.spec.ts",
+      "frontend/mock/issues.mjs",
+      "frontend/mock/server.mjs",
+      "frontend/src/features/issue-followup/issueFollowupAdapter.ts",
+      "frontend/src/features/issue-followup/model.ts",
+      "frontend/src/features/work-item/live/LiveWorkItemView.tsx",
+      "frontend/tests/issue-followup.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -181,7 +685,7 @@
     }
   },
   "created_at": "2026-11-23T17:35:13Z",
-  "round": 1,
+  "round": 2,
   "round_limit": 5,
   "history": [
     {
@@ -199,6 +703,30 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T01:38:01Z",
+      "round": 1,
+      "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T02:05:31Z",
+      "round": 1,
+      "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T02:05:32Z",
+      "round": 2,
+      "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
+      "reason": null
     }
   ],
   "routing": {
@@ -214,7 +742,7 @@
     ]
   },
   "gate": {
-    "round": 1,
+    "round": 2,
     "attempts": 0,
     "verdict": null,
     "commit": null

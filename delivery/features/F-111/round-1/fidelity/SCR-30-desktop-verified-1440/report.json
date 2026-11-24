@@ -1,0 +1,736 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T02:03:22.419Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-30-desktop-verified.dc.html",
+  "boardName": "SCR-30-desktop-verified.dc.html",
+  "pageUrl": "http://localhost:4998/work/5104",
+  "viewport": {
+    "width": 1440,
+    "height": 760
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": null,
+  "pass": false,
+  "passReasons": [
+    "16 board item(s) are missing from the page and are not approved exceptions (coverage 38.5% with exceptions, needs 100%).",
+    "Visual match 83.4 is below 90.",
+    "1 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 38.5,
+    "coverageWithExceptions": 38.5,
+    "visual": 83.4
+  },
+  "visual": {
+    "score": 83.4,
+    "allCellsScore": 87.5,
+    "width": 1440,
+    "height": 760,
+    "boardHeight": 760,
+    "pageHeight": 1116,
+    "cell": 12,
+    "contentCells": 5769,
+    "mismatchedCells": 957
+  },
+  "coverage": {
+    "total": 26,
+    "found": 10,
+    "coverage": 38.5,
+    "matched": [
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Main",
+        "pageName": "Main",
+        "pageRole": "navigation",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 56
+        },
+        "pageBox": {
+          "x": 0,
+          "y": 0,
+          "w": 1440,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PSL FACTORY",
+        "pageName": "PSL FACTORY",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 88,
+          "y": 19,
+          "w": 156,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 16,
+          "w": 156,
+          "h": 26
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "My work",
+        "pageName": "My work",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 268,
+          "y": 1,
+          "w": 81,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 268,
+          "y": 0,
+          "w": 81,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Projects",
+        "pageName": "Projects",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [
+          "text colour #FFFFFF on the board, #C8CDD0 on the page",
+          "coloured bar under it on the board (#C8401C), none on the page"
+        ],
+        "boardBox": {
+          "x": 349,
+          "y": 1,
+          "w": 80,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 349,
+          "y": 0,
+          "w": 79,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Assistant",
+        "pageName": "Assistant",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 430,
+          "y": 1,
+          "w": 86,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 515,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start work",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1061,
+          "y": 8,
+          "w": 118,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1192,
+          "y": 9,
+          "w": 120,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "More ways to start",
+        "pageName": "More ways to start",
+        "pageRole": "button",
+        "similarity": 100,
+        "note": "a button on the page, a link on the board",
+        "looks": [
+          "weight 400 on the board, 600 on the page",
+          "underlined on the board, not on the page"
+        ],
+        "boardBox": {
+          "x": 1179,
+          "y": 8,
+          "w": 42,
+          "h": 40
+        },
+        "pageBox": {
+          "x": 1312,
+          "y": 9,
+          "w": 40,
+          "h": 40
+        }
+      },
+      {
+        "kind": "Main area",
+        "role": "main",
+        "name": "",
+        "pageName": "",
+        "pageRole": "main",
+        "similarity": 90,
+        "looks": [],
+        "boardBox": {
+          "x": 60,
+          "y": 56,
+          "w": 1320,
+          "h": 415
+        },
+        "pageBox": {
+          "x": 60,
+          "y": 57,
+          "w": 1320,
+          "h": 1059
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Login fails on older Android phones",
+        "pageName": "Login fails on older Android phones",
+        "pageRole": "heading",
+        "similarity": 100,
+        "looks": [
+          "text size 32px on the board, 40px on the page"
+        ],
+        "boardBox": {
+          "x": 88,
+          "y": 119,
+          "w": 686,
+          "h": 35
+        },
+        "pageBox": {
+          "x": 88,
+          "y": 110,
+          "w": 773,
+          "h": 37
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "NEXT",
+        "pageName": "NEXT",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 1014,
+          "y": 244,
+          "w": 336,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 947,
+          "w": 1260,
+          "h": 43
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tunde Bello · PMO",
+        "key": "text: Tunde Bello · PMO",
+        "container": "navigation",
+        "boardBox": {
+          "x": 1245,
+          "y": 20,
+          "w": 107,
+          "h": 17
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECTS / LAGOON HEALTH / REGISTERS / ISSUES / ISS-0233",
+        "key": "text: PROJECTS / LAGOON HEALTH / REGISTERS / ISSUES / ISS-0233",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 1264,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "PROJECTS",
+        "key": "link: PROJECTS",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 84,
+          "w": 58,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "LAGOON HEALTH",
+        "key": "link: LAGOON HEALTH",
+        "container": "main",
+        "boardBox": {
+          "x": 167,
+          "y": 84,
+          "w": 94,
+          "h": 15
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "FOLLOW-UP VERIFIED",
+        "key": "text: FOLLOW-UP VERIFIED",
+        "container": "main",
+        "boardBox": {
+          "x": 1210,
+          "y": 133,
+          "w": 142,
+          "h": 21
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Project",
+        "key": "tablist: Project",
+        "container": "main",
+        "boardBox": {
+          "x": 88,
+          "y": 174,
+          "w": 654,
+          "h": 48
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Journey",
+        "key": "tab: Journey",
+        "container": "tablist",
+        "boardBox": {
+          "x": 90,
+          "y": 176,
+          "w": 86,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Milestones 4",
+        "key": "tab: Milestones 4",
+        "container": "tablist",
+        "boardBox": {
+          "x": 176,
+          "y": 176,
+          "w": 129,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Documents 6",
+        "key": "tab: Documents 6",
+        "container": "tablist",
+        "boardBox": {
+          "x": 305,
+          "y": 176,
+          "w": 133,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Money",
+        "key": "tab: Money",
+        "container": "tablist",
+        "boardBox": {
+          "x": 438,
+          "y": 176,
+          "w": 76,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Registers 6",
+        "key": "tab: Registers 6",
+        "container": "tablist",
+        "boardBox": {
+          "x": 514,
+          "y": 176,
+          "w": 120,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Actions 9",
+        "key": "tab: Actions 9",
+        "container": "tablist",
+        "boardBox": {
+          "x": 634,
+          "y": 176,
+          "w": 108,
+          "h": 44
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Tola's investigation and the owner's updates are recorded and verified. The issue itself is still open; closing it is done in the issue register by QA and the PM.",
+        "key": "text: Tola's investigation and the owner's updates are recorded and verified. The issue itself is still open; closing it is done in the issue register by QA and the PM.",
+        "container": "main",
+        "boardBox": {
+          "x": 128,
+          "y": 252,
+          "w": 850,
+          "h": 42
+        },
+        "exception": null
+      },
+      {
+        "kind": "Side panel",
+        "role": "complementary",
+        "name": "(side panel)",
+        "key": "complementary:",
+        "container": "main",
+        "boardBox": {
+          "x": 1012,
+          "y": 242,
+          "w": 340,
+          "h": 173
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "When the fix is verified on all 3 models, close the issue in the register.",
+        "key": "text: When the fix is verified on all 3 models, close the issue in the register.",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 295,
+          "w": 308,
+          "h": 42
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the issue register",
+        "key": "link: Open the issue register",
+        "container": "complementary",
+        "boardBox": {
+          "x": 1028,
+          "y": 349,
+          "w": 308,
+          "h": 50
+        },
+        "exception": null
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Pagination \"NEXT\"",
+        "kind": "Pagination",
+        "name": "NEXT",
+        "boardBox": {
+          "x": 1014,
+          "y": 244,
+          "w": 336,
+          "h": 37
+        },
+        "pageBox": {
+          "x": 90,
+          "y": 947,
+          "w": 1260,
+          "h": 43
+        },
+        "reasons": [
+          "inside a side panel on the board, inside the main area on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Overview",
+        "container": "navigation",
+        "pageBox": {
+          "x": 428,
+          "y": 0,
+          "w": 86,
+          "h": 57
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "navigation",
+        "pageBox": {
+          "x": 970,
+          "y": 11,
+          "w": 36,
+          "h": 36
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Account menu: Kemi Adebayo · PMO Lead",
+        "container": "navigation",
+        "pageBox": {
+          "x": 1018,
+          "y": 19,
+          "w": 162,
+          "h": 20
+        }
+      },
+      {
+        "kind": "Navigation area",
+        "role": "navigation",
+        "name": "Breadcrumb",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 246,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "MY WORK / PMO_ISSUES / WORK 5104",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 246,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "MY WORK",
+        "container": "navigation",
+        "pageBox": {
+          "x": 88,
+          "y": 85,
+          "w": 54,
+          "h": 15
+        }
+      },
+      {
+        "kind": "Tabs",
+        "role": "tablist",
+        "name": "Work item",
+        "container": "main",
+        "pageBox": {
+          "x": 1199,
+          "y": 77,
+          "w": 153,
+          "h": 32
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "Overview",
+        "container": "tablist",
+        "pageBox": {
+          "x": 1201,
+          "y": 79,
+          "w": 82,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Tab",
+        "role": "tab",
+        "name": "History",
+        "container": "tablist",
+        "pageBox": {
+          "x": 1283,
+          "y": 79,
+          "w": 69,
+          "h": 28
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "container": "main",
+        "pageBox": {
+          "x": 875,
+          "y": 115,
+          "w": 77,
+          "h": 27
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Verified",
+        "container": "main",
+        "pageBox": {
+          "x": 88,
+          "y": 157,
+          "w": 48,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "With Tunde Bello",
+        "container": "main",
+        "pageBox": {
+          "x": 148,
+          "y": 157,
+          "w": 107,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Updated 23 Nov 10:00",
+        "container": "main",
+        "pageBox": {
+          "x": 267,
+          "y": 157,
+          "w": 143,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "23 Nov 10:00",
+        "container": "main",
+        "pageBox": {
+          "x": 324,
+          "y": 157,
+          "w": 86,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next step. Nothing more to do.",
+        "container": "main",
+        "pageBox": {
+          "x": 100,
+          "y": 205,
+          "w": 194,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next step.",
+        "container": "main",
+        "pageBox": {
+          "x": 100,
+          "y": 206,
+          "w": 66,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "The fix was confirmed by Engineering on 22 Nov.",
+        "container": "main",
+        "pageBox": {
+          "x": 128,
+          "y": 246,
+          "w": 304,
+          "h": 21
+        }
+      }
+    ],
+    "unexcepted": 16
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

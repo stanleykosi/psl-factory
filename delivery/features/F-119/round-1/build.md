@@ -80,3 +80,7 @@ Not blocked. Open: criterion 21 (live Django check) needs credentials; typecheck
 
 ## Coordinator: sync with main
 The coordinator merged origin/main (e6c24e70, API 1.26.0, green per lane A) into the branch after the build, on lane A's word. Merge commit de279c08. The builder's last commit was 9992f8c8. The feature's own code is unchanged.
+
+## Gate note (round 1, attempt 1)
+- Gate failed two guards. Fixed in 3b782e39: (1) `Number(` replaced by one `idOf()` helper in `model.ts` using `Number.parseInt(value, 10)` that returns null with no match; the body builders use it, an empty owner stays null, a missing required id throws instead of sending 0 or NaN. (2) The "Saved hh:mm WAT, version n." success callout is now a toast (`useToastWhen`), still set only after the re-read.
+- Re-run: `cash-forecast.test.tsx`, `no-success-callouts.test.ts` and my two test files pass (89 tests); tsc has no errors (lane A's shell-live error is gone with the merge); eslint clean on my files. Full gate and e2e not re-run. The e2e checks for the saved text with `getByText`, which a toast satisfies, but it has not been re-run on the toast.
