@@ -45,7 +45,12 @@ export function PaidCell({ item }: { item: MoneyItem }) {
     <>
       {lines.map((line) => (
         <span key={line.id} className="money__block">
-          Paid <Value text={line.paid} /> · Owed <Value text={line.owed} />
+          <span className="money__fig">
+            Paid <Value text={line.paid} /> ·
+          </span>{' '}
+          <span className="money__fig">
+            Owed <Value text={line.owed} />
+          </span>
         </span>
       ))}
     </>

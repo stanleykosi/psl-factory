@@ -220,6 +220,33 @@ describe('Milestones (SCR-38) on the live reads', () => {
   });
 });
 
+describe('F-71 round 2: Unknown, headings, Proof state', () => {
+  it('UI-1-4: Unknown is plain text, not a tag, on the table and the phone cards, styled as bold text', async () => {
+    await open('P-0101');
+    const unknowns = [...panel().querySelectorAll('.psl-unknown')];
+    expect(unknowns.length).toBeGreaterThan(0);
+    expect(unknowns.every((u) => u.textContent === 'Unknown' && !u.closest('.psl-tag'))).toBe(true);
+    const css = readFileSync(join(__dirname, '../src/features/projects/project-tabs.css'), 'utf8');
+    expect(css).toMatch(/\.ptabs__ms \.psl-unknown[^{]*\.ptabs__card \.psl-unknown[^{]*\{[^}]*background: none[^}]*font-weight: 600/);
+  });
+
+  it('UX-1-2: a section heading for the table and for the completions', async () => {
+    await open('P-0101');
+    expect(within(panel()).getByRole('heading', { level: 2, name: 'Contract milestones' })).toBeTruthy();
+    expect(within(panel()).getByRole('heading', { level: 2, name: 'Recorded completions' })).toBeTruthy();
+  });
+
+  it('UX-1-3: Proof buttons say whether the proof is shown', async () => {
+    await open('P-0101');
+    expect(proofButtons().every((b) => b.getAttribute('aria-expanded') === 'false')).toBe(true);
+    await press('Proof for Kick-off');
+    await until(() => expect(panel().textContent).toContain('Proof version 2'));
+    const kickoff = proofButtons().find((b) => b.textContent === 'Proof for Kick-off')!;
+    expect(kickoff.getAttribute('aria-expanded')).toBe('true');
+    expect(proofButtons().filter((b) => b !== kickoff).every((b) => b.getAttribute('aria-expanded') === 'false')).toBe(true);
+  });
+});
+
 describe('Proof', () => {
   it('one read per press; shows the name, the date and the proof version', async () => {
     await open('P-0101');

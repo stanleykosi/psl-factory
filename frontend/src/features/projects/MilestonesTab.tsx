@@ -25,7 +25,7 @@ function Proof({ slot, id, label, proofs }: { slot: string; id: number; label: s
   const state = proofs.proofs[slot];
   return (
     <span className="ptabs__proof">
-      <Button kind="secondary" size={phone ? 'md' : 'sm'} busy={state?.status === 'loading'} busyLabel="Loading…" onClick={() => proofs.press(slot, id)}>
+      <Button kind="secondary" size={phone ? 'md' : 'sm'} aria-expanded={state !== undefined && state.status !== 'loading'} busy={state?.status === 'loading'} busyLabel="Loading…" onClick={() => proofs.press(slot, id)}>
         Proof<VisuallyHidden> for {label}</VisuallyHidden>
       </Button>
       {state?.status === 'ready' && (
@@ -181,6 +181,7 @@ export function MilestonesTab({ caseId, pathname }: { caseId: string; pathname: 
     <>
       {money.status === 'ready' && money.money.limited && <Callout kind="warning">Some figures may be incomplete.</Callout>}
       <div className="ptabs__rows">
+        {money.status === 'ready' && stages.length > 0 && <h2 className="cmp-sr">Contract milestones</h2>}
         {money.status === 'ready' &&
           (stages.length === 0 ? (
             <TabEmpty>No milestones on this project yet.</TabEmpty>

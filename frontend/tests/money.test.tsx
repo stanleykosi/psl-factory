@@ -367,6 +367,42 @@ describe('phone (390): cards and the bottom sheet', () => {
   });
 });
 
+describe('F-71 round 2: figures, panel, headings', () => {
+  const css = (name: string) => readFileSync(join(__dirname, `../src/features/projects/${name}`), 'utf8');
+
+  it('UI-1-2: each Paid and Owed figure is one unbreakable unit with its currency code, and Unknown stays Unknown', async () => {
+    await open();
+    const figs = [...cell(0, 3).querySelectorAll('.money__fig')].map((f) => f.textContent);
+    expect(figs.slice(0, 2)).toEqual(['Paid NGN 2,000,000.00 ·', 'Owed NGN 500,000.00']);
+    expect(css('money.css')).toMatch(/\.money__fig[^{]*\{[^}]*white-space: nowrap/);
+    expect(cell(1, 3).textContent).toBe('Paid Unknown · Owed Unknown');
+    expect(cell(1, 3).textContent).not.toMatch(ZERO);
+  });
+
+  it('UI-1-3: before a figure is chosen the panel body is the prompt, with no empty box', async () => {
+    await open();
+    const body = aside().querySelector('.psl-panel__body')!;
+    expect(body.textContent).toBe('Choose an amount to see where it comes from.');
+    expect(aside().querySelector('.psl-panel__head')!.textContent).toBe('Where a figure comes from');
+  });
+
+  it('UX-1-2: the tab has a section heading for the table', async () => {
+    await open();
+    expect(within(panel()).getByRole('heading', { level: 2, name: 'Billing by contract stage' })).toBeTruthy();
+    expect(panel().querySelector('caption')!.textContent).toBe('Billing by contract stage');
+  });
+
+  it('UX-1-1: Escape closes the phone sheet even when focus is outside it', async () => {
+    phone();
+    await open('P-0101', '?figure=kickoff');
+    await until(() => expect(screen.getByRole('dialog')).toBeTruthy());
+    (document.activeElement as HTMLElement | null)?.blur();
+    nav.router.replace.mockClear();
+    fireEvent.keyDown(document.body, { key: 'Escape' });
+    expect(nav.router.replace).toHaveBeenCalledWith('/projects/P-0101/money', { scroll: false });
+  });
+});
+
 describe('errors and access', () => {
   it.each([
     ['a 500', () => json(500, { code: 'server_error', message: 'Boom' })],

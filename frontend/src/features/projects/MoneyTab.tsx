@@ -19,6 +19,7 @@ import { useMoney, type FigureState } from './useMoney';
 import './money.css';
 
 const PROMPT = 'Choose an amount to see where it comes from.';
+const IDLE_HEAD = 'Where a figure comes from';
 const NO_SOURCE = 'No source recorded';
 const refused = (error: ApiError) => error.kind === 'forbidden' || error.kind === 'not_found';
 
@@ -88,14 +89,14 @@ function Sources({ item }: { item: MoneyItem }) {
 
 /** The drill-down's head: the chosen item's label, the prompt when none is chosen. */
 function headOf(figure: FigureState, selectedKey: string | undefined, items: MoneyItem[]): string {
-  if (selectedKey === undefined) return PROMPT;
+  if (selectedKey === undefined) return IDLE_HEAD;
   if (figure.status === 'ready') return figure.item.label;
   return items.find((i) => i.key === selectedKey)?.label ?? 'Where this figure comes from';
 }
 
 /** The drill-down body, the same in the aside and the sheet. */
 function Explanation({ figure, onRetry }: { figure: FigureState; onRetry: () => void }) {
-  if (figure.status === 'idle') return null;
+  if (figure.status === 'idle') return <p className="money__plain">{PROMPT}</p>;
   if (figure.status === 'loading') return <Loading>Loading sources…</Loading>;
   if (figure.status === 'missing') return <p className="money__plain">That figure isn&rsquo;t available.</p>;
   if (figure.status === 'error') {
@@ -183,6 +184,17 @@ function MoneyContent({ caseId, base }: { caseId: string; base: string }) {
     if (selectedKey !== undefined && amounts.current.has(selectedKey)) returnFocus.current = amounts.current.get(selectedKey) ?? null;
   });
 
+  const sheetOpen = phone && selectedKey !== undefined;
+  useEffect(() => {
+    // Escape closes the sheet even when focus is not inside it.
+    if (!sheetOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') router.replace(`${base}/money`, { scroll: false });
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [sheetOpen, router, base]);
+
   if (money.status === 'loading') return <LoadingState />;
   if ((money.status === 'error' && money.error.kind === 'unauthenticated') || (figure.status === 'error' && figure.error.kind === 'unauthenticated')) {
     return <SignedOutState pathname={`${base}/money`} />;
@@ -221,6 +233,7 @@ function MoneyContent({ caseId, base }: { caseId: string; base: string }) {
     return (
       <>
         {incomplete}
+        <h2 className="cmp-sr">Billing by contract stage</h2>
         <StageCards items={items} pick={pick} />
         <p className="money__hint">Tap an amount to see where it comes from</p>
         <AsOf value={asOf} />
@@ -241,6 +254,7 @@ function MoneyContent({ caseId, base }: { caseId: string; base: string }) {
       {incomplete}
       <div className="money__body">
         <div className="money__main">
+          <h2 className="cmp-sr">Billing by contract stage</h2>
           <StageTable items={items} pick={pick} />
           <AsOf value={asOf} />
         </div>
