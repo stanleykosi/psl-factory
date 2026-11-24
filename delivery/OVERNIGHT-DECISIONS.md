@@ -517,3 +517,9 @@ The design engineer connected the Railway MCP. It is signed in to the personal w
 - Only the main coordinator uses Railway. Lanes and their agents never call Railway tools; they ask the coordinator.
 - Read-only by default: status, logs, metrics, deployments and service descriptions, mainly on `design-acceptance`. Never read variable values or bucket credentials (secrets).
 - Any change (variables such as `PSL_FRONTEND_ORIGINS`, deploys, restarts, and anything on `production`) needs the design engineer's explicit go-ahead for that specific change, and the backend developer's agreement for backend services.
+
+## D-197 (24 Nov 2026): at most two worktrees and one queued heavy job per lane
+By morning the lanes had 12 worktrees (lane A five, lane D four), about 11 GB. Free disk fell from 20 GB to 4.6 GB, and lane A held four of the eight queue tickets while lane B's gate timed out under load. Extra worktrees add no throughput, because heavy jobs run one at a time (D-189). The coordinator's engineering rule:
+- Each lane keeps at most two worktrees: one building, one in gate, review or merge. No new worktree while a lane has two. A worktree is removed as soon as its feature merges, or parks with its branch pushed.
+- `heavy-lock.sh` lets each lane hold at most one ticket, queued or running. A lane's next heavy job waits until its previous one finishes, so no lane can crowd the queue. Tickets queued before this change run as they are.
+- Run `npm cache clean --force` after every gate. Stop under 3 GB free.
