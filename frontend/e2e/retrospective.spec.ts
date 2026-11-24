@@ -362,6 +362,19 @@ test.describe('phone 390', () => {
   });
 });
 
+test('on desktop Tab goes from the notes file straight to Save', async ({ page }) => {
+  await page.goto(PAGE('2001'));
+  await ready(page);
+  await field(page, 'What went well').fill('x');
+  await choose(page, 'Notes file', 'Test plan v2');
+  await expect(page.getByRole('combobox', { name: 'Notes file' })).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Save retrospective' })).toBeFocused();
+  // Decisions come after Save in the page order, not before it
+  const first = await page.evaluate(() => { const save = document.querySelector('.retro__savebar')!; const add = [...document.querySelectorAll('button')].find((b) => b.textContent === 'Add a decision')!; return !!(save.compareDocumentPosition(add) & Node.DOCUMENT_POSITION_FOLLOWING); });
+  expect(first).toBe(true);
+});
+
 test.describe('phone 390 save bar', () => {
   test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
   test('Save sits in a bar at the bottom of the screen and a form message is not covered', async ({ page }) => {
@@ -395,5 +408,23 @@ test.describe('phone 390 save bar', () => {
     expect(m.y + m.height).toBeLessThanOrEqual((await at()).y);
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     expect((await message.boundingBox())!.y).toBeLessThan((await at()).y);
+  });
+
+  test('a focused control is never hidden under the bar', async ({ page }) => {
+    await page.goto(PAGE('2001'));
+    await ready(page);
+    for (const target of [page.getByRole('checkbox', { name: 'Ada Obi' }), field(page, 'Lessons for next projects')]) {
+      await target.focus();
+      await page.waitForTimeout(200);
+      const covered = await target.evaluate((el) => {
+        const r = el.getBoundingClientRect();
+        const top = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        return !(top === el || el.contains(top) || (top && top.closest('label')?.contains(el)));
+      });
+      expect(covered).toBe(false);
+      const bar = (await page.locator('.retro__savebar').boundingBox())!;
+      const box = (await target.boundingBox())!;
+      expect(box.y + box.height).toBeLessThanOrEqual(bar.y + 1);
+    }
   });
 });

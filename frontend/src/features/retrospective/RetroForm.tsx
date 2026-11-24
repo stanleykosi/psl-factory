@@ -4,7 +4,7 @@
 // version; there is no draft. Typed values stay through any failed save.
 import { useState } from 'react';
 
-import { Button, Callout, Checkbox, DateField, Select, TextArea, TextField } from '@/components';
+import { Button, Callout, Checkbox, DateField, Select, TextArea, TextField, useIsPhone } from '@/components';
 
 import { carriedDecisions, DECISION_TEXT_MAX, DECISIONS_MAX, localStamp, moreThanShown, NO_PROOFS, REFERENCE_MAX, saveBody, saveProblems, type MeetingDetail, type MeetingOptions, type SaveDraft } from './model';
 import { parseSummary, BOX_KEYS, BOX_LABELS, EMPTY_BOXES, SUMMARY_LIMIT, writeSummary, type BoxKey } from './summary';
@@ -47,6 +47,7 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
 }) {
   const [draft, setDraft] = useState(initial);
   const [now] = useState(() => new Date());
+  const phone = useIsPhone();
   const proofs = options?.proofs ?? [];
   const problems = saveProblems(draft, proofs.length, now);
   const set = (patch: Partial<SaveDraft>) => setDraft((d) => ({ ...d, ...patch }));
@@ -61,6 +62,55 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
   function setBox(key: BoxKey, value: string) {
     set({ boxes: { ...draft.boxes, [key]: value } });
   }
+
+  const decisions = (
+      <div className="retro__stack">
+        <p className="retro__heading">Decisions</p>
+        {draft.decisions.map((row, at) => (
+          <div key={row.key} className="retro__decision">
+            <TextArea
+              label={`Decision ${at + 1}`}
+              value={row.text}
+              limit={DECISION_TEXT_MAX}
+              onChange={(e) => set({ decisions: draft.decisions.map((d) => (d.key === row.key ? { ...d, text: e.target.value } : d)) })}
+              error={problems.decisions[row.key] && (row.text === '' || row.text.length > DECISION_TEXT_MAX) ? problems.decisions[row.key] : undefined}
+              rows={2}
+            />
+            <Select
+              label={`Supporting file for decision ${at + 1}`}
+              placeholder="Choose a file"
+              value={row.evidenceId || undefined}
+              onChange={(evidenceId) => set({ decisions: draft.decisions.map((d) => (d.key === row.key ? { ...d, evidenceId } : d)) })}
+              options={proofs.map((p) => ({ value: String(p.id), label: p.label }))}
+              error={problems.decisions[row.key] && row.text !== '' && row.evidenceId === '' ? problems.decisions[row.key] : undefined}
+            />
+            <div className="retro__decisionbar">
+              <Button kind="secondary" onClick={() => set({ decisions: draft.decisions.filter((d) => d.key !== row.key) })}>
+                Remove decision {at + 1}
+              </Button>
+            </div>
+          </div>
+        ))}
+        <span>
+          <Button
+            kind="secondary"
+            disabled={draft.decisions.length >= DECISIONS_MAX || proofs.length === 0}
+            reason={draft.decisions.length >= DECISIONS_MAX ? `At most ${DECISIONS_MAX} decisions.` : proofs.length === 0 ? 'A decision needs a supporting file; none is recorded.' : undefined}
+            onClick={() => set({ decisions: [...draft.decisions, { key: Math.max(-1, ...draft.decisions.map((d) => d.key)) + 1, text: '', evidenceId: '', changeEvidenceId: null }] })}
+          >
+            Add a decision
+          </Button>
+        </span>
+      </div>
+  );
+
+  const saveBar = (
+      <div className="retro__actions retro__savebar">
+        <Button type="submit" kind="primary" size="lg" className="retro__save" busy={busy} busyLabel="Saving…" disabled={disabled} reason={reasonText}>
+          {first ? 'Save retrospective' : 'Save new version'}
+        </Button>
+      </div>
+  );
 
   return (
     <form
@@ -151,50 +201,7 @@ export function RetroForm({ options, optionsProblem, revision, initial, busy, fa
       )}
 
 
-      <div className="retro__stack retro__decisions">
-        <p className="retro__heading">Decisions</p>
-        {draft.decisions.map((row, at) => (
-          <div key={row.key} className="retro__decision">
-            <TextArea
-              label={`Decision ${at + 1}`}
-              value={row.text}
-              limit={DECISION_TEXT_MAX}
-              onChange={(e) => set({ decisions: draft.decisions.map((d) => (d.key === row.key ? { ...d, text: e.target.value } : d)) })}
-              error={problems.decisions[row.key] && (row.text === '' || row.text.length > DECISION_TEXT_MAX) ? problems.decisions[row.key] : undefined}
-              rows={2}
-            />
-            <Select
-              label={`Supporting file for decision ${at + 1}`}
-              placeholder="Choose a file"
-              value={row.evidenceId || undefined}
-              onChange={(evidenceId) => set({ decisions: draft.decisions.map((d) => (d.key === row.key ? { ...d, evidenceId } : d)) })}
-              options={proofs.map((p) => ({ value: String(p.id), label: p.label }))}
-              error={problems.decisions[row.key] && row.text !== '' && row.evidenceId === '' ? problems.decisions[row.key] : undefined}
-            />
-            <div className="retro__decisionbar">
-              <Button kind="secondary" onClick={() => set({ decisions: draft.decisions.filter((d) => d.key !== row.key) })}>
-                Remove decision {at + 1}
-              </Button>
-            </div>
-          </div>
-        ))}
-        <span>
-          <Button
-            kind="secondary"
-            disabled={draft.decisions.length >= DECISIONS_MAX || proofs.length === 0}
-            reason={draft.decisions.length >= DECISIONS_MAX ? `At most ${DECISIONS_MAX} decisions.` : proofs.length === 0 ? 'A decision needs a supporting file; none is recorded.' : undefined}
-            onClick={() => set({ decisions: [...draft.decisions, { key: Math.max(-1, ...draft.decisions.map((d) => d.key)) + 1, text: '', evidenceId: '', changeEvidenceId: null }] })}
-          >
-            Add a decision
-          </Button>
-        </span>
-      </div>
-
-      <div className="retro__actions retro__savebar">
-        <Button type="submit" kind="primary" size="lg" className="retro__save" busy={busy} busyLabel="Saving…" disabled={disabled} reason={reasonText}>
-          {first ? 'Save retrospective' : 'Save new version'}
-        </Button>
-      </div>
+      {phone ? <>{decisions}{saveBar}</> : <>{saveBar}{decisions}</>}
     </form>
   );
 }
