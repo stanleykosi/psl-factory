@@ -763,6 +763,11 @@ F-111 round 2, head `8a5c09fe`, ships read-only for the demo under D-202 ("Ship 
 - **Copy (recommend keep all):** live status words (D-187 Q1 A); Tola hidden (D-182, D-185); the board's sample dates, ids and sentences; the frame's own next-step line (D-202).
 - **Recommendation:** "Sign all": sign the 57 exceptions and the eight D-83 visual waivers.
 
+### LD-Q8 · F-119 · Round limit reached with one small phone issue (UX-5-1). Merge now and fix after, or allow round 6?
+Round 5 of 5, head `53c24b19`: gate, technical and UI PASS. UX-5-1 (blocking, low): on phone, keyboard focus into "Lessons for next projects" leaves the field half under the fixed Save bar (WCAG 2.4.11). Every other field clears the bar. The fix is small.
+- **(a, recommended) "Merge now, fix after":** QA, PMO and merge for the laptop demo. UX-5-1 is the first post-demo fix (same pattern as D-203, F-61).
+- **(b) "Allow round 6":** one more round, about an hour, before QA and merge.
+
 ## Answers, batch 1 (23 Nov 2026, D-182)
 
 Every recommended option above is accepted ("Hide, accept all recs"), including LC-Q1 (hide until backend), F-65 (as recommended) and F-76 (read-only list now). Lanes: unpark these features and build them as their specs recommend.

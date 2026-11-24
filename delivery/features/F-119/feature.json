@@ -147,11 +147,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead)",
+      "snapshot_ref": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+      "evidence_refs": [
+        "delivery/features/F-119/round-5/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -177,18 +179,22 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer",
+      "snapshot_ref": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+      "evidence_refs": [
+        "delivery/features/F-119/round-5/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (round 5, static review of the diff, CSS and components; no server started, fidelity not re-run under D-202)",
+      "snapshot_ref": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+      "evidence_refs": [
+        "delivery/features/F-119/round-5/review-ui.md"
+      ]
     }
   },
   "findings": [
@@ -1106,7 +1112,7 @@
         "delivery/features/F-119/round-4/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -1123,11 +1129,25 @@
           ],
           "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T15:41:03Z",
+          "refs": [
+            "Read the rule and its scope: it is inside the `max-width: 719.98px` query, and `:has(.retro__savebar)` matches only on the retro page. The 110px value is a concern (TECH-5-1), not a failure of the fix. Test run not repeated by me; the builder reports the e2e file at 27/27."
+          ],
+          "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Read the rule and its scope: it is inside the `max-width: 719.98px` query, and `:has(.retro__savebar)` matches only on the retro page. The 110px value is a concern (TECH-5-1), not a failure of the fix. Test run not repeated by me; the builder reports the e2e file at 27/27."
       ]
     },
     {
@@ -1143,7 +1163,7 @@
         "delivery/features/F-119/round-4/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "FIX_SUBMITTED",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
@@ -1160,11 +1180,117 @@
           ],
           "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
           "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T15:41:03Z",
+          "refs": [
+            "Read `RetroForm.tsx`: `saveBar` is built once and placed once in the ternary, so one `type=\"submit\"` button exists. `usePhone` is `useSyncExternalStore` with `getServerSnapshot = false`, but the form is absent from SSR, so the false server value is never used for it. The first client render reads `matchMedia` directly, so there is no flicker. The `order` rules and `.retro__decisions` are gone (`git grep` finds none in the feature or the spec). The DOM-order test (`compareDocumentPosition`) and the desktop Tab test check the claimed order."
+          ],
+          "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+          "reason": null
         }
       ],
       "fix_by": "builder",
       "fix_refs": [
         "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Read `RetroForm.tsx`: `saveBar` is built once and placed once in the ternary, so one `type=\"submit\"` button exists. `usePhone` is `useSyncExternalStore` with `getServerSnapshot = false`, but the form is absent from SSR, so the false server value is never used for it. The first client render reads `matchMedia` directly, so there is no flicker. The `order` rules and `.retro__decisions` are gone (`git grep` finds none in the feature or the spec). The DOM-order test (`compareDocumentPosition`) and the desktop Tab test check the claimed order."
+      ]
+    },
+    {
+      "id": "TECH-5-1",
+      "round": 5,
+      "snapshot_ref": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "`retrospective.css` sets `html:has(.retro__savebar) { scroll-padding-bottom: 110px }`, but the fixed bar is `padding 12 / 18`, a 2px border, a 50px Save and, when Save is disabled, a `.psl-reason` line (`Button.tsx:119-120`, rendered inside the bar). One reason line gives about 108px; two lines (the 90-character retro reason at 390px, see TECH-4-2) give about 126px. At 110px a control brought into view by focus can have its lower 16px under the bar. Expected: scroll padding at least the bar's worst case, e.g. 140px to match `.retro__page { padding-bottom: 140px }`, or measured in JS. Path: `retrospective.css:54`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-5/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T15:41:03Z",
+          "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
+        }
+      ]
+    },
+    {
+      "id": "TECH-5-2",
+      "round": 5,
+      "snapshot_ref": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`e2e/retrospective.spec.ts` \"a focused control is never hidden under the bar\" focuses the Ada Obi checkbox and the Lessons field at load, where they are likely above the bar, so no scroll happens and the `scroll-padding` rule is not exercised. The test would also pass without that rule. Expected: add a case that focuses a control below the fold (the last decision or Save after scrolling) and asserts its bottom is at or above the bar's top. Path: `e2e/retrospective.spec.ts:~412-428`. The fixed `waitForTimeout(200)` is also a timing dependency; prefer waiting for the focus state.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-5/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T15:41:03Z",
+          "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
+        }
+      ]
+    },
+    {
+      "id": "TECH-5-3",
+      "round": 5,
+      "snapshot_ref": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`RetroForm.tsx:~196` switches between `<>{decisions}{saveBar}</>` and `<>{saveBar}{decisions}</>`, so both blocks remount when the viewport crosses 720px. Values survive because they are held in `draft`, but keyboard focus inside Decisions or on Save is lost on resize. Expected: accept as a known trade-off, or keep one stable order and use CSS for the bar only if the layout allows. Not a regression from the removed `order` rules.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-5/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T15:41:03Z",
+          "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
+        }
+      ]
+    },
+    {
+      "id": "UX-5-1",
+      "round": 5,
+      "snapshot_ref": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone (390): the focused \"Lessons for next projects\" field is still under the fixed Save bar. Expected: a focused control is scrolled fully clear of the bar (WCAG 2.4.11, AA, in the e2e axe tags). Actual: Tab from \"What didn't\" (and focus()) leaves scrollY 0 with the field at y 708-775 and the bar top at 735; elementFromPoint at the field centre (741) returns the bar. The computed `scroll-padding-bottom` is 110px on html, so the rule applies, but Chrome does not scroll because the field is already inside the viewport. It reproduces with and without touch emulation and on projects 2001 and 5001. The builder's e2e check passes, so it does not catch this state. Path: `frontend/src/features/retrospective/retrospective.css` (phone `.retro__savebar`, `html:has(.retro__savebar)` rule). Suggested fix: give the form or page enough bottom space and scroll the focused control with `scrollIntoView({block:'nearest'})` on focus at phone width. Or add a `focusin` handler that scrolls the target above the bar's top. Re-check at scroll 0 on a fresh load, where the Lessons field starts partly hidden.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-5/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T15:41:03Z",
+          "head": "53c24b19059ece9c6d4e8a9bf3eb086a7cba1405"
+        }
       ]
     }
   ],
