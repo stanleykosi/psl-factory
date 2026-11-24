@@ -60,3 +60,6 @@ Notes for the coordinator: (a) the v7 mock item 4107 in `mock/work-live.mjs` use
 - Not gated yet. Commits 22187535 and 8a01fc7a add an `Extra` slot to lane C's shared frame (workspace/adapter.ts, LiveWorkItemView.tsx). That duplicates F-87's `Actions` slot and breaks lane C's rule against importing adapters in LiveWorkItemView.tsx. When F-87 is on main: merge main, revert those two commits (no force-push), draw the proof link and month actuals through `Actions`, and register the adapter in `workspace/lines/index.ts`. Then gate.
 - Fidelity gaps: the parts the spec hides plus board wording, from options accepted under D-187. These go on the design engineer's look-back list, as with F-119.
 - Live Django comparison (criterion 2): no forecast work item on 55433 yet. QA creates one through POST /work with qa-seed. If a seed command is needed, it goes in the merge batch, not run unasked.
+
+## Coordinator: D-202 (24 Nov)
+The design engineer, in chat (relayed by the main coordinator): "Ship simpler for demo". F-103 ships without the proof link and month actuals: drop the `Extra` slot (commits 22187535 and 8a01fc7a, plus ForecastExtra.tsx and useForecastActuals.ts). Add them back on F-87's `Actions` slot after F-87 merges. It builds after F-119 frees a worktree (D-197: two worktrees).

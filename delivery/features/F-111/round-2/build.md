@@ -45,3 +45,6 @@ Unchanged from round 1 except AC1 (Go-live is text in the facts, not a link: see
 
 ## Coordinator note (24 Nov)
 Round 2 isn't gated yet. The blocking TECH-1-2 / UX-1-1 (Try again) needs F-87's `reload`, so F-111 holds for F-87 on main, like F-103. On 24 Nov lane C was asked for the four frame needs above: section reload, banner tone, an adapter-supplied next step, and a link-capable fact. If lane C declines 2 to 4, the design engineer decides whether to accept amber and the current next-step line. After F-87 lands: merge main, add a per-section Try again through `Actions`, move the adapter import into `workspace/lines/index.ts`, then gate.
+
+## Coordinator: D-202 (24 Nov)
+The design engineer, in chat (relayed by the main coordinator): "Ship simpler for demo". F-111 ships read-only as built: a plain reload message instead of the per-section Try again, an amber banner, Blocks as plain text, and the frame's next-step line. F-95 (lane C, parked until after the demo) replaces these later. TECH-1-2, UX-1-1, UI-1-3, UI-1-4, TECH-1-3 and UX-1-3 are recorded as accepted risk under D-202. The worktree is now /Users/Hunchoo/psl-factory-worktrees/lane-d (ports 4990/4991/8030).
