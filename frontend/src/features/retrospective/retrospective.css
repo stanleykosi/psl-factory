@@ -1,0 +1,60 @@
+/* Project retrospective (SCR-33). Token variables only; the layout is one column below 720px. */
+
+.retro__page { display: flex; flex-direction: column; gap: var(--space-20px); min-width: 0; }
+.retro__sub { margin: 0; color: var(--ink-muted); }
+.retro__body { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
+.retro__main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
+.retro__aside { flex: 1 1 320px; max-width: 420px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
+@media (max-width: 719.98px) { .retro__aside { max-width: none; flex-basis: 100%; } }
+
+.retro__stack { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.retro__plain { margin: 0; overflow-wrap: anywhere; }
+.retro__muted { margin: 0; color: var(--ink-muted); font-size: var(--text-small-size); }
+.retro__heading { margin: 0; font-weight: 600; }
+.retro__text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; border: var(--rule-strong) solid var(--ink); padding: var(--space-10px) var(--space-3); background: var(--surface); line-height: 1.5; min-height: 60px; }
+.retro__count { margin: 0; font-family: var(--font-mono); font-size: var(--text-hint-size); color: var(--ink-muted); }
+.retro__count.is-over { color: var(--signal-ink); font-weight: 600; }
+.retro__actions { display: flex; flex-wrap: wrap; gap: var(--space-10px); align-items: center; }
+.retro__actions .psl-btn { min-height: 50px; }
+.retro__row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; justify-content: space-between; }
+
+.retro__versions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.retro__version { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); width: 100%; min-height: 44px; padding: var(--space-2) var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.retro__version[aria-current='true'] { background: var(--ink); color: var(--surface); }
+.retro__people, .retro__proofs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.retro__people .psl-check, .retro__checks .psl-check { min-height: 44px; }
+.retro__checks { display: flex; flex-direction: column; gap: var(--space-1); border: 0; margin: 0; padding: 0; min-width: 0; }
+.retro__checks legend { padding: 0; font-weight: 600; margin-bottom: var(--space-1); }
+.retro__decision { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-3); border: var(--rule-thin) solid var(--ink-subtle); }
+.retro__decisionbar { display: flex; justify-content: flex-end; }
+.retro__followups { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.retro__followup { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-3); border: var(--rule-thin) solid var(--ink-subtle); }
+
+.retro__strip { display: flex; flex-direction: column; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.retro__check { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-2); }
+.retro__check.is-this { font-weight: 600; }
+.retro__used { margin: 0; font-size: var(--text-small-size); color: var(--ink-muted); }
+
+/* the crumb's links are underlined: colour alone does not set a link apart inside the text (WCAG 1.4.1) */
+.retro__crumb .psl-crumb a { text-decoration: underline; text-underline-offset: 2px; }
+
+/* the boards' fields: no resize grip (the box grows with its text); the pair of facts sits on one row */
+.retro__main textarea { resize: none; }
+.retro__pair { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.retro__pair > * { flex: 1 1 240px; min-width: 0; }
+/* Save is the board's 300 by 50 button straight after the notes file; full width on a phone */
+.retro__actions .retro__save { width: 100%; max-width: 300px; }
+@media (max-width: 719.98px) {
+  .retro__actions .retro__save { max-width: none; }
+  /* phone board: Save is a white bar at the foot of the screen, edge to edge, 2px top rule, padding 12/16/18, button full
+     width. It is the last element of the form (after Decisions) and fixed to the viewport, so it pins at any scroll; the
+     page keeps room under the content so the bar never covers the last field or a message. */
+  .retro__savebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); flex-direction: column; align-items: stretch; gap: var(--space-2); margin: 0; padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); }
+  .retro__page { padding-bottom: calc(var(--retro-bar, 110px) + 32px); }
+  /* a focused control scrolls clear of the fixed bar (WCAG 2.4.11); the page scrolls on html */
+  html:has(.retro__savebar) { scroll-padding-bottom: calc(var(--retro-bar, 110px) + 16px); }
+  /* phone board: each box is its own bordered card with the label inside */
+  .retro__box { background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: var(--space-3); }
+  .retro__box .psl-input { border: 0; padding: 0; min-height: 0; }
+}
+
