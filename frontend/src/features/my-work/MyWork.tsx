@@ -17,6 +17,7 @@ import {
   buildWorkQuery,
   filterCount as countFilters,
   isNarrowed,
+  isV7Row,
   lineOptions,
   mergeRefresh,
   parseView,
@@ -91,7 +92,10 @@ export function MyWork() {
   const fetchPage = useCallback(async (v: View, cursor?: string, limit: Limit = DEFAULT_PAGE_SIZE) => {
     inFlight.current += 1;
     try {
-      return await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery({ ...v, limit }, cursor) } }));
+      const data = await call(api.GET('/api/v1/work', { params: { query: buildWorkQuery({ ...v, limit }, cursor) } }));
+      // Rows that are not v7 rows fail the whole response, so they never reach the row components.
+      if (!data.items.every(isV7Row)) throw networkError();
+      return data;
     } finally {
       inFlight.current -= 1;
     }

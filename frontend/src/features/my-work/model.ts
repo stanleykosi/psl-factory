@@ -63,6 +63,12 @@ export const KINDS: Record<WorkItem['kind'], { words: string; family: Family }> 
   started: { words: 'STARTED', family: 'neutral' },
 };
 
+/** A v7 row has a known `kind`; a live row may not, and `KindTag` would throw on it. */
+export const isV7Row = (item: unknown): boolean => {
+  const kind = (item as { kind?: unknown } | null)?.kind;
+  return typeof kind === 'string' && Object.hasOwn(KINDS, kind);
+};
+
 /** Waiting-on filter words (D-WORKLIST-FILTERS proposal; the categories are an engineering proposal). */
 export const WAITING_ON: Record<WaitingOn, string> = {
   me: 'Me',
