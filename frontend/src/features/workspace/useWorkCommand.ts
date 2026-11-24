@@ -12,7 +12,7 @@ import type { LiveWorkItem } from '@/api/types';
 import { STATE_TAGS } from '@/features/work-item/labels';
 
 import { isPanelUrl, type CommandDescriptor } from './adapter';
-import { useWriteLock } from './useWriteLock';
+import { useScopedWriteLock } from './useWriteLock';
 
 export const WORK_COMMAND_TEXT = {
   noVersion: 'We don’t have this item’s current version yet. Reload and try again.',
@@ -30,7 +30,7 @@ export type CommandNotice = { kind: 'success' | 'error'; text: string; detail?: 
 
 type Args = {
   /** The item (or line context) the commands were described from; only its `revision` is read. A new object means a new read landed. */
-  item: { revision: number | null };
+  item: { revision: number | null; workId?: number; id?: number };
   /** Re-reads GET /work/{id} (and the panels); resolves to the new item, or null when the read failed. */
   reload: () => Promise<LiveWorkItem | null>;
   /** A write answered 401 or 404: the page shows the signed-out or unavailable state. Without it the notice says so. */
@@ -75,10 +75,10 @@ async function send(command: CommandDescriptor, inputs: Record<string, unknown>)
 }
 
 export function useWorkCommand({ item, reload, onAccessLost }: Args) {
-  const { pending, locked, begin, end, lock } = useWriteLock();
+  // Locks live per work item, above the components: they survive History and back, and a failed panel re-read.
+  const { pending, locked, unread: unreadAt, begin, end, lock, setUnread: setUnreadAt } = useScopedWriteLock(String(item.workId ?? item.id ?? 'item'));
   const [notice, setNotice] = useState<CommandNotice | null>(null);
   // The send worked but the re-read did not: nothing may be pressed until a read lands (a new `item`).
-  const [unreadAt, setUnreadAt] = useState<object | null>(null);
 
   // the latest item, so a read that lands while a write runs is not mistaken for the one the write started from
   const latest = useRef(item);

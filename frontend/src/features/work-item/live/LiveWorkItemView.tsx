@@ -201,14 +201,9 @@ class PanelBoundary extends Component<{ children: ReactNode }, { failed: boolean
   }
 }
 
-function Overview({ item, reload, lose }: { item: LiveWorkItem; reload: () => Promise<LiveWorkItem | null>; lose: (error: ApiError) => void }) {
+function Overview({ item, ctx, reload, lose }: { item: LiveWorkItem; ctx: LineContext; reload: () => Promise<LiveWorkItem | null>; lose: (error: ApiError) => void }) {
   const activity = activityOf(item);
   const outputHref = safeHref(item.output_url);
-  // a new object per read, so a line's unread lock (useWorkCommand) clears when a read lands
-  const ctx: LineContext = useMemo(
-    () => ({ workId: item.id, caseId: item.case_id, revision: item.revision, caseRevision: item.case_revision, state: item.state }),
-    [item],
-  );
   return (
     <div className="work-columns work-columns--lone">
       <div className="work-column">
@@ -324,6 +319,12 @@ function History({ id }: { id: number }) {
 export function LiveWorkItemView({ id, tab }: { id: string; tab: 'overview' | 'history' }) {
   const workId = Number.parseInt(id, 10);
   const { state, retry, reload, lose } = useLiveWorkItem(workId);
+  // a new object per read, made here (the frame outlives the tab) so a line's unread lock still matches after History and back
+  const readItem = state.status === 'ready' ? state.item : null;
+  const ctx: LineContext | null = useMemo(
+    () => (readItem ? { workId: readItem.id, caseId: readItem.case_id, revision: readItem.revision, caseRevision: readItem.case_revision, state: readItem.state } : null),
+    [readItem],
+  );
   const base = `/work/${workId}`;
   usePhoneBack(tab === 'history' ? { label: 'Work item', href: base } : { label: 'Queue', href: '/my-work' });
 
@@ -334,7 +335,7 @@ export function LiveWorkItemView({ id, tab }: { id: string; tab: 'overview' | 'h
     <>
       <Header item={item} base={base} tab={tab} />
       {refreshFailed && <Callout kind="warning">We couldn’t refresh this item. Showing what we had at {formatDayTime(loadedAt)}.</Callout>}
-      {tab === 'overview' ? <Overview item={item} reload={reload} lose={lose} /> : <History id={workId} />}
+      {tab === 'overview' ? ctx && <Overview item={item} ctx={ctx} reload={reload} lose={lose} /> : <History id={workId} />}
     </>
   );
 }

@@ -8,6 +8,7 @@ import { ToastProvider } from '@/components';
 import type { LiveWorkItem } from '@/api/types';
 import { makeCommand, readPanel, registerLineAdapter, type PanelRef, type LineActionsProps, type LineAdapter } from '@/features/workspace/adapter';
 import { toFormData, useWorkCommand } from '@/features/workspace/useWorkCommand';
+import { resetScopedWriteLocks } from '@/features/workspace/useWriteLock';
 import { workItemCommands } from '@/features/workspace/workItemCommands';
 import { LiveWorkItemView } from '@/features/work-item/live/LiveWorkItemView';
 
@@ -30,6 +31,7 @@ const posts = () => fetchStub.mock.calls.filter(([r]) => r.method === 'POST').ma
 const sessionReads = () => fetchStub.mock.calls.filter(([r]) => new URL(r.url).pathname === '/api/v1/session').length;
 
 beforeEach(() => {
+  resetScopedWriteLocks();
   resetWorkLive();
   scenario = undefined;
   setCsrfToken('t');
@@ -442,6 +444,50 @@ describe('the controls row on the live page', () => {
     expect(within(row()!).getByText('Check the page before trying again.')).toBeTruthy();
     fireEvent.click(resume);
     expect(posts()).toHaveLength(1);
+  });
+
+  it('a timed-out Resume stays locked after History and back (no new read), and a second press sends nothing', async () => {
+    scenario = 'w500';
+    const view = (tab: 'overview' | 'history') => (
+      <ToastProvider>
+        <LiveWorkItemView id="4121" tab={tab} />
+      </ToastProvider>
+    );
+    const { rerender } = render(view('overview'));
+    fireEvent.click(await screen.findByRole('button', { name: 'Resume' }));
+    await screen.findByText('We couldn’t confirm that this happened. Check the page before trying again.');
+    expect((screen.getByRole('button', { name: 'Resume' }) as HTMLButtonElement).disabled).toBe(true);
+    rerender(view('history'));
+    await screen.findByRole('list', { name: /History/ });
+    expect(screen.queryByRole('button', { name: 'Resume' })).toBeNull();
+    rerender(view('overview'));
+    const resume = (await screen.findByRole('button', { name: 'Resume' })) as HTMLButtonElement;
+    expect(resume.disabled).toBe(true);
+    expect(within(row()!).getByText('Check the page before trying again.')).toBeTruthy();
+    fireEvent.click(resume);
+    expect(posts()).toHaveLength(1);
+  });
+
+  it('switching tabs while a write is running does not allow a second write alongside it', async () => {
+    let release: (r: Response) => void = () => undefined;
+    const base = fetchStub.getMockImplementation()!;
+    fetchStub.mockImplementation(async (request: Request) => (request.method === 'POST' ? new Promise<Response>((resolve) => (release = resolve)) : base(request)));
+    const view = (tab: 'overview' | 'history') => (
+      <ToastProvider>
+        <LiveWorkItemView id="4121" tab={tab} />
+      </ToastProvider>
+    );
+    const { rerender } = render(view('overview'));
+    fireEvent.click(await screen.findByRole('button', { name: 'Resume' }));
+    await waitFor(() => expect(posts()).toHaveLength(1));
+    rerender(view('history'));
+    rerender(view('overview'));
+    const cancel = (await screen.findByRole('button', { name: 'Cancel' })) as HTMLButtonElement;
+    expect(cancel.disabled).toBe(true);
+    fireEvent.click(await screen.findByRole('button', { name: /Working/ }));
+    expect(posts()).toHaveLength(1);
+    release(json(200, { work_id: 4121, state: 'ready', revision: 4 }));
+    await waitFor(() => expect(screen.queryByRole('button', { name: /Working/ })).toBeNull());
   });
 
   it('a 404 on the write replaces the page with "This record is unavailable."', async () => {
