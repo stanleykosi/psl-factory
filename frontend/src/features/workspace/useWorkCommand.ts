@@ -152,7 +152,7 @@ export function useWorkCommand({ item, reload, onAccessLost }: Args) {
         end();
       }
     },
-    [begin, busy, end, item, lock, locked, onAccessLost, reload],
+    [begin, busy, end, item, lock, locked, onAccessLost, reload, setUnreadAt],
   );
 
   return { run, pending, busy, notice, lockedReason, clearNotice: () => setNotice(null) };
