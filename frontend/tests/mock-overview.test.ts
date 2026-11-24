@@ -37,8 +37,8 @@ const get = async (path: string, variant?: string) => {
 };
 
 describe('GET /overview and GET /work/counts in the mock', () => {
-  it('lists the five variants', () => {
-    expect(OVERVIEW_VARIANTS).toEqual(['empty', 'limited', 'missing', 'missing-limited', 'no-counts']);
+  it('lists the six variants', () => {
+    expect(OVERVIEW_VARIANTS).toEqual(['empty', 'limited', 'missing', 'missing-limited', 'no-counts', 'floors']);
   });
 
   it('serves exactly {as_of, lines[{key,title,total}]} and the counts shape, both valid under the live contract', async () => {
@@ -75,6 +75,15 @@ describe('GET /overview and GET /work/counts in the mock', () => {
     expect((await get('/api/v1/overview', 'missing')).body.lines.map((l: { key: string }) => l.key)).toContain('commercial/v1');
     expect((await get('/api/v1/work/counts', 'missing-limited')).body.limited).toBe(true);
     expect((await get('/api/v1/overview', 'empty')).body.lines).toEqual([]);
+  });
+
+  it('floors puts one line on each of the eight floors, summing to the board\'s 18, 5, 3 and 28', async () => {
+    const counts = (await get('/api/v1/work/counts', 'floors')).body;
+    const sum = (pick: (l: Record<string, number>) => number) => counts.lines.reduce((n: number, l: Record<string, number>) => n + pick(l), 0);
+    expect([sum((l) => l.open), sum((l) => l.needs_person), sum((l) => l.stopped), sum((l) => l.verified_this_month)]).toEqual([18, 5, 3, 28]);
+    const overview = (await get('/api/v1/overview', 'floors')).body;
+    expect(overview.lines.map((l: { key: string }) => l.key)).toEqual(counts.lines.map((l: { key: string }) => l.key));
+    for (const line of counts.lines) expect(line.stations.map((s: { count: number }) => s.count).slice(0, 3).reduce((a: number, b: number) => a + b, 0), line.key).toBe(line.open);
   });
 
   it('keeps no v7 overview and no station read', async () => {

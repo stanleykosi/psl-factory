@@ -24,6 +24,12 @@ function stationsFor(entry: CountsLine | undefined, counts: WorkCounts | null): 
   return STATION_KEYS.map((k) => stationOf(k, entry.stations.find((s) => s.key === k)));
 }
 
+const sum = (values: readonly number[]) => {
+  let n = 0;
+  for (const v of values) n += v;
+  return n;
+};
+
 /** Floors in drawn order with "Other lines" last; a floor with no returned line is left out, and no key is dropped. */
 export function floorsOf(overview: Overview, counts: WorkCounts | null): Floor[] {
   const by = new Map<string, FloorLine[]>();
@@ -34,7 +40,7 @@ export function floorsOf(overview: Overview, counts: WorkCounts | null): Floor[]
   }
   return [...FLOORS.map((f) => f.name), OTHER_FLOOR].flatMap((name) => {
     const lines = by.get(name);
-    return lines ? [{ name, total: lines.reduce((n, l) => n + l.total, 0), lines }] : [];
+    return lines ? [{ name, total: sum(lines.map((l) => l.total)), lines }] : [];
   });
 }
 
@@ -42,8 +48,8 @@ export type Totals = { inProgress: number; needPerson: number; stopped: number; 
 
 /** Sums over every line /work/counts returns, including lines /overview does not list. */
 export function totalsOf(counts: WorkCounts): Totals {
-  const sum = (pick: (l: CountsLine) => number) => counts.lines.reduce((n, l) => n + pick(l), 0);
-  return { inProgress: sum((l) => l.open), needPerson: sum((l) => l.needs_person), stopped: sum((l) => l.stopped), verifiedThisMonth: sum((l) => l.verified_this_month) };
+  const total = (pick: (l: CountsLine) => number) => sum(counts.lines.map(pick));
+  return { inProgress: total((l) => l.open), needPerson: total((l) => l.needs_person), stopped: total((l) => l.stopped), verifiedThisMonth: total((l) => l.verified_this_month) };
 }
 
 /** "at least N" when the counts did not cover every item; never a bare number then. */
@@ -56,7 +62,8 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 /** "2026-11" as "Nov 2026". */
 export function monthLabel(month: string) {
   const [y, m] = month.split('-');
-  return MONTHS[Number(m) - 1] ? `${MONTHS[Number(m) - 1]} ${y}` : month;
+  const name = MONTHS[parseInt(m, 10) - 1];
+  return name ? `${name} ${y}` : month;
 }
 
 export const workLink = (key: string) => `/my-work?line=${encodeURIComponent(key)}`;
