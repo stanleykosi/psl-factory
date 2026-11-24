@@ -119,6 +119,18 @@
       "at": "2026-11-24T14:26:56Z",
       "seconds": 298.1,
       "evidence_ref": "delivery/features/F-119/round-3/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 4,
+      "attempt": 1,
+      "commit": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T14:45:31Z",
+      "seconds": 190.7,
+      "evidence_ref": "delivery/features/F-119/round-4/checks.md"
     }
   ],
   "reviews": {
@@ -883,14 +895,42 @@
         "delivery/features/F-119/round-3/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T14:35:28Z",
           "head": "06d07376b02424f191502441b6f29635848c88d5"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:45:31Z",
+          "refs": [
+            "ca44c3775de717cd923cfa569ad85c68460bc85f"
+          ],
+          "head": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:50:27Z",
+          "refs": [
+            "Pinned at any scroll: the bar is viewport-fixed and the e2e test checks its bottom edge at scroll 0 and at scroll end. Read, not run."
+          ],
+          "head": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "ca44c3775de717cd923cfa569ad85c68460bc85f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Pinned at any scroll: the bar is viewport-fixed and the e2e test checks its bottom edge at scroll 0 and at scroll end. Read, not run."
       ]
     },
     {
@@ -906,14 +946,42 @@
         "delivery/features/F-119/round-3/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T14:35:28Z",
           "head": "06d07376b02424f191502441b6f29635848c88d5"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:45:31Z",
+          "refs": [
+            "ca44c3775de717cd923cfa569ad85c68460bc85f"
+          ],
+          "head": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:50:27Z",
+          "refs": [
+            "Technical side. Read the CSS: `position: fixed; left: 0; right: 0; bottom: 0; margin: 0` only in the `max-width: 719.98px` query. Desktop is unchanged (`order` only, which is inert for a non-flex element). No other shared class is touched. Full-width fixed bars match the existing pattern (`work-phonebar`, `alerts-footer`, `rfp-pin`)."
+          ],
+          "head": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "ca44c3775de717cd923cfa569ad85c68460bc85f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "Technical side. Read the CSS: `position: fixed; left: 0; right: 0; bottom: 0; margin: 0` only in the `max-width: 719.98px` query. Desktop is unchanged (`order` only, which is inert for a non-flex element). No other shared class is touched. Full-width fixed bars match the existing pattern (`work-phonebar`, `alerts-footer`, `rfp-pin`)."
       ]
     },
     {
@@ -929,13 +997,133 @@
         "delivery/features/F-119/round-3/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T14:35:28Z",
           "head": "06d07376b02424f191502441b6f29635848c88d5"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:45:31Z",
+          "refs": [
+            "ca44c3775de717cd923cfa569ad85c68460bc85f"
+          ],
+          "head": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:50:27Z",
+          "refs": [
+            "The bar is the last child of the form on phone, after the Decisions block (DOM check in `e2e/retrospective.spec.ts:374-375`). Padding and the 140px allowance keep the last field and the 422 message clear (`e2e/retrospective.spec.ts:386-397`)."
+          ],
+          "head": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "ca44c3775de717cd923cfa569ad85c68460bc85f"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The bar is the last child of the form on phone, after the Decisions block (DOM check in `e2e/retrospective.spec.ts:374-375`). Padding and the 140px allowance keep the last field and the 422 message clear (`e2e/retrospective.spec.ts:386-397`)."
+      ]
+    },
+    {
+      "id": "TECH-4-1",
+      "round": 4,
+      "snapshot_ref": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "Desktop Tab order now differs from screen order. The Decisions block is before the Save row in the DOM (`RetroForm.tsx:154` and `:193`), but on desktop Save is shown above Decisions (`retrospective.css:61-62`). A keyboard user going from Notes file reaches Decision 1 and Add a decision before Save, though Save is visually directly under the notes file. Nothing is unreachable or trapped, so this is a WCAG 2.4.3 watch item, not a blocking breach. Any DOM order fixes one viewport and breaks the other, because the phone bar is last in DOM. Product/UX should decide whether the board's desktop order or the Tab order wins; the builder's note records the same trade-off.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-4/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:50:27Z",
+          "head": "ca44c3775de717cd923cfa569ad85c68460bc85f"
+        }
+      ]
+    },
+    {
+      "id": "TECH-4-2",
+      "round": 4,
+      "snapshot_ref": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`.retro__page { padding-bottom: 140px }` (`retrospective.css:51`) is a fixed allowance, not measured against the bar. When Save is disabled, `.psl-reason` (`Button.tsx:119-120`) sits inside the bar. The longest retro reason is about 90 characters, which wraps to two lines at 390px. That keeps the bar near 130-136px, just inside 140px. A longer reason would let the bar cover the last field at scroll end. Consider 160px or a measured spacer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-4/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:50:27Z",
+          "head": "ca44c3775de717cd923cfa569ad85c68460bc85f"
+        }
+      ]
+    },
+    {
+      "id": "UX-4-1",
+      "round": 4,
+      "snapshot_ref": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone (390): the fixed Save bar covers focused controls. Expected: a control that receives keyboard focus is scrolled fully above the bar (WCAG 2.4.11). Actual: after Tab or focus() the \"Tunde Bello\" checkbox sits at y 824-844 with the bar at 735-844, and elementFromPoint at its centre returns the bar (fully obscured). \"Lessons for next projects\" (708-775) is partly under the bar. Browsers only scroll into view within the full viewport, so the bar hides the element. Path: `frontend/src/features/retrospective/retrospective.css` (phone `.retro__savebar` fixed bar, `.retro__page` padding); suggested fix: set `scroll-padding-bottom` on the form or page at phone width to the bar height plus a margin (about 130px), so focus scrolls above it, and re-check the Tab walk.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-4/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T14:50:27Z",
+          "head": "ca44c3775de717cd923cfa569ad85c68460bc85f"
+        }
+      ]
+    },
+    {
+      "id": "UX-4-2",
+      "round": 4,
+      "snapshot_ref": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Desktop (1440): keyboard focus order does not follow the screen. Expected: Save (visually after the notes file and before Decisions, as on the board) is reached right after the notes file, as in round 3. Actual: DOM order is notes file, Decisions rows, \"Add a decision\", then Save, so Tab goes past the Decisions block (y 1009) and back up to Save (y 840). Caused by `.retro__decisions { order: 2 }` and `.retro__savebar { order: 1 }` on desktop, which change the screen order but not the DOM order. Path: `frontend/src/features/retrospective/RetroForm.tsx` (Save row placed after the Decisions block) and `retrospective.css` (desktop `order` rules). Suggested fix: keep Save before Decisions in the DOM at all widths, and keep the phone bar fixed so its screen position at the foot is unchanged; or keep the phone order and make the desktop order match the DOM. Either way, DOM order must match the desktop screen order.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-4/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T14:50:27Z",
+          "head": "ca44c3775de717cd923cfa569ad85c68460bc85f"
         }
       ]
     }
@@ -1105,6 +1293,61 @@
           ]
         }
       }
+    },
+    {
+      "round": 4,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+          "evidence_refs": [
+            "delivery/features/F-119/round-4/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-119/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer",
+          "snapshot_ref": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+          "evidence_refs": [
+            "delivery/features/F-119/round-4/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "passed",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer (round 4 fix verification, static review of the diff, CSS ancestry and the builder's e2e assertions)",
+          "snapshot_ref": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+          "evidence_refs": [
+            "delivery/features/F-119/round-4/review-ui.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -1129,7 +1372,7 @@
     "base_branch": "main",
     "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-delivery-closure-retrospective",
-    "head_sha": "06d07376b02424f191502441b6f29635848c88d5",
+    "head_sha": "ca44c3775de717cd923cfa569ad85c68460bc85f",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d2",
     "pr_url": null,
     "pr_number": null,
@@ -1193,7 +1436,7 @@
     }
   },
   "created_at": "2026-11-23T17:35:28Z",
-  "round": 4,
+  "round": 5,
   "round_limit": 5,
   "history": [
     {
@@ -1283,6 +1526,30 @@
       "round": 4,
       "head": "06d07376b02424f191502441b6f29635848c88d5",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T14:45:39Z",
+      "round": 4,
+      "head": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T14:50:27Z",
+      "round": 4,
+      "head": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T14:50:27Z",
+      "round": 5,
+      "head": "ca44c3775de717cd923cfa569ad85c68460bc85f",
+      "reason": null
     }
   ],
   "routing": {
@@ -1298,7 +1565,7 @@
     ]
   },
   "gate": {
-    "round": 4,
+    "round": 5,
     "attempts": 0,
     "verdict": null,
     "commit": null
