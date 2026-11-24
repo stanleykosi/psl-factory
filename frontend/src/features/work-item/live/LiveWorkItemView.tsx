@@ -1,14 +1,31 @@
 'use client';
 
 // F-85 SCR-02 on the live API: /work/[id] and /work/[id]/history for an integer work id (GET /work/{id}, GET /work/{id}/history).
-// Only what the response carries is drawn: no station track, facts strip or agent steps, and no placeholder where they were.
+// F-91: the station track, six facts, agent card, reference and started line come from GET /work/{id}/tracking (item.tracking_url);
+// history pages older events by the next_before cursor. Only what the API serves is drawn: no agent steps, no placeholder where a part is absent.
 // Writes: the controls row (ItemControls, F-87) and a line's own `Actions` slot; both send through useWorkCommand. Access is the backend's answer (404 = missing or not yours).
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Component, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Component, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import type { ApiError } from '@/api/errors';
-import { Breadcrumb, buttonClass, Button, Callout, EmptyState, formatDayTime, Segmented, Tabs, Tag, useIsPhone } from '@/components';
+import {
+  AgentAvatar,
+  agentKey,
+  Breadcrumb,
+  buttonClass,
+  Button,
+  Callout,
+  EmptyState,
+  FactsStrip,
+  formatDayTime,
+  PersonAvatar,
+  Segmented,
+  StationTrack,
+  Tabs,
+  Tag,
+  useIsPhone,
+} from '@/components';
 import { adapterFor, type LineContext, type PanelRef } from '@/features/workspace/adapter';
 import type { Section } from '@/features/workspace/labels';
 import { SectionView } from '@/features/workspace/Sections';
@@ -16,13 +33,14 @@ import '@/features/workspace/lines';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 import { SampleLabel } from '@/shell/SampleLabel';
-import type { LiveWorkItem } from '@/api/types';
+import type { LiveTracking, LiveWorkItem } from '@/api/types';
 
-import { nextStepKind, STATE_TAGS } from '../labels';
+import { ACTOR_TAGS, nextStepKind, STATE_TAGS } from '../labels';
 import { NoAccessState, WorkErrorCard } from '../WorkItemStates';
 import { ItemControls } from './ItemControls';
-import { decisionHref, activityOf, historyCaption, historyLine, HISTORY_FILTERS, lineName, safeHref, words } from './model';
+import { decisionHref, activityOf, factsOf, historyCaption, historyLine, HISTORY_FILTERS, lineName, safeHref, stationsOf, words } from './model';
 import { useLiveHistory } from './useLiveHistory';
+import { useLiveTracking } from './useLiveTracking';
 import { useLiveWorkItem } from './useLiveWorkItem';
 
 import '../work-item.css';
@@ -77,7 +95,7 @@ function Tabs2({ base, tab }: { base: string; tab: 'overview' | 'history' }) {
   );
 }
 
-function Header({ item, base, tab }: { item: LiveWorkItem; base: string; tab: 'overview' | 'history' }) {
+function Header({ item, tracking, base, tab }: { item: LiveWorkItem; tracking: LiveTracking | null; base: string; tab: 'overview' | 'history' }) {
   const phone = useIsPhone();
   const tag = STATE_TAGS[item.state];
   const tagEl = (
@@ -89,6 +107,11 @@ function Header({ item, base, tab }: { item: LiveWorkItem; base: string; tab: 'o
     <div className="work-sub">
       <span>{item.status_label}</span>
       {item.owner !== null && <span>With {item.owner}</span>}
+      {tracking && (
+        <span>
+          Started by {tracking.started_by} · <time dateTime={tracking.started_at}>{formatDayTime(tracking.started_at)}</time>
+        </span>
+      )}
       <span>
         Updated <time dateTime={item.updated_at}>{formatDayTime(item.updated_at)}</time>
       </span>
@@ -101,7 +124,7 @@ function Header({ item, base, tab }: { item: LiveWorkItem; base: string; tab: 'o
     <header className="work-header work-header--end">
       {!phone && (
         <div className="work-crumbrow">
-          <Breadcrumb items={[{ label: 'My work', href: '/my-work' }, { label: lineName(item.line) }]} current={<span>Work {item.id}</span>} />
+          <Breadcrumb items={[{ label: 'My work', href: '/my-work' }, { label: lineName(item.line) }]} current={<span>Work {item.id}{item.reference ? ` · ${item.reference}` : ''}</span>} />
           <div className="work-crumbright">{tabs}</div>
         </div>
       )}
@@ -201,12 +224,100 @@ class PanelBoundary extends Component<{ children: ReactNode }, { failed: boolean
   }
 }
 
-function Overview({ item, ctx, reload, lose }: { item: LiveWorkItem; ctx: LineContext; reload: () => Promise<LiveWorkItem | null>; lose: (error: ApiError) => void }) {
+const BUSY = new Set<ApiError['kind']>(['rate_limited', 'read_limited']);
+const isBusy = (error: ApiError) => BUSY.has(error.kind) || error.status === 503;
+
+/** The station track with who holds each station, and the six facts. Nothing when the item has no tracking_url; one callout when the read failed and there is no earlier read. */
+function TrackingBlock({ item, tracking, error, onRetry }: { item: LiveWorkItem; tracking: LiveTracking | null; error: ApiError | null; onRetry: () => void }) {
+  if (item.tracking_url === null) return null;
+  if (!tracking) {
+    return error ? (
+      <Callout kind="warning">
+        We couldn’t load where this work is held.{isBusy(error) && ' Try again shortly.'}{' '}
+        <Button kind="secondary" size="sm" onClick={onRetry}>
+          Try again
+        </Button>
+      </Callout>
+    ) : null;
+  }
+  const stations = stationsOf(tracking, item);
+  return (
+    <>
+      {stations.length > 0 && (
+        <section className="work-track" aria-label="Stations">
+          <StationTrack stations={stations} />
+        </section>
+      )}
+      <FactsStrip facts={factsOf(tracking)} label="Facts" className="work-facts" paidNote={null} />
+    </>
+  );
+}
+
+/** The agent on this item: its name and picture, what it is doing (the activity line, else progress) and its last recorded activity. No steps. */
+function AgentCard({ item, tracking }: { item: LiveWorkItem; tracking: LiveTracking | null }) {
   const activity = activityOf(item);
+  const last = tracking?.last_activity ?? null;
+  if (!item.agent && !activity && !last) return null;
+  const key = agentKey(item.agent);
+  return (
+    <section className="psl-agent work-agent" aria-label="Agent at work">
+      {item.agent && (
+        <div className="psl-agent__head">
+          {key ? <AgentAvatar agent={key} working={item.current_activity?.watching === true} /> : <PersonAvatar name={item.agent} />}
+          <span>
+            <strong>{item.agent}</strong>
+          </span>
+        </div>
+      )}
+      {(activity || last) && (
+        <div className="work-agent__body">
+          {activity && (
+            <p className="work-plain">
+              {activity.text}
+              {activity.updatedAt && (
+                <>
+                  {' '}
+                  <span className="work-note">
+                    Updated <time dateTime={activity.updatedAt}>{formatDayTime(activity.updatedAt)}</time>
+                  </span>
+                </>
+              )}
+            </p>
+          )}
+          {last && (
+            <p className="work-note">
+              Last activity: {words(last.kind)} · {words(last.status)} · <time dateTime={last.at}>{formatDayTime(last.at)}</time>
+            </p>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function Overview({
+  item,
+  ctx,
+  reload,
+  lose,
+  tracking,
+  trackingError,
+  retryTracking,
+}: {
+  item: LiveWorkItem;
+  ctx: LineContext;
+  reload: () => Promise<LiveWorkItem | null>;
+  lose: (error: ApiError) => void;
+  tracking: LiveTracking | null;
+  trackingError: ApiError | null;
+  retryTracking: () => void;
+}) {
   const outputHref = safeHref(item.output_url);
   return (
     <div className="work-columns work-columns--lone">
       <div className="work-column">
+        <TrackingBlock item={item} tracking={tracking} error={trackingError} onRetry={retryTracking} />
+        <AgentCard item={item} tracking={tracking} />
         <ItemControls item={item} reload={reload} onAccessLost={lose} />
         {item.blocker && (
           <Callout kind="warning" announce={false} className="work-next">
@@ -217,19 +328,6 @@ function Overview({ item, ctx, reload, lose }: { item: LiveWorkItem; ctx: LineCo
           <Callout kind={nextStepKind(item.state)} announce={false} icon={false} className="work-next">
             <strong>Next step.</strong> {item.next_step}
           </Callout>
-        )}
-        {activity && (
-          <p className="work-plain">
-            {activity.text}
-            {activity.updatedAt && (
-              <>
-                {' '}
-                <span className="work-note">
-                  Updated <time dateTime={activity.updatedAt}>{formatDayTime(activity.updatedAt)}</time>
-                </span>
-              </>
-            )}
-          </p>
         )}
         {item.tasks.length > 0 && (
           <section className="psl-panel" aria-labelledby="live-decisions">
@@ -273,34 +371,67 @@ function Overview({ item, ctx, reload, lose }: { item: LiveWorkItem; ctx: LineCo
 }
 
 function History({ id }: { id: number }) {
-  const { state, kind, setKind, retry } = useLiveHistory(id);
+  const { state, kind, setKind, retry, loadOlder } = useLiveHistory(id);
+  const list = useRef<HTMLOListElement>(null);
+  // the row to focus once older events arrive: the first new one
+  const focusFrom = useRef<number | null>(null);
+  const count = state.status === 'ready' ? state.items.length : 0;
+  useEffect(() => {
+    if (focusFrom.current === null || count <= focusFrom.current) return;
+    (list.current?.children[focusFrom.current] as HTMLElement | undefined)?.focus();
+    focusFrom.current = null;
+  }, [count]);
+
   let body: ReactNode;
   if (state.status === 'loading') body = <LoadingState />;
   else if (state.status === 'error') body = <ErrorState error={state.error} pathname={`/work/${id}/history`} onRetry={() => void retry()} what="this item’s history" />;
   else if (state.items.length === 0) body = <EmptyState title="No changes recorded yet.">Changes appear here as the work moves.</EmptyState>;
   else {
+    const failed = typeof state.older === 'object' ? state.older.error : null;
     body = (
       <>
-        <ol className="work-hcards" aria-label="History, newest first">
-          {state.items.map((row, i) => {
+        <ol ref={list} className="work-hcards" aria-label="History, newest first">
+          {state.items.map((row) => {
             const line = historyLine(row);
+            const tag = ACTOR_TAGS[line.actorKind === 'worker' ? 'agent' : 'person'];
             return (
-              <li key={i} className="work-hcard">
+              <li key={line.entryId} className="work-hcard" tabIndex={-1}>
                 <span className="work-hcard__when">
                   <time dateTime={line.at}>{formatDayTime(line.at)}</time>
+                </span>
+                <span className="work-who">
+                  <Tag tone={tag.tone}>{tag.text}</Tag>
+                  {line.actor && <span>{line.actor}</span>}
                 </span>
                 <span className="work-eventline">
                   <strong className="work-event">{line.station}</strong> {line.status}
                 </span>
-                {line.actor && <span className="work-who">{line.actor}</span>}
                 {line.reason && <span className="work-line">{line.reason}</span>}
                 {line.evidenceId !== null && <span className="work-line">Evidence {line.evidenceId}</span>}
               </li>
             );
           })}
         </ol>
+        {failed && (
+          <Callout kind="warning">{isBusy(failed) ? 'Try again shortly.' : 'We couldn’t load older events. Your work is safe; nothing was changed.'}</Callout>
+        )}
+        {state.nextBefore !== null && (
+          <p>
+            <Button
+              kind="secondary"
+              busy={state.older === 'loading'}
+              busyLabel="Loading…"
+              onClick={() => {
+                focusFrom.current = state.items.length;
+                void loadOlder();
+              }}
+            >
+              {failed ? 'Try again' : 'Older events'}
+            </Button>
+          </p>
+        )}
         <p className="work-note">
-          {historyCaption(state.items.length)} As of <time dateTime={state.asOf}>{formatDayTime(state.asOf)}</time>.
+          {historyCaption(state.items.length, state.nextBefore !== null)} As of <time dateTime={state.asOf}>{formatDayTime(state.asOf)}</time>.
         </p>
       </>
     );
@@ -325,6 +456,7 @@ export function LiveWorkItemView({ id, tab }: { id: string; tab: 'overview' | 'h
     () => (readItem ? { workId: readItem.id, caseId: readItem.case_id, revision: readItem.revision, caseRevision: readItem.case_revision, state: readItem.state } : null),
     [readItem],
   );
+  const tracking = useLiveTracking(workId, readItem !== null && readItem.tracking_url !== null, state.status === 'ready' ? state.loadedAt : null, lose);
   const base = `/work/${workId}`;
   usePhoneBack(tab === 'history' ? { label: 'Work item', href: base } : { label: 'Queue', href: '/my-work' });
 
@@ -333,9 +465,9 @@ export function LiveWorkItemView({ id, tab }: { id: string; tab: 'overview' | 'h
   const { item, loadedAt, refreshFailed } = state;
   return (
     <>
-      <Header item={item} base={base} tab={tab} />
+      <Header item={item} tracking={tracking.tracking} base={base} tab={tab} />
       {refreshFailed && <Callout kind="warning">We couldn’t refresh this item. Showing what we had at {formatDayTime(loadedAt)}.</Callout>}
-      {tab === 'overview' ? ctx && <Overview item={item} ctx={ctx} reload={reload} lose={lose} /> : <History id={workId} />}
+      {tab === 'overview' ? ctx && <Overview item={item} ctx={ctx} reload={reload} lose={lose} tracking={tracking.tracking} trackingError={tracking.error} retryTracking={() => void tracking.retry()} /> : <History id={workId} />}
     </>
   );
 }

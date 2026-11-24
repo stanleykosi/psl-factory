@@ -19,4 +19,6 @@ export type LiveWorkItem = LiveGet<'/api/v1/work/{work_id}'>;
 export type LiveWorkTask = LiveWorkItem['tasks'][number];
 export type LiveWorkHistory = LiveGet<'/api/v1/work/{work_id}/history'>;
 export type LiveHistoryRow = LiveWorkHistory['items'][number];
+export type LiveTracking = LiveGet<'/api/v1/work/{work_id}/tracking'>;
+export type LiveStation = LiveTracking['stations'][number];
 export type LiveWeeklyReport = LiveGet<'/api/v1/work/{work_id}/weekly-report'>;
