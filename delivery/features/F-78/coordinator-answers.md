@@ -7,3 +7,6 @@
 
 ## B32 answered (24 Nov 2026, D-195)
 The design engineer accepted the recommended option for B32: "All recommended options accepted: … B32 …" (delivery/connect/questions-batch.md, "Answers, batch 4"). Build option 1 of each board change in spec.md "Conflicts with the boards"; option 2 (stage number through the link) is not taken. Product acceptance for these board changes is recorded under D-184 from this answer. F-78 is high risk (it records a completion, which queues the Finance handoff), so its merge still goes to merge-batch.md for the design engineer.
+
+## Batch 5 confirmed (24 Nov 2026, D-202)
+The design engineer, in chat, relayed by the main coordinator (records 2d8816cc): "Accept all recs". This covers F-78 batch 5, option 1 (accept all), the same answer D-195 recorded above.
