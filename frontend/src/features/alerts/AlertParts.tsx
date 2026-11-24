@@ -134,8 +134,8 @@ export function RowTail({ alert, notice, onMark }: { alert: Alert; notice?: RowN
         </span>
       )}
       {!alert.read && !alertHref(alert) && notice !== 'gone' && (
-        <Button kind="bare" className="alerts-markread" onClick={() => onMark(alert)}>
-          Mark as read<VisuallyHidden>: {alert.title}</VisuallyHidden>
+        <Button kind="bare" className="alerts-markread" aria-label={`Mark as read: ${alert.title}`} onClick={() => onMark(alert)}>
+          Mark as read
         </Button>
       )}
     </>

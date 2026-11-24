@@ -196,7 +196,7 @@ test.describe('list states', () => {
         const fail = asStatus('404');
         await page.route('**/api/v1/notifications?page=1', fail);
         await page.goto('/notifications');
-        const card = page.getByRole('alert');
+        const card = page.getByRole('alert').filter({ hasText: 'We couldn’t load your alerts' });
         await expect(card).toContainText('We couldn’t load your alerts.');
         await expect(card).toContainText('Reference not_found for support.');
         await expectNoAxeViolations(page);
@@ -338,23 +338,24 @@ test.describe('settings at 1440 (SCR-15-desktop-settings)', () => {
     await expect(page.getByRole('link', { name: 'Sign in' }).first()).toHaveAttribute('href', '/sign-in?next=%2Fsettings%2Falerts');
   });
 
-  test('the switch focus ring and the Save focus ring are visible', async ({ page }) => {
+  test('the switch focus ring and the Save focus ring are visible (keyboard focus)', async ({ page }) => {
     await page.goto('/settings/alerts');
     await settingsLoaded(page);
-    await sw(page, 'WhatsApp').click();
-    const rings: Record<string, string> = {};
-    const targets = [
-      ['switch', sw(page, 'WhatsApp')],
-      ['save', page.getByRole('button', { name: 'Save settings' })],
-    ] as const;
-    for (const [name, target] of targets) {
+    const ring = (el: Element) => (getComputedStyle(el).outlineStyle !== 'none' ? `${getComputedStyle(el).outlineStyle} ${getComputedStyle(el).outlineWidth}` : 'none');
+    const reach = async (target: ReturnType<typeof sw>) => {
       for (let i = 0; i < 40; i++) {
         if (await target.evaluate((el) => el === document.activeElement)) break;
         await page.keyboard.press('Tab');
       }
       await expect(target).toBeFocused();
-      rings[name] = await target.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? `${getComputedStyle(el).outlineStyle} ${getComputedStyle(el).outlineWidth}` : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid 2px' : 'none'));
-    }
+    };
+    const whatsapp = sw(page, 'WhatsApp');
+    await reach(whatsapp);
+    const rings: Record<string, string> = { switch: await whatsapp.evaluate(ring) };
+    await page.keyboard.press('Space');
+    const save = page.getByRole('button', { name: 'Save settings' });
+    await reach(save);
+    rings.save = await save.evaluate(ring);
     expect(rings).toEqual({ switch: 'solid 2px', save: 'solid 2px' });
   });
 });

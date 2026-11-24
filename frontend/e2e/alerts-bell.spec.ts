@@ -169,7 +169,7 @@ test.describe('desktop 1440', () => {
     await expect(bell(page)).toHaveAttribute('aria-expanded', 'false');
 
     await bell(page).click();
-    await dialog(page).getByRole('button', { name: 'Close' }).click();
+    await dialog(page).getByRole('button', { name: 'Close', exact: true }).click();
     await expect(dialog(page)).toHaveCount(0);
     await expect(bell(page)).toBeFocused();
 
@@ -413,7 +413,7 @@ test.describe('phone 390', () => {
     expect(panel.y + panel.height).toBe(844);
     expect(panel.width).toBe(390);
     await expect(d.locator('.psl-sheet__grab')).toBeVisible();
-    const close = await box(d.getByRole('button', { name: 'Close' }));
+    const close = await box(d.getByRole('button', { name: 'Close', exact: true }));
     expect(close.width).toBeGreaterThanOrEqual(44);
     expect(close.height).toBeGreaterThanOrEqual(44);
     const tabs = d.getByRole('tab');
