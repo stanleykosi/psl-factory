@@ -3,26 +3,60 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-67",
-  "outcome": "The app frame uses API 1.24.0: role words come from /me positions, the menu shows each destination's live url and hides unavailable ones, a save that meets csrf_failed retries once with the same idempotency key, and a signed-out download shows the frame's own signed-out state",
-  "state": "PLANNED",
+  "outcome": "The app frame and API client run on API 1.24.0 data and rules",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "A `/me` with positions \"PMO Lead\" and \"Finance Lead\" shows \"PMO Lead, Finance Lead\" beside the name on both bars. The page makes no `GET /api/v1/role-dashboard` call. \u2014 verify: `frontend/tests/shell-live.test.tsx`, fetch stub calls contain no `/role-dashboard`; the account menu header shows the names.",
+    "A `/me` with no positions shows the name only, with no stray separator. \u2014 verify: same test file.",
+    "Destinations `my_work` (available), `setup` (`available:false`) show only My work in the menu; Setup is not in the bar or the phone menu. \u2014 verify: shell test reads link names on both bars.",
+    "Each link's `href` equals the destination `url`. A `django_url` of `/retired/` and a `work_desk_url` never appear in any `href`. \u2014 verify: shell test asserts hrefs and greps rendered HTML.",
+    "A destination `url` of `https://evil.example/x`, `//evil.example`, or `javascript:alert(1)` is not rendered as a link. A same-origin absolute URL becomes its path. \u2014 verify: unit test of the url check.",
+    "All destinations unavailable shows \"No sections are open to your role yet.\" \u2014 verify: shell test.",
+    "A keyed POST (body has `idempotency_key: \"k1\"`) answering 403 `csrf_failed` then 200 sends exactly: POST, `GET /api/v1/session`, POST. Both POSTs carry byte-identical bodies with `k1`; the second carries the new token from the session read; the caller gets the 200 data. \u2014 verify: `frontend/tests/client.test.ts` fetch stub call log.",
+    "Two `csrf_failed` answers in a row give an error of kind `csrf` after exactly two POSTs and one `/session` read; no third POST. \u2014 verify: client test.",
+    "A 403 with another code (`forbidden`), a 401, a 409, a 422, a 429 and a 503 on a keyed write each cause exactly one POST and no `/session` read. \u2014 verify: client test, table-driven.",
+    "A keyed write whose retry returns 409 `idempotency_conflict` or 422 surfaces that error normally. A failing `GET /session` surfaces kind `csrf` after one POST. \u2014 verify: client test.",
+    "Duplicate-effect check: a stub backend that runs the handler only on non-403 answers and counts effects for key `k1` shows one effect after a `csrf_failed` then success. \u2014 verify: client test asserts count is 1.",
+    "A write with no `idempotency_key` (sign-out `POST /api/v1/session/logout`) answering `csrf_failed` is sent once, refreshes the token once, and keeps the existing toast. \u2014 verify: `frontend/tests/sign-in.test.tsx` and client test.",
+    "A GET is never retried on `csrf_failed`. A multipart or non-JSON body write is never retried. \u2014 verify: client test.",
+    "A 429 body `{code:\"rate_limited\",message:\"Slow down for 30 seconds.\"}` gives an error whose message is that text and code `rate_limited`; the same for 503 `read_limited`. A 429 with an HTML body gives the fixed fallback text. A response with no `Retry-After` header causes no error. \u2014 verify: `frontend/tests/client.test.ts`.",
+    "`download('/cases/c1/files/u1/')` answering 401 JSON throws kind `unauthenticated` and the frame main area shows \"You're signed out.\" with a Sign in link to `/sign-in?next=...`. No redirect is followed. \u2014 verify: client test plus a shell test that triggers the notifier.",
+    "`download` answering 200 returns the blob; 403 and 404 map to `forbidden` and `not_found` and do not show the signed-out state. \u2014 verify: client test.",
+    "An admin `/me` with no `invite_minutes` anywhere renders the frame with the Admin role words. \u2014 verify: shell test.",
+    "The v7 mock path still works: with a v7 `/me` (no `url`, no `available`) the five links appear at their fixed paths. \u2014 verify: `frontend/tests/shell.test.tsx` passes unchanged.",
+    "`npm run gen:api:live` produces no diff in `src/api/live-schema.d.ts`. \u2014 verify: `git diff --exit-code frontend/src/api/live-schema.d.ts` after running it."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "high",
+    "surfaces": [
+      "ui",
+      "api",
+      "security",
+      "auth",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "High, because the retry lives in src/api and applies to every write in the product, including sign-in (F-58) and the money and payment features coming in later waves. A retry that mints a new key, loops, or repeats a non-csrf failure could double-execute an effect that is hard to undo. Auth and security apply because the change touches session refresh, CSRF and the signed-out state. Contract-change applies because it moves the client from v7 to 1.24.0 fields. Merge goes through the security review and a technical reviewer on the high-risk route (Opus per D-123). Per D-184, sign-in and security surfaces still come to the design engineer."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-67/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +93,30 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-67/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "security": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +193,29 @@
   "created_at": "2026-11-23T17:35:23Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-24T14:21:18Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "opus",
+      "ux": "sonnet",
+      "ui": "sonnet",
+      "security": "opus"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-67/readiness.md",
+      "delivery/features/F-67/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

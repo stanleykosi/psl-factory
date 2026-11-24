@@ -3,26 +3,62 @@
   "record_kind": "project_record",
   "project_id": "psl-factory-main",
   "feature_id": "F-63",
-  "outcome": "A signed-in person sees their own work queue from live records on SCR-01 My work, with its tabs, search and filters, using the shared work-list adapter from F-62, and opens any item's work (part 2 of the FE-CONNECT-1 work lists)",
-  "state": "PLANNED",
+  "outcome": "My work on the live work list: eight tabs, counts, kind, station, reference and rows per page",
+  "state": "READY",
   "task_ids": [
     "FE-CONNECT-1"
   ],
   "operation_ids": [],
-  "acceptance_criteria": [],
+  "acceptance_criteria": [
+    "Opening `/my-work` (signed in, mock or live) requests `GET /api/v1/work?queue=needs_me` and `GET /api/v1/work/counts`, and no request carries `cursor`, `waiting_on` or `counts` \u2014 verify: a network-mock test in `tests/my-work.test.tsx` asserts the requested URLs; `grep -rn \"waiting_on\\|E-WORK-LIST\\|isV7Row\" frontend/src/features/my-work` returns nothing.",
+    "The eight tabs appear in the order Needs me, Waiting on others, Started by me, Active, Decisions, Exceptions, (Unassigned), Verified, and each sends its live `queue` value (`needs_me`, `waiting`, `mine`, `active`, `decisions`, `exceptions`, `unassigned`, `verified`); `/my-work?queue=done` or `waiting_on_others` falls back to Needs me \u2014 verify: test clicks each tab and asserts the `queue` query; a URL test for the two old values.",
+    "A row shows kind tag, title linking to `/work/{id}`, line title from `lines[]`, reference, \"Station 3 of 5 \u00b7 Approval\" with a mini bar, state tag, owner, a start age and \"Updated\" time \u2014 verify: page at 1440 and 390 with the fixture above; test asserts the link `href` is `/work/412` and no `django_url`/`api_url` appears in any `href`.",
+    "A row with `owner: null` shows \"Unassigned\"; `action_kind: null` shows no kind tag; `reference: null` shows no reference; `station: null` shows no bar and no \"Station\" text \u2014 verify: component test with those fields null; no \"null\", \"undefined\" or \"0\" text in the row.",
+    "Tab counts come only from `/work/counts`: `total` 3 shows 3; `total: null, observed: 2` shows \"2+\" with accessible name \"at least 2\"; `total: null, observed: 0` shows no number; a real `total: 0` shows 0; a failed counts read shows no numbers and \"Count unavailable\" while rows still load \u2014 verify: tests for the five cases; the page never renders a tab count from the list response.",
+    "\"N records you can see\" equals the sum of `lines[].open`; when `limited` is true it reads \"at least N\"; when counts are missing it is absent, never \"0 records\" \u2014 verify: tests with `limited` false/true and a counts 500.",
+    "Rows per page 10/20/50 sends `limit=10|20|50` on the next list request, restarts from `page=1`, and is kept in the URL (`limit=20`); 10 is omitted from the URL; `?limit=8` or `?limit=15` in the URL is dropped (not offered by the control) \u2014 verify: test selecting 20 asserts `limit=20&page=1` and the URL; test `?limit=15` requests with no `limit` or with 10.",
+    "State filter: choosing \"Waiting\" in the panel sends `state=waiting` (the 11 live values are offered, no Waiting on group), adds a \"State\" chip, restarts from page 1, and the chip removes it \u2014 verify: filter test; the panel contains no \"Waiting on\" text.",
+    "Search sends `q` (trimmed, max 120; the input stops at 120 characters), line sends `line=<key>`, project sends `project=<uuid>`; any change restarts at page 1 and drops late answers from the earlier request \u2014 verify: tests with a slow first response resolving after the second request; the older result never replaces the newer.",
+    "\"Show more\" on an empty page with `next_page` set keeps asking, up to 10 requests, then the button reads \"Keep looking\"; rows appear as soon as a page has any; no empty state shows while `next_page` is non-null \u2014 verify: tests with `[]`,`[]`,rows and with ten empties.",
+    "Result count: `total` complete shows \"{loaded} OF {total} ITEMS\"; `total: null` shows \"{loaded}+ ITEMS\" while more pages exist and never \"OF\"; `total_coverage: \"incomplete\"` is treated as unknown even if `total` is a number \u2014 verify: three test cases.",
+    "Coverage: `limited: true` shows \"This list may be incomplete. Some work could not be checked yet.\"; `deferred` of 3 shows \"3 more items are still being checked.\" and 8 shows \"8 or more\u2026\"; \"As of hh:mm\" is always shown \u2014 verify: test using `coverageNotes`.",
+    "Needs me empty with no filters shows \"You're all caught up\", \"Start work\" and \"See what you started\" (goes to `?queue=mine`); the number of started things comes from the `mine` count and is replaced by \"Things you started keep moving.\" when that count is unknown; there are no \"Where your work is\" groups, no suggestions and no `waiting_on` requests \u2014 verify: test with `mine` total 9 and with `total:null`.",
+    "Empty with a search or filter shows \"No work matches\" and \"Clear filters\", which clears q, line, project and state \u2014 verify: component test.",
+    "Wrong user: a 403 on the list shows \"This queue isn't open to your role.\" with a \"Go to Needs me\" link (not on Needs me) and no Try again; 401 shows the signed-out state with `next=/my-work`; 500 and a network failure show the error card \"We couldn't load your queue. Your work is safe; nothing was changed.\" with Try again and the support reference \u2014 verify: four tests; with live-none, `?queue=exceptions` or `unassigned` shows the closed state (live-none run, coordinator).",
+    "A failed counts read does not blank the list, and a failed list read does not blank the tabs \u2014 verify: two tests.",
+    "Wrong tenant and invalid input: `?project=not-a-uuid`, `?line=nope`, `?state=nope`, `?queue=nope` send no such parameter and the page loads Needs me; a `q` of 130 characters is cut to 120 \u2014 verify: URL-parse tests in `tests/my-work-model.test.ts`.",
+    "The Unassigned tab renders F-88's `UnassignedBids` and makes no `GET /work?queue=unassigned` request; it is drawn only when the `unassigned` count is above zero or the URL names it; `?queue=unassigned&assign=<uuid>` still opens F-88's drawer and the toolbar is hidden there \u2014 verify: tests from F-88 still pass unchanged; a new test asserts the request list.",
+    "The 15-second refresh re-reads page 1 and `/work/counts`, keeps rows loaded with Show more, and a failed refresh shows \"Couldn't refresh \u00b7 updated hh:mm\" without removing rows \u2014 verify: fake-timer test.",
+    "The interim \"Verified outputs\" link under the heading is gone and the Verified tab opens the same list shape with `queue=verified`; `/verified` still works \u2014 verify: `grep -n \"my-work__verified\" frontend/src` returns nothing; `tests/verified.test.tsx` passes unchanged.",
+    "Existing `useWorkList` callers behave as before: Verified and Exceptions send no `limit` or `state` \u2014 verify: `tests/work-list.test.ts` and `tests/verified.test.tsx` pass; new adapter tests cover `limit`, `state`, `total`, `totalComplete` and `refresh`.",
+    "Keyboard and sample label: tab order is tabs, search, Filter, rows; after \"Show more\" focus moves to the first added row (as today); `SampleLabel` shows on sample rows \u2014 verify: tests kept from `tests/my-work.test.tsx`.",
+    "The mock serves the live shape for all eight queues, `limit`, `state`, `total` and `/work/counts`, and its tests pass \u2014 verify: `tests/mock-work-list.test.ts`; `npm run dev` mock at `/my-work` shows rows for each persona."
+  ],
   "risk": {
-    "level": null,
-    "surfaces": [],
-    "rated_by": null,
-    "rationale": null
+    "level": "medium",
+    "surfaces": [
+      "ui",
+      "api",
+      "contract-change"
+    ],
+    "rated_by": "readiness",
+    "rationale": "Medium. It is a cross-layer contract change (v7 row shape, queue renames, paging and counts moved to live GET /work and /work/counts) on the main work screen, over shared code from F-62 (`src/features/work-list`) and `src/features/my-work`, with a possible file collision with F-88. It is read-only with no money, identity or data writes, so not high. Product acceptance is required because new tabs and labels, hidden board parts and coverage wording change what the client approved (delivery/connect/screens-a-frame-core.md SCR-01; D-182, D-185); routine batch-delegation under D-184 may apply for board changes already accepted in batch, but the new tab wording and the counts' coverage display are new."
   },
   "baseline": {
     "architecture_manifest_sha256": null,
     "demo_manifest_sha256": null,
-    "approval_evidence_refs": [],
+    "approval_evidence_refs": [
+      "delivery/features/F-63/readiness.md"
+    ],
     "blocking_decision_ids": [],
-    "readiness_checked": false,
-    "explicit_exception": null
+    "readiness_checked": true,
+    "explicit_exception": null,
+    "design_gate": {
+      "status": "EXCEPTION",
+      "design_sha256": "4eed6eff71fbd99841cc7e750e026f70c50df7907a06f39590d082ea2cbef06c",
+      "canvas_url": null,
+      "canvas_version": null
+    }
   },
   "roles": {},
   "snapshot": {
@@ -59,9 +95,23 @@
       "evidence_refs": []
     },
     "product_acceptance": {
-      "required": null,
-      "assessment_reason": null,
+      "required": true,
+      "assessment_reason": "delivery/features/F-63/readiness.md",
       "status": "not_assessed",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ux": {
+      "status": "pending",
+      "reviewer": null,
+      "authority": null,
+      "snapshot_ref": null,
+      "evidence_refs": []
+    },
+    "ui": {
+      "status": "pending",
       "reviewer": null,
       "authority": null,
       "snapshot_ref": null,
@@ -138,8 +188,28 @@
   "created_at": "2026-11-23T13:22:30Z",
   "round": 0,
   "round_limit": null,
-  "history": [],
-  "routing": null,
+  "history": [
+    {
+      "from": "PLANNED",
+      "to": "READY",
+      "at": "2026-11-24T14:21:12Z",
+      "round": 0,
+      "head": null,
+      "reason": null
+    }
+  ],
+  "routing": {
+    "review": {
+      "technical": "sonnet",
+      "ux": "sonnet",
+      "ui": "sonnet"
+    },
+    "qa": "sonnet",
+    "planned_from": [
+      "delivery/features/F-63/readiness.md",
+      "delivery/features/F-63/spec.md"
+    ]
+  },
   "gate": {
     "round": 0,
     "attempts": 0,

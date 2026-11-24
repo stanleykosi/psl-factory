@@ -4976,3 +4976,13 @@
 {"at":"2026-11-24T14:27:25Z","feature":"F-71","round":2,"kind":"finding","action":"add","finding":"UI-2-2","by":"ui-reviewer","severity":"low","owner":"design engineer (exception or waiver)","blocking":false,"role":"ui"}
 {"at":"2026-11-24T14:27:25Z","feature":"F-71","round":2,"kind":"finding","action":"add","finding":"UI-2-3","by":"ui-reviewer","severity":"medium","owner":"design engineer (exception or waiver)","blocking":false,"role":"ui"}
 {"at":"2026-11-24T14:27:25Z","feature":"F-71","round":2,"kind":"transition","head":"cfc3c4623820","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-24T14:28:47Z","feature":"F-61","round":1,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"5f61b03c833d","findings":{"QA-1-1":"medium","QA-1-2":"medium","QA-1-3":"low","QA-1-4":"low","QA-1-5":"low"},"written_at":"2026-11-24T14:28:05Z"}
+{"at":"2026-11-24T14:28:47Z","feature":"F-61","round":1,"kind":"finding","action":"add","finding":"QA-1-1","by":"qa","severity":"medium","owner":"integration","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T14:28:47Z","feature":"F-61","round":1,"kind":"finding","action":"add","finding":"QA-1-2","by":"qa","severity":"medium","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T14:28:47Z","feature":"F-61","round":1,"kind":"finding","action":"add","finding":"QA-1-3","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T14:28:47Z","feature":"F-61","round":1,"kind":"finding","action":"add","finding":"QA-1-4","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T14:28:47Z","feature":"F-61","round":1,"kind":"finding","action":"add","finding":"QA-1-5","by":"qa","severity":"low","owner":"frontend","blocking":false,"role":"integrated_qa"}
+{"at":"2026-11-24T14:28:48Z","feature":"F-61","round":1,"kind":"transition","head":"5f61b03c833d","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-24T14:29:59Z","feature":"F-119","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"06d07376b024","written_at":"2026-11-24T14:28:20Z"}
+{"at":"2026-11-24T14:30:03Z","feature":"F-61","round":1,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"5f61b03c833d","findings":{"PMO-1-1":"low","PMO-1-2":"low"},"written_at":"2026-11-24T14:29:14Z"}
+{"at":"2026-11-24T14:30:03Z","feature":"F-71","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), recorded by the lane B coordinator","commit":"cfc3c4623820","written_at":"2026-11-24T14:27:40Z"}

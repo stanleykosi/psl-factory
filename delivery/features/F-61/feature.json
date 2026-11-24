@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-61",
   "outcome": "Alerts list, drawer and alert settings on the live API",
-  "state": "INTEGRATED_QA",
+  "state": "READY_FOR_ACCEPTANCE",
   "task_ids": [
     "FE-ALERTS"
   ],
@@ -90,11 +90,13 @@
       ]
     },
     "integrated_qa": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "qa",
+      "authority": "integrated QA",
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-qa.md"
+      ]
     },
     "pmo_acceptance": {
       "status": "pending",
@@ -183,6 +185,121 @@
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T13:54:22Z",
+          "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-1",
+      "round": 1,
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "owner": "integration",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "The live API answers a stale preferences save with 422 `action_unavailable`, not the 409 `stale` the spec (acceptance 11) and the page's Reload button are built for. Expected: the person can recover. Actual: the 422 message is shown and the draft stays, with no Reload, so every further Save repeats the old revision and gets 422 until the page is reloaded by hand. Reproduce: two tabs on /settings/alerts, save in one, save in the other. Frontend path: `frontend/src/features/alerts/AlertSettingsPage.tsx` (409 branch only). Options: backend returns 409, or the page also shows Reload for this 422 message or code. Raise it with the coordinator (a backend question).",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T14:28:47Z",
+          "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-2",
+      "round": 1,
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": false,
+      "summary": "In the mock e2e, `e2e/alerts-bell.spec.ts:149` \"desktop 1440 \u203a focus stays inside; Escape, Close and the scrim close it...\" failed at line 164: the page `scrollY` went from 0 to 531 after `mouse.wheel(0, 600)` with the drawer open. The test body is unchanged by this branch. I could not reproduce it live (a 28-alert drawer plus wheel over both the drawer and the page left `scrollY` at 0), so it may be mock-build specific or flaky, and I did not run it at the base. The gate (CI) does not run e2e. Please run that spec once at the base and at this head and fix or document it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T14:28:47Z",
+          "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-3",
+      "round": 1,
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The drawer's bell label and the \"Needs you\" heading count the loaded page (\"5 need you\"), while the summary line above says \"8 need you\" (server total). Both are spec-faithful (the count is from loaded items), but a reader sees two figures for one thing on the same panel. Consider wording the loaded count (\"5 shown\") or taking the bell's need-you count from `daily_summary.actions_open`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T14:28:47Z",
+          "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-4",
+      "round": 1,
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "In `next dev`, the first fresh browser session as live-none on `/notifications` stayed on \"Loading\u2026\" for 9 s in three runs, with no notifications request issued (`/me` was answered once). A repeat run, and every later context, loaded fine (\"No alerts\"). I could not reproduce it deterministically, and it may be dev-server or StrictMode timing. Worth one look when someone next runs live-none.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T14:28:47Z",
+          "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
+        }
+      ]
+    },
+    {
+      "id": "QA-1-5",
+      "round": 1,
+      "snapshot_ref": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`/notifications` issues both `GET /api/v1/notifications?page=1` and `GET /api/v1/notifications` on every load (the second is the shell feed). Harmless, but two identical reads.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-61/round-1/review-qa.md"
+      ],
+      "raised_by": "qa",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "qa",
+          "at": "2026-11-24T14:28:47Z",
           "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608"
         }
       ]
@@ -329,6 +446,14 @@
       "from": "IN_REVIEW",
       "to": "INTEGRATED_QA",
       "at": "2026-11-24T13:54:35Z",
+      "round": 1,
+      "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
+      "reason": null
+    },
+    {
+      "from": "INTEGRATED_QA",
+      "to": "READY_FOR_ACCEPTANCE",
+      "at": "2026-11-24T14:28:48Z",
       "round": 1,
       "head": "5f61b03c833db545052bd88a34ed1a1ac62eb608",
       "reason": null

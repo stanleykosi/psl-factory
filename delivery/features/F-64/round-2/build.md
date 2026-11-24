@@ -45,3 +45,6 @@ Left un-excepted: the amount "₦4,250,000.00" on not-yours 1440 and 390 and sta
 
 ## Blocked
 Not blocked.
+
+## Pending live evidence
+- The main coordinator will prove the live decision journey on psl_demo (seeded report template and a pending PMO Lead review). Pending.
