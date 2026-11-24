@@ -337,7 +337,7 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "d906028a759d42bc124e6c935b91c225ca09b2ae",
+    "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-connect-1-money-milestones-tabs",
     "head_sha": "3df5462d49c464d12d789486760215fb1df62304",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b",

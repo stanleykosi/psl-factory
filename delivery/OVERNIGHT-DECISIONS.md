@@ -533,3 +533,6 @@ Changes for the lanes:
 - Merge `origin/main` into a branch so it has the workflow, then push before running `feature.py gate`.
 - A ci-mode gate only polls GitHub, so it is not a heavy job and runs without `heavy-lock.sh`. Local-mode gates, full local vitest runs, builds, Playwright suites and `npm ci` still queue (D-189, D-197).
 - PR #107 also fixed `tests/mock-contract.test.ts` (full history) and the load-sensitive `tests/hypercare.test.tsx` toast wait.
+
+## D-200 (24 Nov 2026): after a main sync, base_sha moves to the merged main commit
+F-71's ci gate failed although GitHub's run passed. The tool flagged `delivery/checks.sh` as a protected path changed since `base_sha`, but that change came in through main's #107 merge, not from F-71. The coordinator's rule (engineering, factual): when a feature branch merges `origin/main`, its `git.base_sha` is set to that main commit (the merge base). The protected-path check then sees only the feature's own changes. Before moving it, the lane confirms with `git diff --name-only $(git merge-base HEAD origin/main) HEAD` that the feature itself touches no protected path. F-71 now has base 8692cf87, and its own diff touches no protected path.
