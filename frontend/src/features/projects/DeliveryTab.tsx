@@ -12,7 +12,7 @@ import { deliveryRows, stateWords, type DeliveryOverview, type HoldReason } from
 import { ProjectNoAccess } from './ProjectStates';
 import { useDeliveryOverview } from './useDeliveryOverview';
 
-import './delivery.css';
+import './dlvov.css';
 
 const SKELETON_ROWS = ['01', '02', '03', '04', '05', '06'];
 
@@ -20,10 +20,10 @@ export function DeliveryTab({ caseId }: { caseId: string }) {
   const { state, retry } = useDeliveryOverview(caseId);
   if (state.status === 'loading') {
     return (
-      <Panel head="Delivery lines" headingLevel={2} aria-busy="true" bodyClassName="projects__journeybody">
-        <ol className="delivery__list" aria-label="Loading the delivery lines">
+      <Panel head="The six delivery lines, in order" headingLevel={2} aria-busy="true" bodyClassName="dlvov__body">
+        <ol className="dlvov__list" aria-label="Loading the delivery lines">
           {SKELETON_ROWS.map((n) => (
-            <li key={n} className="delivery__row">
+            <li key={n} className="dlvov__row dlvov__row--skel">
               <Skeleton widths={[40]} />
             </li>
           ))}
@@ -47,35 +47,36 @@ export function DeliveryTab({ caseId }: { caseId: string }) {
 function DeliveryRows({ overview, reasons }: { overview: DeliveryOverview; reasons: HoldReason[] }) {
   const phone = useIsPhone();
   return (
-    <Panel head="Delivery lines" headingLevel={2} bodyClassName="projects__journeybody">
-      <ol className="delivery__list">
+    <Panel head="The six delivery lines, in order" headingLevel={2} bodyClassName="dlvov__body">
+      <ol className="dlvov__list">
         {deliveryRows(overview).map(({ number, line, reference, updatedAt, href }) => {
           const { text, tone } = stateWords(line);
           const closure = line.key === 'delivery-closure/v1';
           return (
-            <li key={line.key} className="delivery__row">
-              <span className="delivery__num psl-mono" aria-hidden="true">
+            <li key={line.key} className="dlvov__row">
+              <span className="dlvov__num psl-mono" aria-hidden="true">
                 {number}
               </span>
-              <span className="delivery__title">{line.title}</span>
-              <span className="delivery__ref psl-mono">{reference}</span>
-              <Tag tone={tone}>{text}</Tag>
-              <span className="delivery__date">{updatedAt && `Updated ${formatDayMonth(updatedAt)}`}</span>
-              <span className="delivery__open">
-                {href && (
-                  <Link href={href} aria-label={`Open ${line.title}`}>
-                    Open
-                  </Link>
-                )}
-              </span>
+              {href ? (
+                <Link href={href} className="dlvov__title">
+                  {line.title}
+                </Link>
+              ) : (
+                <span className="dlvov__title">{line.title}</span>
+              )}
+              {reference && <span className="dlvov__ref psl-mono">{reference}</span>}
+              <Tag tone={tone} className="dlvov__tag">
+                {text}
+              </Tag>
+              {updatedAt && <span className="dlvov__date">Updated {formatDayMonth(updatedAt)}</span>}
               {closure && reasons.length > 0 && (
-                <div className="delivery__reasons">
+                <div className="dlvov__reasons">
                   <p className="projects__plain">Closure waits on:</p>
                   <ul>
                     {reasons.map((r) => (
                       <li key={r.title}>
                         {r.title}
-                        {r.finding && <span className="delivery__finding"> {r.finding}</span>}
+                        {r.finding && <span className="dlvov__finding"> – {r.finding}</span>}
                       </li>
                     ))}
                   </ul>
@@ -85,8 +86,8 @@ function DeliveryRows({ overview, reasons }: { overview: DeliveryOverview; reaso
           );
         })}
       </ol>
-      {!phone && <p className="delivery__rule">Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance&#39;s confirmation.</p>}
-      <p className="projects__note delivery__asof">Checked {formatDateTime(overview.as_of)}</p>
+      {!phone && <p className="dlvov__rule">Hypercare, archive and handover run side by side after go-live. Closure needs all of them, a saved retrospective and Finance&#39;s confirmation.</p>}
+      <p className="projects__note dlvov__asof">Checked {formatDateTime(overview.as_of)}</p>
     </Panel>
   );
 }

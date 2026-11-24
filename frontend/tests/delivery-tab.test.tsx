@@ -43,19 +43,21 @@ const open = async (caseId = 'P-0101') => {
   render(<DeliveryTab caseId={caseId} />);
   await until(() => expect(screen.queryByText('Closure')).toBeTruthy());
 };
-const rows = () => screen.getAllByRole('listitem').filter((li) => li.classList.contains('delivery__row'));
+const rows = () => screen.getAllByRole('listitem').filter((li) => li.classList.contains('dlvov__row'));
 
 describe('success', () => {
-  it('reads the overview once, draws six rows in order and links Open to /work/{id}', async () => {
+  it('reads the overview once, draws six rows in order and makes each started row title the link to /work/{id}', async () => {
     await open();
     await until(() => expect(paths()).toContain('/api/v1/projects/P-0101/delivery/52/closure-checklist'));
     expect(paths().filter((p) => p.endsWith('/delivery-overview'))).toHaveLength(1);
-    expect(rows().map((r) => r.querySelector('.delivery__title')!.textContent)).toEqual(['Release gates', 'Go-live acceptance', 'Hypercare', 'Handover to Support', 'Archive', 'Closure']);
+    expect(rows().map((r) => r.querySelector('.dlvov__title')!.textContent)).toEqual(['Release gates', 'Go-live acceptance', 'Hypercare', 'Handover to Support', 'Archive', 'Closure']);
+    expect(screen.getByRole('heading', { level: 2, name: 'The six delivery lines, in order' })).toBeTruthy();
+    expect(within(rows()[0]).getAllByRole('link')).toHaveLength(1);
     const release = within(rows()[0]);
     expect(release.getByText('REL-0091')).toBeTruthy();
     expect(release.getByText('VERIFIED')).toBeTruthy();
     expect(release.getByText('Updated 25 Mar')).toBeTruthy();
-    expect(release.getByRole('link', { name: 'Open Release gates' }).getAttribute('href')).toBe('/work/2501');
+    expect(release.getByRole('link', { name: 'Release gates' }).getAttribute('href')).toBe('/work/2501');
     expect(within(rows()[3]).getByText('ACTION NEEDED')).toBeTruthy();
     const closure = within(rows()[5]);
     expect(closure.getByText('NOT STARTED')).toBeTruthy();
@@ -89,7 +91,7 @@ describe('success', () => {
     await open();
     await until(() => expect(screen.getByText('Closure waits on:')).toBeTruthy());
     const reasons = within(rows()[5]).getAllByRole('listitem').map((li) => li.textContent);
-    expect(reasons).toEqual(['Handover to Support Support listed 2 gaps.', 'Retrospective']);
+    expect(reasons).toEqual(['Handover to Support – Support listed 2 gaps.', 'Retrospective']);
     expect(rows()[5].textContent).not.toContain('Hypercare');
   });
 
