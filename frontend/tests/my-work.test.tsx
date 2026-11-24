@@ -11,6 +11,8 @@ import { AppShell } from '@/shell/AppShell';
 
 // @ts-expect-error plain ESM module without type declarations
 import { liveWorkCounts, liveWorkList } from '../mock/live-work.mjs';
+// @ts-expect-error plain ESM module without type declarations
+import { receivedBids } from '../mock/received-bids.mjs';
 import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 import { optionsOf, pick } from './controls';
 import { page as basePage, row as baseRow } from './work-list-rows';
@@ -72,11 +74,13 @@ let work: (url: URL) => Answer;
 let countsAnswer: () => Answer;
 let calls: URL[];
 let countsCalls: number;
+let bidCalls: URL[];
 
 beforeEach(() => {
   persona = 'finance_lead';
   calls = [];
   countsCalls = 0;
+  bidCalls = [];
   work = (url) => mockList(url);
   countsAnswer = mockCounts;
   nav.router.replace.mockClear();
@@ -89,6 +93,11 @@ beforeEach(() => {
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me(persona));
       if (url.pathname === '/api/v1/projects') return json(200, { items: [{ case_id: PROJECT, title: 'Lagoon Health Billing' }], next_cursor: null });
+      if (url.pathname.startsWith('/api/v1/received-bids')) {
+        bidCalls.push(url);
+        const [status, body] = receivedBids({ method: 'get', url, raw: '', rawBytes: new Uint8Array(), contentType: null, scenario: persona === 'pm' ? '403' : undefined, csrfOk: true, persona });
+        return json(status, body);
+      }
       if (url.pathname === '/api/v1/work/counts') {
         countsCalls += 1;
         return countsAnswer();
@@ -234,7 +243,8 @@ describe('queue tabs', () => {
     });
     expect(calls.slice(before)).toEqual([]);
     expect(calls.every((c) => c.searchParams.get('queue') !== 'unassigned')).toBe(true);
-    expect(screen.getByRole('heading', { name: 'Unassigned work' })).toBeTruthy();
+    // F-88: the body is the received RFPs from their own read, and the toolbar is hidden there
+    await until(() => expect(bidCalls.map((u) => u.pathname)).toContain('/api/v1/received-bids/assignments'));
     expect(screen.queryByRole('search')).toBeNull();
   });
 
@@ -460,6 +470,26 @@ describe('filters (CMP-22, SCR-01-*-filter)', () => {
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
     await waitFor(() => expect(document.activeElement).toBe(filter));
     expect(window.location.search).toBe('');
+  });
+});
+
+describe('Unassigned (F-88)', () => {
+  it('lists the received RFPs, never the work list, and opens the assign drawer from ?assign=<case uuid>', async () => {
+    await open('?queue=unassigned');
+    await until(() => expect(screen.getAllByRole('link', { name: 'Assign PM' }).length).toBeGreaterThan(0));
+    expect(calls.filter((c) => c.searchParams.get('queue') === 'unassigned')).toEqual([]);
+    expect(screen.queryByRole('searchbox')).toBeNull();
+    const href = screen.getAllByRole('link', { name: 'Assign PM' })[0].getAttribute('href')!;
+    expect(href).toMatch(/^\/my-work\?queue=unassigned&assign=[0-9a-f-]{36}$/);
+    nav.set(new URL(href, 'http://localhost').search);
+    await until(() => expect(bidCalls.some((u) => /\/assignment$/.test(u.pathname))).toBe(true));
+  });
+
+  it('a person without the role gets the plain closed state with a way back', async () => {
+    persona = 'pm';
+    await open('?queue=unassigned');
+    await until(() => expect(screen.getByRole('heading', { name: 'This queue isn’t open to your role.' })).toBeTruthy());
+    expect(screen.getByRole('link', { name: 'Go to Needs me' }).getAttribute('href')).toBe('/my-work');
   });
 });
 

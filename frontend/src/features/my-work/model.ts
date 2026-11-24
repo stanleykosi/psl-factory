@@ -45,7 +45,8 @@ export const KINDS: Record<Kind, { words: string; tone: Family }> = {
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export type View = { queue: WorkQueue; q?: string; line?: LineKey; project?: string; state?: WorkState; limit: Limit };
+/** `assign` (F-88): the received RFP's case whose "Assign accountable PM" drawer is open over the Unassigned list; not part of the list's own request. */
+export type View = { queue: WorkQueue; q?: string; line?: LineKey; project?: string; state?: WorkState; limit: Limit; assign?: string };
 
 /** Reads the view from the URL; a value the contract does not accept is dropped. */
 export function parseView(params: URLSearchParams): View {
@@ -57,7 +58,9 @@ export function parseView(params: URLSearchParams): View {
   const rawProject = params.get('project');
   const project = rawProject && UUID.test(rawProject) ? rawProject : undefined;
   const limit = LIMITS.find((n) => String(n) === params.get('limit')) ?? DEFAULT_LIMIT;
-  return { queue, q, line, project, state, limit };
+  const rawAssign = params.get('assign');
+  const assign = queue === 'unassigned' && rawAssign && UUID.test(rawAssign) ? rawAssign : undefined;
+  return { queue, q, line, project, state, limit, assign };
 }
 
 /** The URL search for a view; defaults are left out. */
@@ -69,6 +72,7 @@ export function viewSearch(view: View): string {
   if (view.project) params.set('project', view.project);
   if (view.state) params.set('state', view.state);
   if (view.limit !== DEFAULT_LIMIT) params.set('limit', String(view.limit));
+  if (view.assign) params.set('assign', view.assign);
   const search = params.toString();
   return search ? `?${search}` : '';
 }

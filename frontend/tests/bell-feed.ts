@@ -1,6 +1,6 @@
 // The shell's alert bell (F-15) reads GET /api/v1/notifications once the frame is ready. Page tests that are not
 // about alerts answer it here with an empty list, so their own request counts and queued responses stay theirs.
-const EMPTY = { items: [], as_of: '2026-11-14T10:00:00Z', unread_count: 0 };
+const EMPTY = { items: [], as_of: '2026-11-14T10:00:00Z', page: 1, next_page: null, unread: 0, daily_summary: { date: '2026-11-14', actions_open: 0, unread_updates_today: 0, unread_without_timestamp: 0, scope: 'current_inbox' } };
 
 export const isBellFeed = (request: Request) => request.method === 'GET' && new URL(request.url).pathname === '/api/v1/notifications';
 

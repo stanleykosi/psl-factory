@@ -5,15 +5,15 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-import { EmptyState, usePagedRows, Unknown, When, type PageSize } from '@/components';
+import { EmptyState, usePagedRows, When, type PageSize } from '@/components';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
-import { amountText, ownerText, workHref, type Amount, type ListTab, type Owner, type TabRows } from './tabsModel';
+import { ownerText, workHref, type Owner, type ReadTab, type TabRows } from './tabsModel';
 import type { TabState } from './useProjectTab';
 
 /** What a tab shows until it has rows: null when ready. 403 and 404 look the same and leave no row text behind. */
-export function tabStateView(state: TabState<ListTab>, { retry, signInPath }: { retry: () => void; signInPath: string }): ReactNode {
+export function tabStateView(state: TabState<ReadTab>, { retry, signInPath }: { retry: () => void; signInPath: string }): ReactNode {
   if (state.status === 'ready') return null;
   if (state.status === 'loading') return <LoadingState />;
   const { error } = state;
@@ -52,12 +52,6 @@ export function RowLink({ workId, className, children }: { workId: unknown; clas
   );
 }
 
-/** A money value: the amount as the boards write it (plain text), or the amber Unknown tag (never 0 or blank). */
-export function AmountValue({ value }: { value: Amount | undefined }) {
-  const text = amountText(value);
-  return text === undefined ? <Unknown /> : <>{text}</>;
-}
-
 /** The owner as the boards write it; "No owner" in signal ink when the row has none. */
 export function OwnerValue({ owner }: { owner: Owner | undefined }) {
   const text = ownerText(owner);
@@ -76,7 +70,7 @@ export function AsOf({ value }: { value: string }) {
 }
 
 /** The paging window over a tab's loaded rows (10 first, grown in place by the footer). */
-export function useTabPaging<T extends ListTab>(state: TabState<T>, more: 'idle' | 'loading' | 'error', showMore: (limit: PageSize) => Promise<void>, resetKey = '') {
+export function useTabPaging<T extends ReadTab>(state: TabState<T>, more: 'idle' | 'loading' | 'error', showMore: (limit: PageSize) => Promise<void>, resetKey = '') {
   const ready = state.status === 'ready' ? state : undefined;
   const { rows, paging } = usePagedRows({
     items: (ready?.rows ?? []) as TabRows[T][number][],

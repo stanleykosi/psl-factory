@@ -179,8 +179,7 @@ describe('a line run in the demo (weekly report: PM starts, PMO Lead decides)', 
     expect(needs.body.counts.needs_me).toBe(needs.body.items.length);
     expect((await get('/api/v1/work?queue=waiting_on_others', 'pm')).body.items.find((i: any) => i.id === id)).toMatchObject({ waiting_on: 'PMO Lead' });
     const alerts = await get('/api/v1/notifications', 'pmo_lead');
-    check('E-NOTIFICATIONS', 200, alerts.body);
-    expect(alerts.body.items[0]).toMatchObject({ work_id: id, read: false });
+    expect(alerts.body.items[0]).toMatchObject({ django_url: `/work/${id}/`, api_url: `/api/v1/work/${id}`, read: false });
 
     const task = item.tasks[0];
     expect((await call('POST', `/api/v1/tasks/${task.id}/claim`, 'pmo_lead', { expected_revision: task.revision })).status).toBe(200);
@@ -196,7 +195,7 @@ describe('a line run in the demo (weekly report: PM starts, PMO Lead decides)', 
     expect([item.state, item.stations.map((s: any) => s.status)]).toEqual(['verified', ['done', 'done', 'done', 'done', 'verified']]);
     expect((await get('/api/v1/work?queue=done', 'pm')).body.items.map((i: any) => i.id)).toContain(id);
     expect((await get('/api/v1/work?queue=done', 'pmo_lead')).body.items.map((i: any) => i.id)).toContain(id);
-    expect((await get('/api/v1/notifications', 'pm')).body.items[0]).toMatchObject({ work_id: id });
+    expect((await get('/api/v1/notifications', 'pm')).body.items[0]).toMatchObject({ api_url: `/api/v1/work/${id}` });
 
     const history = (await get(`/api/v1/work/${id}/history?limit=50`, 'pm')).body;
     check('E-WORK-HISTORY', 200, history);
@@ -326,12 +325,6 @@ describe('D-159: who decides a demo line the PMO Lead started', () => {
 describe('D-164: a won demo RFP creates a project', () => {
   const HOUR = 60 * 60 * 1000;
   const PERSONAS_WITH = ['ceo', 'pmo_lead', 'pm', 'finance_lead'];
-  const noAlertExtras = (alerts: any[]) =>
-    alerts.map((alert: any) => {
-      const rest = { ...alert };
-      delete rest.case_id;
-      return rest;
-    });
 
   /** Logs an RFP as the PMO Lead in the demo: one proof upload, then the start. */
   async function startRfp(intake: Record<string, unknown> = {}, cookie = 'psl_mock_demo=on; psl_mock_speed=fast') {
@@ -381,11 +374,18 @@ describe('D-164: a won demo RFP creates a project', () => {
       expect((await get('/api/v1/projects/P-9001', persona)).body).toEqual(page.body);
       expect(page.body.items).toEqual([expect.objectContaining({ state: 'Verified', id: 9001 })]);
       expect(page.body.facts.engagement).toBeNull();
-      for (const tab of ['milestones', 'documents', 'registers', 'actions', 'money']) {
+      for (const tab of ['documents', 'registers', 'actions']) {
         const read = await get(`/api/v1/projects/P-9001/${tab}`, persona);
         check('E-PROJECT-TAB', 200, read.body);
         expect(read.body.items, `${persona} ${tab}`).toEqual([]);
       }
+      // F-71: the milestones and money tabs are the live shape
+      const completions = await get('/api/v1/projects/P-9001/milestones', persona);
+      checkLive('/api/v1/projects/{case_id}/{tab}', completions.body);
+      expect(completions.body.sections[0].items, `${persona} milestones`).toEqual([]);
+      const money = await get('/api/v1/projects/P-9001/money', persona);
+      checkLive('/api/v1/projects/{case_id}/money', money.body);
+      expect(money.body.items, `${persona} money`).toEqual([]);
     }
     expect((await get('/api/v1/projects/P-9001', 'hr')).status).toBe(404);
     expect((await get('/api/v1/projects/P-9001/milestones', 'hr')).status).toBe(404);
@@ -409,9 +409,8 @@ describe('D-164: a won demo RFP creates a project', () => {
     await decideRfp(await startRfp(), 'approve');
     pass(HOUR);
     const alerts = (await get('/api/v1/notifications', 'pmo_lead')).body;
-    const ready = alerts.items.find((a: any) => a.text === 'Tamarind Loans Ltd · new engagement is ready to plan');
-    expect(ready).toMatchObject({ work_id: 'W-9001', case_id: 'P-9001' });
-    check('E-NOTIFICATIONS', 200, { ...alerts, items: noAlertExtras(alerts.items) });
+    const ready = alerts.items.find((a: any) => a.title === 'Tamarind Loans Ltd · new engagement is ready to plan');
+    expect(ready).toMatchObject({ django_url: '/work/W-9001/', target_kind: 'project', api_url: '/api/v1/projects/P-9001' });
   });
 
   it('creates nothing when the RFP is rejected, with the demo off, or after Reset demo', async () => {
@@ -426,6 +425,6 @@ describe('D-164: a won demo RFP creates a project', () => {
     await fetch(`${base}/__mock/reset`, { method: 'POST' });
     expect((await get('/api/v1/projects?status=all', 'pmo_lead')).body.items.some((p: any) => p.case_id.startsWith('P-9'))).toBe(false);
     expect((await projectOptions('pmo_lead')).some((o: any) => o.value.startsWith('P-9'))).toBe(false);
-    expect((await get('/api/v1/projects/P-9001/milestones', 'ceo')).body.items).toEqual([]);
+    expect((await get('/api/v1/projects/P-9001/milestones', 'ceo')).body.sections[0].items).toEqual([]);
   });
 });

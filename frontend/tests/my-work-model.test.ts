@@ -34,7 +34,7 @@ describe('queues', () => {
 
 describe('parseView (acceptance 2, 7, 17)', () => {
   it('defaults to Needs me, ten rows and no filters', () => {
-    expect(parse('')).toEqual({ queue: 'needs_me', q: undefined, line: undefined, project: undefined, state: undefined, limit: 10 });
+    expect(parse('')).toEqual({ queue: 'needs_me', q: undefined, line: undefined, project: undefined, state: undefined, limit: 10, assign: undefined });
   });
 
   it.each(['done', 'waiting_on_others', 'nope', 'NEEDS_ME', ' waiting', 'waiting%00'])('drops the queue %j', (queue) => {
@@ -85,7 +85,15 @@ describe('parseView (acceptance 2, 7, 17)', () => {
 
   it('never reads the old parameters', () => {
     const view = parse('waiting_on=agent&cursor=o10&assign=W-1&counts=1');
-    expect(Object.keys(view).sort()).toEqual(['limit', 'line', 'project', 'q', 'queue', 'state']);
+    expect(Object.keys(view).sort()).toEqual(['assign', 'limit', 'line', 'project', 'q', 'queue', 'state']);
+    expect(view.assign).toBeUndefined();
+  });
+
+  it('keeps an assign case uuid only on the Unassigned tab (F-88)', () => {
+    expect(parse(`queue=unassigned&assign=${PROJECT}`).assign).toBe(PROJECT);
+    expect(parse(`queue=waiting&assign=${PROJECT}`).assign).toBeUndefined();
+    expect(parse(`assign=${PROJECT}`).assign).toBeUndefined();
+    for (const bad of ['W-1001', 'nope', '', `${PROJECT}/..`, ` ${PROJECT}`]) expect(parse(new URLSearchParams({ queue: 'unassigned', assign: bad }).toString()).assign).toBeUndefined();
   });
 });
 
@@ -100,6 +108,10 @@ describe('viewSearch', () => {
     expect(viewSearch({ ...base, queue: 'verified', limit: 20, state: 'ready', line: 'finance-ledger/v1', project: PROJECT, q: 'lagoon' })).toBe(
       `?queue=verified&q=lagoon&line=finance-ledger%2Fv1&project=${PROJECT}&state=ready&limit=20`,
     );
+  });
+
+  it('writes assign beside the Unassigned tab', () => {
+    expect(viewSearch({ queue: 'unassigned', limit: 10, assign: PROJECT })).toBe(`?queue=unassigned&assign=${PROJECT}`);
   });
 
   it('round-trips through parseView', () => {

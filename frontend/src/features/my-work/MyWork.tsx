@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { call, liveApi } from '@/api/client';
 import { Button, EmptyState, ListToolbar, ShowMore, Tabs, useIsPhone, type FilterChip, type ShowMoreProps } from '@/components';
+import { UnassignedBids } from '@/features/rfp/UnassignedBids';
 import { coverageNotes, useWorkCounts, useWorkList, WorkListLoading, type LineKey } from '@/features/work-list';
 import { SignedOutState } from '@/shell/FrameStates';
 
@@ -148,6 +149,8 @@ export function MyWork() {
     return data.total_coverage === 'complete' && data.total !== null ? { count: data.total } : undefined;
   }, []);
   const removeFilter = (filters: Filters) => navigate(filters);
+  // F-88: closing the assign drawer keeps the list's own view; the list reads itself again after a write
+  const closeAssign = () => router.replace(`/my-work${viewSearch(viewRef.current)}`, { scroll: false });
 
   if (list.status === 'error' && !unassigned && list.error.kind === 'unauthenticated') return <SignedOutState pathname="/my-work" />;
   if (countsState.status === 'error' && countsState.error.kind === 'unauthenticated') return <SignedOutState pathname="/my-work" />;
@@ -194,12 +197,8 @@ export function MyWork() {
 
   let body;
   if (unassigned) {
-    // F-88 puts received bids here; until it lands the tab says so rather than asking the work list.
-    body = (
-      <EmptyState title="Unassigned work">
-        Work that still needs an owner opens here once this list is connected to received bids.
-      </EmptyState>
-    );
+    // F-88: the received RFPs waiting for a PM come from their own read, not the work list; the drawer opens over them
+    body = <UnassignedBids openId={view.assign} hrefFor={(caseId) => `/my-work${viewSearch({ ...view, assign: caseId })}`} onClose={closeAssign} pathname="/my-work?queue=unassigned" />;
   } else if (list.status === 'loading') {
     body = <WorkListLoading>Loading your queue…</WorkListLoading>;
   } else if (list.status === 'error' && list.error.kind === 'forbidden') {
