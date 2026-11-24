@@ -557,3 +557,11 @@ The design engineer answered three batch questions in chat:
 - **Issues and cash forecast: "Ship simpler for demo".**
   - F-111 ships read-only as built: a plain reload message instead of the per-section Try again, an amber banner, Blocks as plain text, and the frame's next-step line. F-95 replaces these later.
   - F-103 ships without its proof link and month actuals, and its `Extra` slot is dropped. Both return on F-87.
+
+## D-203 (24 Nov 2026): demo-path merges and sign-offs
+The design engineer answered in chat:
+- **F-64 decision desk (#111): "Merge now, prove after".** The live decision journey is proved on `psl_demo` by the coordinator as a follow-up.
+- **F-61 alerts (#112): "Merge now, fix after".** LA-4 (no Reload button when a stale settings save gets a 422 instead of a 409) and the live proof that alerts are created both become follow-ups. QA's alert rows were seeded through the ORM, so only the display is proven.
+- **F-87 work item actions (#113): "Accept and merge".** PMO-3-1 is accepted risk: "Check what happened" and Resume are proven on the mock only, not live, the same as F-60 and F-88. Pause and Continue are proven live. The merge is approved.
+- **F-111 issues, LD-Q7: "Sign all".** 57 exceptions and eight D-83 visual waivers (desktop 74.8, 77.6, 84.4 and 83.6; phone 76.5, 76.9, 75.1 and 76.8).
+F-64 and F-61 conflicted with main after F-71 (#114). Each lane syncs main and re-gates, and the coordinator then merges with `--match-head-commit`.
