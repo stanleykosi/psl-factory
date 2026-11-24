@@ -52,6 +52,7 @@ Lane D takes the Finance line workspaces from lane B (SCR-32, 53, 54, 55, 56, 57
 
 ## Rules that never bend
 
+- Never call Railway tools (`mcp__…railway…`, whatever the tool names). Only the main coordinator uses the Railway connector, read-only by default (D-196). Ask the coordinator for logs or status.
 - Stop only processes whose PID the agent recorded when it started them, never by name or pattern (`pkill`, `killall`, `kill $(pgrep …)`). On 24 Nov a reviewer killed the design engineer's app mock (port 3001) by pattern.
 - Check `df -h /System/Volumes/Data` before you spawn any agent. Below 3 GB free, stop and tell the coordinator.
 - Never invent business rules, approvers, attempt counts or amounts. Unknown money stays unknown, never 0.
