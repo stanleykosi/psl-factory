@@ -99,7 +99,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "technical reviewer (lead), lighter panel D-180",
-      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
       "evidence_refs": [
         "delivery/features/F-88/round-2/review-technical.md"
       ]
@@ -108,7 +108,7 @@
       "status": "passed",
       "reviewer": "qa",
       "authority": "integrated QA (lighter D-180 panel)",
-      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
       "evidence_refs": [
         "delivery/features/F-88/round-2/review-qa.md"
       ]
@@ -117,7 +117,7 @@
       "status": "passed",
       "reviewer": "pmo-acceptance",
       "authority": "PMO delivery acceptance (delivery only; product acceptance, merge and release keep their own authorities)",
-      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
       "evidence_refs": [
         "delivery/features/F-88/round-2/acceptance-pmo.md"
       ]
@@ -128,7 +128,7 @@
       "status": "passed",
       "reviewer": "design engineer (hunchoweb), accepted in batch, delegated under D-184",
       "authority": "D-182, D-183, D-187 and D-198 (batch answers); D-184 (batch-approved board changes count as product acceptance)",
-      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
       "evidence_refs": [
         "delivery/features/F-88/round-2/acceptance-product.md"
       ]
@@ -137,7 +137,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "reviewer-ux (lighter panel, D-180)",
-      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
       "evidence_refs": [
         "delivery/features/F-88/round-2/review-ux.md"
       ]
@@ -146,7 +146,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer (lighter panel, D-180)",
-      "snapshot_ref": "eacdc7045a458039ad42eb19ea5852cc411578df",
+      "snapshot_ref": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
       "evidence_refs": [
         "delivery/features/F-88/round-2/review-ui.md"
       ]
@@ -813,7 +813,7 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "811465d841db6da9fbbeb6b8953df2816cf62295",
+    "base_sha": "f355d33908d66468082b5cadac12aaf6dd6b09ce",
     "task_branch": "fe-connect-1-received-rfp-assign-pm",
     "head_sha": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c2",
@@ -871,12 +871,19 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "AUTO_MERGE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-88/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "24 changed files exceed the auto-merge limit of 15"
+    ],
+    "decided_for_head_sha": "98eb07bbb7c5fe76f5f13423947995eb4942e520",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
