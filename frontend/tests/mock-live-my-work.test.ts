@@ -3,10 +3,14 @@ import { describe, expect, it } from 'vitest';
 // @ts-expect-error plain ESM module without type declarations
 import { isLiveWorkRequest, liveWorkCounts, liveWorkList } from '../mock/live-work.mjs';
 
+// Loose shapes for the plain-JS mock's replies (the mock has no type declarations).
+type Row = Record<string, unknown> & { state?: string; key?: string; total?: number | null; observed?: number };
+type Body = { items: Row[]; queues: Row[]; lines: Row[]; [k: string]: unknown };
+
 // The live work list and counts in the mock (F-63): all eight queues, limit, state and total; v7 callers are left alone.
 const url = (search: string) => new URL(`http://mock/api/v1/work?${search}`);
-const list = (search: string, persona = 'finance_lead', dataset?: string) => liveWorkList({ url: url(search), persona, dataset }) as { status: number; body: any };
-const counts = (persona = 'finance_lead', dataset?: string) => liveWorkCounts({ persona, dataset }).body as any;
+const list = (search: string, persona = 'finance_lead', dataset?: string) => liveWorkList({ url: url(search), persona, dataset }) as { status: number; body: Body };
+const counts = (persona = 'finance_lead', dataset?: string) => liveWorkCounts({ persona, dataset }).body as Body;
 
 describe('which requests are live', () => {
   it('takes live-only queues and any request with page; leaves the decision desk read to v7', () => {
@@ -40,7 +44,7 @@ describe('liveWorkList', () => {
   it('limit sets the page size and state narrows', () => {
     expect(list('queue=needs_me&page=1&limit=20').body.items).toHaveLength(20);
     const waiting = list('queue=needs_me&page=1&limit=50&state=waiting').body;
-    expect(waiting.items.every((r: any) => r.state === 'waiting')).toBe(true);
+    expect(waiting.items.every((r: Row) => r.state === 'waiting')).toBe(true);
   });
 
   it('refuses what the contract refuses', () => {
@@ -65,17 +69,17 @@ describe('liveWorkList', () => {
 describe('liveWorkCounts', () => {
   it('lists every queue with observed and total, and per-line summaries', () => {
     const body = counts();
-    expect(body.queues.map((q: any) => q.key)).toEqual(['needs_me', 'waiting', 'mine', 'active', 'decisions', 'exceptions', 'unassigned', 'verified']);
-    expect(body.queues.find((q: any) => q.key === 'exceptions')).toMatchObject({ observed: 20, total: null });
+    expect(body.queues.map((q: Row) => q.key)).toEqual(['needs_me', 'waiting', 'mine', 'active', 'decisions', 'exceptions', 'unassigned', 'verified']);
+    expect(body.queues.find((q: Row) => q.key === 'exceptions')).toMatchObject({ observed: 20, total: null });
     expect(body.lines[0]).toHaveProperty('open');
   });
 
   it('leaves Unassigned out for people who cannot see it, and everything at 0 for the persona with no work', () => {
-    expect(counts('pm').queues.map((q: any) => q.key)).not.toContain('unassigned');
-    expect(counts('none').queues.every((q: any) => q.total === 0 && q.observed === 0)).toBe(true);
+    expect(counts('pm').queues.map((q: Row) => q.key)).not.toContain('unassigned');
+    expect(counts('none').queues.every((q: Row) => q.total === 0 && q.observed === 0)).toBe(true);
   });
 
   it('the board dataset carries the board counts', () => {
-    expect(counts('finance_lead', 'board').queues.find((q: any) => q.key === 'verified').total).toBe(28);
+    expect(counts('finance_lead', 'board').queues.find((q: Row) => q.key === 'verified')?.total).toBe(28);
   });
 });
