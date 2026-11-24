@@ -479,7 +479,7 @@
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "passed",
-    "human_approval": "delegated under D-180 (board changes accepted in batch, D-182; delegation D-184)",
+    "human_approval": "approved",
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",

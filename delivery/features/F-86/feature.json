@@ -685,7 +685,7 @@
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "passed",
-    "human_approval": "pending",
+    "human_approval": "approved",
     "merge_status": "merged",
     "merge_sha": "3b7df6cc589bebd8014502db6ce1eaaa8a01afde",
     "merge_policy": "not_configured",

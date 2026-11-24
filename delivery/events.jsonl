@@ -4585,3 +4585,12 @@
 {"at":"2026-11-24T02:56:19Z","feature":"F-60","round":1,"kind":"review","role":"security","verdict":"PASS","reviewer":"reviewer-security","commit":"f2a1ebfd541d","written_at":"2026-11-24T02:54:06Z"}
 {"at":"2026-11-24T02:56:34Z","feature":"F-125","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":649.9,"commit":"a0eb67073f7a"}
 {"at":"2026-11-24T02:56:49Z","feature":"F-125","round":1,"kind":"transition","head":"a0eb67073f7a","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-24T02:58:27Z","feature":"F-125","round":1,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"a0eb67073f7a","written_at":"2026-11-24T02:58:17Z"}
+{"at":"2026-11-24T02:58:27Z","feature":"F-125","round":1,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"a0eb67073f7a","written_at":"2026-11-24T02:57:32Z"}
+{"at":"2026-11-24T02:58:27Z","feature":"F-125","round":1,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"a0eb67073f7a","written_at":"2026-11-24T02:57:35Z"}
+{"at":"2026-11-24T02:58:40Z","feature":"F-125","round":1,"kind":"transition","head":"a0eb67073f7a","from":"IN_REVIEW","to":"INTEGRATED_QA"}
+{"at":"2026-11-24T03:02:30Z","feature":"F-125","round":1,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"a0eb67073f7a","written_at":"2026-11-24T03:02:11Z"}
+{"at":"2026-11-24T03:02:30Z","feature":"F-125","round":1,"kind":"transition","head":"a0eb67073f7a","from":"INTEGRATED_QA","to":"READY_FOR_ACCEPTANCE"}
+{"at":"2026-11-24T03:02:56Z","feature":"F-70","round":2,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-24T03:02:57Z","feature":"F-72","round":1,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-24T03:02:58Z","feature":"F-86","round":2,"kind":"fields","fields":{"git.human_approval":"approved"}}
