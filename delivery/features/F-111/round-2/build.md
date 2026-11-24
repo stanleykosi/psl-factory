@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: 570b3e2f4b1529212a6299158cdbb81c3c467d61
+COMMIT: 8a5c09fe624b12c209c2a70cb1f75c8a38238586
 BUILDER: builder
 LANE: full
 
@@ -48,3 +48,9 @@ Round 2 isn't gated yet. The blocking TECH-1-2 / UX-1-1 (Try again) needs F-87's
 
 ## Coordinator: D-202 (24 Nov)
 The design engineer, in chat (relayed by the main coordinator): "Ship simpler for demo". F-111 ships read-only as built: a plain reload message instead of the per-section Try again, an amber banner, Blocks as plain text, and the frame's next-step line. F-95 (lane C, parked until after the demo) replaces these later. TECH-1-2, UX-1-1, UI-1-3, UI-1-4, TECH-1-3 and UX-1-3 are recorded as accepted risk under D-202. The worktree is now /Users/Hunchoo/psl-factory-worktrees/lane-d (ports 4990/4991/8030).
+
+## Round-2 note (D-202, merge with main)
+- D-202: ships read-only as built (reload message, amber banner, plain-text Blocks, the frame's next-step line). TECH-1-2, UX-1-1, UI-1-3, UI-1-4, TECH-1-3 and UX-1-3 are accepted; no workaround built.
+- Merged origin/main (F-85/F-86/F-72/F-62/F-125/F-113, D-199 workflow). Conflicts in `mock/server.mjs` (kept my issue route block and main's F-62 live-work line) and `tests/next-config.test.ts` (kept main's allowlist and comment, added `issues.mjs` and F-111). The adapter import is still one line in `LiveWorkItemView.tsx`.
+- `node --check mock/server.mjs` ok; `tsc --noEmit` clean; issue-followup, mock-issues-live and next-config tests: 37 passed.
+- `fidelity-exceptions.json`: 57 items, every missing board item of the eight round-1 reports is covered, all `approved_by` "builder proposal, pending design engineer".

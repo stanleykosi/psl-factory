@@ -107,6 +107,18 @@
       "at": "2026-11-24T13:58:07Z",
       "seconds": 292.8,
       "evidence_ref": "delivery/features/F-119/round-2/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 3,
+      "attempt": 1,
+      "commit": "06d07376b02424f191502441b6f29635848c88d5",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T14:26:56Z",
+      "seconds": 298.1,
+      "evidence_ref": "delivery/features/F-119/round-3/checks.md"
     }
   ],
   "reviews": {
@@ -796,7 +808,43 @@
           "by": "reviewer-ui",
           "at": "2026-11-24T14:13:35Z",
           "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T14:26:56Z",
+          "refs": [
+            "06d07376b02424f191502441b6f29635848c88d5"
+          ],
+          "head": "06d07376b02424f191502441b6f29635848c88d5",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T14:35:28Z",
+          "refs": [
+            "Phone Save is a bottom bar on first view, stays on screen while scrolling to the page end, does not cover the lowest form control at the end or the 422 message, and the save toast shows after a valid save. Checked at 390 on 4992 + 4993 (Playwright, mobile emulation)."
+          ],
+          "head": "06d07376b02424f191502441b6f29635848c88d5",
+          "reason": null
+        },
+        {
+          "action": "reopen",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:35:28Z",
+          "refs": [],
+          "head": "06d07376b02424f191502441b6f29635848c88d5",
+          "reason": "The bar is sticky, white, with a 2px top rule and the board's padding and gap (retrospective.css:49), but it is inside the framed Panel and is not screen width (see UI-3-1). The builder's test only asserts `width > 300` and bottom-of-screen placement (frontend/e2e/retrospective.spec.ts, phone 390 save bar), so it does not catch the frame or the width."
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "06d07376b02424f191502441b6f29635848c88d5"
+      ],
+      "verified_by": "reviewer-ux",
+      "verification_refs": [
+        "Phone Save is a bottom bar on first view, stays on screen while scrolling to the page end, does not cover the lowest form control at the end or the 422 message, and the save toast shows after a valid save. Checked at 390 on 4992 + 4993 (Playwright, mobile emulation)."
       ]
     },
     {
@@ -819,6 +867,75 @@
           "by": "reviewer-ui",
           "at": "2026-11-24T14:13:35Z",
           "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27"
+        }
+      ]
+    },
+    {
+      "id": "UX-3-1",
+      "round": 3,
+      "snapshot_ref": "06d07376b02424f191502441b6f29635848c88d5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "On phone the Save bar is pinned only while the form's top section is in view. Its containing block is the form and the Decisions block (about 77px) sits after it, so the pin ends at scroll about 290px. After that the bar rides up with the content: measured at scroll 600 it sat at 413..523 on a 844 viewport, and at the page end at 204..314. Expected per the round 3 build (\"a sticky bottom bar below 720px\"): a bar at the bottom edge for the whole form. Actual: a mid-screen button for the lower half of the form. Nothing is hidden and Save stays reachable, so it is not blocking. Path: `frontend/src/features/retrospective/retrospective.css` (phone `.retro__savebar`) and `RetroForm.tsx` (Save row placement relative to the Decisions block). A fixed bar with bottom padding on the form, or moving the Decisions block above the bar, would give the full pinned behaviour.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-3/review-ux.md"
+      ],
+      "raised_by": "reviewer-ux",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ux",
+          "at": "2026-11-24T14:35:28Z",
+          "head": "06d07376b02424f191502441b6f29635848c88d5"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-1",
+      "round": 3,
+      "snapshot_ref": "06d07376b02424f191502441b6f29635848c88d5",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone Save bar is inside the Panel frame and is not screen-width. Expected (SCR-33-mobile.dc.html, bottom element of the 390 screen): a white bar, edge to edge, 2px top rule, padding 12/16/18, with Save full width at the foot of the screen. Actual: `RetroForm.tsx:153` puts `.retro__savebar` inside the form, and the form sits in `Panel` (`RetrospectiveView.tsx:142`, `.psl-panel` 2px border, `.psl-panel__body` padding 14px). The bar's negative margin of 14px (`retrospective.css:49`) only reaches the panel's inner edge, so the panel border frames the bar and the bar is about 354px wide, not 390px. Fix: on phone, make the bar span the screen (for example a margin of -32px to the screen edges, with the panel's border and the body padding not wrapping it, or take Save out of the Panel on phone), and move the `retro__savebar` row after the Decisions block (`RetroForm.tsx:159-196`) so the bar is the last thing in the form and does not cover Decisions while scrolling. The e2e assertion (width > 300) does not catch the width; add a check that the bar's width is about the viewport width and that its left edge is at 0.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:35:28Z",
+          "head": "06d07376b02424f191502441b6f29635848c88d5"
+        }
+      ]
+    },
+    {
+      "id": "UI-3-2",
+      "round": 3,
+      "snapshot_ref": "06d07376b02424f191502441b6f29635848c88d5",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "The builder's note says the bar \"never hides the last field\" because it \"sits in the flow at the end of the form\". Decisions follow it in the DOM (`RetroForm.tsx:159`), so the sticky bar overlays Decisions fields while they are scrolled past. The same fix as UI-3-1 (move the row after Decisions) removes this; if it is kept, add scroll-padding so a focused field is not left under the bar.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-3/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:35:28Z",
+          "head": "06d07376b02424f191502441b6f29635848c88d5"
         }
       ]
     }
@@ -933,6 +1050,61 @@
           ]
         }
       }
+    },
+    {
+      "round": 3,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "06d07376b02424f191502441b6f29635848c88d5",
+          "evidence_refs": [
+            "delivery/features/F-119/round-3/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-119/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer",
+          "snapshot_ref": "06d07376b02424f191502441b6f29635848c88d5",
+          "evidence_refs": [
+            "delivery/features/F-119/round-3/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "06d07376b02424f191502441b6f29635848c88d5",
+          "evidence_refs": [
+            "delivery/features/F-119/round-3/review-ui.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -957,7 +1129,7 @@
     "base_branch": "main",
     "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-delivery-closure-retrospective",
-    "head_sha": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+    "head_sha": "06d07376b02424f191502441b6f29635848c88d5",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d2",
     "pr_url": null,
     "pr_number": null,
@@ -1021,7 +1193,7 @@
     }
   },
   "created_at": "2026-11-23T17:35:28Z",
-  "round": 3,
+  "round": 4,
   "round_limit": 5,
   "history": [
     {
@@ -1087,6 +1259,30 @@
       "round": 3,
       "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T14:27:20Z",
+      "round": 3,
+      "head": "06d07376b02424f191502441b6f29635848c88d5",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T14:35:28Z",
+      "round": 3,
+      "head": "06d07376b02424f191502441b6f29635848c88d5",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T14:35:29Z",
+      "round": 4,
+      "head": "06d07376b02424f191502441b6f29635848c88d5",
+      "reason": null
     }
   ],
   "routing": {
@@ -1102,7 +1298,7 @@
     ]
   },
   "gate": {
-    "round": 3,
+    "round": 4,
     "attempts": 0,
     "verdict": null,
     "commit": null

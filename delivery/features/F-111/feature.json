@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-111",
   "outcome": "The issue workspace shows a live project issue, read only (SCR-30 part 1)",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -90,6 +90,18 @@
       "at": "2026-11-24T01:37:32Z",
       "seconds": 436.3,
       "evidence_ref": "delivery/features/F-111/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T14:31:20Z",
+      "seconds": 186.3,
+      "evidence_ref": "delivery/features/F-111/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -809,10 +821,10 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
+    "base_sha": "4a88c26b2aa399ff54f9ec6cedad65ae075ebbb8",
     "task_branch": "fe-connect-1-issue-reads",
-    "head_sha": "570b3e2f4b1529212a6299158cdbb81c3c467d61",
-    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d3",
+    "head_sha": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d",
     "pr_url": null,
     "pr_number": null,
     "pr_author": null,
@@ -907,6 +919,14 @@
       "round": 2,
       "head": "e35acf835f4162ea0fb1e350933c0a866f8667a3",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T14:31:43Z",
+      "round": 2,
+      "head": "8a5c09fe624b12c209c2a70cb1f75c8a38238586",
+      "reason": null
     }
   ],
   "routing": {
@@ -923,9 +943,9 @@
   },
   "gate": {
     "round": 2,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "8a5c09fe624b12c209c2a70cb1f75c8a38238586"
   },
   "blocked": null
 }

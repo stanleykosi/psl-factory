@@ -4999,3 +4999,15 @@
 {"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"7108be9d7093","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","surface 'product-decision' always needs a human","28 changed files exceed the auto-merge limit of 15","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
 {"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
 {"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"transition","head":"7108be9d7093","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
+{"at":"2026-11-24T14:35:24Z","feature":"F-61","round":1,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), recorded by the lane A coordinator","commit":"5f61b03c833d","written_at":"2026-11-24T14:35:24Z"}
+{"at":"2026-11-24T14:35:24Z","feature":"F-61","round":1,"kind":"finding","action":"add","finding":"PMO-1-1","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-24T14:35:24Z","feature":"F-61","round":1,"kind":"finding","action":"add","finding":"PMO-1-2","by":"pmo-acceptance","severity":"low","owner":"pmo","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-24T14:35:28Z","feature":"F-119","round":3,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"06d07376b024","findings":{"UX-3-1":"low"},"written_at":"2026-11-24T14:35:19Z"}
+{"at":"2026-11-24T14:35:28Z","feature":"F-119","round":3,"kind":"review","role":"ui","verdict":"CHANGES","reviewer":"reviewer-ui","commit":"06d07376b024","findings":{"UI-3-1":"medium","UI-3-2":"low"},"written_at":"2026-11-24T14:30:30Z"}
+{"at":"2026-11-24T14:35:28Z","feature":"F-119","round":3,"kind":"finding","action":"verify","finding":"UI-2-1","by":"reviewer-ux"}
+{"at":"2026-11-24T14:35:28Z","feature":"F-119","round":3,"kind":"finding","action":"reopen","finding":"UI-2-1","by":"reviewer-ui"}
+{"at":"2026-11-24T14:35:28Z","feature":"F-119","round":3,"kind":"finding","action":"add","finding":"UX-3-1","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":false,"role":"ux"}
+{"at":"2026-11-24T14:35:28Z","feature":"F-119","round":3,"kind":"finding","action":"add","finding":"UI-3-1","by":"reviewer-ui","severity":"medium","owner":"frontend","blocking":true,"role":"ui"}
+{"at":"2026-11-24T14:35:28Z","feature":"F-119","round":3,"kind":"finding","action":"add","finding":"UI-3-2","by":"reviewer-ui","severity":"low","owner":"frontend","blocking":false,"role":"ui"}
+{"at":"2026-11-24T14:35:28Z","feature":"F-119","round":3,"kind":"transition","head":"06d07376b024","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
+{"at":"2026-11-24T14:35:29Z","feature":"F-119","round":4,"kind":"transition","head":"06d07376b024","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
