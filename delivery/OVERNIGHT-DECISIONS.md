@@ -589,3 +589,10 @@ The design engineer, in chat: "for any risky action, i give you permission to ap
   - anything on Railway or in production (D-196, which also needs the backend developer's agreement);
   - business rules, approvers or amounts that only PSL can supply.
 - **Lanes still never record a human approval themselves.** They send the head sha, and the coordinator records and merges.
+
+## D-208 (24 Nov 2026): F-119's sixth round runs as a follow-up record, F-119B
+The tool only gives a new rework budget through a human change request on an open PR. That route is blocked while UX-5-1 is open, so D-206's sixth round can't be recorded on F-119. Asked, the design engineer chose "New follow-up record". The steps:
+1. F-119B is created with the same task and branch, and starts its own round on the branch head that holds the UX-5-1 fix (9d9b149c or later).
+2. F-119B runs gate, lenses, QA, PMO and merge as normal.
+3. F-119's record is closed as superseded by F-119B. Its round 1 to 5 evidence and its D-202 signatures carry over, cited in F-119B's spec.
+Nothing merges unreviewed.
