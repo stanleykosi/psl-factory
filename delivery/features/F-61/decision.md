@@ -43,3 +43,4 @@ Files to look at:
 ## Human decision (24 Nov 2026)
 - The design engineer's answer, relayed by the main coordinator, verbatim: "Merge now, fix after".
 - Follow-ups: LA-4 (a Reload control on a 422 stale save) and the live alert-creation proof. The main coordinator merges PR #112 once the conflict with main (F-71, #114) is resolved and CI passes.
+- Re-sync with main f355d339 (after F-64 and #115) as d5ebf991. The only conflict was the tests/next-config.test.ts allow-list (union; that test passes). No F-61 file changed in the merge. CI passed on d5ebf991, PR #112 is MERGEABLE/CLEAN, and D-200 is applied.

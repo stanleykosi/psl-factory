@@ -5152,3 +5152,6 @@
 {"at":"2026-11-24T15:41:03Z","feature":"F-119","round":5,"kind":"finding","action":"add","finding":"TECH-5-2","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
 {"at":"2026-11-24T15:41:03Z","feature":"F-119","round":5,"kind":"finding","action":"add","finding":"TECH-5-3","by":"reviewer-technical","severity":"low","owner":"frontend","blocking":false,"role":"technical"}
 {"at":"2026-11-24T15:41:03Z","feature":"F-119","round":5,"kind":"finding","action":"add","finding":"UX-5-1","by":"reviewer-ux","severity":"low","owner":"frontend","blocking":true,"role":"ux"}
+{"at":"2026-11-24T15:46:55Z","feature":"F-65","round":1,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":347.7,"commit":"15ad8e8b0d20"}
+{"at":"2026-11-24T15:47:04Z","feature":"F-78","round":1,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":443.3,"commit":"ef3b2d8409b2"}
+{"at":"2026-11-24T15:47:25Z","feature":"F-65","round":1,"kind":"transition","head":"15ad8e8b0d20","from":"IMPLEMENTING","to":"IN_REVIEW"}

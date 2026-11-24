@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-65",
   "outcome": "The factory floor shows live recorded work per line, with a way into each line's queue",
-  "state": "IMPLEMENTING",
+  "state": "IN_REVIEW",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -63,7 +63,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T15:46:55Z",
+      "seconds": 347.7,
+      "evidence_ref": "delivery/features/F-65/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -232,6 +245,14 @@
       "round": 1,
       "head": null,
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T15:47:25Z",
+      "round": 1,
+      "head": "15ad8e8b0d20155707c459097c067c6dfff28dc6",
+      "reason": null
     }
   ],
   "routing": {
@@ -248,9 +269,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "15ad8e8b0d20155707c459097c067c6dfff28dc6"
   },
   "blocked": null
 }
