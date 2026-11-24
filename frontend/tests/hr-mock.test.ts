@@ -95,13 +95,16 @@ describe('hr work rows', () => {
   });
 });
 
+/** The work id an alert opens, from its live api_url (/api/v1/work/<id>). */
+const workOf = (alert: any) => String(alert.api_url).split('/').pop() as string;
+
 describe('hr alerts', () => {
   it('lists at least three alerts that open HR items', async () => {
     const list = (await get('/api/v1/notifications')).body;
     expect(list.items.length).toBeGreaterThanOrEqual(3);
-    for (const alert of list.items) expect((await get(`/api/v1/work/${alert.work_id}`)).body.id).toBe(alert.work_id);
-    expect(list.items.every((a: any) => /^W-46/.test(a.work_id) && a.agent === 'zainab')).toBe(true);
-    expect(list.unread_count).toBe(3);
+    for (const alert of list.items) expect((await get(`/api/v1/work/${workOf(alert)}`)).body.id).toBe(workOf(alert));
+    expect(list.items.every((a: any) => /^W-46/.test(workOf(a)) && a.agent === 'zainab')).toBe(true);
+    expect(list.unread).toBe(3);
   });
 });
 
@@ -204,7 +207,7 @@ describe('hr_lead (the HR Lead stand-in)', () => {
   it('has its own alerts, three or more Assistant conversations and the stand-in line', async () => {
     const alerts = (await lead('/api/v1/notifications')).body;
     expect(alerts.items.length).toBeGreaterThanOrEqual(3);
-    for (const a of alerts.items) expect((await lead(`/api/v1/work/${a.work_id}`)).body.id).toBe(a.work_id);
+    for (const a of alerts.items) expect((await lead(`/api/v1/work/${workOf(a)}`)).body.id).toBe(workOf(a));
     const list = (await lead('/api/v1/assistant/conversations')).body.items as any[];
     expect(list.map((c) => c.conversation_id)).toEqual(['CV-2431', 'CV-2432', 'CV-2433']);
     for (const c of list) expect((await lead(`/api/v1/assistant/conversations/${c.conversation_id}`)).body.messages).toHaveLength(2);
