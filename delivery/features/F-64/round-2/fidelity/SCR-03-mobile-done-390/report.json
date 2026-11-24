@@ -1,0 +1,828 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T02:35:10.212Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-03-mobile-done.dc.html",
+  "boardName": "SCR-03-mobile-done.dc.html",
+  "pageUrl": "http://localhost:4964/work/17/decide?task=41",
+  "viewport": {
+    "width": 390,
+    "height": 1080
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-64/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "1 board item(s) are missing from the page and are not approved exceptions (coverage 97.1% with exceptions, needs 100%).",
+    "Visual match 64.3 is below 90.",
+    "3 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
+  ],
+  "scores": {
+    "coverage": 35.3,
+    "coverageWithExceptions": 97.1,
+    "visual": 64.3
+  },
+  "visual": {
+    "score": 64.3,
+    "allCellsScore": 66.2,
+    "width": 390,
+    "height": 1080,
+    "boardHeight": 1080,
+    "pageHeight": 1080,
+    "cell": 12,
+    "contentCells": 2788,
+    "mismatchedCells": 995
+  },
+  "coverage": {
+    "total": 34,
+    "found": 12,
+    "coverage": 35.3,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 291,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "YOU APPROVED · 10:47",
+        "pageName": "YOU APPROVED · 03:35",
+        "pageRole": "text",
+        "similarity": 80,
+        "looks": [],
+        "boardBox": {
+          "x": 34,
+          "y": 90,
+          "w": 322,
+          "h": 15
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 88,
+          "w": 326,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Invoice v2 for Lagoon Health is approved",
+        "pageName": "Invoice 3 for the Lekki handover is approved",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Invoice v2 for Lagoon Health is approved\" on the board, \"Invoice 3 for the Lekki handover is approved\" on the page",
+        "looks": [
+          "text size 24px on the board, 26px on the page"
+        ],
+        "boardBox": {
+          "x": 34,
+          "y": 111,
+          "w": 322,
+          "h": 55
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 112,
+          "w": 326,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "WHAT HAPPENS NEXT",
+        "pageName": "WHAT HAPPENS NEXT",
+        "pageRole": "heading",
+        "similarity": 100,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 20,
+          "y": 198,
+          "w": 350,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 198,
+          "w": 354,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "link",
+        "name": "Next decision · 1 of 8",
+        "pageName": "Next decision · 1 of 2",
+        "pageRole": "link",
+        "similarity": 95,
+        "looks": [],
+        "boardBox": {
+          "x": 34,
+          "y": 338,
+          "w": 322,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 251,
+          "w": 326,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the work item",
+        "pageName": "Open the work item",
+        "pageRole": "link",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 34,
+          "y": 396,
+          "w": 322,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 311,
+          "w": 326,
+          "h": 50
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WORK",
+        "pageName": "WORK",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 36,
+          "y": 612,
+          "w": 96,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 34,
+          "y": 407,
+          "w": 110,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "YOU DECIDED",
+        "pageName": "YOU DECIDED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 36,
+          "y": 692,
+          "w": 96,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 34,
+          "y": 470,
+          "w": 110,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Approve, with no note",
+        "pageName": "Approve, with no note",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 144,
+          "y": 692,
+          "w": 210,
+          "h": 19
+        },
+        "pageBox": {
+          "x": 156,
+          "y": 470,
+          "w": 200,
+          "h": 21
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DECIDED",
+        "pageName": "DECIDED",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 36,
+          "y": 732,
+          "w": 96,
+          "h": 38
+        },
+        "pageBox": {
+          "x": 34,
+          "y": 554,
+          "w": 110,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Paid is tracked separately by Finance and is not part of this decision.",
+        "pageName": "Paid is tracked separately by Finance and is not part of this decision.",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 18,
+          "y": 798,
+          "w": 354,
+          "h": 34
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 630,
+          "w": 358,
+          "h": 39
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "STILL WAITING ON YOU · 8",
+        "pageName": "STILL WAITING ON YOU · 2",
+        "pageRole": "heading",
+        "similarity": 96,
+        "note": "a heading on the page, plain text on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 34,
+          "y": 860,
+          "w": 322,
+          "h": 14
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 697,
+          "w": 326,
+          "h": 17
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Decisions",
+        "key": "link: ← Decisions",
+        "container": "page",
+        "boardBox": {
+          "x": 18,
+          "y": 6,
+          "w": 82,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Phone back link is the shell bar's \"Back to Decisions\" link.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next step. Chidi will issue it and email it to Lagoon Health. You'll see SENT once the delivery receipt comes back.",
+        "key": "text: Next step. Chidi will issue it and email it to Lagoon Health. You'll see SENT once the delivery receipt comes back.",
+        "container": "page",
+        "boardBox": {
+          "x": 102,
+          "y": 249,
+          "w": 254,
+          "h": 63
+        },
+        "exception": {
+          "reason": "Q8: Chidi next-step sentence has no live source; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "DRAFTED",
+        "key": "text: DRAFTED",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 486,
+          "w": 95,
+          "h": 13
+        },
+        "exception": {
+          "reason": "Q8: the facts strip (DRAFTED/REVIEWED/APPROVED/SENT/RECEIPT/VERIFIED) has no live source; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "v2",
+        "key": "text: v2",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 499,
+          "w": 17,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: facts strip detail; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "REVIEWED",
+        "key": "text: REVIEWED",
+        "container": "page",
+        "boardBox": {
+          "x": 147,
+          "y": 486,
+          "w": 95,
+          "h": 13
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You",
+        "key": "text: You",
+        "container": "page",
+        "boardBox": {
+          "x": 147,
+          "y": 499,
+          "w": 26,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: facts strip detail; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "APPROVED",
+        "key": "text: APPROVED",
+        "container": "page",
+        "boardBox": {
+          "x": 263,
+          "y": 486,
+          "w": 97,
+          "h": 13
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "10:47",
+        "key": "text: 10:47",
+        "container": "page",
+        "boardBox": {
+          "x": 263,
+          "y": 499,
+          "w": 41,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q6/Q8: time comes from the decision history only; hidden when absent.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "key": "text: SENT",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 540,
+          "w": 95,
+          "h": 13
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "text",
+        "name": "Next",
+        "key": "text: Next",
+        "container": "page",
+        "boardBox": {
+          "x": 30,
+          "y": 553,
+          "w": 33,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: facts strip detail; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "key": "text: RECEIPT",
+        "container": "page",
+        "boardBox": {
+          "x": 147,
+          "y": 540,
+          "w": 95,
+          "h": 13
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "page",
+        "boardBox": {
+          "x": 147,
+          "y": 553,
+          "w": 12,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: facts strip placeholder; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "key": "text: VERIFIED",
+        "container": "page",
+        "boardBox": {
+          "x": 263,
+          "y": 540,
+          "w": 97,
+          "h": 13
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "page",
+        "boardBox": {
+          "x": 263,
+          "y": 553,
+          "w": 12,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: facts strip placeholder; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0412 · Prepare an invoice",
+        "key": "text: INV-0412 · Prepare an invoice",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 612,
+          "w": 210,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: no invoice reference or line name live; the Work row shows the work title.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "PROJECT",
+        "key": "text: PROJECT",
+        "container": "page",
+        "boardBox": {
+          "x": 36,
+          "y": 652,
+          "w": 96,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: no project name live; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Lagoon Health, milestone 2",
+        "key": "text: Lagoon Health, milestone 2",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 652,
+          "w": 210,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: no project name live; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Sat 21 Nov, 10:47 WAT, by Ada Okafor",
+        "key": "text: Sat 21 Nov, 10:47 WAT, by Ada Okafor",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 732,
+          "w": 210,
+          "h": 38
+        },
+        "exception": null
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Coastal Freight · Milestone 2 invoice",
+        "key": "link: Coastal Freight · Milestone 2 invoice",
+        "container": "page",
+        "boardBox": {
+          "x": 34,
+          "y": 882,
+          "w": 322,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: \"Still waiting on you\" is filled from GET /work?queue=decisions only.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Eko Insurance · Milestone 4 invoice",
+        "key": "link: Eko Insurance · Milestone 4 invoice",
+        "container": "page",
+        "boardBox": {
+          "x": 34,
+          "y": 909,
+          "w": 322,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: filled from the live decision list only.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Eko Insurance · Receipt for INV-0401",
+        "key": "link: Eko Insurance · Receipt for INV-0401",
+        "container": "page",
+        "boardBox": {
+          "x": 34,
+          "y": 936,
+          "w": 322,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: filled from the live decision list only.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "See all",
+        "key": "link: See all",
+        "container": "page",
+        "boardBox": {
+          "x": 34,
+          "y": 963,
+          "w": 322,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: shown only when the live list holds more than three.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      }
+    ],
+    "misplaced": [
+      {
+        "label": "Pagination \"WHAT HAPPENS NEXT\"",
+        "kind": "Pagination",
+        "name": "WHAT HAPPENS NEXT",
+        "boardBox": {
+          "x": 20,
+          "y": 198,
+          "w": 350,
+          "h": 36
+        },
+        "pageBox": {
+          "x": 18,
+          "y": 198,
+          "w": 354,
+          "h": 39
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Pagination \"Next decision · 1 of 8\"",
+        "kind": "Pagination",
+        "name": "Next decision · 1 of 8",
+        "boardBox": {
+          "x": 34,
+          "y": 338,
+          "w": 322,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 251,
+          "w": 326,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      },
+      {
+        "label": "Link \"Open the work item\"",
+        "kind": "Link",
+        "name": "Open the work item",
+        "boardBox": {
+          "x": 34,
+          "y": 396,
+          "w": 322,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 32,
+          "y": 311,
+          "w": 326,
+          "h": 50
+        },
+        "reasons": [
+          "inside the main area on the board, inside a side panel on the page"
+        ]
+      }
+    ],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Decisions",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 76,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Pagination",
+        "role": "complementary",
+        "name": "WHAT HAPPENS NEXT",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 196,
+          "w": 358,
+          "h": 181
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Invoice 4 for the Ikeja fit-out",
+        "container": "main",
+        "pageBox": {
+          "x": 32,
+          "y": 722,
+          "w": 186,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Invoice 5 for the Yaba office",
+        "container": "main",
+        "pageBox": {
+          "x": 32,
+          "y": 751,
+          "w": 181,
+          "h": 18
+        }
+      },
+      {
+        "kind": "Status message",
+        "role": "status",
+        "name": "Your decision was recorded.",
+        "container": "page",
+        "pageBox": {
+          "x": 16,
+          "y": 1019,
+          "w": 358,
+          "h": 45
+        }
+      }
+    ],
+    "unexcepted": 1
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

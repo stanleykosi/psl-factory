@@ -1,7 +1,7 @@
 {
   "tool": "design-fidelity-check",
   "version": 1,
-  "generatedAt": "2026-11-24T01:17:53.046Z",
+  "generatedAt": "2026-11-24T03:59:11.738Z",
   "boardPath": "/Users/Hunchoo/psl-factory-worktrees/lane-a-hot/design/canvas/project/SCR-17-mobile-setup.dc.html",
   "boardName": "SCR-17-mobile-setup.dc.html",
   "pageUrl": "http://127.0.0.1:4966/staff/join/#vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv",
@@ -18,25 +18,25 @@
   "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-60/fidelity-exceptions.json",
   "pass": false,
   "passReasons": [
-    "4 board item(s) are missing from the page and are not approved exceptions (coverage 60% with exceptions, needs 100%).",
-    "Visual match 55.6 is below 90.",
+    "2 board item(s) are missing from the page and are not approved exceptions (coverage 80% with exceptions, needs 100%).",
+    "Visual match 58.3 is below 90.",
     "6 item(s) are in a different place; review them (not part of the pass rule unless --strict-position)."
   ],
   "scores": {
     "coverage": 60,
-    "coverageWithExceptions": 60,
-    "visual": 55.6
+    "coverageWithExceptions": 80,
+    "visual": 58.3
   },
   "visual": {
-    "score": 55.6,
-    "allCellsScore": 76,
+    "score": 58.3,
+    "allCellsScore": 76.8,
     "width": 390,
     "height": 844,
     "boardHeight": 844,
     "pageHeight": 844,
     "cell": 12,
-    "contentCells": 1269,
-    "mismatchedCells": 563
+    "contentCells": 1303,
+    "mismatchedCells": 544
   },
   "coverage": {
     "total": 10,
@@ -57,7 +57,7 @@
           "x": 0,
           "y": 0,
           "w": 390,
-          "h": 51
+          "h": 52
         },
         "pageBox": {
           "x": 20,
@@ -78,9 +78,9 @@
         ],
         "boardBox": {
           "x": 20,
-          "y": 71,
+          "y": 72,
           "w": 350,
-          "h": 26
+          "h": 28
         },
         "pageBox": {
           "x": 20,
@@ -101,9 +101,9 @@
         ],
         "boardBox": {
           "x": 20,
-          "y": 109,
+          "y": 112,
           "w": 350,
-          "h": 38
+          "h": 36
         },
         "pageBox": {
           "x": 20,
@@ -122,9 +122,9 @@
         "looks": [],
         "boardBox": {
           "x": 20,
-          "y": 323,
+          "y": 322,
           "w": 350,
-          "h": 17
+          "h": 16
         },
         "pageBox": {
           "x": 20,
@@ -144,7 +144,7 @@
         "looks": [],
         "boardBox": {
           "x": 20,
-          "y": 460,
+          "y": 456,
           "w": 350,
           "h": 50
         },
@@ -167,7 +167,7 @@
         ],
         "boardBox": {
           "x": 20,
-          "y": 522,
+          "y": 518,
           "w": 350,
           "h": 30
         },
@@ -190,8 +190,8 @@
         "boardBox": {
           "x": 32,
           "y": 199,
-          "w": 179,
-          "h": 19
+          "w": 178,
+          "h": 18
         },
         "exception": null
       },
@@ -203,9 +203,9 @@
         "container": "page",
         "boardBox": {
           "x": 32,
-          "y": 284,
-          "w": 71,
-          "h": 19
+          "y": 283,
+          "w": 82,
+          "h": 18
         },
         "exception": null
       },
@@ -217,11 +217,14 @@
         "container": "page",
         "boardBox": {
           "x": 32,
-          "y": 392,
-          "w": 130,
-          "h": 19
+          "y": 389,
+          "w": 128,
+          "h": 18
         },
-        "exception": null
+        "exception": {
+          "reason": "G-SCR17-5: the WhatsApp number value is left out with its field; no operation exists in 1.24.0 (D-182 Q2 a).",
+          "approved_by": "design engineer, 23 Nov 2026, D-182"
+        }
       },
       {
         "kind": "Text",
@@ -231,11 +234,14 @@
         "container": "page",
         "boardBox": {
           "x": 20,
-          "y": 431,
+          "y": 428,
           "w": 350,
-          "h": 17
+          "h": 16
         },
-        "exception": null
+        "exception": {
+          "reason": "G-SCR17-5: the sentence about the WhatsApp code is left out with its field; no operation exists in 1.24.0 (D-182 Q2 a).",
+          "approved_by": "design engineer, 23 Nov 2026, D-182"
+        }
       }
     ],
     "misplaced": [
@@ -247,7 +253,7 @@
           "x": 0,
           "y": 0,
           "w": 390,
-          "h": 51
+          "h": 52
         },
         "pageBox": {
           "x": 20,
@@ -265,9 +271,9 @@
         "name": "Set up your account",
         "boardBox": {
           "x": 20,
-          "y": 71,
+          "y": 72,
           "w": 350,
-          "h": 26
+          "h": 28
         },
         "pageBox": {
           "x": 20,
@@ -285,9 +291,9 @@
         "name": "Welcome, Sola. You've been given PMO for Ojo Foods and Kora Logistics.",
         "boardBox": {
           "x": 20,
-          "y": 109,
+          "y": 112,
           "w": 350,
-          "h": 38
+          "h": 36
         },
         "pageBox": {
           "x": 20,
@@ -305,9 +311,9 @@
         "name": "At least 12 characters",
         "boardBox": {
           "x": 20,
-          "y": 323,
+          "y": 322,
           "w": 350,
-          "h": 17
+          "h": 16
         },
         "pageBox": {
           "x": 20,
@@ -325,7 +331,7 @@
         "name": "Finish setup",
         "boardBox": {
           "x": 20,
-          "y": 460,
+          "y": 456,
           "w": 350,
           "h": 50
         },
@@ -345,7 +351,7 @@
         "name": "Wrong roles? Ask the person who invited you; you can't change your own roles.",
         "boardBox": {
           "x": 20,
-          "y": 522,
+          "y": 518,
           "w": 350,
           "h": 30
         },
@@ -364,7 +370,7 @@
       {
         "kind": "Text",
         "role": "text",
-        "name": "This invitation works until 26 Nov 2026, 15:00.",
+        "name": "This invitation works until 26 Nov 2026 · 15:00 WAT.",
         "container": "form",
         "pageBox": {
           "x": 20,
@@ -410,10 +416,11 @@
         }
       }
     ],
-    "unexcepted": 4
+    "unexcepted": 2
   },
   "warnings": [
-    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/lane-a-hot/design/mascots/canvas-assets.json (19 mapped)."
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-worktrees/lane-a-hot/design/mascots/canvas-assets.json (19 mapped).",
+    "Fonts: Google Fonts could not be reached (fonts.googleapis.com); the board was drawn with fallback fonts, so text widths may differ slightly. The run continues."
   ],
   "images": {
     "board": "board.png",

@@ -39,3 +39,6 @@ Not blocked.
 
 ## Coordinator merge of main 3b7df6cc
 - Merged as a0eb6707 with no conflicts; `npx tsc --noEmit` reports 0 errors.
+
+## Coordinator e2e (after PMO)
+- `npx playwright test e2e/my-work.spec.ts` through heavy-lock on a0eb6707: 15 passed (52.2s). This closes PMO-1-1.

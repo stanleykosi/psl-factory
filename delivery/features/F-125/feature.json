@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-125",
   "outcome": "/my-work shows its existing error state on live rows instead of crashing",
-  "state": "READY_FOR_ACCEPTANCE",
+  "state": "PR_OPEN",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -86,11 +86,13 @@
       ]
     },
     "pmo_acceptance": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "pmo-acceptance",
+      "authority": "PMO delivery acceptance (D-180 lighter panel). Delivery acceptance only; merge and release keep their own authorities. Product acceptance is not required (readiness).",
+      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "evidence_refs": [
+        "delivery/features/F-125/round-1/acceptance-pmo.md"
+      ]
     },
     "product_acceptance": {
       "required": false,
@@ -120,7 +122,54 @@
       ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "PMO-1-1",
+      "round": 1,
+      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "owner": "integration",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Criterion 3 names `e2e/my-work.spec.ts`, but neither the builder, the gate nor QA ran it. The mock path is covered by vitest and by QA's manual check. Run the spec at merge sync. Also confirm that F-86 meant to delete the start-work test files that the technical review noted.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-125/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T08:52:02Z",
+          "head": "a0eb67073f7a675f3a1436fbd62b855b8a44161d"
+        }
+      ]
+    },
+    {
+      "id": "PMO-1-2",
+      "round": 1,
+      "snapshot_ref": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`round-1/live-my-work.png` shows the loading state, not the error card, as `build.md` admits. `round-1/qa-errorcard.png` is the valid screenshot for criterion 5.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-125/round-1/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T08:52:02Z",
+          "head": "a0eb67073f7a675f3a1436fbd62b855b8a44161d"
+        }
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -144,11 +193,11 @@
     "base_branch": "main",
     "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-connect-1-my-work-live-guard",
-    "head_sha": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+    "head_sha": "af26eadde50195b3db8a1f68b60ffeb081736b25",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a4",
-    "pr_url": null,
-    "pr_number": null,
-    "pr_author": null,
+    "pr_url": "https://github.com/stanleykosi/psl-factory/pull/105",
+    "pr_number": 105,
+    "pr_author": "hunchoweb",
     "designated_approver": null,
     "ci_status": "not_run",
     "human_approval": "pending",
@@ -156,15 +205,27 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
+      "frontend/e2e/document-review.spec.ts",
       "frontend/e2e/hr.spec.ts",
       "frontend/e2e/rfp-intake.spec.ts",
       "frontend/e2e/start-work-ppe-forecast.spec.ts",
       "frontend/e2e/start-work-proof.spec.ts",
       "frontend/e2e/start-work.spec.ts",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/documents/review-2901.json",
+      "frontend/mock/fixtures/documents/review-2901.publication.json",
       "frontend/mock/server.mjs",
       "frontend/mock/start-live.mjs",
+      "frontend/src/features/documents/DocumentParts.tsx",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/documents/ReviewControls.tsx",
+      "frontend/src/features/documents/document-review.css",
+      "frontend/src/features/documents/documentModel.ts",
+      "frontend/src/features/documents/useDocument.ts",
+      "frontend/src/features/documents/useReview.ts",
       "frontend/src/features/my-work/MyWork.tsx",
       "frontend/src/features/my-work/model.ts",
+      "frontend/src/features/projects/DocumentsTab.tsx",
       "frontend/src/features/start-work/LineChooser.tsx",
       "frontend/src/features/start-work/LineForm.tsx",
       "frontend/src/features/start-work/ProjectPicker.tsx",
@@ -181,9 +242,13 @@
       "frontend/src/features/start-work/useStart.ts",
       "frontend/src/features/start-work/useStartWork.ts",
       "frontend/tests/assistant.test.tsx",
+      "frontend/tests/document-review-model.test.ts",
+      "frontend/tests/document-review.test.tsx",
       "frontend/tests/issue-detail.test.tsx",
+      "frontend/tests/mock-live-document-review.test.ts",
       "frontend/tests/my-work.test.tsx",
       "frontend/tests/next-config.test.ts",
+      "frontend/tests/project-tabs.test.tsx",
       "frontend/tests/rfp-intake.test.tsx",
       "frontend/tests/start-work-intake.test.ts",
       "frontend/tests/start-work-live.test.tsx",
@@ -263,6 +328,14 @@
       "from": "INTEGRATED_QA",
       "to": "READY_FOR_ACCEPTANCE",
       "at": "2026-11-24T03:02:30Z",
+      "round": 1,
+      "head": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
+      "reason": null
+    },
+    {
+      "from": "READY_FOR_ACCEPTANCE",
+      "to": "PR_OPEN",
+      "at": "2026-11-24T08:53:22Z",
       "round": 1,
       "head": "a0eb67073f7a675f3a1436fbd62b855b8a44161d",
       "reason": null

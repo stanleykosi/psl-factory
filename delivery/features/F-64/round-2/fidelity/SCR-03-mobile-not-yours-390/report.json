@@ -1,0 +1,498 @@
+{
+  "tool": "design-fidelity-check",
+  "version": 1,
+  "generatedAt": "2026-11-24T02:35:32.461Z",
+  "boardPath": "/Users/Hunchoo/psl-factory-main/design/canvas/project/SCR-03-mobile-not-yours.dc.html",
+  "boardName": "SCR-03-mobile-not-yours.dc.html",
+  "pageUrl": "http://localhost:4964/work/18/decide?task=42",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "rules": {
+    "minVisual": 90,
+    "minCoverage": 100,
+    "threshold": 0.8,
+    "strictPosition": false
+  },
+  "exceptionsPath": "/Users/Hunchoo/psl-factory-main/delivery/features/F-64/fidelity-exceptions.json",
+  "pass": false,
+  "passReasons": [
+    "1 board item(s) are missing from the page and are not approved exceptions (coverage 94.7% with exceptions, needs 100%).",
+    "Visual match 92.6 meets 90."
+  ],
+  "scores": {
+    "coverage": 31.6,
+    "coverageWithExceptions": 94.7,
+    "visual": 92.6
+  },
+  "visual": {
+    "score": 92.6,
+    "allCellsScore": 93,
+    "width": 390,
+    "height": 844,
+    "boardHeight": 844,
+    "pageHeight": 844,
+    "cell": 12,
+    "contentCells": 2203,
+    "mismatchedCells": 163
+  },
+  "coverage": {
+    "total": 19,
+    "found": 6,
+    "coverage": 31.6,
+    "matched": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Start",
+        "pageName": "Start work",
+        "pageRole": "button",
+        "similarity": 80,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 293,
+          "y": 6,
+          "w": 81,
+          "h": 44
+        },
+        "pageBox": {
+          "x": 290,
+          "y": 6,
+          "w": 84,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "Approve the Milestone 2 invoice?",
+        "pageName": "Invoice 4 for the Ikeja fit-out",
+        "pageRole": "heading",
+        "similarity": 80,
+        "note": "main heading reads \"Approve the Milestone 2 invoice?\" on the board, \"Invoice 4 for the Ikeja fit-out\" on the page",
+        "looks": [
+          "text size 22px on the board, 26px on the page"
+        ],
+        "boardBox": {
+          "x": 16,
+          "y": 70,
+          "w": 358,
+          "h": 48
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 72,
+          "w": 358,
+          "h": 56
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "AMOUNT",
+        "pageName": "AMOUNT",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 26,
+          "y": 140,
+          "w": 100,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 26,
+          "y": 150,
+          "w": 100,
+          "h": 13
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "WAITING FOR",
+        "pageName": "WAITING FOR",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 262,
+          "y": 140,
+          "w": 102,
+          "h": 13
+        },
+        "pageBox": {
+          "x": 144,
+          "y": 150,
+          "w": 220,
+          "h": 13
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "NOT YOUR DECISION",
+        "pageName": "NOT YOUR DECISION",
+        "pageRole": "text",
+        "similarity": 100,
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 263,
+          "w": 135,
+          "h": 21
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 204,
+          "w": 135,
+          "h": 23
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Add a comment",
+        "pageName": "Add comment",
+        "pageRole": "button",
+        "similarity": 85,
+        "note": "a button on the page, a link on the board",
+        "looks": [],
+        "boardBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        },
+        "pageBox": {
+          "x": 16,
+          "y": 776,
+          "w": 358,
+          "h": 50
+        }
+      }
+    ],
+    "patterns": [],
+    "missing": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "← Queue",
+        "key": "link: ← Queue",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 6,
+          "w": 61,
+          "h": 44
+        },
+        "exception": {
+          "reason": "Phone back link is the shell bar's \"Back to Queue\" link.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "INV-0412",
+        "key": "text: INV-0412",
+        "container": "page",
+        "boardBox": {
+          "x": 224,
+          "y": 21,
+          "w": 58,
+          "h": 15
+        },
+        "exception": {
+          "reason": "Q10: no invoice reference live; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "₦4,250,000.00",
+        "key": "text: ₦4,250,000.00",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 153,
+          "w": 106,
+          "h": 19
+        },
+        "exception": null
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "BASIS",
+        "key": "text: BASIS",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 140,
+          "w": 100,
+          "h": 13
+        },
+        "exception": {
+          "reason": "Q3: no live source for the basis row (A-19, A-21); hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SOW v2 stage 2",
+        "key": "text: SOW v2 stage 2",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 153,
+          "w": 96,
+          "h": 38
+        },
+        "exception": {
+          "reason": "Q10: basis value has no live source; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "Finance Lead",
+        "key": "text: Finance Lead",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 153,
+          "w": 92,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q10: the waiting box shows the task role (\"finance reviewer\").",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "SENT",
+        "key": "text: SENT",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 209,
+          "w": 100,
+          "h": 13
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "page",
+        "boardBox": {
+          "x": 26,
+          "y": 222,
+          "w": 12,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: facts strip placeholder; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "RECEIPT",
+        "key": "text: RECEIPT",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 209,
+          "w": 100,
+          "h": 13
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "page",
+        "boardBox": {
+          "x": 144,
+          "y": 222,
+          "w": 12,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: facts strip placeholder; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "VERIFIED",
+        "key": "text: VERIFIED",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 209,
+          "w": 102,
+          "h": 13
+        },
+        "exception": {
+          "reason": "Q8: facts strip; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "—",
+        "key": "text: —",
+        "container": "page",
+        "boardBox": {
+          "x": 262,
+          "y": 222,
+          "w": 12,
+          "h": 19
+        },
+        "exception": {
+          "reason": "Q8: facts strip placeholder; hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "This needs a Finance Lead. You can read it and comment, but not decide. Ada Okafor was alerted at 10:42.",
+        "key": "text: This needs a Finance Lead. You can read it and comment, but not decide. Ada Okafor was alerted at 10:42.",
+        "container": "page",
+        "boardBox": {
+          "x": 16,
+          "y": 296,
+          "w": 358,
+          "h": 57
+        },
+        "exception": {
+          "reason": "Q10: generic sentence only; alert line hidden.",
+          "approved_by": "design engineer, 23 Nov 2026 — D-182"
+        }
+      }
+    ],
+    "misplaced": [],
+    "extra": [
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Back to Queue",
+        "container": "banner",
+        "pageBox": {
+          "x": 16,
+          "y": 6,
+          "w": 57,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Button",
+        "role": "button",
+        "name": "Alerts, 1 unread",
+        "container": "page",
+        "pageBox": {
+          "x": 238,
+          "y": 6,
+          "w": 44,
+          "h": 44
+        }
+      },
+      {
+        "kind": "Heading",
+        "role": "heading",
+        "name": "This decision needs a finance reviewer.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 240,
+          "w": 271,
+          "h": 19
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "You can’t approve, return or reject it.",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 240,
+          "w": 336,
+          "h": 42
+        }
+      },
+      {
+        "kind": "Text field",
+        "role": "textbox",
+        "name": "Comment for the finance reviewer (optional)",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 323,
+          "w": 358,
+          "h": 74
+        }
+      },
+      {
+        "kind": "Text",
+        "role": "text",
+        "name": "0 / 2000",
+        "container": "main",
+        "pageBox": {
+          "x": 321,
+          "y": 403,
+          "w": 53,
+          "h": 17
+        }
+      },
+      {
+        "kind": "Link",
+        "role": "link",
+        "name": "Open the work item",
+        "container": "main",
+        "pageBox": {
+          "x": 16,
+          "y": 432,
+          "w": 123,
+          "h": 18
+        }
+      }
+    ],
+    "unexcepted": 1
+  },
+  "warnings": [
+    "Images: /_blob/ images are served from /Users/Hunchoo/psl-factory-main/design/mascots/canvas-assets.json (19 mapped)."
+  ],
+  "images": {
+    "board": "board.png",
+    "page": "page.png",
+    "sideBySide": "side-by-side.png",
+    "diff": "diff.png",
+    "boardMarked": "board-marked.png",
+    "pageMarked": "page-marked.png"
+  }
+}

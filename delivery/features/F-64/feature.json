@@ -173,14 +173,28 @@
         "delivery/features/F-64/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T01:03:37Z",
           "head": "7318a3fc23558a60d535835417ef644a320f22bf"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:54:10Z",
+          "refs": [
+            "fa18b1b4"
+          ],
+          "head": "ec939861a647cc4a8e62d795394263c13a08b2e6",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "fa18b1b4"
       ]
     },
     {
@@ -196,14 +210,28 @@
         "delivery/features/F-64/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T01:03:37Z",
           "head": "7318a3fc23558a60d535835417ef644a320f22bf"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:54:10Z",
+          "refs": [
+            "fa18b1b4"
+          ],
+          "head": "ec939861a647cc4a8e62d795394263c13a08b2e6",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "fa18b1b4"
       ]
     },
     {
@@ -219,14 +247,28 @@
         "delivery/features/F-64/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T01:03:37Z",
           "head": "7318a3fc23558a60d535835417ef644a320f22bf"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:54:10Z",
+          "refs": [
+            "fa18b1b4"
+          ],
+          "head": "ec939861a647cc4a8e62d795394263c13a08b2e6",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "fa18b1b4"
       ]
     },
     {
@@ -242,14 +284,28 @@
         "delivery/features/F-64/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T01:03:37Z",
           "head": "7318a3fc23558a60d535835417ef644a320f22bf"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:54:10Z",
+          "refs": [
+            "fa18b1b4"
+          ],
+          "head": "ec939861a647cc4a8e62d795394263c13a08b2e6",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "fa18b1b4"
       ]
     },
     {
@@ -265,14 +321,28 @@
         "delivery/features/F-64/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T01:03:37Z",
           "head": "7318a3fc23558a60d535835417ef644a320f22bf"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:54:10Z",
+          "refs": [
+            "fa18b1b4"
+          ],
+          "head": "ec939861a647cc4a8e62d795394263c13a08b2e6",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "fa18b1b4"
       ]
     },
     {
@@ -378,7 +448,7 @@
     "base_branch": "main",
     "base_sha": "8f562602199901411810dd1f845dfc39145cb323",
     "task_branch": "fe-connect-1-decision-desk",
-    "head_sha": "7318a3fc23558a60d535835417ef644a320f22bf",
+    "head_sha": "ec939861a647cc4a8e62d795394263c13a08b2e6",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a",
     "pr_url": null,
     "pr_number": null,
@@ -540,6 +610,8 @@
       "frontend/mock/demo-projects.mjs",
       "frontend/mock/documents.mjs",
       "frontend/mock/fixtures/E-PROJECT.json",
+      "frontend/mock/fixtures/documents/review-2901.json",
+      "frontend/mock/fixtures/documents/review-2901.publication.json",
       "frontend/mock/fixtures/me.admin.json",
       "frontend/mock/fixtures/me.ceo.json",
       "frontend/mock/fixtures/me.finance_lead.json",
@@ -604,8 +676,15 @@
       "frontend/src/features/decide/presentation.ts",
       "frontend/src/features/decide/useDecision.ts",
       "frontend/src/features/decide/useLiveDecision.ts",
+      "frontend/src/features/documents/DocumentParts.tsx",
       "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/documents/ReviewControls.tsx",
+      "frontend/src/features/documents/document-review.css",
+      "frontend/src/features/documents/documentModel.ts",
+      "frontend/src/features/documents/useDocument.ts",
+      "frontend/src/features/documents/useReview.ts",
       "frontend/src/features/projects/DeliveryTab.tsx",
+      "frontend/src/features/projects/DocumentsTab.tsx",
       "frontend/src/features/projects/MoreFooter.tsx",
       "frontend/src/features/projects/ProjectJourney.tsx",
       "frontend/src/features/projects/ProjectTabContent.tsx",
@@ -649,6 +728,8 @@
       "frontend/tests/delivery-release-mock.test.ts",
       "frontend/tests/demo-mock.test.ts",
       "frontend/tests/destinations.ts",
+      "frontend/tests/document-review-model.test.ts",
+      "frontend/tests/document-review.test.tsx",
       "frontend/tests/engagement-planning-mock.test.ts",
       "frontend/tests/engagement-planning.test.tsx",
       "frontend/tests/evidence.test.tsx",
@@ -657,6 +738,7 @@
       "frontend/tests/live-work-item.test.tsx",
       "frontend/tests/mock-contract.test.ts",
       "frontend/tests/mock-live-decide.test.ts",
+      "frontend/tests/mock-live-document-review.test.ts",
       "frontend/tests/mock-live-projects.test.ts",
       "frontend/tests/mock-projects.test.ts",
       "frontend/tests/mock-work-live.test.ts",

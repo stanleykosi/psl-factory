@@ -1,5 +1,5 @@
 STATUS: READY
-COMMIT: f2a1ebfd541d2a248f6e0ef7985b31b561ca7582
+COMMIT: dfeb2a2e7cd0f483514c31d22642f6d6cf572b65
 BUILDER: builder
 LANE: full
 
@@ -20,7 +20,13 @@ LANE: full
 - Shared-file note (checklist 9): `AppShell.tsx` and `SignInView.tsx` only as above. No Workspace/InlineDecide files touched.
 
 ## Fixes
-- none (round 1)
+- TECH-1-1 | dfeb2a2e | A failed session read after a 201 accept is caught on its own and treated as signed out, so the ready state shows ("Your account is ready.", "Sign in with <email>."), not "Nothing was changed". Unit tests: session 500 and network failure after accept.
+- TECH-1-2 | dfeb2a2e | The validity line uses the frame's `formatDateTime` ("26 Nov 2026 · 15:00 WAT", hidden when Unknown); the copied formatter is removed from `welcome.ts`. Unit and e2e expectations updated.
+- TECH-1-3 | dfeb2a2e | `open()` reads the session in its own `try`: any failure there is the "couldn't open" state with Try again, never "can't be used". Unit test: 400 on the session read.
+- UI-1-3 | dfeb2a2e | The read-only email is drawn white with the ink border like the other inputs (`join.css`); it stays `readOnly`.
+- UI-1-1 | no change | The phone page already draws the full-width dark `.signin-brand` band with "PSL FACTORY", the same as F-58's `/sign-in` on phone (visible in `fidelity/SCR-17-mobile-setup-390/side-by-side.png`). The tool's "background none on the page" note compares the wordmark text, not the band. The visual score is low because the approved validity line and confirm field push every element down. Not changed; for the design engineer to confirm.
+- UI-1-2 | left as is | The desktop illustrations and tagline are the shared F-58 `BrandColumn` (settled, D-178); the other SCR-17 boards carry them, and `/sign-in` must stay unchanged. Design engineer to confirm or add an exception.
+- Exceptions | dfeb2a2e (file in the feature folder) | Added the two Text entries for the WhatsApp value and sentence (approved_by "design engineer, 23 Nov 2026, D-182"). Lint: one `react-hooks/set-state-in-effect` disable on the `open()` call, as in other files.
 
 ## Acceptance criteria
 1. [x] No `/me` call, no bars: unit (`join.test.tsx`, only session read + preview) and e2e (no navigation).
@@ -80,3 +86,6 @@ Not blocked. Open for the coordinator: criteria 17, 19, 22 mock-only by the desi
 ## Coordinator merge of main 3b7df6cc
 - Merged as 4a11ce3f with no conflicts; package-lock.json unchanged; `npx tsc --noEmit` reports 0 errors.
 - Merged main ae0525fb (F-72) as f2a1ebfd with no conflicts; tsc reports 0 errors.
+
+## Fidelity re-run (phone only, after the fixes)
+One run of SCR-17-mobile-setup @390 on a production build through the lock (mock 4967, app 4966): coverage 60% (6/10), 80% with exceptions; visual 58.3 (was 55.6). The two remaining unmatched items are the board's input sample values `sola.martins@psl.example` (the page shows it in the read-only field) and `••••••••••••` (the password field is empty by design): the tool cannot read input values as text. The design engineer can add "input value the tool cannot read" exceptions. The desktop report is from the first run (coverage 60%, visual 90.1) and was not re-run. Servers on 4966 and 4967 are stopped; Django 8004 was stopped earlier.

@@ -90,11 +90,13 @@
   ],
   "reviews": {
     "technical": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "reviewer-technical",
+      "authority": "technical reviewer (lead), lighter panel D-180/D-193",
+      "snapshot_ref": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
+      "evidence_refs": [
+        "delivery/features/F-60/round-1/review-technical.md"
+      ]
     },
     "integrated_qa": {
       "status": "pending",
@@ -120,28 +122,257 @@
       "evidence_refs": []
     },
     "ux": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-ux",
+      "authority": "UX reviewer",
+      "snapshot_ref": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
+      "evidence_refs": [
+        "delivery/features/F-60/round-1/review-ux.md"
+      ]
     },
     "ui": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "changes_requested",
+      "reviewer": "reviewer-ui",
+      "authority": "UI design reviewer (D-180 lighter panel; builder's fidelity run read, not re-run)",
+      "snapshot_ref": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
+      "evidence_refs": [
+        "delivery/features/F-60/round-1/review-ui.md"
+      ]
     },
     "security": {
-      "status": "pending",
-      "reviewer": null,
-      "authority": null,
-      "snapshot_ref": null,
-      "evidence_refs": []
+      "status": "passed",
+      "reviewer": "reviewer-security",
+      "authority": "security reviewer",
+      "snapshot_ref": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
+      "evidence_refs": [
+        "delivery/features/F-60/round-1/review-security.md"
+      ]
     }
   },
-  "findings": [],
+  "findings": [
+    {
+      "id": "TECH-1-1",
+      "round": 1,
+      "snapshot_ref": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "A failed session read after a successful accept is reported as a failed set-up. Expected: once accept has returned 201, the page says the account was created (the ready state, \"Sign in with <email>.\"), because the account exists whatever the session read says (AGENTS.md: reconcile uncertain effects; spec \"After set-up\"). Actual: `refreshSession()` at `frontend/src/features/join/JoinView.tsx:129` sits inside the same `try` as the accept, so its error goes to the accept-failure `catch`. A 5xx then shows \"Set-up isn't working right now. Try again in a moment. Nothing was changed.\", and a network error shows the connection message, both with the form still showing. `token.current` was already set to `''` at line 125, so pressing Finish setup again sends `token: ''`. That comes back as 422 `invalid_input` on `token`, and the callout shows the field message with no way forward except the small sign-in link. Fix: catch the post-accept session read separately and treat a failure as `signed_in: false`, which shows the ready state. Add a unit case (accept 201, session GET 500 or network) that expects the ready state.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-60/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T08:51:57Z",
+          "head": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:54:08Z",
+          "refs": [
+            "dfeb2a2e"
+          ],
+          "head": "dfeb2a2e7cd0f483514c31d22642f6d6cf572b65",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "dfeb2a2e"
+      ]
+    },
+    {
+      "id": "TECH-1-2",
+      "round": 1,
+      "snapshot_ref": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "The validity line does not use the existing frame date formatting. Expected: spec \"Validity line\" says to use \"the existing Lagos-time date formatting used by the frame\". For screens whose board draws no date, that is `formatDateTime` in `frontend/src/components/format.ts` (D-93): \"26 Nov 2026 \u00b7 15:00 WAT\". Actual: a new `Intl.DateTimeFormat` copy, `lagosWhen`, at `frontend/src/features/join/welcome.ts:16-22` prints \"26 Nov 2026, 15:00\" with no time zone. This duplicates the shared helper and leaves the time ambiguous for someone outside Lagos. Fix: use `formatDateTime(preview.expires_at)`, keep hiding the line when the result is `UNKNOWN`, and update `tests/join.test.tsx:137` and `e2e/join.spec.ts:40`.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-60/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T08:51:57Z",
+          "head": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:54:08Z",
+          "refs": [
+            "dfeb2a2e"
+          ],
+          "head": "dfeb2a2e7cd0f483514c31d22642f6d6cf572b65",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "dfeb2a2e"
+      ]
+    },
+    {
+      "id": "TECH-1-3",
+      "round": 1,
+      "snapshot_ref": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "`open()` at `frontend/src/features/join/JoinView.tsx:71-72` sorts errors by kind, without knowing whether the session read or the preview failed. So a 4xx on `GET /api/v1/session` (for example a 400 or a non-csrf 403 from a proxy) shows \"This invitation can't be used\" rather than the spec's \"session read failing: cannot open\" callout with Try again. This is unlikely in practice. Splitting the session read into its own `try` would fix it.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-60/round-1/review-technical.md"
+      ],
+      "raised_by": "reviewer-technical",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T08:51:57Z",
+          "head": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:54:08Z",
+          "refs": [
+            "dfeb2a2e"
+          ],
+          "head": "dfeb2a2e7cd0f483514c31d22642f6d6cf572b65",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "dfeb2a2e"
+      ]
+    },
+    {
+      "id": "UI-1-1",
+      "round": 1,
+      "snapshot_ref": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
+      "owner": "frontend",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Phone brand band missing. Board SCR-17-mobile-setup draws a full-width #1F2427 band (390x51) holding \"PSL FACTORY\" at the top; the built page at 390 shows the wordmark on the light background with no band (report.json: \"background #1F2427 on the board, none on the page\"). Visual 55.6 vs required 90. Expected: dark band as the board. Actual: no band. Path: frontend/src/features/sign-in/BrandColumn.tsx (and join.css / sign-in phone styles). Check against the F-58 sign-in phone board before changing the shared component so sign-in does not regress.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-60/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T08:51:57Z",
+          "head": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:54:08Z",
+          "refs": [
+            "no change"
+          ],
+          "head": "dfeb2a2e7cd0f483514c31d22642f6d6cf572b65",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "no change"
+      ]
+    },
+    {
+      "id": "UI-1-2",
+      "round": 1,
+      "snapshot_ref": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Desktop brand column carries three illustrations and the tagline \"Work you can see moving, from first draft to verified.\"; the SCR-17-desktop-setup board shows only the wordmark on an empty dark column. The other SCR-17 boards (sign-in, error) do carry the tagline, and the column is the shared F-58 component, so this is treated as settled. Design engineer to confirm or add an exception.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-60/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T08:51:57Z",
+          "head": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:54:08Z",
+          "refs": [
+            "left as is"
+          ],
+          "head": "dfeb2a2e7cd0f483514c31d22642f6d6cf572b65",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "left as is"
+      ]
+    },
+    {
+      "id": "UI-1-3",
+      "round": 1,
+      "snapshot_ref": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": false,
+      "summary": "Work email renders as a grey read-only field (tinted fill, no heavy border); the board draws it as a white bordered input like the others. Reasonable for read-only, but it is a visible difference. Design engineer to confirm.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-60/round-1/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "FIX_SUBMITTED",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T08:51:57Z",
+          "head": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T08:54:08Z",
+          "refs": [
+            "dfeb2a2e"
+          ],
+          "head": "dfeb2a2e7cd0f483514c31d22642f6d6cf572b65",
+          "reason": null
+        }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "dfeb2a2e"
+      ]
+    }
+  ],
   "prior_review_records": [],
   "run_controls": {
     "unattended_execution_enabled": false,
@@ -165,7 +396,7 @@
     "base_branch": "main",
     "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-signin-account-setup-from-invitation",
-    "head_sha": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
+    "head_sha": "dfeb2a2e7cd0f483514c31d22642f6d6cf572b65",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a-hot",
     "pr_url": null,
     "pr_number": null,
