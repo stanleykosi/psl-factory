@@ -728,6 +728,16 @@ F-114C (go-live document review) is held: no read gives the reviewer the version
    2. Criteria form board.
    3. Observation proof when no file is on the project.
 
+### LD-Q5 · F-119 · Closure and retrospective (SCR-33): sign the 28 design exceptions and two visual waivers?
+F-119 round 2, head `f39d6dda`. The design check ran once on a production build. Coverage is 100% after the 28 proposed exceptions on both boards. Visual is 78.8 desktop and 76.6 phone, above D-83's floor of 70 but under 90, so each board needs a D-83 visual waiver. The UI reviewer found no fixable gap except the phone Save bar, which is being fixed. The gap comes from spec-approved additions: the When and Reference row, the checkbox list and notes select, the Decisions block, and on phone the info note and checklist. Side-by-sides: `delivery/features/F-119/round-2/fidelity/` (including filled-form shots). Exceptions: `delivery/features/F-119/fidelity-exceptions.json`.
+- **Layout (recommend keep all):** Cites chips hidden (D-182, entries 3, 4, 5, 8, 11); Tola panel hidden (DC-3, 16, 17); Save draft hidden (D-8, 15); who-took-part line, notes file name and "Uploaded" as plain form parts (D-195, 12 to 14); phone back link and subtitle, frame items (27, 28).
+- **Colour:** none needed. Chips and Save match the board.
+- **Copy (recommend keep all):** the three box labels (D-195, 1, 6, 9); the three sample sentences, board sample content (2, 7, 10); the nine DONE, NOW and UNKNOWN checklist entries using the API's words (D-187, 18 to 26). These also cover rows the API renames. Confirm that's acceptable.
+- **Recommendation:** "Sign all": sign the 28 exceptions and the two D-83 visual waivers (78.8 desktop, 76.6 phone).
+
+### LD-Q6 · F-119 · The checklist strip says "(saved <date>)". Keep "saved" or change to "held"?
+The spec and its browser test say "saved". Technical review (TECH-1-5) asked whether "held" reads better for a closure check that is held. **Recommendation:** keep "saved", as the spec says.
+
 ## Answers, batch 1 (23 Nov 2026, D-182)
 
 Every recommended option above is accepted ("Hide, accept all recs"), including LC-Q1 (hide until backend), F-65 (as recommended) and F-76 (read-only list now). Lanes: unpark these features and build them as their specs recommend.

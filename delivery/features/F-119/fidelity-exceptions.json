@@ -1,0 +1,200 @@
+{
+  "exceptions": [
+    {
+      "role": "text",
+      "name": "What went well",
+      "category": "D-195 plain form",
+      "reason": "Drawn as the label of its text box (a form field label); the tool reads the board's label as plain text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "UAT finished on time; the client's team responded within a day on most questions.",
+      "category": "board sample text",
+      "reason": "Sample content of the boxes, not UI; the boxes hold what the person writes.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Cites:",
+      "category": "spec hides (D-182)",
+      "reason": "Per-box Cites have no live source (spec conflict 1; D-182).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "MIN-0138",
+      "category": "spec hides (D-182)",
+      "reason": "Per-box Cites have no live source (spec conflict 1; D-182).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Milestone 2",
+      "category": "spec hides (D-182)",
+      "reason": "Per-box Cites have no live source (spec conflict 1; D-182).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "What didn't",
+      "category": "D-195 plain form",
+      "reason": "Drawn as the label of its text box (a form field label); the tool reads the board's label as plain text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Older Android phones weren't in the test plan, so a login issue reached UAT.",
+      "category": "board sample text",
+      "reason": "Sample content of the boxes, not UI; the boxes hold what the person writes.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "ISS-0233",
+      "category": "spec hides (D-182)",
+      "reason": "Per-box Cites have no live source (spec conflict 1; D-182).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Lessons for next projects",
+      "category": "D-195 plain form",
+      "reason": "Drawn as the label of its text box (a form field label); the tool reads the board's label as plain text.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Ask for the client's device mix during planning and add it to the test plan.",
+      "category": "board sample text",
+      "reason": "Sample content of the boxes, not UI; the boxes hold what the person writes.",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Test plan v2",
+      "category": "spec hides (D-182)",
+      "reason": "Per-box Cites have no live source (spec conflict 1; D-182).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Tunde Bello (PM), Lagoon Health product owner (recorded), Engineering (recorded)",
+      "category": "D-195 plain form",
+      "reason": "Board sample data. Who took part is a list of project people and the notes file a select of recorded proofs; outside parties and upload are not offered (spec conflicts 3 and 4; DC-4).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "retrospective-notes-sabi.docx",
+      "category": "D-195 plain form",
+      "reason": "Board sample data. Who took part is a list of project people and the notes file a select of recorded proofs; outside parties and upload are not offered (spec conflicts 3 and 4; DC-4).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Uploaded · 36 KB",
+      "category": "D-195 plain form",
+      "reason": "Board sample data. Who took part is a list of project people and the notes file a select of recorded proofs; outside parties and upload are not offered (spec conflicts 3 and 4; DC-4).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "Save draft",
+      "category": "spec hides (D-8)",
+      "reason": "No draft exists: every save is a recorded version (D-8, spec conflict 2).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Tola · PMO agent I pulled the project's issues, changes and late actions to help you. The conclusions are yours.",
+      "category": "spec hides (DC-3)",
+      "reason": "Tola's panel has no live source (spec conflict 6; DC-3, D-182).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Tola",
+      "category": "spec hides (DC-3)",
+      "reason": "Tola's panel has no live source (spec conflict 6; DC-3, D-182).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Go-live accepted DONE",
+      "category": "D-187 accepted option",
+      "reason": "The strip uses the API's check titles and status words (Closed, Recorded, Not yet, Unknown); context and report checks are omitted (spec conflict 7).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "DONE",
+      "category": "D-187 accepted option",
+      "reason": "The strip uses the API's check titles and status words (Closed, Recorded, Not yet, Unknown); context and report checks are omitted (spec conflict 7).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Hypercare qualified DONE",
+      "category": "D-187 accepted option",
+      "reason": "The strip uses the API's check titles and status words (Closed, Recorded, Not yet, Unknown); context and report checks are omitted (spec conflict 7).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Archive DONE",
+      "category": "D-187 accepted option",
+      "reason": "The strip uses the API's check titles and status words (Closed, Recorded, Not yet, Unknown); context and report checks are omitted (spec conflict 7).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Handover received DONE",
+      "category": "D-187 accepted option",
+      "reason": "The strip uses the API's check titles and status words (Closed, Recorded, Not yet, Unknown); context and report checks are omitted (spec conflict 7).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Retrospective NOW",
+      "category": "D-187 accepted option",
+      "reason": "The strip uses the API's check titles and status words (Closed, Recorded, Not yet, Unknown); context and report checks are omitted (spec conflict 7).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "NOW",
+      "category": "D-187 accepted option",
+      "reason": "The strip uses the API's check titles and status words (Closed, Recorded, Not yet, Unknown); context and report checks are omitted (spec conflict 7).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Finance confirmation UNKNOWN",
+      "category": "D-187 accepted option",
+      "reason": "The strip uses the API's check titles and status words (Closed, Recorded, Not yet, Unknown); context and report checks are omitted (spec conflict 7).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "UNKNOWN",
+      "category": "D-187 accepted option",
+      "reason": "The strip uses the API's check titles and status words (Closed, Recorded, Not yet, Unknown); context and report checks are omitted (spec conflict 7).",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "link",
+      "name": "← Sabi Market",
+      "category": "frame item",
+      "reason": "The phone back link and subtitle: the frame shows the breadcrumb and the page's own subtitle (\"Sabi Market web store · needed before closure\").",
+      "approved_by": "builder proposal, pending design engineer"
+    },
+    {
+      "role": "text",
+      "name": "Sabi Market · needed before closure",
+      "category": "frame item",
+      "reason": "The phone back link and subtitle: the frame shows the breadcrumb and the page's own subtitle (\"Sabi Market web store · needed before closure\").",
+      "approved_by": "builder proposal, pending design engineer"
+    }
+  ]
+}

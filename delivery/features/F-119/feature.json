@@ -95,6 +95,18 @@
       "at": "2026-11-24T03:08:38Z",
       "seconds": 666.6,
       "evidence_ref": "delivery/features/F-119/round-1/checks.md"
+    },
+    {
+      "kind": "gate",
+      "round": 2,
+      "attempt": 1,
+      "commit": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T13:58:07Z",
+      "seconds": 292.8,
+      "evidence_ref": "delivery/features/F-119/round-2/checks.md"
     }
   ],
   "reviews": {
@@ -157,14 +169,42 @@
         "delivery/features/F-119/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T08:52:10Z",
           "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T13:58:07Z",
+          "refs": [
+            "f39d6dda"
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:13:35Z",
+          "refs": [
+            "`failure.ts` keeps unmapped fields under `other`. `generalMessage(failure, drawn)` returns the loose messages, or the API message when no field is named. `FailureNotice` draws it in `RetroForm` (DRAWN: reference, occurredAt, boxes, evidence) and `ActionForm` (DRAWN includes ownerId, dueAt). `tests/retrospective-failure.test.ts` covers the empty-fields, unmapped-field and owner cases. The builder reports two e2e tests as well."
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f39d6dda"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`failure.ts` keeps unmapped fields under `other`. `generalMessage(failure, drawn)` returns the loose messages, or the API message when no field is named. `FailureNotice` draws it in `RetroForm` (DRAWN: reference, occurredAt, boxes, evidence) and `ActionForm` (DRAWN includes ownerId, dueAt). `tests/retrospective-failure.test.ts` covers the empty-fields, unmapped-field and owner cases. The builder reports two e2e tests as well."
       ]
     },
     {
@@ -180,14 +220,42 @@
         "delivery/features/F-119/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T08:52:10Z",
           "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T13:58:07Z",
+          "refs": [
+            "f39d6dda"
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:13:35Z",
+          "refs": [
+            "`useRetrospective.ts:save` sets `posted` after the 201. A later failure maps to `failureOf(networkError())`, which is unconfirmed, and re-reads the list. Save stays off until the read shows the result. It never says \"Try again shortly\"."
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f39d6dda"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`useRetrospective.ts:save` sets `posted` after the 201. A later failure maps to `failureOf(networkError())`, which is unconfirmed, and re-reads the list. Save stays off until the read shows the result. It never says \"Try again shortly\"."
       ]
     },
     {
@@ -203,14 +271,42 @@
         "delivery/features/F-119/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T08:52:10Z",
           "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T13:58:07Z",
+          "refs": [
+            "f39d6dda"
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:13:35Z",
+          "refs": [
+            "`createAction` re-reads the list and detail on `unconfirmed` and `stale`, with a \"check the follow-up actions below\" message."
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f39d6dda"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`createAction` re-reads the list and detail on `unconfirmed` and `stale`, with a \"check the follow-up actions below\" message."
       ]
     },
     {
@@ -226,14 +322,42 @@
         "delivery/features/F-119/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T08:52:10Z",
           "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T13:58:07Z",
+          "refs": [
+            "f39d6dda"
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:13:35Z",
+          "refs": [
+            "`FailureNotice` renders `SignedOutState` for `signed_out` in both forms."
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f39d6dda"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "`FailureNotice` renders `SignedOutState` for `signed_out` in both forms."
       ]
     },
     {
@@ -272,14 +396,42 @@
         "delivery/features/F-119/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T08:52:10Z",
           "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T13:58:07Z",
+          "refs": [
+            "f39d6dda"
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-technical",
+          "at": "2026-11-24T14:13:35Z",
+          "refs": [
+            "The builder reports `e2e/retrospective.spec.ts` at 24 of 24 after the toast change. I did not re-run it. Criterion 21 (live Django) is still unchecked; QA on 55433 should cover it."
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f39d6dda"
+      ],
+      "verified_by": "reviewer-technical",
+      "verification_refs": [
+        "The builder reports `e2e/retrospective.spec.ts` at 24 of 24 after the toast change. I did not re-run it. Criterion 21 (live Django) is still unchecked; QA on 55433 should cover it."
       ]
     },
     {
@@ -295,14 +447,42 @@
         "delivery/features/F-119/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T13:41:59Z",
           "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T13:58:07Z",
+          "refs": [
+            "f39d6dda"
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:13:35Z",
+          "refs": [
+            "desktop: Save is 300x50 directly after Notes file, board blue when filled (computed rgb(36,89,214)); phone: full width 326x50. Phone bottom-bar placement remains (UI-2-1)."
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f39d6dda"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "desktop: Save is 300x50 directly after Notes file, board blue when filled (computed rgb(36,89,214)); phone: full width 326x50. Phone bottom-bar placement remains (UI-2-1)."
       ]
     },
     {
@@ -318,14 +498,42 @@
         "delivery/features/F-119/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T13:41:59Z",
           "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T13:58:07Z",
+          "refs": [
+            "f39d6dda"
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:13:35Z",
+          "refs": [
+            "no panel title bar on either width (side-by-side and filled screenshots)."
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f39d6dda"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "no panel title bar on either width (side-by-side and filled screenshots)."
       ]
     },
     {
@@ -341,14 +549,42 @@
         "delivery/features/F-119/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T13:41:59Z",
           "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T13:58:07Z",
+          "refs": [
+            "f39d6dda"
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:13:35Z",
+          "refs": [
+            "chips now Closed/Recorded green, Not yet red, Unknown amber as the board (words are the D-187 option)."
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f39d6dda"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "chips now Closed/Recorded green, Not yet red, Unknown amber as the board (words are the D-187 option)."
       ]
     },
     {
@@ -364,14 +600,42 @@
         "delivery/features/F-119/round-1/review-ui.md"
       ],
       "raised_by": "reviewer-ui",
-      "state": "OPEN",
+      "state": "VERIFIED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ui",
           "at": "2026-11-24T13:41:59Z",
           "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T13:58:07Z",
+          "refs": [
+            "f39d6dda"
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
+        },
+        {
+          "action": "verify",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:13:35Z",
+          "refs": [
+            "phone boxes are bordered cards with the label inside, title 22px, no resize grip; the tool lists no style difference on the title or boxes."
+          ],
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "f39d6dda"
+      ],
+      "verified_by": "reviewer-ui",
+      "verification_refs": [
+        "phone boxes are bordered cards with the label inside, title 22px, no resize grip; the tool lists no style difference on the title or boxes."
       ]
     },
     {
@@ -511,6 +775,52 @@
           "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a"
         }
       ]
+    },
+    {
+      "id": "UI-2-1",
+      "round": 2,
+      "snapshot_ref": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+      "owner": "frontend",
+      "severity": "low",
+      "blocking": true,
+      "summary": "Phone Save is not in the board's bottom bar. The mobile board draws a white bar at the bottom with a full-width blue button; the built Save is full width but sits in the flow after Notes file (y about 1002) with Decisions below it. The tool does not flag this (the button matches by name). Make it a bar at the foot of the form as the board draws it (sticky or last in the panel, with Decisions above it), or add it to the exceptions for the design engineer.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:13:35Z",
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27"
+        }
+      ]
+    },
+    {
+      "id": "UI-2-2",
+      "round": 2,
+      "snapshot_ref": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+      "owner": "design engineer",
+      "severity": "medium",
+      "blocking": true,
+      "summary": "Visual score is below 90 at both widths (78.8, 76.6), so the tool cannot pass. The causes are spec-approved: When it was held and Reference row, checkbox list and notes select instead of the one-line and dashed chip, Decisions block, no Cites chips or Tola panel, API checklist words, and on phone the info note and checklist the board omits (spec D-99). No code change gets to 90 without removing these. Needs the design engineer to accept the score for F-119, or to rule on the additions below.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-119/round-2/review-ui.md"
+      ],
+      "raised_by": "reviewer-ui",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "reviewer-ui",
+          "at": "2026-11-24T14:13:35Z",
+          "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -568,6 +878,61 @@
           ]
         }
       }
+    },
+    {
+      "round": 2,
+      "reviews": {
+        "technical": {
+          "status": "passed",
+          "reviewer": "reviewer-technical",
+          "authority": "technical reviewer (lead)",
+          "snapshot_ref": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "evidence_refs": [
+            "delivery/features/F-119/round-2/review-technical.md"
+          ]
+        },
+        "integrated_qa": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "pmo_acceptance": {
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "product_acceptance": {
+          "required": true,
+          "assessment_reason": "delivery/features/F-119/readiness.md",
+          "status": "pending",
+          "reviewer": null,
+          "authority": null,
+          "snapshot_ref": null,
+          "evidence_refs": []
+        },
+        "ux": {
+          "status": "passed",
+          "reviewer": "reviewer-ux",
+          "authority": "UX reviewer",
+          "snapshot_ref": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "evidence_refs": [
+            "delivery/features/F-119/round-2/review-ux.md"
+          ]
+        },
+        "ui": {
+          "status": "changes_requested",
+          "reviewer": "reviewer-ui",
+          "authority": "UI design reviewer",
+          "snapshot_ref": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+          "evidence_refs": [
+            "delivery/features/F-119/round-2/review-ui.md"
+          ]
+        }
+      }
     }
   ],
   "run_controls": {
@@ -590,9 +955,9 @@
     "repository": null,
     "task_id": "FE-DELIVERY-CLOSURE",
     "base_branch": "main",
-    "base_sha": "d906028a759d42bc124e6c935b91c225ca09b2ae",
+    "base_sha": "8692cf873dc18b64962f40885193e07f8f0d7c29",
     "task_branch": "fe-delivery-closure-retrospective",
-    "head_sha": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
+    "head_sha": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d2",
     "pr_url": null,
     "pr_number": null,
@@ -604,73 +969,25 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
-      "apps/agents/assistant.py",
-      "apps/agents/assistant_views.py",
-      "apps/agents/specialist_memory.py",
-      "apps/core/alerts.py",
-      "apps/core/factory_api/finance_operations.py",
-      "apps/core/management/commands/work_approval_routes.py",
-      "apps/documents/delivery.py",
-      "apps/finance/forecast.py",
-      "apps/finance/month_end.py",
-      "apps/finance/payments_overview.py",
-      "apps/finance/performance_calculation.py",
-      "apps/finance/project_money.py",
-      "apps/identity/role_work_views.py",
-      "apps/pmo/approval_routing.py",
-      "apps/workflows/factory_coordinator_views.py",
-      "apps/workflows/factory_engagement_views.py",
-      "apps/workflows/factory_execution_views.py",
-      "apps/workflows/factory_intake_views.py",
-      "apps/workflows/factory_receipt_recovery_views.py",
-      "apps/workflows/factory_views.py",
-      "contracts/psl-factory.openapi.json",
       "frontend/e2e/retrospective.spec.ts",
-      "frontend/mock/demo-projects.mjs",
-      "frontend/mock/fixtures/me.admin.json",
-      "frontend/mock/fixtures/me.ceo.json",
-      "frontend/mock/fixtures/me.finance_lead.json",
-      "frontend/mock/fixtures/me.hr.json",
-      "frontend/mock/fixtures/me.hr_lead.json",
-      "frontend/mock/fixtures/me.none.json",
-      "frontend/mock/fixtures/me.pm.json",
-      "frontend/mock/fixtures/me.pmo_lead.json",
-      "frontend/mock/fixtures/projects/list.json",
-      "frontend/mock/projects.mjs",
       "frontend/mock/retrospective.mjs",
       "frontend/mock/server.mjs",
-      "frontend/src/api/live-schema.d.ts",
       "frontend/src/api/types.ts",
       "frontend/src/app/projects/[caseId]/retrospective/page.tsx",
-      "frontend/src/features/assistant/AssistantFrame.tsx",
       "frontend/src/features/retrospective/ActionForm.tsx",
       "frontend/src/features/retrospective/ChecklistStrip.tsx",
+      "frontend/src/features/retrospective/FailureNotice.tsx",
       "frontend/src/features/retrospective/RetroForm.tsx",
       "frontend/src/features/retrospective/RetrospectiveView.tsx",
       "frontend/src/features/retrospective/SavedVersion.tsx",
+      "frontend/src/features/retrospective/failure.ts",
       "frontend/src/features/retrospective/model.ts",
       "frontend/src/features/retrospective/retrospective.css",
       "frontend/src/features/retrospective/summary.ts",
       "frontend/src/features/retrospective/useRetrospective.ts",
-      "frontend/src/features/sign-in/sign-in.css",
-      "frontend/src/styles/shell.css",
-      "frontend/tests/destinations.ts",
-      "frontend/tests/mock-live-projects.test.ts",
+      "frontend/tests/retrospective-failure.test.ts",
       "frontend/tests/retrospective-model.test.ts",
-      "frontend/tests/retrospective-summary.test.ts",
-      "frontend/tests/shell-live.test.tsx",
-      "handoffs/nextjs/psl-factory.openapi.json",
-      "legacy_ui/templates/base.html",
-      "legacy_ui/templates/design/month_end_overview.html",
-      "scripts/railway-worker.sh",
-      "tests/test_finance_performance.py",
-      "tests/test_minutes_migration.py",
-      "tests/test_railway_review_regressions.py",
-      "tests/test_railway_worker.py",
-      "tests/test_role_scoped_work.py",
-      "tests/test_specialist_loop.py",
-      "tests/test_statement_ppe_migrations.py",
-      "tests/test_support_channel_workers.py"
+      "frontend/tests/retrospective-summary.test.ts"
     ]
   },
   "parallel_execution": {
@@ -704,7 +1021,7 @@
     }
   },
   "created_at": "2026-11-23T17:35:28Z",
-  "round": 2,
+  "round": 3,
   "round_limit": 5,
   "history": [
     {
@@ -746,6 +1063,30 @@
       "round": 2,
       "head": "3b782e399d96666f02e5efbaf52ff86a8f590e0a",
       "reason": null
+    },
+    {
+      "from": "IMPLEMENTING",
+      "to": "IN_REVIEW",
+      "at": "2026-11-24T13:59:26Z",
+      "round": 2,
+      "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+      "reason": null
+    },
+    {
+      "from": "IN_REVIEW",
+      "to": "CHANGES_REQUESTED",
+      "at": "2026-11-24T14:13:35Z",
+      "round": 2,
+      "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+      "reason": null
+    },
+    {
+      "from": "CHANGES_REQUESTED",
+      "to": "IMPLEMENTING",
+      "at": "2026-11-24T14:13:35Z",
+      "round": 3,
+      "head": "f39d6dda8b095d99f19a3f9c809a2c97b71eba27",
+      "reason": null
     }
   ],
   "routing": {
@@ -761,7 +1102,7 @@
     ]
   },
   "gate": {
-    "round": 2,
+    "round": 3,
     "attempts": 0,
     "verdict": null,
     "commit": null
