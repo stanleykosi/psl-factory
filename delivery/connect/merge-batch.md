@@ -51,3 +51,26 @@ Lane A worktrees: `/Users/Hunchoo/psl-factory-worktrees/lane-a2` (F-63) and `lan
 - **F-69 Emergency change, F-121 Escalation, F-122 Leadership report**: READY (D-195). They need lane C's F-87 on main (the freeze was for F-87 at handover). F-69 and F-121 are high risk.
 - **F-123, F-124** (the D-185 switch-on follow-ups for F-62 and F-64): PLANNED; readiness not yet run.
 - Open backend questions from lane A: LA-1 to LA-4 in backend-questions.md. LA-5 is a main flake: the e2e/alerts-bell.spec.ts:149 scroll lock.
+
+## Lane B, for Codex
+
+Worktrees: `/Users/Hunchoo/psl-factory-worktrees/lane-b` (F-78) and `lane-b2` (F-75), both slim. No lane B server, Django or heavy job is running. Lane B's shared dev server ran on 4970/4971, and Django on 8010.
+
+- **F-70** DONE (be9d34d9). **F-71** merged 811465d8, PR #114, under delegation; awaiting the design engineer's confirmation in "Merged under delegation". **F-72** DONE (ae0525fb).
+- **F-75** Registers and Actions tabs, PR_OPEN, PR #118, head d5c20396 (lane-b2, branch fe-connect-1-registers-actions-tabs). All six sign-offs PASS on d5c20396, the approver recommends AUTO_MERGE (decision.md), CI passes, and B35 was signed under D-207. Resume from here:
+  1. When the merge freeze is off, merge origin/main once. GitHub shows DIRTY only because F-111 (#116) and F-75 each added one line to the frontend/tests/next-config.test.ts allow-list; keep both lines, plus F-87's if it adds one.
+  2. Apply D-200, run ci-mode checks.sh, and have each lens do a diff-only D-193 re-check. Use the brief template in delivery/features/F-75/round-2/build.md "Coordinator sync" and carry product acceptance over.
+  3. Run `decide`. Expect HUMAN_APPROVAL on the contract-change surface and the 27-file count, both delegated under D-180/D-184. Advance AWAITING_USER_APPROVAL, then merge with `--match-head-commit`, record the merge sha, and list it under "Merged under delegation".
+- **F-78** Mark a milestone complete, IMPLEMENTING round 3 (lane-b, branch fe-milestone-complete-mark-complete). High risk; the merge goes to the main coordinator under D-207. Round 2 on ca4abee2: technical and security (Opus) PASS; UX and UI CHANGES on one item, UI-2-1/UX-2-1 (the "WHAT HAPPENS NEXT" heading is navy on the blue band; make it white in milestone-complete.css). Its builder was finishing that fix at handover: see round-3/build.md and the branch head. B36 is fully signed under D-207 (fidelity-exceptions.json; coordinator-answers.md). Resume from here:
+  1. ci gate on the round-3 head.
+  2. Diff-only UI and UX re-checks. The UI re-runs fidelity once in the READY state (proof chosen, tick set) and applies the signed visual waiver if the score is still under 90 with no styling gap.
+  3. Technical diff check.
+  4. QA, with LB-2 recorded as "live: hidden for every staff role until LB-2 is fixed".
+  5. PMO and product acceptance (B32 under D-195/D-202, B36 under D-207).
+  6. One main sync (D-193 and D-200), then the PR with LB-2 text in the body, and hand to the main coordinator under D-207.
+- **F-73** Clients, READY, medium risk, with a security surface: add a reviewer-security lens by hand. Not started. Next after F-75 merges, in lane-b2. Standing answers are in delivery/features/F-73/coordinator-answers.md.
+- **F-74** Setup picker and reads, READY, high risk, with auth and security surfaces: Opus technical and security reviews. Not started. Its merge goes to the main coordinator under D-207.
+- **F-76** Staff accounts, read-only, READY, with an auth surface. Not started. Its merge goes to the main coordinator under D-207.
+- **F-79** Month-end and payments list, READY, medium risk. Not started.
+- **F-77** Costing rule: BLOCKED on PSL decision D-COSTING-RULE.
+- Lane notes: `/Users/Hunchoo/Library/Application Support/Claude/side-session-notes/local_470c61bb-df7e-4c46-903e-fdbbda964892/lane-b.md`. Rules in force: D-193, D-197, D-199, D-200 and D-207, and stop servers only by recorded PID.
