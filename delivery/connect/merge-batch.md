@@ -74,3 +74,22 @@ Worktrees: `/Users/Hunchoo/psl-factory-worktrees/lane-b` (F-78) and `lane-b2` (F
 - **F-79** Month-end and payments list, READY, medium risk. Not started.
 - **F-77** Costing rule: BLOCKED on PSL decision D-COSTING-RULE.
 - Lane notes: `/Users/Hunchoo/Library/Application Support/Claude/side-session-notes/local_470c61bb-df7e-4c46-903e-fdbbda964892/lane-b.md`. Rules in force: D-193, D-197, D-199, D-200 and D-207, and stop servers only by recorded PID.
+
+## Lane C, for Codex (resume from here, 24 Nov)
+
+Lane C: worktrees `/Users/Hunchoo/psl-factory-worktrees/lane-c` and `lane-c2`; ports 4980/4981/8020 and 4982/4983/8021. Lane notes: `side-session-notes/…/lane-c.md`. Feature tool: `python3 /Users/Hunchoo/software-factory/packages/delivery/feature.py --project /Users/Hunchoo/psl-factory-main next F-xx`. Gates run on GitHub (D-199). After every main sync, set git.base_sha to the merge base (D-200). Re-check each lens on the merge head before merging (D-193).
+
+| Feature | State | Head / PR | Resume from here |
+|---|---|---|---|
+| F-85 | DONE | e2f44656 (#101) | — |
+| F-86 | DONE | 3b7df6cc (#103) | — |
+| F-88 | merged, awaiting the design engineer's confirmation | 397cdd49 (#110) | Coordinator records human_approval, then APPROVED → MERGED → DONE (merge evidence already recorded). |
+| F-87 | AWAITING_USER_APPROVAL, all lenses PASS on the head | 3af9c1dc (#113) | Coordinator merges under D-207: `gh pr merge 113 --squash --match-head-commit 3af9c1dc75c5de9224ef957711b15cf7974c3aab`, then records the merge. If main moves first, sync once, set D-200, CI-gate, and get a quick technical re-check. |
+| F-91 | IMPLEMENTING round 1, stacked on F-87 (lane-c2, branch fe-connect-1-work-item-tracking) | WIP commit (see round-1/build.md) | Finish the build, then merge main once F-87 is in (base becomes main), gate, then review (technical, UX, UI), QA, PMO. Spec: station track, six facts, agent card (LC-Q24 note), reference, paged history. |
+| F-95 | PLANNED | — | Lane D's four frame seams (F-111 round-2 build.md): per-section Try again, banner tone, line next-step override, link-capable fact. Readiness → spec → build after F-87 is on main. |
+| F-89 | READY (spec on 1.24.0; D-183 LC-Q14/Q16) | — | Build after F-87 is on main: weekly report review and correct via `weeklyReportAdapter.Actions`. |
+| F-90 | READY, high risk (money) | — | Build after F-87; merge goes to the coordinator (D-207). |
+| F-92 | READY | — | Start work form engine from `request_schema`, after F-88 (on main). |
+| F-93 | READY, high risk | — | "Confirm what happened" panel, after F-87. |
+| F-94 | PLANNED | — | Invoice intake via the F-92 engine. |
+| F-96 to F-99 | not created | — | Remaining lane C PMO lines in LANES order (SCR-16, SCR-26/40, SCR-27, SCR-41/42). |
