@@ -67,7 +67,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "8d8849474b9d23ad85b3eee54d0e52eb3be23bbb",
+      "verdict": "FAIL",
+      "exit_code": 1,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T14:54:20Z",
+      "seconds": 162.2,
+      "evidence_ref": "delivery/features/F-75/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -138,7 +151,7 @@
     "base_branch": "main",
     "base_sha": "4a88c26b2aa399ff54f9ec6cedad65ae075ebbb8",
     "task_branch": "fe-connect-1-registers-actions-tabs",
-    "head_sha": null,
+    "head_sha": "8d8849474b9d23ad85b3eee54d0e52eb3be23bbb",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b2",
     "pr_url": null,
     "pr_number": null,
@@ -149,7 +162,30 @@
     "merge_status": "not_merged",
     "merge_sha": null,
     "merge_policy": "not_configured",
-    "changed_paths": null
+    "changed_paths": [
+      "frontend/e2e/project-tabs.spec.ts",
+      "frontend/mock/fixtures/projects/tabs/P-0101.actions.json",
+      "frontend/mock/fixtures/projects/tabs/P-0101.registers.json",
+      "frontend/mock/fixtures/projects/tabs/P-0102.actions.json",
+      "frontend/mock/fixtures/projects/tabs/P-0102.registers.json",
+      "frontend/mock/fixtures/projects/tabs/P-0106.actions.json",
+      "frontend/mock/fixtures/projects/tabs/P-0106.registers.json",
+      "frontend/mock/project-tabs.mjs",
+      "frontend/src/features/projects/ActionsTab.tsx",
+      "frontend/src/features/projects/RegistersTab.tsx",
+      "frontend/src/features/projects/TabParts.tsx",
+      "frontend/src/features/projects/sectionsModel.ts",
+      "frontend/src/features/projects/tabsModel.ts",
+      "frontend/src/features/projects/useProjectSections.ts",
+      "frontend/tests/demo-mock.test.ts",
+      "frontend/tests/mock-live-project-sections.test.ts",
+      "frontend/tests/mock-project-tabs.test.ts",
+      "frontend/tests/next-config.test.ts",
+      "frontend/tests/project-sections-model.test.ts",
+      "frontend/tests/project-sections.test.tsx",
+      "frontend/tests/project-tabs-model.test.ts",
+      "frontend/tests/project-tabs.test.tsx"
+    ]
   },
   "parallel_execution": {
     "enabled": false,
@@ -216,9 +252,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "FAIL",
+    "commit": "8d8849474b9d23ad85b3eee54d0e52eb3be23bbb"
   },
   "blocked": null
 }

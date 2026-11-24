@@ -5077,3 +5077,5 @@
 {"at":"2026-11-24T14:53:23Z","feature":"F-71","round":2,"kind":"transition","head":"f29087ed4c45","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
 {"at":"2026-11-24T14:53:24Z","feature":"F-71","round":2,"kind":"fields","fields":{"git.human_approval":"delegated under D-180 (board changes accepted in batch, D-182/D-185; exceptions and waivers signed, D-202; delegation D-184)"}}
 {"at":"2026-11-24T14:53:45Z","feature":"F-71","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"811465d841db6da9fbbeb6b8953df2816cf62295"}}
+{"at":"2026-11-24T14:54:20Z","feature":"F-75","round":1,"kind":"gate","verdict":"FAIL","attempt":1,"exit_code":1,"seconds":162.2,"commit":"8d8849474b9d"}
+{"at":"2026-11-24T14:54:30Z","feature":"F-78","round":1,"kind":"transition","from":"READY","to":"IMPLEMENTING"}
