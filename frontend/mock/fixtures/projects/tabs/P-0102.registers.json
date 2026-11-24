@@ -1,685 +1,589 @@
 {
-  "items": [
-    {
-      "register": "issues",
-      "reference": "ISS-1001",
-      "title": "Android login loop (1)",
-      "severity": "high",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 18000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1002",
-      "title": "Slow statement download (2)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 36000,
-      "sample": true
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1003",
-      "title": "Wrong balance after transfer (3)",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 54000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1004",
-      "title": "Push notifications arrive late (4)",
-      "severity": "high",
-      "state": "Open",
-      "age_seconds": 72000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1005",
-      "title": "Biometric prompt repeats (5)",
-      "severity": "medium",
-      "owner": {
-        "name": "Support"
-      },
-      "age_seconds": 90000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1006",
-      "title": "Android login loop (6)",
-      "severity": "low",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1007",
-      "title": "Slow statement download (7)",
-      "severity": "high",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 126000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1008",
-      "title": "Wrong balance after transfer (8)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 144000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1009",
-      "title": "Push notifications arrive late (9)",
-      "severity": "low",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 162000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1010",
-      "title": "Biometric prompt repeats (10)",
-      "severity": "high",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 180000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1011",
-      "title": "Android login loop (11)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 198000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1012",
-      "title": "Slow statement download (12)",
-      "severity": "low",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 216000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1013",
-      "title": "Wrong balance after transfer (13)",
-      "severity": "high",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 234000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1014",
-      "title": "Push notifications arrive late (14)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 252000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1015",
-      "title": "Biometric prompt repeats (15)",
-      "severity": "low",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 270000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1016",
-      "title": "Android login loop (16)",
-      "severity": "high",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 288000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1017",
-      "title": "Slow statement download (17)",
-      "severity": "medium",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 306000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1018",
-      "title": "Wrong balance after transfer (18)",
-      "severity": "low",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 324000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1019",
-      "title": "Push notifications arrive late (19)",
-      "severity": "high",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 342000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1020",
-      "title": "Biometric prompt repeats (20)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 360000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1021",
-      "title": "Android login loop (21)",
-      "severity": "low",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 378000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1022",
-      "title": "Slow statement download (22)",
-      "severity": "high",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 396000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1023",
-      "title": "Wrong balance after transfer (23)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 414000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1024",
-      "title": "Push notifications arrive late (24)",
-      "severity": "low",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 432000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1025",
-      "title": "Biometric prompt repeats (25)",
-      "severity": "high",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 450000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "changes",
-      "reference": "CR-0090",
-      "title": "Biometric login",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Amendment awaiting signature",
-      "age_seconds": 7200,
-      "work_id": "W-1005"
-    },
-    {
-      "register": "emergencies",
-      "reference": "EM-0007",
-      "title": "Card controls outage",
-      "severity": "high",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Being handled",
-      "age_seconds": 1800
-    },
-    {
-      "register": "rfps",
-      "reference": "RFP-0102",
-      "title": "Savings product extension",
-      "owner": {
-        "name": "Harmattan Bank",
-        "role": "Client",
-        "outside_party": true
-      },
-      "state": "Waiting for the client"
-    }
-  ],
   "as_of": "2026-11-12T15:40:00Z",
-  "registers": [
+  "sections": [
     {
-      "register": "issues",
-      "reference": "ISS-1001",
-      "title": "Android login loop (1)",
-      "severity": "high",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 18000,
-      "work_id": "W-1002"
+      "key": "issues",
+      "title": "Issues",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues",
+      "items": [
+        {
+          "title": "ISS-1001",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Android login loop (1)",
+          "at": null,
+          "due": null,
+          "severity": "High",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1001",
+          "record_id": 1001,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1001",
+          "reference": "ISS-1001",
+          "age_days": 1,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1002",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Slow statement download (2)",
+          "at": null,
+          "due": null,
+          "severity": "Medium",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1002",
+          "record_id": 1002,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1002",
+          "reference": "ISS-1002",
+          "age_days": 2,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1003",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Wrong balance after transfer (3)",
+          "at": null,
+          "due": null,
+          "severity": "Low",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1003",
+          "record_id": 1003,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1003",
+          "reference": "ISS-1003",
+          "age_days": 3,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1004",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Push notifications arrive late (4)",
+          "at": null,
+          "due": null,
+          "severity": "High",
+          "owner": "Support",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1004",
+          "record_id": 1004,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1004",
+          "reference": "ISS-1004",
+          "age_days": 4,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1005",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Biometric prompt repeats (5)",
+          "at": null,
+          "due": null,
+          "severity": "Medium",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1005",
+          "record_id": 1005,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1005",
+          "reference": "ISS-1005",
+          "age_days": 5,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1006",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Android login loop (6)",
+          "at": null,
+          "due": null,
+          "severity": "Low",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1006",
+          "record_id": 1006,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1006",
+          "reference": "ISS-1006",
+          "age_days": 6,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1007",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Slow statement download (7)",
+          "at": null,
+          "due": null,
+          "severity": "High",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1007",
+          "record_id": 1007,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1007",
+          "reference": "ISS-1007",
+          "age_days": 7,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1008",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Wrong balance after transfer (8)",
+          "at": null,
+          "due": null,
+          "severity": "Medium",
+          "owner": "Support",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1008",
+          "record_id": 1008,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1008",
+          "reference": "ISS-1008",
+          "age_days": 8,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1009",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Push notifications arrive late (9)",
+          "at": null,
+          "due": null,
+          "severity": "Low",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1009",
+          "record_id": 1009,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1009",
+          "reference": "ISS-1009",
+          "age_days": 9,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1010",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Biometric prompt repeats (10)",
+          "at": null,
+          "due": null,
+          "severity": "High",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1010",
+          "record_id": 1010,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1010",
+          "reference": "ISS-1010",
+          "age_days": 10,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1011",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Android login loop (11)",
+          "at": null,
+          "due": null,
+          "severity": "Medium",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1011",
+          "record_id": 1011,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1011",
+          "reference": "ISS-1011",
+          "age_days": 11,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1012",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Slow statement download (12)",
+          "at": null,
+          "due": null,
+          "severity": "Low",
+          "owner": "Support",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1012",
+          "record_id": 1012,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1012",
+          "reference": "ISS-1012",
+          "age_days": 12,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1013",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Wrong balance after transfer (13)",
+          "at": null,
+          "due": null,
+          "severity": "High",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1013",
+          "record_id": 1013,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1013",
+          "reference": "ISS-1013",
+          "age_days": 13,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1014",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Push notifications arrive late (14)",
+          "at": null,
+          "due": null,
+          "severity": "Medium",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1014",
+          "record_id": 1014,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1014",
+          "reference": "ISS-1014",
+          "age_days": 14,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1015",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Biometric prompt repeats (15)",
+          "at": null,
+          "due": null,
+          "severity": "Low",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1015",
+          "record_id": 1015,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1015",
+          "reference": "ISS-1015",
+          "age_days": 15,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1016",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Android login loop (16)",
+          "at": null,
+          "due": null,
+          "severity": "High",
+          "owner": "Support",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1016",
+          "record_id": 1016,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1016",
+          "reference": "ISS-1016",
+          "age_days": 16,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1017",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Slow statement download (17)",
+          "at": null,
+          "due": null,
+          "severity": "Medium",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1017",
+          "record_id": 1017,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1017",
+          "reference": "ISS-1017",
+          "age_days": 17,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1018",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Wrong balance after transfer (18)",
+          "at": null,
+          "due": null,
+          "severity": "Low",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1018",
+          "record_id": 1018,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1018",
+          "reference": "ISS-1018",
+          "age_days": 18,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1019",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Push notifications arrive late (19)",
+          "at": null,
+          "due": null,
+          "severity": "High",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1019",
+          "record_id": 1019,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1019",
+          "reference": "ISS-1019",
+          "age_days": 19,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1020",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Biometric prompt repeats (20)",
+          "at": null,
+          "due": null,
+          "severity": "Medium",
+          "owner": "Support",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1020",
+          "record_id": 1020,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1020",
+          "reference": "ISS-1020",
+          "age_days": 20,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1021",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Android login loop (21)",
+          "at": null,
+          "due": null,
+          "severity": "Low",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1021",
+          "record_id": 1021,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1021",
+          "reference": "ISS-1021",
+          "age_days": 21,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1022",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Slow statement download (22)",
+          "at": null,
+          "due": null,
+          "severity": "High",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1022",
+          "record_id": 1022,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1022",
+          "reference": "ISS-1022",
+          "age_days": 22,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1023",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Wrong balance after transfer (23)",
+          "at": null,
+          "due": null,
+          "severity": "Medium",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1023",
+          "record_id": 1023,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1023",
+          "reference": "ISS-1023",
+          "age_days": 23,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1024",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Push notifications arrive late (24)",
+          "at": null,
+          "due": null,
+          "severity": "Low",
+          "owner": "Support",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1024",
+          "record_id": 1024,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1024",
+          "reference": "ISS-1024",
+          "age_days": 24,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1025",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Biometric prompt repeats (25)",
+          "at": null,
+          "due": null,
+          "severity": "High",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1025",
+          "record_id": 1025,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1025",
+          "reference": "ISS-1025",
+          "age_days": 25,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1026",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Android login loop (26)",
+          "at": null,
+          "due": null,
+          "severity": "Medium",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1026",
+          "record_id": 1026,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1026",
+          "reference": "ISS-1026",
+          "age_days": 26,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1027",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Slow statement download (27)",
+          "at": null,
+          "due": null,
+          "severity": "Low",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1027",
+          "record_id": 1027,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1027",
+          "reference": "ISS-1027",
+          "age_days": 27,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1028",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Wrong balance after transfer (28)",
+          "at": null,
+          "due": null,
+          "severity": "High",
+          "owner": "Support",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1028",
+          "record_id": 1028,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1028",
+          "reference": "ISS-1028",
+          "age_days": 28,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1029",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Push notifications arrive late (29)",
+          "at": null,
+          "due": null,
+          "severity": "Medium",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1029",
+          "record_id": 1029,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1029",
+          "reference": "ISS-1029",
+          "age_days": 29,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-1030",
+          "state": "Open",
+          "state_code": "open",
+          "detail": "Biometric prompt repeats (30)",
+          "at": null,
+          "due": null,
+          "severity": "Low",
+          "owner": "Amina Yusuf",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/issues/#1030",
+          "record_id": 1030,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/issues/1030",
+          "reference": "ISS-1030",
+          "age_days": 30,
+          "origin_meeting": null
+        }
+      ]
     },
     {
-      "register": "issues",
-      "reference": "ISS-1002",
-      "title": "Slow statement download (2)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 36000,
-      "sample": true
+      "key": "escalations",
+      "title": "Escalations",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/escalations/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/escalations",
+      "items": [
+        {
+          "title": "ISS-1003",
+          "state": "Decision recorded · Upheld",
+          "state_code": "decided",
+          "detail": "Wrong balance after transfer (3)",
+          "at": null,
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/escalations/#90",
+          "record_id": 90,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/escalations/90",
+          "reference": "ISS-1003",
+          "age_days": null,
+          "origin_meeting": null
+        }
+      ]
     },
     {
-      "register": "issues",
-      "reference": "ISS-1003",
-      "title": "Wrong balance after transfer (3)",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 54000,
-      "work_id": "W-1002"
+      "key": "changes",
+      "title": "Changes",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/change-versions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/change-versions",
+      "items": [
+        {
+          "title": "CHG-0090",
+          "state": "Version 1",
+          "state_code": "recorded",
+          "detail": "Biometric login",
+          "at": null,
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/change-versions/#90",
+          "record_id": 90,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/change-versions/90",
+          "reference": null,
+          "age_days": null,
+          "origin_meeting": null
+        }
+      ]
     },
     {
-      "register": "issues",
-      "reference": "ISS-1004",
-      "title": "Push notifications arrive late (4)",
-      "severity": "high",
-      "state": "Open",
-      "age_seconds": 72000
+      "key": "emergencies",
+      "title": "Emergency changes",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/emergency-changes/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/emergency-changes",
+      "items": [
+        {
+          "title": "EMG-0007",
+          "state": "Recorded after the fact",
+          "state_code": "recorded",
+          "detail": null,
+          "at": null,
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/emergency-changes/#7",
+          "record_id": 7,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/emergency-changes/7",
+          "reference": null,
+          "age_days": null,
+          "origin_meeting": null
+        }
+      ]
     },
     {
-      "register": "issues",
-      "reference": "ISS-1005",
-      "title": "Biometric prompt repeats (5)",
-      "severity": "medium",
-      "owner": {
-        "name": "Support"
-      },
-      "age_seconds": 90000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1006",
-      "title": "Android login loop (6)",
-      "severity": "low",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1007",
-      "title": "Slow statement download (7)",
-      "severity": "high",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 126000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1008",
-      "title": "Wrong balance after transfer (8)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 144000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1009",
-      "title": "Push notifications arrive late (9)",
-      "severity": "low",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 162000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1010",
-      "title": "Biometric prompt repeats (10)",
-      "severity": "high",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 180000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1011",
-      "title": "Android login loop (11)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 198000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1012",
-      "title": "Slow statement download (12)",
-      "severity": "low",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 216000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1013",
-      "title": "Wrong balance after transfer (13)",
-      "severity": "high",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 234000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1014",
-      "title": "Push notifications arrive late (14)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 252000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1015",
-      "title": "Biometric prompt repeats (15)",
-      "severity": "low",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 270000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1016",
-      "title": "Android login loop (16)",
-      "severity": "high",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 288000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1017",
-      "title": "Slow statement download (17)",
-      "severity": "medium",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 306000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1018",
-      "title": "Wrong balance after transfer (18)",
-      "severity": "low",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 324000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1019",
-      "title": "Push notifications arrive late (19)",
-      "severity": "high",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 342000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1020",
-      "title": "Biometric prompt repeats (20)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 360000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1021",
-      "title": "Android login loop (21)",
-      "severity": "low",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 378000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1022",
-      "title": "Slow statement download (22)",
-      "severity": "high",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 396000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1023",
-      "title": "Wrong balance after transfer (23)",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 414000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1024",
-      "title": "Push notifications arrive late (24)",
-      "severity": "low",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Open",
-      "age_seconds": 432000
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-1025",
-      "title": "Biometric prompt repeats (25)",
-      "severity": "high",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Open",
-      "age_seconds": 450000,
-      "work_id": "W-1002"
-    },
-    {
-      "register": "changes",
-      "reference": "CR-0090",
-      "title": "Biometric login",
-      "severity": "medium",
-      "owner": {
-        "name": "Amina Yusuf",
-        "role": "PM"
-      },
-      "state": "Amendment awaiting signature",
-      "age_seconds": 7200,
-      "work_id": "W-1005"
-    },
-    {
-      "register": "emergencies",
-      "reference": "EM-0007",
-      "title": "Card controls outage",
-      "severity": "high",
-      "owner": {
-        "name": "Support"
-      },
-      "state": "Being handled",
-      "age_seconds": 1800
-    },
-    {
-      "register": "rfps",
-      "reference": "RFP-0102",
-      "title": "Savings product extension",
-      "owner": {
-        "name": "Harmattan Bank",
-        "role": "Client",
-        "outside_party": true
-      },
-      "state": "Waiting for the client"
+      "key": "rfp",
+      "title": "Bid requests",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000102/received-bids/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/received-bids",
+      "items": [
+        {
+          "title": "RFP-0102",
+          "state": "Bid request recorded",
+          "state_code": "recorded",
+          "detail": null,
+          "at": null,
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000102/received-bids/#102",
+          "record_id": 102,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000102/received-bids/102",
+          "reference": null,
+          "age_days": null,
+          "origin_meeting": null
+        }
+      ]
     }
-  ],
-  "summary": {
-    "registers": {
-      "issues": 25,
-      "changes": 1,
-      "emergencies": 1,
-      "rfps": 1
-    }
-  }
+  ]
 }
