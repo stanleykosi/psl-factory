@@ -8,6 +8,7 @@ import {
   bellName,
   buildPrefsBody,
   deliveryTime,
+  deliveryWord,
   draftFrom,
   loadedLine,
   metaLine,
@@ -187,6 +188,10 @@ describe('settings save body', () => {
     expect(prefsChanged(prefs, draftFrom(prefs))).toBe(false);
     expect(prefsChanged(prefs, { email: false, whatsapp: false })).toBe(true);
     expect(prefsChanged(prefs, { email: true, whatsapp: true })).toBe(true);
+  });
+
+  it('words the four receipt states; uncertain reads "Not confirmed"', () => {
+    expect(['queued', 'uncertain', 'delivered', 'held'].map((state) => deliveryWord(state as 'queued'))).toEqual(['Queued', 'Not confirmed', 'Delivered', 'Held']);
   });
 
   it('times a receipt by delivery, else by creation', () => {

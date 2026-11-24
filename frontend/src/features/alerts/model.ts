@@ -98,12 +98,9 @@ export function summaryLine(summary: Partial<DailySummary> | undefined): string 
 export const loadedLine = (loaded: number, unread: number | undefined) =>
   typeof unread === 'number' ? `${loaded} loaded, ${unread} unread` : `${loaded} loaded`;
 
-export const DELIVERY_STATE_WORDS: Record<Delivery['state'], string> = {
-  queued: 'Queued',
-  uncertain: 'Not confirmed',
-  delivered: 'Delivered',
-  held: 'Held',
-};
+// The receipt's state in plain words. `uncertain` is "Not confirmed": it is never worded as received.
+const STATE_WORDS: Record<Delivery['state'], string> = { queued: 'queued', uncertain: 'not confirmed', delivered: 'delivered', held: 'held' };
+export const deliveryWord = (state: Delivery['state']) => STATE_WORDS[state].charAt(0).toUpperCase() + STATE_WORDS[state].slice(1);
 export const CHANNEL_WORDS: Record<Delivery['channel'], string> = { email: 'Email', whatsapp: 'WhatsApp' };
 
 /** The receipt's time: when it was delivered, else when it was queued. */

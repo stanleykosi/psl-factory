@@ -9,7 +9,7 @@ import { LoadingState, SignedOutState } from '@/shell/FrameStates';
 
 import { AlertSwitch } from './AlertSwitch';
 import type { AlertPrefs } from './types';
-import { buildPrefsBody, CHANNEL_WORDS, DELIVERY_STATE_WORDS, deliveryTime, draftFrom, prefsChanged, type Draft } from './model';
+import { buildPrefsBody, CHANNEL_WORDS, deliveryTime, deliveryWord, draftFrom, prefsChanged, type Draft } from './model';
 import './alerts.css';
 
 const PATHNAME = '/settings/alerts';
@@ -191,7 +191,7 @@ export function AlertSettingsPage() {
           {prefs.recent_deliveries.map((delivery, index) => (
             <li key={`${delivery.channel}-${delivery.created_at}-${index}`} className="alerts-receipt">
               <span>{CHANNEL_WORDS[delivery.channel]}</span>
-              <span className={`alerts-receiptstate alerts-receiptstate--${delivery.state}`}>{DELIVERY_STATE_WORDS[delivery.state]}</span>
+              <span className={`alerts-receiptstate alerts-receiptstate--${delivery.state}`}>{deliveryWord(delivery.state)}</span>
               <span className="alerts-receiptmeta">{formatDateTime(deliveryTime(delivery))}</span>
               {delivery.receipt && <span className="alerts-receiptmeta">Receipt {delivery.receipt}</span>}
             </li>
