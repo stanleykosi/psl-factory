@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 9b921ea707826cf3528dcc32da1c10f17e26ed90
+COMMIT: 7108be9d709378a1d14333db432515028e087aa0
 REVIEWER: reviewer-ux
 AUTHORITY: reviewer-ux
 
@@ -15,3 +15,10 @@ None.
 
 ## Verified
 - UX-1-none | verified | round 1 had no findings to retest
+
+## Pre-merge re-confirm (7108be9d)
+VERDICT: PASS
+Diff 9b921ea7..7108be9d is 15 files, all in the project pages, mock and tests (Delivery tab on the project, its model and hook, dlvov.css, project tab bar, mock delivery overview). No file under src/features/decide changed, and nothing in the diff references the decision desk.
+The one shared change is the project tab bar: Delivery now sits after Journey on every project. That is on the project page, not the decision desk, and it matches the Delivery tab the spec names.
+ledger-source.test.tsx changed only by a wait on the recorded notice, so no user-facing behaviour changed.
+The round-2 decision desk findings and their evidence stand unchanged.

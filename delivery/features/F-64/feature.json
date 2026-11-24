@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-64",
   "outcome": "SCR-03 Decision desk on the live API: read the invoice or accounting review, claim it, record approve, return or reject",
-  "state": "PR_OPEN",
+  "state": "AWAITING_USER_APPROVAL",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -142,7 +142,7 @@
       "status": "passed",
       "reviewer": "reviewer-technical",
       "authority": "reviewer-technical (lighter panel, D-180)",
-      "snapshot_ref": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "snapshot_ref": "7108be9d709378a1d14333db432515028e087aa0",
       "evidence_refs": [
         "delivery/features/F-64/round-2/review-technical.md"
       ]
@@ -151,7 +151,7 @@
       "status": "passed",
       "reviewer": "reviewer-qa",
       "authority": "reviewer-qa (integrated QA, lighter panel D-180)",
-      "snapshot_ref": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "snapshot_ref": "7108be9d709378a1d14333db432515028e087aa0",
       "evidence_refs": [
         "delivery/features/F-64/round-2/review-qa.md"
       ]
@@ -159,8 +159,8 @@
     "pmo_acceptance": {
       "status": "passed",
       "reviewer": "pmo-acceptance",
-      "authority": "PMO delivery acceptance (D-180 lighter panel). Not client or product acceptance, merge or release.",
-      "snapshot_ref": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "authority": "PMO delivery acceptance (D-180 lighter panel; D-193 pre-merge re-confirmation). Not client or product acceptance, merge or release.",
+      "snapshot_ref": "7108be9d709378a1d14333db432515028e087aa0",
       "evidence_refs": [
         "delivery/features/F-64/round-2/acceptance-pmo.md"
       ]
@@ -171,7 +171,7 @@
       "status": "passed",
       "reviewer": "design engineer (hunchoweb), recorded by the lane A coordinator",
       "authority": "accepted in batch, delegated under D-184 (the design engineer's batch answers D-182 and D-202)",
-      "snapshot_ref": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "snapshot_ref": "7108be9d709378a1d14333db432515028e087aa0",
       "evidence_refs": [
         "delivery/features/F-64/round-2/acceptance-product.md"
       ]
@@ -180,7 +180,7 @@
       "status": "passed",
       "reviewer": "reviewer-ux",
       "authority": "reviewer-ux",
-      "snapshot_ref": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "snapshot_ref": "7108be9d709378a1d14333db432515028e087aa0",
       "evidence_refs": [
         "delivery/features/F-64/round-2/review-ux.md"
       ]
@@ -189,7 +189,7 @@
       "status": "passed",
       "reviewer": "reviewer-ui",
       "authority": "UI design reviewer",
-      "snapshot_ref": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "snapshot_ref": "7108be9d709378a1d14333db432515028e087aa0",
       "evidence_refs": [
         "delivery/features/F-64/round-2/review-ui.md"
       ]
@@ -496,6 +496,29 @@
           "head": "9b921ea707826cf3528dcc32da1c10f17e26ed90"
         }
       ]
+    },
+    {
+      "id": "PMO-2-2",
+      "round": 2,
+      "snapshot_ref": "7108be9d709378a1d14333db432515028e087aa0",
+      "owner": "evidence",
+      "severity": "low",
+      "blocking": false,
+      "summary": "round-2/review-technical.md still shows COMMIT 9b921ea7 and has no \"Pre-merge re-confirm (7108be9d)\" section. The coordinator reports a technical re-confirmation on this head, but I could not find it in the file. Expected: the technical re-confirm recorded in the round file. Actual: not found when read. Route: the technical reviewer appends the re-confirm section before merge. The delta is a main merge only and CI passed, so this does not block delivery acceptance.",
+      "reproduction": null,
+      "evidence_refs": [
+        "delivery/features/F-64/round-2/acceptance-pmo.md"
+      ],
+      "raised_by": "pmo-acceptance",
+      "state": "OPEN",
+      "history": [
+        {
+          "action": "add",
+          "by": "pmo-acceptance",
+          "at": "2026-11-24T14:34:39Z",
+          "head": "7108be9d709378a1d14333db432515028e087aa0"
+        }
+      ]
     }
   ],
   "prior_review_records": [
@@ -577,13 +600,13 @@
     "base_branch": "main",
     "base_sha": "4a88c26b2aa399ff54f9ec6cedad65ae075ebbb8",
     "task_branch": "fe-connect-1-decision-desk",
-    "head_sha": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+    "head_sha": "7108be9d709378a1d14333db432515028e087aa0",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a4",
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/111",
     "pr_number": 111,
     "pr_author": "hunchoweb",
     "designated_approver": null,
-    "ci_status": "not_run",
+    "ci_status": "passed",
     "human_approval": "pending",
     "merge_status": "not_merged",
     "merge_sha": null,
@@ -637,12 +660,20 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "ESCALATE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-64/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "risk 'medium' is not auto-mergeable",
+      "surface 'contract-change' always needs a human",
+      "surface 'product-decision' always needs a human",
+      "28 changed files exceed the auto-merge limit of 15",
+      "approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"
+    ],
+    "decided_for_head_sha": "7108be9d709378a1d14333db432515028e087aa0",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
@@ -723,6 +754,14 @@
       "at": "2026-11-24T14:22:10Z",
       "round": 2,
       "head": "9b921ea707826cf3528dcc32da1c10f17e26ed90",
+      "reason": null
+    },
+    {
+      "from": "PR_OPEN",
+      "to": "AWAITING_USER_APPROVAL",
+      "at": "2026-11-24T14:34:39Z",
+      "round": 2,
+      "head": "7108be9d709378a1d14333db432515028e087aa0",
       "reason": null
     }
   ],

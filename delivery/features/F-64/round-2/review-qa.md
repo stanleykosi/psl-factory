@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 9b921ea707826cf3528dcc32da1c10f17e26ed90
+COMMIT: 7108be9d709378a1d14333db432515028e087aa0
 REVIEWER: reviewer-qa
 AUTHORITY: reviewer-qa (integrated QA, lighter panel D-180)
 
@@ -25,3 +25,9 @@ Live commands, for the next agent (password never copied):
 - `POST /api/v1/work` weekly report on case 4a228bcb... returned 200 `{work_id:12, state:"ready"}`; `GET /api/v1/work?queue=decisions` returned zero items; `GET /api/v1/tasks/{1,999}` 404; claim, decision and comment on 999 404; `GET /work/12/history?kind=decision` 200 empty; anonymous `GET /tasks/1` 401.
 - Pages signed in: `/work/12/decide?task=1` shows "This decision isn't open here" with `GET /work/12` 200 only (no task call); `/work/abc/decide?task=1` shows the same with no work request; `/work/99999/decide?task=1` shows "You can't open this work item" after `GET /work/99999` 404; signed out shows "You're signed out".
 - Cleanup: my Django (PID 63991) and next dev (PID 63992) stopped. A `next-server` on 4980 (PID 75160, started 15:16) is not mine and was left running. Work 12 ("F64 QA weekly") remains in the local test database.
+
+## Pre-merge re-confirm (7108be9d)
+- `git diff 9b921ea7 7108be9d`: 15 files, all the F-113 Delivery tab (projects feature, delivery tests, mock work-live and server, one ledger-source test wait). Nothing in src/features/decide, InlineDecide or the decide tests changed.
+- Run singly from the worktree frontend: `tests/decide.test.tsx` 63 of 63 passed; `tests/mock-live-decide.test.ts` 11 of 11 passed.
+- Not re-run: live stack, e2e, full suite (by instruction). Round-2 live and mock evidence stands.
+VERDICT: PASS

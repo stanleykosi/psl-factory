@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 9b921ea707826cf3528dcc32da1c10f17e26ed90
+COMMIT: 7108be9d709378a1d14333db432515028e087aa0
 REVIEWER: reviewer-technical
 AUTHORITY: reviewer-technical (lighter panel, D-180)
 
@@ -15,3 +15,7 @@ None.
 
 ## Verified
 - TECH-1-none | verified | Round 1 had no findings. The F-64 decide code is unchanged apart from the UI fixes above, and the main merge only adds F-62, F-72 and F-125 files.
+
+## Pre-merge re-confirm (7108be9d)
+
+Diff-only read of `git diff 9b921ea7 7108be9d`: 15 files, all from F-113 (Delivery tab, delivery-overview mock, model/hook/css, its tests) and the ledger-source test wait. No F-64 file (live-decide.mjs, decision desk code or tests) changed. The F-64 hook in frontend/mock/server.mjs is intact; the only server.mjs change is the added F-113 deliveryRead route and its imports, placed before the document routes and not touching the F-64 route. Verdict: PASS, no new findings.

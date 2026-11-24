@@ -1,5 +1,5 @@
 VERDICT: PASS
-COMMIT: 9b921ea707826cf3528dcc32da1c10f17e26ed90
+COMMIT: 7108be9d709378a1d14333db432515028e087aa0
 REVIEWER: reviewer-ui
 AUTHORITY: UI design reviewer
 
@@ -22,3 +22,13 @@ None.
 ## Notes
 - Unchanged from round 1 and not raised: the tool's false-negative on the amount, and the bell in the shell.
 - Fidelity scores: done 1440 70.5, done 390 64.3, stale 1440 69.1, stale 390 74.5, not-yours 1440 78.6, not-yours 390 92.6. Five are under 90 because of the D-182 removals; they need the design engineer's waiver.
+
+## Pre-merge re-confirm (7108be9d)
+VERDICT: PASS
+COMMIT: 7108be9d709378a1d14333db432515028e087aa0
+REVIEWER: reviewer-ui
+AUTHORITY: UI design reviewer
+
+Diff 9b921ea7..7108be9d: 15 files, 650 insertions, 23 deletions. The decision desk (features/decide, features/decide-v7) imports nothing from features/projects, and no shared component, shell or style file (components, shell, styles, app) changed. The only style change is dlvov.css, a new file scoped to the Delivery tab (dlvov__ classes, used only by DeliveryTab.tsx). ProjectJourney.tsx passes caseId to DeliveryTab, and model.ts adds Delivery after Journey in the project tab bar; neither touches the decision desk. The mock server adds GET routes for delivery overview, dossier and checklist paths only, which do not collide with decision routes. The ledger-source test change is a wait, not UI.
+
+Decision desk styling and layout are unchanged since round 2. Round 2 findings UI-1-5 remain verified. Round 2 fidelity results stand for the decision desk.

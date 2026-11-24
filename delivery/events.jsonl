@@ -4986,3 +4986,16 @@
 {"at":"2026-11-24T14:29:59Z","feature":"F-119","round":3,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"06d07376b024","written_at":"2026-11-24T14:28:20Z"}
 {"at":"2026-11-24T14:30:03Z","feature":"F-61","round":1,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"5f61b03c833d","findings":{"PMO-1-1":"low","PMO-1-2":"low"},"written_at":"2026-11-24T14:29:14Z"}
 {"at":"2026-11-24T14:30:03Z","feature":"F-71","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), recorded by the lane B coordinator","commit":"cfc3c4623820","written_at":"2026-11-24T14:27:40Z"}
+{"at":"2026-11-24T14:31:20Z","feature":"F-111","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":186.3,"commit":"8a5c09fe624b"}
+{"at":"2026-11-24T14:31:43Z","feature":"F-111","round":2,"kind":"transition","head":"8a5c09fe624b","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-24T14:32:26Z","feature":"F-64","round":2,"kind":"fields","fields":{"git.ci_status":"passed"}}
+{"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"7108be9d7093","written_at":"2026-11-24T14:33:30Z"}
+{"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"reviewer-qa","commit":"7108be9d7093","written_at":"2026-11-24T14:31:52Z"}
+{"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"7108be9d7093","findings":{"PMO-2-1":"medium","PMO-2-2":"low"},"written_at":"2026-11-24T14:32:50Z"}
+{"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), recorded by the lane A coordinator","commit":"7108be9d7093","written_at":"2026-11-24T14:32:25Z"}
+{"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"7108be9d7093","written_at":"2026-11-24T14:30:52Z"}
+{"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"7108be9d7093","written_at":"2026-11-24T14:31:36Z"}
+{"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"finding","action":"add","finding":"PMO-2-2","by":"pmo-acceptance","severity":"low","owner":"evidence","blocking":false,"role":"pmo_acceptance"}
+{"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"7108be9d7093","reasons":["risk 'medium' is not auto-mergeable","surface 'contract-change' always needs a human","surface 'product-decision' always needs a human","28 changed files exceed the auto-merge limit of 15","approver recommendation is 'ESCALATE', not 'AUTO_MERGE'"]}
+{"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"ESCALATE"}}
+{"at":"2026-11-24T14:34:39Z","feature":"F-64","round":2,"kind":"transition","head":"7108be9d7093","from":"PR_OPEN","to":"AWAITING_USER_APPROVAL"}
