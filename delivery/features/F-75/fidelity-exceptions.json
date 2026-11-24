@@ -4,91 +4,91 @@
       "role": "text",
       "name": "PM · Tunde Bello",
       "reason": "Hidden: the owner role and the \"recorded by PM\" mark; live sends the name only (spec Conflicts 1, B-13, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (i), D-182 hide; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "Engineering (recorded by PM)",
       "reason": "Hidden: the owner role and the \"recorded by PM\" mark; live sends the name only (spec Conflicts 1, B-13, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (i), D-182 hide; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "Waiting on Engineering · Engineering (recorded by PM)",
       "reason": "Hidden: the owner role and the \"recorded by PM\" mark; live sends the name only (spec Conflicts 1, B-13, D-182). The card text differs by the role and mark only.",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (i), D-182 hide; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "Closed by QA and PM · PM · Tunde Bello",
       "reason": "Hidden: the owner role and the \"recorded by PM\" mark; live sends the name only (spec Conflicts 1, B-13, D-182). The card text differs by the role only.",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (i), D-182 hide; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "Engineering (recorded by PM) · due 15 Nov",
       "reason": "Hidden: the owner role and the \"recorded by PM\" mark; live sends the name only (spec Conflicts 1, B-13, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (i), D-182 hide; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "■■■",
       "reason": "Severity glyph text is read together with the owner line on the phone cards; the owner role and mark are hidden (spec Conflicts 1, D-182), so the merged text differs. Severity itself is drawn.",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (i), D-182 hide; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "■■□MEDIUM",
       "reason": "Severity glyph text is read together with the owner line on the phone cards; the owner role and mark are hidden (spec Conflicts 1, D-182), so the merged text differs. Severity itself is drawn.",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (i), D-182 hide; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "■■□",
       "reason": "Severity glyph text is read together with the owner line on the phone cards; the owner role and mark are hidden (spec Conflicts 1, D-182), so the merged text differs. Severity itself is drawn.",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (i), D-182 hide; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "■□□",
       "reason": "Severity glyph text is read together with the owner line on the phone cards; the owner role and mark are hidden (spec Conflicts 1, D-182), so the merged text differs. Severity itself is drawn.",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (i), D-182 hide; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "spec hides (D-182)"
     },
     {
       "role": "text",
       "name": "OVERDUE",
       "reason": "Hidden: the OVERDUE row tag; live gives overdue only as a section total, shown in the header (spec Conflicts 2, D-182).",
-      "approved_by": "hide accepted by the design engineer, 23 Nov 2026, D-182; exception entry pending sign-off (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (i), D-182 hide; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "spec hides (D-182)"
     },
     {
       "role": "button",
       "name": "Filter",
       "reason": "Hidden: the Filter button; the tab has no option catalogue for state, owner or severity (B-14, spec Out of scope, G-SCR11-1).",
-      "approved_by": "pending design engineer (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (ii); the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "no field"
     },
     {
       "role": "text",
       "name": "Actions come from confirmed minutes. Changing an owner or due date is recorded with your name.",
       "reason": "Shortened: the page keeps \"Actions come from confirmed minutes.\"; the second sentence describes a write that is out of scope.",
-      "approved_by": "pending design engineer (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (ii); the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "no field"
     },
     {
       "role": "text",
       "name": "No owner · due Unknown",
       "reason": "Sample wording: live reads \"Owner needed\" for an action with no owner (spec, display rule); the due is the amber Unknown tag.",
-      "approved_by": "pending design engineer (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (ii); the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "sample value"
     },
     {
@@ -116,14 +116,14 @@
       "role": "text",
       "name": "Tunde Bello · PMO",
       "reason": "Frame: the account menu shows the signed-in person (shell, lane A); the board names a sample person and role.",
-      "approved_by": "pending design engineer (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (ii); the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "frame item"
     },
     {
       "role": "tab",
       "name": "Registers",
       "reason": "Frame: the phone project-tab strip scrolls sideways and clips the Registers tab (ProjectTabs, F-70).",
-      "approved_by": "pending design engineer (questions-batch B35)",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (ii); the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
       "category": "frame item"
     }
   ],
@@ -149,5 +149,26 @@
       "approved_by": "pending design engineer (questions-batch B35)"
     }
   ],
-  "visual_waivers": []
+  "visual_waivers": [
+    {
+      "board": "SCR-11-desktop-1440",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (iii), D-83 visual waiver; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
+      "reason": "Visual 81.1 on head 286b4105 (needs 90); coverage 100% with exceptions. The gap is frame items and sample data; the reviewer found no table or row styling difference of the build's own (round-2/review-ui.md UI-2-1 to UI-2-3)."
+    },
+    {
+      "board": "SCR-11-mobile-390",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (iii), D-83 visual waiver; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
+      "reason": "Visual 76.6 on head 286b4105 (needs 90); coverage 100% with exceptions. The gap is frame items and sample data; the reviewer found no table or row styling difference of the build's own (round-2/review-ui.md UI-2-1 to UI-2-3)."
+    },
+    {
+      "board": "SCR-29-desktop-1440",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (iii), D-83 visual waiver; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
+      "reason": "Visual 86.2 on head 286b4105 (needs 90); coverage 100% with exceptions. The gap is frame items and sample data; the reviewer found no table or row styling difference of the build's own (round-2/review-ui.md UI-2-1 to UI-2-3)."
+    },
+    {
+      "board": "SCR-29-mobile-390",
+      "approved_by": "main coordinator, 24 Nov 2026, approved by the coordinator under D-207 (B35 (iii), D-83 visual waiver; the design engineer: \"for any risky action, i give you permission to approve except it has something to do with db approve any other task\")",
+      "reason": "Visual 78.0 on head 286b4105 (needs 90); coverage 100% with exceptions. The gap is frame items and sample data; the reviewer found no table or row styling difference of the build's own (round-2/review-ui.md UI-2-1 to UI-2-3)."
+    }
+  ]
 }
