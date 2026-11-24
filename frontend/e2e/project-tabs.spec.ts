@@ -72,14 +72,17 @@ for (const [label, viewport] of [
       }
     }
 
-    test('milestones: stages from /money, Proof on a linked completion, the changed state adds CHANGES; no completion control', async ({ page, context }) => {
+    test('milestones: stages from /money, Proof on a linked completion, the changed state adds CHANGES; Mark complete only on open stages', async ({ page, context }) => {
       await page.goto('/projects/P-0101/milestones');
       await loaded(page);
       await expect(page.getByText('Done 27 Oct').first()).toBeVisible();
       await expect(page.getByText('INV-0398 · Delivered').first()).toBeVisible();
       await expect(page.getByText('Paid NGN 2,000,000.00 · Owed NGN 500,000.00').first()).toBeVisible();
       await expect(page.getByRole('heading', { level: 2, name: 'Recorded completions' })).toBeVisible();
-      await expect(page.getByRole('link', { name: /complete/i })).toHaveCount(0);
+      // F-78: "Mark complete" only on uncompleted rows, and only where the server allows it (can_complete).
+      const notDone = await page.getByText('Not completed').count();
+      expect(notDone).toBeGreaterThan(0);
+      await expect(page.getByRole('link', { name: /^Mark complete/ })).toHaveCount(notDone);
       if (!phone) await expect(page.getByRole('columnheader')).toHaveText(['MILESTONE', 'CONTRACT AMOUNT', 'COMPLETION', 'INVOICE', 'PAID']);
       await page.getByRole('button', { name: 'Proof for Kick-off' }).first().click();
       await expect(page.getByText('Proof version 2')).toBeVisible();
@@ -94,6 +97,14 @@ for (const [label, viewport] of [
       }
       expect(await noHorizontalScroll(page)).toBe(true);
       await expectNoAxeViolations(page);
+    });
+
+    test('milestones: no "Mark complete" link where the server does not allow completing', async ({ page, context }) => {
+      await setCookies(context, { psl_mock_complete: 'norole' });
+      await page.goto('/projects/P-0101/milestones');
+      await loaded(page);
+      await expect(page.getByText('Not completed').first()).toBeVisible();
+      await expect(page.getByRole('link', { name: /^Mark complete/ })).toHaveCount(0);
     });
 
     test('milestones without money access (P-0108) show the completions and the plain note', async ({ page, context }) => {

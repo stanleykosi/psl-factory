@@ -137,7 +137,8 @@ const NO_FINANCE = 'Contract amounts, invoices and payments aren’t available t
 describe('Milestones (SCR-38) on the live reads', () => {
   it('P-0101: contract stages only, in the order sent, numbered where they have a position, two reads, no CHANGES column', async () => {
     await open('P-0101');
-    expect(reads().sort()).toEqual(['/milestones', '/money']);
+    // F-78: the third read is the Mark complete entry's options read
+    expect(reads().sort()).toEqual(['/milestones', '/milestones/completions', '/money']);
     expect(screen.getByRole('tab', { name: /^Milestones/ }).getAttribute('aria-selected')).toBe('true');
     expect([...document.querySelectorAll('thead th')].map((th) => th.textContent)).toEqual(['MILESTONE', 'CONTRACT AMOUNT', 'COMPLETION', 'INVOICE', 'PAID']);
     const rows = rowsOf();
@@ -188,6 +189,17 @@ describe('Milestones (SCR-38) on the live reads', () => {
     };
     await open('P-0101');
     expect(panel().querySelectorAll('.ptabs__completion')).toHaveLength(2);
+  });
+
+  it('QA-3-2: sections: [] from the live API reads as no recorded completions, not an error', async () => {
+    respond = (url) => {
+      if (!url.pathname.endsWith('/milestones')) return undefined;
+      const r = projectTab({ url, persona }) as { body: object };
+      return json(200, { ...r.body, sections: [] });
+    };
+    await open('P-0101');
+    expect(within(panel()).getByText('No completions recorded yet.')).toBeTruthy();
+    expect(text()).not.toContain('couldn’t load the recorded completions');
   });
 
   it('a row without who recorded it says so', async () => {
@@ -245,6 +257,24 @@ describe('F-71 round 2: Unknown, headings, Proof state', () => {
     expect(kickoff.getAttribute('aria-expanded')).toBe('true');
     expect(proofButtons().filter((b) => b !== kickoff).every((b) => b.getAttribute('aria-expanded') === 'false')).toBe(true);
   });
+
+  it('TECH-2-1: Proof is a toggle; aria-expanded is true from the press, through the read, until the second press', async () => {
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    respond = (url) => (/\/milestones\/\d+$/.test(url.pathname) ? gate.then(() => json(200, { id: 3101, name: 'Kick-off', completed_at: '2026-10-27T10:00:00Z', evidence_id: 1, proof_version: 2 })) : undefined);
+    await open('P-0101');
+    const kick = buttons('Proof for Kick-off')[0];
+    fireEvent.click(kick);
+    const kickoff = () => kick;
+    expect(kickoff().getAttribute('aria-expanded')).toBe('true');
+    release();
+    await until(() => expect(panel().textContent).toContain('Proof version 2'));
+    expect(kickoff().getAttribute('aria-expanded')).toBe('true');
+    await press('Proof for Kick-off');
+    expect(kickoff().getAttribute('aria-expanded')).toBe('false');
+    expect(panel().textContent).not.toContain('Proof version 2');
+    expect(detailCalls()).toHaveLength(1);
+  });
 });
 
 describe('Proof', () => {
@@ -256,6 +286,9 @@ describe('Proof', () => {
     expect(detailCalls().map((u) => u.pathname)).toEqual([`/api/v1/projects/${uuidOf('P-0101')}/milestones/3101`]);
     const shown = panel().querySelector('.ptabs__proofbody')!.textContent;
     expect(shown).toBe('Kick-offCompleted 27 OctProof version 2');
+    await press('Proof for Kick-off');
+    expect(panel().querySelector('.ptabs__proofbody')).toBeNull();
+    expect(detailCalls()).toHaveLength(1);
     await press('Proof for Kick-off');
     await until(() => expect(detailCalls()).toHaveLength(2));
   });
@@ -385,7 +418,7 @@ describe('errors and paging', () => {
     expect(panel().querySelectorAll('.ptabs__completion')).toHaveLength(25);
     await press('Show more');
     await until(() => expect(panel().querySelectorAll('.ptabs__completion')).toHaveLength(27));
-    expect(reads().filter((r) => r.startsWith('/milestones'))).toEqual(['/milestones', '/milestones?page=2']);
+    expect(reads().filter((r) => r.startsWith('/milestones') && r !== '/milestones/completions')).toEqual(['/milestones', '/milestones?page=2']);
     expect(within(panel()).queryByRole('button', { name: 'Show more' })).toBeNull();
     await until(() => expect(document.activeElement).toBe(panel().querySelectorAll('.ptabs__completion')[25]));
   });
@@ -436,5 +469,35 @@ describe('phone (390)', () => {
     cookies = { psl_mock_milestones: 'changed' };
     await open('P-0101');
     expect([...panel().querySelectorAll('.ptabs__card')][2].textContent).toContain('CHANGED · CHG-0007');
+  });
+});
+
+describe('F-78: Mark complete entry', () => {
+  const OPTIONS = { revision: 5, proofs: [], next_page: null, can_complete: true, can_attach_pdf: true, hold: null };
+  const entry = (body: unknown) => (url: URL) => (url.pathname.endsWith('/milestones/completions') ? json(200, body) : undefined);
+  const links = () => [...panel().querySelectorAll('a')].filter((a) => a.textContent!.startsWith('Mark complete'));
+
+  it('shows the link only on uncompleted rows, to the page with the encoded name, when can_complete is true', async () => {
+    respond = entry(OPTIONS);
+    await open('P-0101');
+    await until(() => expect(links().length).toBeGreaterThan(0));
+    const hrefs = links().map((a) => a.getAttribute('href'));
+    expect(hrefs.every((h) => h!.includes('/milestones/complete?name='))).toBe(true);
+    expect(panel().textContent).not.toContain('Mark complete for Kick-off');
+  });
+
+  it('can_complete false with a hold shows one reason and no link', async () => {
+    respond = entry({ ...OPTIONS, can_complete: false, hold: 'baseline_required' });
+    await open('P-0101');
+    await until(() => expect(text()).toContain('This project has no signed baseline yet.'));
+    expect(links()).toHaveLength(0);
+    expect(text()).not.toContain('baseline_required');
+  });
+
+  it('a failed options read leaves the table and completions as they were', async () => {
+    respond = (url) => (url.pathname.endsWith('/milestones/completions') ? json(500, { code: 'server_error', message: 'x' }) : undefined);
+    await open('P-0101');
+    expect(links()).toHaveLength(0);
+    expect(rowsOf().length).toBeGreaterThan(0);
   });
 });

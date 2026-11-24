@@ -56,6 +56,7 @@ import { liveDecideRoute, ownsLiveDecide, resetLiveDecide } from './live-decide.
 import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
 import { LOGOUT_PATH, logoutRoute, ONBOARDING_PATH, onboardingRoute, ROLE_DASHBOARD_PATH, roleDashboardRoute, SESSION_PATH, SIGNED_OUT_REPLY, signedOut, signInRoute, sessionRoute } from './session.mjs';
 import { isMilestoneRequest, isMoneyRequest, moneyRoute } from './money.mjs';
+import { isCompletionsPath, milestoneComplete, recordedRead, resetMilestoneComplete } from './milestone-complete.mjs';
 import { ALERT_PATH, createAlertsMock } from './alerts.mjs';
 import { ASSISTANT_LOG_PATH, ASSISTANT_OPERATIONS, ASSISTANT_UPLOADS_PATH, createAssistantMock } from './assistant.mjs';
 import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog, workspaceRoute } from './workspace.mjs';
@@ -303,6 +304,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetIssues();
         resetClients();
         resetDocumentReviews();
+        resetMilestoneComplete();
         assistant.reset();
         runs.reset();
         resetLiveDecide();
@@ -407,6 +409,18 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
           return send(res, ...roleDashboardRoute({ persona }));
         }
       }
+      // F-78 (SCR-19, not in v7): the completion options read and the write (milestone-complete.mjs), and a completion recorded there.
+      if ((method === 'get' || method === 'post') && isCompletionsPath(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (scenario && SCENARIO_BODIES[scenario] && (method === 'post' || ['401', '403', '404'].includes(String(scenario)))) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        if (method === 'post' && req.headers['x-csrftoken'] !== me[persona].csrf_token) return send(res, 403, CSRF_FAILED);
+        const r = milestoneComplete({ method, url, raw, persona, cookies, canSee: caseVisible });
+        return send(res, r.status, r.body);
+      }
+      const recordedHere = method === 'get' ? recordedRead(url.pathname, parseCookies(req.headers.cookie)) : undefined;
+      if (recordedHere) return send(res, recordedHere.status, recordedHere.body);
       // F-71: one recorded completion of a project (live, not in v7); money.mjs answers it.
       if (method === 'get' && isMilestoneRequest(url)) return send(res, ...moneyRoute({ route: { statuses: ['401', '403', '404'] }, url, req, cookies: parseCookies(req.headers.cookie) }));
       // F-113 (not in v7): the delivery overview and the two reads behind the closure reason (delivery-overview.mjs).

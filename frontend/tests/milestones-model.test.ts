@@ -59,7 +59,7 @@ describe('guards', () => {
   it('finds the completions as the only section, whatever its title or key', () => {
     expect(isCompletions(tab())).toBe(true);
     expect(isCompletions(tab([section({ title: 'Something else', key: 'other' })]))).toBe(true);
-    expect(isCompletions(tab([]))).toBe(false);
+    expect(isCompletions(tab([]))).toBe(true);
     expect(isCompletions(tab([section(), section()]))).toBe(false);
   });
 
