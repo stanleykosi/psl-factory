@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-70",
   "outcome": "The project list and project journey read from the live API",
-  "state": "AWAITING_USER_APPROVAL",
+  "state": "DONE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -458,9 +458,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -480,8 +480,8 @@
     "designated_approver": null,
     "ci_status": "passed",
     "human_approval": "approved",
-    "merge_status": "not_merged",
-    "merge_sha": null,
+    "merge_status": "merged",
+    "merge_sha": "be9d34d97b4f63105424a3a6671f2cbb2d9fc72a",
     "merge_policy": "not_configured",
     "changed_paths": [
       "frontend/e2e/alerts-bell.spec.ts",
@@ -720,6 +720,30 @@
       "from": "PR_OPEN",
       "to": "AWAITING_USER_APPROVAL",
       "at": "2026-11-23T15:34:07Z",
+      "round": 2,
+      "head": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-24T03:04:43Z",
+      "round": 2,
+      "head": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-24T03:04:43Z",
+      "round": 2,
+      "head": "cf5074164183ccd9027b818fe6a3b64099288c2b",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-24T03:04:44Z",
       "round": 2,
       "head": "cf5074164183ccd9027b818fe6a3b64099288c2b",
       "reason": null

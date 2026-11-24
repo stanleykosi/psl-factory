@@ -4594,3 +4594,14 @@
 {"at":"2026-11-24T03:02:56Z","feature":"F-70","round":2,"kind":"fields","fields":{"git.human_approval":"approved"}}
 {"at":"2026-11-24T03:02:57Z","feature":"F-72","round":1,"kind":"fields","fields":{"git.human_approval":"approved"}}
 {"at":"2026-11-24T03:02:58Z","feature":"F-86","round":2,"kind":"fields","fields":{"git.human_approval":"approved"}}
+{"at":"2026-11-24T03:04:03Z","feature":"F-86","round":2,"kind":"transition","head":"bdeee685f982","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-24T03:04:05Z","feature":"F-70","round":2,"kind":"fields","fields":{"git.merge_status":"merged","git.merge_sha":"be9d34d97b4f63105424a3a6671f2cbb2d9fc72a"}}
+{"at":"2026-11-24T03:04:05Z","feature":"F-86","round":2,"kind":"transition","head":"bdeee685f982","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-24T03:04:05Z","feature":"F-72","round":1,"kind":"fields","fields":{"git.merge_status":"merged"}}
+{"at":"2026-11-24T03:04:06Z","feature":"F-86","round":2,"kind":"transition","head":"bdeee685f982","from":"MERGED","to":"DONE"}
+{"at":"2026-11-24T03:04:43Z","feature":"F-70","round":2,"kind":"transition","head":"cf5074164183","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-24T03:04:43Z","feature":"F-70","round":2,"kind":"transition","head":"cf5074164183","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-24T03:04:44Z","feature":"F-70","round":2,"kind":"transition","head":"cf5074164183","from":"MERGED","to":"DONE"}
+{"at":"2026-11-24T03:04:44Z","feature":"F-72","round":1,"kind":"transition","head":"81a9bb9f021d","from":"AWAITING_USER_APPROVAL","to":"APPROVED"}
+{"at":"2026-11-24T03:04:44Z","feature":"F-72","round":1,"kind":"transition","head":"81a9bb9f021d","from":"APPROVED","to":"MERGED"}
+{"at":"2026-11-24T03:04:45Z","feature":"F-72","round":1,"kind":"transition","head":"81a9bb9f021d","from":"MERGED","to":"DONE"}

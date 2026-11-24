@@ -4,7 +4,7 @@
   "project_id": "psl-factory-main",
   "feature_id": "F-72",
   "outcome": "Document review reads and records its decision through the live document-review API",
-  "state": "AWAITING_USER_APPROVAL",
+  "state": "DONE",
   "task_ids": [
     "FE-CONNECT-1"
   ],
@@ -510,9 +510,9 @@
     "escalation_authority": null
   },
   "completion": {
-    "status": "blocked",
+    "status": "done",
     "evidence_refs": [],
-    "reason": "Project, readiness, implementation and review evidence has not been supplied."
+    "reason": null
   },
   "release": {
     "status": "not_authorized",
@@ -525,14 +525,14 @@
     "base_sha": "be9d34d97b4f63105424a3a6671f2cbb2d9fc72a",
     "task_branch": "fe-connect-1-document-review",
     "head_sha": "81a9bb9f021d125b3c0f55234434deb93977ec7e",
-    "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-b",
+    "worktree": null,
     "pr_url": "https://github.com/stanleykosi/psl-factory/pull/104",
     "pr_number": 104,
     "pr_author": null,
     "designated_approver": null,
     "ci_status": "passed",
     "human_approval": "approved",
-    "merge_status": "not_merged",
+    "merge_status": "merged",
     "merge_sha": "ae0525fb32aa7215e9e6c291181e3b75fc451d10",
     "merge_policy": "not_configured",
     "changed_paths": [
@@ -894,6 +894,30 @@
       "from": "PR_OPEN",
       "to": "AWAITING_USER_APPROVAL",
       "at": "2026-11-24T02:37:26Z",
+      "round": 1,
+      "head": "81a9bb9f021d125b3c0f55234434deb93977ec7e",
+      "reason": null
+    },
+    {
+      "from": "AWAITING_USER_APPROVAL",
+      "to": "APPROVED",
+      "at": "2026-11-24T03:04:44Z",
+      "round": 1,
+      "head": "81a9bb9f021d125b3c0f55234434deb93977ec7e",
+      "reason": null
+    },
+    {
+      "from": "APPROVED",
+      "to": "MERGED",
+      "at": "2026-11-24T03:04:44Z",
+      "round": 1,
+      "head": "81a9bb9f021d125b3c0f55234434deb93977ec7e",
+      "reason": null
+    },
+    {
+      "from": "MERGED",
+      "to": "DONE",
+      "at": "2026-11-24T03:04:45Z",
       "round": 1,
       "head": "81a9bb9f021d125b3c0f55234434deb93977ec7e",
       "reason": null
