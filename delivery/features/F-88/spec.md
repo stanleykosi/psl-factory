@@ -134,3 +134,5 @@ Agreed: F-88 adds the optional `ownsSubmit` flag to the F-86 `LineForm` entry an
 
 ## Coordinator note (lane C, 24 Nov): live proof
 The design engineer answered "Mock-only, like F-60" (relayed by the main coordinator). The live RFP log success path and the upload limit are proven on the mock only. Live proof covers the 403 refusal for an account with no received-bid organisation. QA, PMO and the PR record them as unproven live, quoting that answer. Nobody sets up organisations or grants in the database by any route.
+
+D-198 (24 Nov): the design engineer answered LC-Q33 to LC-Q36 "Accept all four" (relayed by the main coordinator). Product acceptance for F-88 comes under D-184 from D-182, D-183, D-187 and D-198 once its gate and re-checks pass.
