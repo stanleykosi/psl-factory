@@ -10,7 +10,7 @@ import {
   shownFields,
   startableHere,
 } from '@/features/start-work/intake';
-import type { Field, Line } from '@/features/start-work/types';
+import type { Field, LegacyLine as Line } from '@/features/start-work/types';
 
 const f = (name: string, type: string, extra: Partial<Field> = {}): Field => ({ name, label: name, type, required: false, ...extra });
 

@@ -1,11 +1,12 @@
 'use client';
 
-// The Documents tab: the project's documents (title, version, status, TEST TEMPLATE) from E-PROJECT-TAB. A row that
-// carries a work_id opens its review (SCR-08); a row without one is plain text. No filter, search or upload.
+// The Documents tab: the project's documents (title, version, status, TEST TEMPLATE) from E-PROJECT-TAB. A row opens its
+// review (SCR-08) only when its own api_url is this project's document-review path; any other row is plain text (B-7:
+// no live link from a tab row to a version id). No filter, search or upload.
 import Link from 'next/link';
 
 import { ShowMore, Table, Tag, Unknown, useIsPhone, type Column } from '@/components';
-import { documentHref } from '@/features/documents/documentModel';
+import { reviewHrefOf } from '@/features/documents/documentModel';
 
 import { AsOf, useTabPaging, TabEmpty, tabStateView } from './TabParts';
 import { textOf } from './model';
@@ -18,7 +19,8 @@ import { useRef } from 'react';
 const VIEW = { register: 'issues' } as const;
 
 function Title({ caseId, row }: { caseId: string; row: DocumentRow }) {
-  return textOf(row.work_id) ? <Link href={documentHref(caseId, row.document_id, row.version)}>{row.title}</Link> : <>{row.title}</>;
+  const href = reviewHrefOf(caseId, (row as { api_url?: unknown }).api_url);
+  return href ? <Link href={href}>{row.title}</Link> : <>{row.title}</>;
 }
 
 const Status = ({ row }: { row: DocumentRow }) => textOf(row.status) ?? <Unknown />;
