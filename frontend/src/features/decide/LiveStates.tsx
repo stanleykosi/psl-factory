@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 import type { LiveHistoryItem, LiveTaskRead, LiveWork } from '@/api/types';
-import { Button, buttonClass, Callout, EmptyState, formatClock, formatWeekdayDayTime, Tag, TextArea, useToastWhen } from '@/components';
+import { Button, buttonClass, Callout, EmptyState, formatClock, formatWeekdayDayTime, Tag, TextArea, useIsPhone, useToastWhen } from '@/components';
 
 import { AmountValue, DecideHeader } from './LiveContent';
 import { formatAmount, roleWords, VERDICT_WORDS, WORK_STATE_WORDS, type Verdict, type WorkState } from './liveFormat';
@@ -146,15 +146,22 @@ function compareRows(old: Snapshot, now: Snapshot): Compared[] {
 
 type StaleProps = { replaced: Snapshot; current: Snapshot; note: string; onReview: () => void };
 
-/** The replaced and current versions side by side (a table on desktop, stacked cards on phones), each current value marked. */
+const packetOfSnapshot = (s: Snapshot) => (s.amount ? { amount: s.amount, currency: s.currency ?? '' } : null);
+
+/**
+ * The replaced and current versions: a table on desktop (SCR-03-desktop-stale), and on phones one grey line for the
+ * replaced version and one card for the current values (SCR-03-mobile-stale). The changed row is the one highlighted.
+ */
 export function StaleView({ replaced, current, note, onReview }: StaleProps) {
   const rows = compareRows(replaced, current);
   const oldN = replaced.version;
   const newN = current.version;
-  const rowClass = (row: Compared) => `decide-row${row.mark === 'changed' ? ' decide-row--changed' : ''}`;
+  const phone = useIsPhone();
   const head = useRef<HTMLHeadingElement>(null);
   // the page changed under the reader: move focus to what happened (the alert also announces it)
   useEffect(() => head.current?.focus(), []);
+  const rowLabel = (label: string) => (phone && label === 'Send to' ? 'To' : label);
+  const mark = (row: Compared) => <span className={row.mark === 'changed' ? 'decide-changed' : 'decide-muted'}>{phone ? row.mark : `· ${row.mark}`}</span>;
   return (
     <section className="decide-stale" aria-labelledby="decide-stale-title">
       {/* the shared Callout as the boards set it: running text with no icon (block flow, see decide.css); the wrapper
@@ -168,36 +175,54 @@ export function StaleView({ replaced, current, note, onReview }: StaleProps) {
         </Callout>
       </div>
       {note.trim() !== '' && <p className="decide-plain decide-unsent">Your note wasn&rsquo;t sent: &ldquo;{note}&rdquo;</p>}
-      <div className="decide-compare">
-        <section className="decide-compare__old" aria-labelledby="decide-old-title">
-          <h3 id="decide-old-title" className="decide-colhead">
-            {oldN === null ? 'EARLIER VERSION' : `VERSION ${oldN}`} · REPLACED
-          </h3>
-          <dl className="decide-rows">
-            {rows.map((row) => (
-              <div key={row.label} className={rowClass(row)}>
-                <dt>{row.label}</dt>
-                <dd>{row.old}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-        <section className="decide-compare__new" aria-labelledby="decide-new-title">
-          <h3 id="decide-new-title" className="decide-colhead">
-            {newN === null ? 'CURRENT VERSION' : `VERSION ${newN}`} · CURRENT
-          </h3>
-          <dl className="decide-rows">
-            {rows.map((row) => (
-              <div key={row.label} className={rowClass(row)}>
-                <dt>{row.label}</dt>
-                <dd>
-                  {row.now} <span className={row.mark === 'changed' ? 'decide-changed' : 'decide-muted'}>· {row.mark}</span>
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-      </div>
+      {phone ? (
+        <>
+          <section className="decide-old" aria-label={oldN === null ? 'Earlier version, no longer current' : `Version ${oldN}, no longer current`}>
+            <span>
+              {oldN === null ? 'Earlier version' : `Invoice v${oldN}`} · <AmountValue packet={packetOfSnapshot(replaced)} />
+            </span>
+            <span className="decide-old__tag">REPLACED</span>
+          </section>
+          <section className="decide-new" aria-label={newN === null ? 'What changed in the current version' : `What changed in version ${newN}`}>
+            <dl className="decide-new__rows">
+              {rows.map((row) => (
+                <div key={row.label} className="decide-new__row">
+                  <dt>{rowLabel(row.label)}</dt>
+                  <dd className={row.mark === 'changed' ? 'decide-new__changed' : undefined}>
+                    {row.now} {mark(row)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        </>
+      ) : (
+        <div className="decide-tablewrap">
+          {/* eslint-disable-next-line no-restricted-syntax -- the board's two-version compare: row headers and a changed-row tint, which the shared Table has no place for */}
+          <table className="decide-table">
+            <thead>
+              <tr>
+                <th scope="col">
+                  <span className="cmp-sr">Field</span>
+                </th>
+                <th scope="col">{oldN === null ? 'EARLIER VERSION' : `VERSION ${oldN}`} · REPLACED</th>
+                <th scope="col">{newN === null ? 'CURRENT VERSION' : `VERSION ${newN}`} · CURRENT</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.label} className={row.mark === 'changed' ? 'decide-table__changed' : undefined}>
+                  <th scope="row">{row.label}</th>
+                  <td>{row.old}</td>
+                  <td>
+                    {row.mark === 'changed' ? <strong>{row.now}</strong> : row.now} {mark(row)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       <div className="decide-stale__foot">
         <p className="decide-stale__action">
           <Button size="lg" block onClick={onReview}>
@@ -303,7 +328,7 @@ export function DoneView({ id, work, result, label, note, reloaded, history, ref
             {approved && <p className="decide-plain decide-paid">Paid is tracked separately by Finance and is not part of this decision.</p>}
           </div>
           <div className="decide-done__side">
-            <section className="decide-donepanel" aria-labelledby="decide-next-head">
+            <aside className="decide-donepanel" aria-labelledby="decide-next-head">
               <h2 id="decide-next-head" className="decide-donepanel__head">
                 WHAT HAPPENS NEXT
               </h2>
@@ -317,7 +342,7 @@ export function DoneView({ id, work, result, label, note, reloaded, history, ref
                   Open the work item
                 </Link>
               </p>
-            </section>
+            </aside>
             {waiting && (
               <section className="decide-still" aria-labelledby="decide-still-head">
                 <h2 id="decide-still-head" className="decide-still__head">

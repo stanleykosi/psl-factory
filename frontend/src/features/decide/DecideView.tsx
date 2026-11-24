@@ -119,7 +119,7 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
   if (view.kind === 'stale') {
     return (
       <>
-        <DecideHeader work={work} trail={trail} title={read.label} sub={work.title} quietOnPhone />
+        <DecideHeader work={work} trail={trail} title={read.label} sub={work.title === read.label ? undefined : work.title} quietOnPhone />
         {uncertain && <UncertainNotice />}
         <StaleView replaced={view.replaced} current={snapshotOf(read)} note={view.note} onReview={reviewCurrent} />
       </>
@@ -130,7 +130,7 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
   if (layout === 'read-only' || !claim) {
     return (
       <>
-        <DecideHeader work={work} trail={<>Decision</>} title={read.label} sub={work.title} />
+        <DecideHeader work={work} trail={<>Decision</>} title={read.label} sub={work.title === read.label ? undefined : work.title} />
         {uncertain && <UncertainNotice />}
         <CannotActView id={id} read={read} commentState={commentState} onComment={comment} />
       </>
@@ -139,7 +139,7 @@ export function DecideView({ id, taskId }: { id: string; taskId: string | undefi
 
   return (
     <>
-      <DecideHeader work={work} trail={trail} title={read.label} sub={work.title} />
+      <DecideHeader work={work} trail={trail} title={read.label} sub={work.title === read.label ? undefined : work.title} />
       {unconfirmed ? <UnconfirmedNotice checking={view.checking} onRecheck={recheck} /> : uncertain && <UncertainNotice />}
       <div className="decide-board">
         <div className="decide-main">

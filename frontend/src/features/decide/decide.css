@@ -142,7 +142,7 @@
 .decide-own .decide-asked { color: var(--ink); }
 .decide-callout-text { margin: 0; font: inherit; }
 
-/* stale: the notice, then the versions as one table (desktop) */
+/* stale: the notice, then the versions as one table (desktop) or two cards (phone) */
 .decide-stale { display: flex; flex-direction: column; gap: var(--space-20px); }
 .decide-stale p { margin: 0; }
 .decide-stale__foot { display: flex; flex-direction: column; gap: var(--space-20px); }
@@ -150,28 +150,24 @@
 .decide-stale__head { display: inline; margin: 0; font: inherit; font-weight: 700; }
 .decide-stale__notice p { display: inline; }
 .decide-stale__action { max-width: 360px; }
-.decide-compare { display: grid; grid-template-columns: minmax(0, 1.06fr) minmax(0, 1fr); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
-.decide-compare > section { min-width: 0; }
-.decide-colhead { margin: 0; padding: var(--space-10px) var(--space-14px); border-bottom: var(--rule-strong) solid var(--ink); font-family: var(--font-mono); font-size: var(--text-label-size); font-weight: 500; letter-spacing: .06em; color: var(--ink-muted); }
-.decide-compare__old .decide-colhead { padding-left: calc(160px + var(--space-14px)); }
-.decide-compare .decide-rows { display: grid; gap: 0; }
-.decide-compare__old .decide-rows { grid-template-columns: 160px minmax(0, 1fr); }
-.decide-compare .decide-row { display: contents; }
-.decide-compare .decide-row > * { margin: 0; padding: var(--space-1) var(--space-14px); border-bottom: var(--rule-thin) solid var(--rule-soft); font-size: var(--text-body-size); line-height: 1.3; color: var(--ink); }
-.decide-compare .psl-amount { font-family: inherit; font-size: inherit; font-weight: inherit; }
-.decide-colhead { line-height: 1.3; padding-top: var(--space-2); padding-bottom: var(--space-2); }
-.decide-compare .decide-row--changed > * { background: var(--waiting-tint); }
-.decide-compare__new dt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.decide-compare__changes { padding: var(--space-1) var(--space-14px); font-size: var(--text-hint-size); line-height: 1.3; color: var(--ink-muted); }
-/* desktop: what the producer changed sits at the right of the current values, so the table keeps its height */
-@media (min-width: 720px) {
-  .decide-compare__new { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, max-content); align-content: start; }
-  .decide-compare__new > .decide-colhead { grid-column: 1 / -1; }
-  .decide-compare__changes { grid-column: 2; grid-row: 2; max-width: 240px; border-left: var(--rule-thin) solid var(--rule-soft); }
-}
-.decide-compare__changes > * { display: inline; margin: 0; padding: 0; font-size: inherit; }
-.decide-compare__changes li { display: inline; }
-.decide-compare__changes li + li::before { content: ', '; }
+.decide-tablewrap { overflow-x: auto; background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.decide-table { width: 100%; min-width: 600px; border-collapse: collapse; text-align: left; }
+.decide-table th, .decide-table td { padding: var(--space-10px) var(--space-14px); text-align: left; font-weight: 400; vertical-align: baseline; overflow-wrap: anywhere; }
+.decide-table tbody th, .decide-table td { border-bottom: var(--rule-thin) solid var(--rule-soft); }
+.decide-table thead th { border-bottom: var(--rule-strong) solid var(--ink); font-family: var(--font-mono); font-size: var(--text-label-size); font-weight: 500; letter-spacing: .06em; color: var(--ink-muted); }
+.decide-table .psl-amount { font-family: inherit; font-size: inherit; font-weight: inherit; }
+.decide-table__changed { background: var(--waiting-tint); }
+.decide-old { display: flex; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-14px); background: var(--surface); border: var(--rule-strong) solid var(--disabled); opacity: .75; color: var(--ink-muted); }
+.decide-old .psl-amount { font-family: inherit; font-size: inherit; font-weight: inherit; }
+.decide-old__tag { font-family: var(--font-mono); font-size: var(--text-small-size); }
+.decide-new { background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.decide-new__rows { margin: 0; padding: var(--space-14px); display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-10px) var(--space-14px); }
+.decide-new__row { display: contents; }
+.decide-new__row dt { color: var(--ink-muted); }
+.decide-new__row dd { margin: 0; overflow-wrap: anywhere; }
+.decide-new__row .psl-amount { font-family: var(--font-mono); font-size: 17px; font-weight: 500; }
+.decide-new__row dd.decide-new__changed { background: var(--waiting-tint); }
+.decide-new .decide-changed, .decide-new .decide-muted { font-size: var(--text-hint-size); font-weight: 400; color: var(--ink-muted); }
 
 /* done */
 .decide-done { display: flex; flex-direction: column; gap: var(--space-20px); }
@@ -255,6 +251,7 @@
   .decide-strip__box:nth-child(3n) { border-right: none; }
   .decide-strip__box:nth-child(-n + 3):nth-last-child(n + 4) { border-bottom: var(--rule-strong) solid var(--ink); }
   .decide-strip__box--phone { display: flex; }
+  .decide-strip__box--waiting { grid-column: span 2; }
   .decide-strip dd { overflow-wrap: normal; }
   .decide-strip dt { font-size: 10px; letter-spacing: 0; }
   .decide-strip dd { font-family: var(--font-sans); font-size: var(--text-body-phone-size); }
@@ -267,21 +264,10 @@
   .decide-own { gap: var(--space-3); }
   .decide-lead { font-size: var(--text-body-phone-size); }
 
-  /* stale: stacked cards */
+  /* stale: the notice, a grey replaced line and the current card */
   .decide-stale { gap: var(--space-14px); }
   .decide-stale__notice { padding: var(--space-14px); }
   .decide-stale__head { display: block; margin-bottom: var(--space-6px); font-weight: 600; }
-  .decide-compare { grid-template-columns: minmax(0, 1fr); gap: var(--space-14px); background: none; border: none; }
-  .decide-compare > section { background: var(--surface); border: var(--rule-strong) solid var(--ink); }
-  .decide-compare > .decide-compare__old { border-color: var(--disabled); }
-  .decide-compare__old .decide-colhead { padding-left: var(--space-14px); }
-  .decide-compare .decide-rows, .decide-compare__old .decide-rows { grid-template-columns: auto minmax(0, 1fr); padding: var(--space-10px) 0; }
-  .decide-compare .decide-row > * { padding: var(--space-1) var(--space-14px); border-bottom: none; font-size: var(--text-body-phone-size); }
-  .decide-compare__new dt { position: static; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; }
-  /* the phone's current card: the figure in mono, the marks small and muted, the agent note inside the card */
-  .decide-compare__new .psl-amount { font-family: var(--font-mono); font-size: 17px; font-weight: 500; }
-  .decide-compare__new .decide-changed, .decide-compare__new .decide-muted { font-size: var(--text-small-size); font-weight: 400; color: var(--ink-muted); }
-  .decide-compare__new .decide-agent { border: none; border-top: var(--rule-strong) solid var(--ink); margin-top: var(--space-10px); font-size: var(--text-hint-size); }
   .decide-header--quiet { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .decide-stale { padding-bottom: 120px; }
   .decide-stale__foot { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); gap: var(--space-10px); padding: var(--space-10px) var(--space-18px) var(--space-18px); background: var(--steel); }

@@ -404,6 +404,20 @@ describe('stale (criterion 5, checklist 1)', () => {
     expect(counts().decides).toHaveLength(1);
   });
 
+  it('desktop: the compare is a real table with the board column headers and the changed row marked (UI-1-1)', async () => {
+    answers.decide = () => json(409, CONFLICT);
+    answers.task = (n) => json(200, n === 0 ? readOf() : readOf({ revision: 4 }, { invoice_packet: { ...readOf().invoice_packet!, version: 3 }, recipient_change: { earlier: null, current: 'Other Estates Ltd' } }));
+    await openReady();
+    choose(/client email/);
+    fireEvent.click(button('Approve v2'));
+    await screen.findByRole('table');
+    expect(screen.getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['Field', 'VERSION 2 · REPLACED', 'VERSION 3 · CURRENT']);
+    const rows = screen.getAllByRole('row').slice(1);
+    expect(rows.map((r) => r.textContent)).toEqual(['Amount₦4,250,000.00₦4,250,000.00 · unchanged', 'Send toLekki Estates LtdOther Estates Ltd · changed']);
+    expect(rows[1].className).toContain('decide-table__changed');
+    expect(rows[0].className).not.toContain('decide-table__changed');
+  });
+
   it('"Review version 3" shows the current board and claims the new revision once', async () => {
     answers.decide = () => json(409, CONFLICT);
     answers.task = (n) => json(200, n === 0 ? readOf() : redrafted());
@@ -442,6 +456,53 @@ describe('stale (criterion 5, checklist 1)', () => {
     await screen.findByText('A newer version arrived while you were reading.');
     expect(counts().claims).toHaveLength(1);
     expect(counts().decides).toHaveLength(0);
+  });
+});
+
+describe('phone stale and not-yours (UI-1-2, UI-1-3)', () => {
+  beforeEach(() => {
+    vi.stubGlobal('matchMedia', (q: string) => ({ matches: q.includes('max-width'), media: q, addEventListener: () => {}, removeEventListener: () => {} }));
+  });
+
+  it('stale: one grey replaced line, then one current card with the To row and its changed tag', async () => {
+    answers.decide = () => json(409, CONFLICT);
+    answers.task = (n) => json(200, n === 0 ? readOf() : readOf({ revision: 4 }, { invoice_packet: { ...readOf().invoice_packet!, version: 3 }, recipient_change: { earlier: null, current: 'Other Estates Ltd' } }));
+    await openReady();
+    choose(/client email/);
+    fireEvent.click(button('Approve v2'));
+    const old = await screen.findByRole('region', { name: 'Version 2, no longer current' });
+    expect(old.textContent).toBe('Invoice v2 · ₦4,250,000.00REPLACED');
+    expect(screen.queryByRole('table')).toBeNull();
+    const now = screen.getByRole('region', { name: 'What changed in version 3' });
+    expect(now.textContent).toBe('Amount₦4,250,000.00 unchangedToOther Estates Ltd changed');
+  });
+
+  it('not-yours: the Waiting cell spans the rest of the strip so no empty cell is left', async () => {
+    answers.task = () => json(200, readOf({ can_claim: false, can_decide: false }));
+    await open();
+    expect(document.querySelectorAll('.decide-strip__box')).toHaveLength(2);
+    expect(document.querySelector('.decide-strip__box--waiting')).toBeTruthy();
+    const css = readFileSync(join(__dirname, '../src/features/decide/decide.css'), 'utf8');
+    expect(css).toMatch(/\.decide-strip__box--waiting \{ grid-column: span 2; \}/);
+  });
+});
+
+describe('the done board panel (UI-1-4)', () => {
+  it('"What happens next" is a complementary landmark', async () => {
+    await openReady();
+    choose(/client email/);
+    fireEvent.click(button('Approve v2'));
+    await screen.findByText(/Decision recorded on|is approved/);
+    expect(screen.getByRole('complementary', { name: 'WHAT HAPPENS NEXT' })).toBeTruthy();
+  });
+});
+
+describe('the title is drawn once (UI-1-5)', () => {
+  it('no sub-line when the work title equals the task label; the work title shows when it differs', async () => {
+    answers.task = () => json(200, claimed());
+    answers.work = () => json(200, workOf([task()], { title: 'Invoice 3 for the Lekki handover' }));
+    await open();
+    expect(screen.getAllByText('Invoice 3 for the Lekki handover').filter((el) => !el.closest('.cmp-sr') && el.tagName !== 'H1')).toHaveLength(0);
   });
 });
 
