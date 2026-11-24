@@ -24,31 +24,14 @@
 .alerts-meta { font-size: var(--text-small-size); color: var(--ink-muted); }
 .alerts-new { align-self: flex-start; }
 
-/* settings: switch matrix, digest and number cards, Save */
-.alerts-table { min-width: 760px; }
-.alerts-table td { vertical-align: middle; }
-.alerts-locked { display: block; font-size: var(--text-hint-size); color: var(--ink-muted); }
+/* settings: the switches and Save */
 .alerts-switch { position: relative; flex: none; display: inline-flex; align-items: center; justify-content: flex-start; width: var(--control-md); height: var(--switch-track); margin: 0; padding: 2px; box-sizing: border-box; border: var(--rule-strong) solid var(--ink); background: var(--surface); cursor: pointer; vertical-align: middle; }
 .alerts-switch__knob { width: 18px; height: 18px; background: var(--ink); }
 .alerts-switch.is-on { justify-content: flex-end; background: var(--ink); }
 .alerts-switch.is-on .alerts-switch__knob { background: var(--surface); }
-.alerts-switch.is-locked { border-color: var(--disabled); background: var(--surface); cursor: not-allowed; }
-.alerts-switch.is-locked .alerts-switch__knob { background: var(--disabled); }
-.alerts-cards { display: flex; flex-wrap: wrap; gap: var(--space-22px); }
-.alerts-card { flex: 1 1 300px; background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-10px); }
-.alerts-cardlabel { font-weight: 500; }
-.alerts-select { padding: 0 var(--space-10px); }
-.alerts-number { font-family: var(--font-mono); }
-.alerts-note { font-size: var(--text-hint-size); color: var(--ink-muted); }
 .alerts-save { max-width: 260px; }
 
-/* phone settings: one card per event, quiet hours as text, Save pinned to the bottom */
-.alerts-eventcard { line-height: normal; background: var(--surface); border: var(--rule-strong) solid var(--ink); padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-6px); }
-.alerts-eventlabel { font-weight: 600; }
-.alerts-eventswitches { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; font-size: var(--text-hint-size); }
-.alerts-switchwrap { display: contents; }
-.alerts-timing { font-size: var(--text-small-size); color: var(--ink-muted); }
-.alerts-quiet { margin: 0; line-height: normal; font-size: var(--text-hint-size); color: var(--ink-muted); }
+/* phone settings: Save pinned to the bottom */
 .alerts-page { --alerts-footer: 86px; }
 .alerts-footspace { height: var(--alerts-footer); flex: none; }
 /* focus and scrollIntoView stop a message above the pinned Save bar, not under it */
@@ -56,22 +39,16 @@
 .alerts-footer { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); }
 
 @media (max-width: 719.98px) {
-  /* the phone board: search and Filter share a row, and the count is for screen readers only */
-  .alerts-page .psl-toolbar { flex-wrap: nowrap; }
-  .alerts-page .psl-toolbar .psl-search { flex: 1 1 0; min-width: 0; }
-  .alerts-page .psl-resultcount { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .alerts-page { gap: var(--space-3); }
   .alerts-head { flex-wrap: nowrap; align-items: center; }
   /* the 44px target overlaps the gaps around the heading row instead of making it taller */
   .alerts-head .alerts-back { margin: calc(var(--space-2) * -1) 0; }
-  .alerts-search { flex: 1 1 0; min-width: 0; max-width: none; }
   .alerts-link { padding: var(--space-10px) var(--space-3); }
   /* the switch is a 44px target (D-92c); its track is drawn behind the knob as the board draws it, and the extra
      height overlaps the row around it so the rows keep the board's rhythm */
-  .alerts-switch, .alerts-switch.is-on, .alerts-switch.is-locked { height: var(--control-md); margin-block: calc((var(--switch-track) - var(--control-md)) / 2); padding: 0 var(--space-1); border: none; background: none; }
+  .alerts-switch, .alerts-switch.is-on { height: var(--control-md); margin-block: calc((var(--switch-track) - var(--control-md)) / 2); padding: 0 var(--space-1); border: none; background: none; }
   .alerts-switch::before { content: ""; position: absolute; left: 0; right: 0; top: calc((var(--control-md) - var(--switch-track)) / 2); height: var(--switch-track); box-sizing: border-box; border: var(--rule-strong) solid var(--ink); background: var(--surface); }
   .alerts-switch.is-on::before { background: var(--ink); }
-  .alerts-switch.is-locked::before { border-color: var(--disabled); background: var(--surface); }
   .alerts-switch__knob { position: relative; }
 }
 
@@ -92,3 +69,32 @@
   .alerts-drawer .psl-sheet__foot { flex-direction: row; justify-content: space-between; align-items: center; min-height: var(--control-phone); padding-block: 0; }
   .alerts-drawer .psl-sheet__foot a { min-height: var(--control-md); display: inline-flex; align-items: center; }
 }
+
+/* F-61: the summary and as-of lines, the group headings on the page, row notices, Mark as read and Load more */
+.alerts-summary { margin: 0; line-height: normal; color: var(--ink-muted); }
+.alerts-drawer .alerts-summary { padding: var(--space-3) 0 0; font-size: var(--text-small-size); }
+.alerts-asof { margin: 0; padding-top: var(--space-3); line-height: normal; font-size: var(--text-small-size); color: var(--ink-muted); }
+.alerts-page > .alerts-asof { padding: 0; }
+.alerts-grp--page { padding: var(--space-2) var(--space-4); }
+.alerts-sub { font-size: var(--text-small-size); overflow-wrap: anywhere; }
+.alerts-rowmain { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.alerts-rownote { display: block; margin: 0; font-size: var(--text-small-size); color: var(--ink-muted); }
+.alerts-rowtail { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); padding: 0 var(--space-4) var(--space-3) calc(var(--space-4) + 40px + var(--space-3)); }
+.alerts-link--plain:hover { background: none; }
+.alerts-markread { align-self: flex-start; min-height: var(--control-md); padding: 0; background: none; border: none; color: var(--ink); text-decoration: underline; cursor: pointer; font: inherit; font-size: var(--text-small-size); }
+.alerts-more { display: flex; }
+
+/* settings: the two switches, their state words and the receipts */
+.alerts-channels { list-style: none; margin: 0; padding: 0; background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.alerts-channel { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-4); border-bottom: var(--rule-thin) solid var(--rule-soft); }
+.alerts-channel:last-child { border-bottom: none; }
+.alerts-channelname { font-weight: 600; }
+.alerts-channelstate { display: block; font-size: var(--text-small-size); color: var(--ink-muted); }
+.alerts-receipts { list-style: none; margin: 0; padding: 0; background: var(--surface); border: var(--rule-strong) solid var(--ink); }
+.alerts-receipt { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); padding: var(--space-3) var(--space-4); border-bottom: var(--rule-thin) solid var(--rule-soft); }
+.alerts-receipt:last-child { border-bottom: none; }
+.alerts-receiptstate { font-weight: 500; }
+.alerts-receiptstate--uncertain { font-style: italic; }
+.alerts-receiptmeta { font-size: var(--text-small-size); color: var(--ink-muted); }
+.alerts-h2 { margin: 0; font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-muted); }
+.alerts-saved { margin: 0; line-height: normal; font-weight: 500; }

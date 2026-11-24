@@ -1,161 +1,156 @@
 {
-  "items": [
-    {
-      "register": "issues",
-      "reference": "ISS-0233",
-      "title": "Login fails on older Android phones",
-      "severity": "high",
-      "owner": {
-        "name": "Tunde Bello",
-        "role": "PM"
-      },
-      "state": "Fix in testing",
-      "age_seconds": 180000,
-      "work_id": "W-2411"
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-0229",
-      "title": "Report totals round differently",
-      "severity": "medium",
-      "owner": {
-        "name": "Engineering",
-        "recorded_by_pm": true
-      },
-      "state": "Waiting on Engineering",
-      "age_seconds": 349200
-    },
-    {
-      "register": "issues",
-      "reference": "ISS-0221",
-      "title": "Slow search on patient list",
-      "severity": "low",
-      "owner": {
-        "name": "Tunde Bello",
-        "role": "PM"
-      },
-      "state": "Closed by QA and PM"
-    },
-    {
-      "register": "changes",
-      "reference": "CR-0031",
-      "title": "SMS reminders",
-      "severity": "medium",
-      "owner": {
-        "name": "Tunde Bello",
-        "role": "PM"
-      },
-      "state": "Assessing the effect on milestone 3",
-      "age_seconds": 432000,
-      "work_id": "W-1005"
-    },
-    {
-      "register": "changes",
-      "reference": "CR-0027",
-      "title": "Export visit list to CSV",
-      "severity": "low",
-      "owner": {
-        "name": "Engineering",
-        "recorded_by_pm": true
-      },
-      "state": "Approved and built",
-      "age_seconds": 1641600
-    },
-    {
-      "register": "rfps",
-      "reference": "RFP-0044",
-      "title": "Pilot for the Ikeja clinic group",
-      "owner": {
-        "name": "Lagoon Health",
-        "role": "Client",
-        "outside_party": true
-      },
-      "state": "Draft being prepared",
-      "age_seconds": 259200
-    }
-  ],
   "as_of": "2026-11-12T15:40:00Z",
-  "registers": [
+  "sections": [
     {
-      "register": "issues",
-      "reference": "ISS-0233",
-      "title": "Login fails on older Android phones",
-      "severity": "high",
-      "owner": {
-        "name": "Tunde Bello",
-        "role": "PM"
-      },
-      "state": "Fix in testing",
-      "age_seconds": 180000,
-      "work_id": "W-2411"
+      "key": "issues",
+      "title": "Issues",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/issues/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/issues",
+      "items": [
+        {
+          "title": "ISS-0233",
+          "state": "Fix in testing",
+          "state_code": "fix_in_testing",
+          "detail": "Login fails on older Android phones",
+          "at": null,
+          "due": null,
+          "severity": "High",
+          "owner": "Tunde Bello",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/issues/#233",
+          "record_id": 233,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/issues/233",
+          "reference": "ISS-0233",
+          "age_days": 2,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-0229",
+          "state": "Waiting on Engineering",
+          "state_code": "waiting_on_engineering",
+          "detail": "Report totals round differently",
+          "at": null,
+          "due": null,
+          "severity": "Critical",
+          "owner": "Engineering",
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/issues/#229",
+          "record_id": 229,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/issues/229",
+          "reference": "ISS-0229",
+          "age_days": 4,
+          "origin_meeting": null
+        },
+        {
+          "title": "ISS-0221",
+          "state": "Closed by QA and PM",
+          "state_code": "closed",
+          "detail": "Slow search on patient list",
+          "at": null,
+          "due": null,
+          "severity": "Low",
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/issues/#221",
+          "record_id": 221,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/issues/221",
+          "reference": "ISS-0221",
+          "age_days": null,
+          "origin_meeting": null
+        }
+      ]
     },
     {
-      "register": "issues",
-      "reference": "ISS-0229",
-      "title": "Report totals round differently",
-      "severity": "medium",
-      "owner": {
-        "name": "Engineering",
-        "recorded_by_pm": true
-      },
-      "state": "Waiting on Engineering",
-      "age_seconds": 349200
+      "key": "escalations",
+      "title": "Escalations",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/escalations/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/escalations",
+      "items": [
+        {
+          "title": "ISS-0240",
+          "state": "Awaiting decision",
+          "state_code": "awaiting_decision",
+          "detail": "Payment webhook keeps failing",
+          "at": null,
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/escalations/#77",
+          "record_id": 77,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/escalations/77",
+          "reference": "ISS-0240",
+          "age_days": null,
+          "origin_meeting": null
+        }
+      ]
     },
     {
-      "register": "issues",
-      "reference": "ISS-0221",
-      "title": "Slow search on patient list",
-      "severity": "low",
-      "owner": {
-        "name": "Tunde Bello",
-        "role": "PM"
-      },
-      "state": "Closed by QA and PM"
+      "key": "changes",
+      "title": "Changes",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/change-versions/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/change-versions",
+      "items": [
+        {
+          "title": "CHG-0031",
+          "state": "Version 2",
+          "state_code": "recorded",
+          "detail": "Reminders",
+          "at": null,
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/change-versions/#31",
+          "record_id": 31,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/change-versions/31",
+          "reference": null,
+          "age_days": null,
+          "origin_meeting": null
+        },
+        {
+          "title": "CHG-0027",
+          "state": "Version 1",
+          "state_code": "recorded",
+          "detail": "Visit list export",
+          "at": null,
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/change-versions/#27",
+          "record_id": 27,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/change-versions/27",
+          "reference": null,
+          "age_days": null,
+          "origin_meeting": null
+        }
+      ]
     },
     {
-      "register": "changes",
-      "reference": "CR-0031",
-      "title": "SMS reminders",
-      "severity": "medium",
-      "owner": {
-        "name": "Tunde Bello",
-        "role": "PM"
-      },
-      "state": "Assessing the effect on milestone 3",
-      "age_seconds": 432000,
-      "work_id": "W-1005"
+      "key": "emergencies",
+      "title": "Emergency changes",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/emergency-changes/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/emergency-changes",
+      "items": []
     },
     {
-      "register": "changes",
-      "reference": "CR-0027",
-      "title": "Export visit list to CSV",
-      "severity": "low",
-      "owner": {
-        "name": "Engineering",
-        "recorded_by_pm": true
-      },
-      "state": "Approved and built",
-      "age_seconds": 1641600
-    },
-    {
-      "register": "rfps",
-      "reference": "RFP-0044",
-      "title": "Pilot for the Ikeja clinic group",
-      "owner": {
-        "name": "Lagoon Health",
-        "role": "Client",
-        "outside_party": true
-      },
-      "state": "Draft being prepared",
-      "age_seconds": 259200
+      "key": "rfp",
+      "title": "Bid requests",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/received-bids/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/received-bids",
+      "items": [
+        {
+          "title": "RFP-0044",
+          "state": "Bid request recorded",
+          "state_code": "recorded",
+          "detail": null,
+          "at": null,
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/received-bids/#44",
+          "record_id": 44,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/received-bids/44",
+          "reference": null,
+          "age_days": null,
+          "origin_meeting": null
+        }
+      ]
     }
-  ],
-  "summary": {
-    "registers": {
-      "issues": 3,
-      "changes": 2,
-      "emergencies": 0,
-      "rfps": 1
-    }
-  }
+  ]
 }

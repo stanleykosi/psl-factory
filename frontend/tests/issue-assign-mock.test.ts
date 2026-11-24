@@ -95,12 +95,13 @@ describe('the four issue fixtures', () => {
     for (const id of ['W-2411', 'W-2412', 'W-2413', 'W-2414']) expect(await (await fetch(`${base}/api/v1/work/${id}`, { headers: HEADERS })).json()).toEqual(fixture(id));
   });
 
-  it('the register row for ISS-0233 opens W-2411', () => {
+  it('the live P-0101 register fixture carries the ISS-0233 row as plain text with no work link (F-75 conflict 4, D-182)', () => {
     const tab = JSON.parse(readFileSync(join(__dirname, '../mock/fixtures/projects/tabs/P-0101.registers.json'), 'utf8'));
     const rows = JSON.stringify(tab);
     expect(rows).not.toContain('W-1002');
-    expect(tab.rows ?? rows).toBeTruthy();
-    expect(rows).toMatch(/"work_id":\s*"W-2411"/);
+    const row = tab.sections.flatMap((s: { items: Record<string, unknown>[] }) => s.items).find((r: Record<string, unknown>) => r.reference === 'ISS-0233');
+    expect(row).toBeTruthy();
+    expect(row).not.toHaveProperty('work_id');
   });
 });
 

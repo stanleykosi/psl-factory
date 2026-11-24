@@ -8,9 +8,20 @@ import { FileUpload, type FileState } from '@/components';
 
 import { uploadCaseFile, uploadErrorMessage, type UploadedFile } from './evidence';
 
-type Props = { caseId: string; value: UploadedFile | null; onChange(file: UploadedFile | null): void; disabledReason?: string };
+type Props = {
+  caseId: string;
+  value: UploadedFile | null;
+  onChange(file: UploadedFile | null): void;
+  disabledReason?: string;
+  /** F-78: a narrower list of accepted extensions than the default proof types (the zone refuses the rest before any request). */
+  accept?: string[];
+  /** F-78: the zone's label; default "Evidence file". */
+  label?: string;
+  /** F-78: the words for a failed upload; default `uploadErrorMessage`. */
+  describeError?: (error: unknown) => string;
+};
 
-export function EvidencePicker({ caseId, value, onChange, disabledReason }: Props) {
+export function EvidencePicker({ caseId, value, onChange, disabledReason, accept, label = 'Evidence file', describeError = uploadErrorMessage }: Props) {
   const [busy, setBusy] = useState<{ file: File } | null>(null);
   const [failed, setFailed] = useState<{ file: File; message: string } | null>(null);
 
@@ -20,7 +31,7 @@ export function EvidencePicker({ caseId, value, onChange, disabledReason }: Prop
     try {
       onChange(await uploadCaseFile(caseId, file));
     } catch (error) {
-      setFailed({ file, message: uploadErrorMessage(error) });
+      setFailed({ file, message: describeError(error) });
     } finally {
       setBusy(null);
     }
@@ -36,7 +47,8 @@ export function EvidencePicker({ caseId, value, onChange, disabledReason }: Prop
 
   return (
     <FileUpload
-      label="Evidence file"
+      label={label}
+      accept={accept}
       state={state}
       pending={busy !== null}
       disabledReason={disabledReason}

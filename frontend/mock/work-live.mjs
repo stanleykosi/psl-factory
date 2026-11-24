@@ -7,7 +7,12 @@
 // (delivery-overview.mjs): the same line, state, reference and date as the row that links to them.
 // A scenario (cookie psl_mock_scenario or header X-Mock-Scenario) answers every route here with that status; csrf_failed
 // answers writes with the stale-token 403.
-export const WORK_LIVE_PATH = /^\/api\/v1\/work\/(\d+)(\/history|\/weekly-report)?$/;
+// F-87: the work item's own writes (POST /work/{id}/actions, /control, /background). Fixtures: 4120 awaiting reconciliation
+// (reconcile, revision 5), 4121 stopped (resume and cancel, revision 3), 4122 processing with background (revision 7), 4110
+// null revision (reconcile and cancel listed), 4111 nothing listed, 4123 lists adopt_profile and release_invoice (never drawn).
+// Write scenarios answer only the three write routes, so the re-read still works: w403, w403csrf, w409 (the item moves on to
+// a higher revision), w422, w429, w503, w500, wdrop (the connection is cut after the write ran). `ready` makes a reconcile find the item ready.
+export const WORK_LIVE_PATH = /^\/api\/v1\/work\/(\d+)(\/history|\/weekly-report|\/actions|\/control|\/background)?$/;
 export const CASE_FILES_PATH = /^\/api\/v1\/cases\/([^/]+)\/(files|files\/(\d+)\/drafts|file-drafts\/(\d+)\/review)$/;
 
 const CASE = '6c2f1d3e-1a4b-4b8e-9d0a-0a1b2c3d4e5f';
@@ -99,6 +104,25 @@ const WORK = {
   4105: item(4105, { state: 'action_needed', status_label: 'Action needed', revision: null, department_handoff_url: '/handoff/4105' }),
   4107: item(4107, { state: 'waiting', status_label: 'Waiting', panels: [{ key: 'weekly-report', url: '/api/v1/work/4107/weekly-report', contract_path: null }, { key: 'forecast', url: '/api/v1/work/4107/forecast', contract_path: null }] }),
   4108: item(4108, { state: 'verified', status_label: 'Verified' }),
+  4110: item(4110, { state: 'awaiting_reconciliation', status_label: 'Awaiting reconciliation', revision: null, actions: ['reconcile'], available_control: ['cancel'] }),
+  4111: item(4111, { state: 'ready', status_label: 'Ready' }),
+  4120: item(4120, { title: 'Invoice for Lagoon Health', line: 'invoice', state: 'awaiting_reconciliation', status_label: 'Awaiting reconciliation', revision: 5, actions: ['reconcile'] }),
+  4121: item(4121, { state: 'action_needed', status_label: 'Stopped', revision: 3, available_control: ['resume', 'cancel'] }),
+  4122: item(4122, { state: 'processing', status_label: 'Processing', revision: 7, actions: ['background'], current_activity: { label: 'Drafting the weekly update', watching: false } }),
+  4123: item(4123, { state: 'action_needed', status_label: 'Stopped', revision: 2, actions: ['release_invoice'], available_control: ['adopt_profile'] }),
+};
+
+// what a write changed: id -> { state, status_label, revision }; reset with the mock
+let moved = {};
+const current = (id) => (WORK[id] ? { ...WORK[id], ...moved[id] } : undefined);
+const STATUS_LABEL = { ready: 'Ready', cancelled: 'Cancelled', awaiting_reconciliation: 'Awaiting reconciliation', processing: 'Processing' };
+const WRITE_SCENARIOS = {
+  w403: [403, BODIES[403]],
+  w409: [409, { code: 'stale_version', message: 'Someone changed this since you opened it.' }],
+  w422: [422, { code: 'setup_required', message: 'A policy value is missing.', fields: [{ name: 'policy', message: 'Ask the PMO Lead to set it.' }] }],
+  w429: [429, BODIES[429]],
+  w503: [503, BODIES[503]],
+  w500: [500, { code: 'server_error', message: 'Something broke.' }],
 };
 
 const REPORT = (patch) => ({
@@ -151,23 +175,55 @@ let log = [];
 export const resetWorkLive = () => {
   uploads = 0;
   log = [];
+  moved = {};
 };
 /** The uploads, drafts and reviews the mock accepted: tests read it to count what was sent. */
 export const workLiveLog = () => log;
 
 const send = (status, body) => [status, body];
 
+/** One of the three work item writes. The body is the raw bytes; the result is moved only when the scenario lets the write through. */
+function workWrite(id, route, scenario, csrfOk, rawBytes) {
+  const item = current(id);
+  if (!item) return send(404, BODIES[404]);
+  if (scenario === 'w403csrf' || !csrfOk) return send(403, CSRF_FAILED);
+  let body = {};
+  try {
+    body = JSON.parse(Buffer.from(rawBytes ?? []).toString('utf8') || '{}');
+  } catch {
+    return send(400, BODIES[400]);
+  }
+  log.push({ route, work_id: id, body });
+  const action = route === 'background' ? 'background' : body.action;
+  const listed = route === 'control' ? item.available_control.includes(action) : item.actions.includes(action);
+  if (!listed) return send(409, { code: 'action_unavailable', message: 'That is not available for this item now.' });
+  if (scenario === 'w409') {
+    moved[id] = { ...moved[id], revision: (item.revision ?? 0) + 2 };
+    return send(409, WRITE_SCENARIOS.w409[1]);
+  }
+  if (WRITE_SCENARIOS[scenario]) return send(...WRITE_SCENARIOS[scenario]);
+  const state =
+    route === 'actions' ? (scenario === 'ready' ? 'ready' : 'awaiting_reconciliation') : action === 'cancel' ? 'cancelled' : action === 'resume' ? 'ready' : item.state;
+  // as the live API does, a background change leaves the revision as it was; the others move it on
+  const revision = route === 'background' ? item.revision : item.revision + 1;
+  moved[id] = { state, status_label: STATUS_LABEL[state] ?? item.status_label, revision };
+  // the connection is cut after the write ran: the page cannot know, and the re-read shows the item moved
+  if (scenario === 'wdrop') return ['drop'];
+  return send(route === 'control' ? 200 : 202, { work_id: id, state, revision });
+}
+
 /** One live read or upload. `scenario` is the cookie or header value; `csrfOk` is whether the write carried the persona's token. */
 export function workLive({ method, url, scenario, csrfOk, persona, rawBytes }) {
   const read = WORK_LIVE_PATH.exec(url.pathname);
   const write = CASE_FILES_PATH.exec(url.pathname);
   const status = Number(scenario);
+  if (read && method === 'post' && read[2] && /^\/(actions|control|background)$/.test(read[2])) return workWrite(Number(read[1]), read[2].slice(1), scenario, csrfOk, rawBytes);
   if (BODIES[status]) return send(status, BODIES[status]);
   if (read && method === 'get') {
     if (scenario === 'csrf_failed') return send(403, CSRF_FAILED);
     const id = Number(read[1]);
     if (persona === 'none' || id === 4106 || (!WORK[id] && !REPORTS[id] && id !== 4108)) return send(404, BODIES[404]);
-    if (!read[2]) return send(200, WORK[id]);
+    if (!read[2]) return send(200, current(id));
     if (read[2] === '/history') {
       const kind = url.searchParams.get('kind');
       if (kind && !['worker', 'decision', 'evidence'].includes(kind)) return send(400, BODIES[400]);

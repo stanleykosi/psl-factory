@@ -1,0 +1,28 @@
+/* SCR-19 Mark a milestone complete (desktop, mobile). Token variables only; layout switches at 720px (bp-phone). */
+
+.mscomplete { display: flex; flex-direction: column; gap: var(--space-20px); min-width: 0; }
+.mscomplete__header { display: flex; flex-direction: column; gap: var(--space-20px); }
+.mscomplete__row { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
+.mscomplete__card { flex: 999 1 560px; min-width: 0; max-width: 720px; }
+.mscomplete__next { flex: 1 1 300px; max-width: 420px; min-width: 0; }
+/* the board's blue header with white text on the side panel (token --action); the selector outranks components.css `.cmp-panelbox.psl-panel--agent > .psl-panel__head` */
+.cmp-panelbox.psl-panel--agent.mscomplete__next > .psl-panel__head { background: var(--action); color: var(--on-strong); border-bottom-color: var(--action); }
+.mscomplete__box { min-height: 44px; display: flex; align-items: center; padding: 0 10px; border: 2px solid var(--ink); background: var(--surface); overflow-wrap: anywhere; }
+.mscomplete__phonetitle { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 22px; line-height: 1.08; overflow-wrap: anywhere; }
+.mscomplete__sub { margin: 0; color: var(--ink-muted); font-size: var(--text-hint-size); }
+.mscomplete--phone { gap: var(--space-12px, 12px); }
+.mscomplete--phone .mscomplete__header { gap: var(--space-2); }
+.mscomplete__fields, .mscomplete__evidence { display: flex; flex-direction: column; gap: var(--space-12px, 12px); min-width: 0; }
+.mscomplete__evidence { border: none; margin: 0; padding: 0; }
+.mscomplete__field { display: flex; flex-direction: column; gap: var(--space-6px); }
+.mscomplete__label { font-weight: 500; }
+.mscomplete__name { margin: 0; overflow-wrap: anywhere; }
+.mscomplete__plain { margin: 0; overflow-wrap: anywhere; }
+.mscomplete__why { color: var(--ink-muted); font-size: var(--text-hint-size); }
+.mscomplete__pdf { display: flex; flex-direction: column; gap: var(--space-6px); }
+.mscomplete__actions { display: flex; }
+
+@media (max-width: 720px) {
+  .mscomplete { padding-bottom: 120px; }
+  .mscomplete__bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-bar); }
+}

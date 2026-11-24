@@ -71,6 +71,14 @@
 .work-agent--none { padding: var(--space-14px); background: var(--surface); border: var(--rule-strong) solid var(--rule-soft); color: var(--ink-muted); }
 .work-agent--none p { margin: 0; }
 .work-next { margin: 0; }
+/* F-87 controls row: small buttons side by side, stacked full width on the phone */
+.work-controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+.work-control { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+@media (max-width: 719.98px) {
+  .work-controls { flex-direction: column; align-items: stretch; }
+  .work-control { flex-direction: column; align-items: stretch; }
+  .work-control .psl-btn { width: 100%; min-height: 44px; }
+}
 
 /* two columns from bp-desktop: main work on the left, the human task, state card or About history on the right */
 .work-columns { display: grid; gap: var(--space-5); align-items: start; }
