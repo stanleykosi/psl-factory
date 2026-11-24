@@ -471,6 +471,26 @@ The live server needs the week as date-times with a timezone offset, at most 8 d
 2. Use one fixed PSL timezone (for example Africa/Lagos) for everyone, whatever the browser says.
 3. End at 23:59:59 of the last day instead of the next midnight.
 
+### LC-Q33 · F-88 · Log RFP: "Client or prospect" and the new-client hint
+The SCR-23 board labels the field "Client or prospect" and offers "New client · they'll be added to the client register". The live API only takes an existing organisation and does not add new clients (backend C-9).
+1. **(Recommended)** Label it "Client", list existing organisations only, and leave out the new-client hint until the backend can add a client.
+2. Keep the board's label "Client or prospect", with the same existing-only list.
+
+### LC-Q34 · F-88 · Log RFP: the board's note and deadline hints
+The board shows the note "Received from their procurement lead by email." and the deadline hint "Taken from page 2 of the RFP (proof attached)". The contract has no source or proof field for the deadline.
+1. **(Recommended)** Leave both hints out; the Note is free text the person types.
+2. Show the deadline hint as plain help text without a proof link.
+
+### LC-Q35 · F-88 · Assign PM: states and list no board draws
+Assign PM needs states the SCR-24 board doesn't draw: setup required, no nominees, already assigned, unconfirmed, and the choice between a recorded proof and an upload with an "I have checked this file" tick-box. The list behind the drawer is the received-RFP list, not the work table.
+1. **(Recommended)** Accept the states as built (plain callouts in the drawer's style) and draw them on the board later.
+2. Hold F-88's merge until the boards for these states exist.
+
+### LC-Q36 · F-88 · Log RFP: the submission method can't be cleared
+The board's submission-method segment (four choices) is optional, but once a choice is made it can't be cleared; an unchosen method is simply not sent.
+1. **(Recommended)** Keep the board's segment as drawn; a person who chose by mistake picks the right one.
+2. Add a fifth "Not known" choice that sends nothing.
+
 ## Lane D
 
 ### LD-Q1 · F-107 · Business-unit totals (SCR-57): build on what the API discloses?
