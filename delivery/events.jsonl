@@ -4903,3 +4903,4 @@
 {"at":"2026-11-24T14:01:36Z","feature":"F-71","round":2,"kind":"gate","verdict":"PASS","attempt":1,"exit_code":0,"seconds":296.4,"commit":"cfc3c4623820"}
 {"at":"2026-11-24T14:01:52Z","feature":"F-71","round":2,"kind":"transition","head":"cfc3c4623820","from":"IMPLEMENTING","to":"IN_REVIEW"}
 {"at":"2026-11-24T14:02:00Z","feature":"F-119","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"f39d6dda8b09","written_at":"2026-11-24T14:01:36Z"}
+{"at":"2026-11-24T14:03:28Z","feature":"F-87","round":3,"kind":"finding","action":"fix","finding":"TECH-2-1","by":"builder"}

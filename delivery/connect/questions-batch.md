@@ -300,6 +300,20 @@ Parts that 1.24.0 now supplies are switched on as the boards draw them (D-185), 
   1. (Recommended) Accept all: the board's "Chidi drafts the stage 2 invoice… Finance Lead approves" becomes the D-187 wording (completion queues the Finance handoff; "Completing a milestone is not invoicing it" stays); proof is a choice of the project's recorded proofs, plus a PDF upload when the server allows it, with a "this is the right file" tick; a hold line explains why it can't be marked yet; no recorder name or release reference (live gives neither); the page shows the milestone name before recording and the completed date after; "Mark complete" shows on uncompleted rows only when the server allows it, with one hold line above the table.
   2. Show the milestone's stage number through the link (option 2 of item 4).
 
+### Batch 6 (lane B, D-201 demo path)
+- **F-71 · B33. Sign the Money and Milestones fidelity exceptions.** `delivery/features/F-71/fidelity-exceptions.json` has 10 entries. Each one is a board part the spec lists as an accepted hide or change under D-182 ("Hide, accept all recs"), in "Conflicts with the boards" items 1, 3 to 7 and 11:
+  - the Chidi agent card and its "Ask me" link (3 entries);
+  - the report title;
+  - "INV-0398 · verified" and "INV-0412 · awaiting Finance decision" as one composed status (2 entries);
+  - "Part paid · ₦500,000.00 owed";
+  - the amount_note line;
+  - "Mark milestone 3 complete";
+  - the CR-0031 link.
+  The fidelity tool needs them signed to count coverage.
+  1. (Recommended) Sign all 10 as drafted.
+  2. Sign some and name the ones to rebuild as drawn.
+  More may follow once the round-2 fidelity re-run reports: NGN against ₦, board sample values, and a visual waiver if the score stays under 90.
+
 ## Lane C
 
 ### LC-Q1 · F-85, F-87 · Work item parts the live API does not give
