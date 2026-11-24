@@ -5183,3 +5183,13 @@
 {"at":"2026-11-24T15:51:18Z","feature":"F-111","round":2,"kind":"transition","head":"30143e1a4f93","from":"READY_FOR_ACCEPTANCE","to":"PR_OPEN"}
 {"at":"2026-11-24T15:51:19Z","feature":"F-65","round":1,"kind":"transition","head":"15ad8e8b0d20","from":"IN_REVIEW","to":"CHANGES_REQUESTED"}
 {"at":"2026-11-24T15:51:21Z","feature":"F-65","round":2,"kind":"transition","head":"15ad8e8b0d20","from":"CHANGES_REQUESTED","to":"IMPLEMENTING"}
+{"at":"2026-11-24T15:52:25Z","feature":"F-111","round":2,"kind":"decision","decision":"HUMAN_APPROVAL","head":"30143e1a4f93","reasons":["finding TECH-1-2 was accepted as a risk","finding TECH-1-3 was accepted as a risk","finding UX-1-1 was accepted as a risk","finding UX-1-3 was accepted as a risk","finding UI-1-3 was accepted as a risk","finding UI-1-4 was accepted as a risk","finding UI-1-5 was accepted as a risk","finding UI-1-6 was accepted as a risk"]}
+{"at":"2026-11-24T15:52:25Z","feature":"F-111","round":2,"kind":"fields","fields":{"merge_decision.approver_recommendation":"AUTO_MERGE"}}
+{"at":"2026-11-24T15:55:17Z","feature":"F-78","round":1,"kind":"gate","verdict":"PASS","attempt":2,"exit_code":0,"seconds":231.3,"commit":"07aca01552f4"}
+{"at":"2026-11-24T15:55:29Z","feature":"F-78","round":1,"kind":"transition","head":"07aca01552f4","from":"IMPLEMENTING","to":"IN_REVIEW"}
+{"at":"2026-11-24T15:56:16Z","feature":"F-88","round":2,"kind":"review","role":"technical","verdict":"PASS","reviewer":"reviewer-technical","commit":"9204573002b0","findings":{"TECH-2-1":"low"},"written_at":"2026-11-24T15:53:59Z"}
+{"at":"2026-11-24T15:56:16Z","feature":"F-88","round":2,"kind":"review","role":"integrated_qa","verdict":"PASS","reviewer":"qa","commit":"9204573002b0","findings":{"QA-2-1":"low","QA-2-2":"low","QA-2-3":"low"},"written_at":"2026-11-24T15:55:59Z"}
+{"at":"2026-11-24T15:56:16Z","feature":"F-88","round":2,"kind":"review","role":"pmo_acceptance","verdict":"PASS","reviewer":"pmo-acceptance","commit":"9204573002b0","findings":{"PMO-2-1":"low","PMO-2-2":"low","PMO-2-3":"low","PMO-2-4":"low"},"written_at":"2026-11-24T15:54:07Z"}
+{"at":"2026-11-24T15:56:16Z","feature":"F-88","round":2,"kind":"review","role":"product_acceptance","verdict":"PASS","reviewer":"design engineer (hunchoweb), accepted in batch, delegated under D-184","commit":"9204573002b0","written_at":"2026-11-24T15:54:05Z"}
+{"at":"2026-11-24T15:56:16Z","feature":"F-88","round":2,"kind":"review","role":"ux","verdict":"PASS","reviewer":"reviewer-ux","commit":"9204573002b0","findings":{"UX-2-1":"low","UX-1-2":"low"},"written_at":"2026-11-24T15:54:01Z"}
+{"at":"2026-11-24T15:56:16Z","feature":"F-88","round":2,"kind":"review","role":"ui","verdict":"PASS","reviewer":"reviewer-ui","commit":"9204573002b0","written_at":"2026-11-24T15:54:01Z"}

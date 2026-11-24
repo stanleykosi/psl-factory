@@ -1245,7 +1245,7 @@
     "repository": null,
     "task_id": "FE-CONNECT-1",
     "base_branch": "main",
-    "base_sha": "4fd055ce825ee3b11bd6d24b4549fbc0f5efec55",
+    "base_sha": "90748de39df2315efb0b8b1abe72604bb551af0b",
     "task_branch": "fe-connect-1-issue-reads",
     "head_sha": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-d",
@@ -1288,12 +1288,23 @@
   },
   "merge_decision": {
     "policy_ref": null,
-    "approver_recommendation": null,
-    "approver": null,
-    "approver_reasons": [],
-    "script_decision": null,
-    "script_reasons": [],
-    "decided_for_head_sha": null,
+    "approver_recommendation": "AUTO_MERGE",
+    "approver": "approver",
+    "approver_reasons": [
+      "delivery/features/F-111/decision.md"
+    ],
+    "script_decision": "HUMAN_APPROVAL",
+    "script_reasons": [
+      "finding TECH-1-2 was accepted as a risk",
+      "finding TECH-1-3 was accepted as a risk",
+      "finding UX-1-1 was accepted as a risk",
+      "finding UX-1-3 was accepted as a risk",
+      "finding UI-1-3 was accepted as a risk",
+      "finding UI-1-4 was accepted as a risk",
+      "finding UI-1-5 was accepted as a risk",
+      "finding UI-1-6 was accepted as a risk"
+    ],
+    "decided_for_head_sha": "30143e1a4f9376200d9fc6f89797ff57e97a3b54",
     "merged_by": null,
     "pre_merge_sync": {
       "base_sha": null,
