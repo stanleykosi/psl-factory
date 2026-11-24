@@ -12,6 +12,7 @@ import { Breadcrumb, buttonClass, Button, Callout, EmptyState, formatDayTime, Se
 import { adapterFor, type LineContext, type PanelRef } from '@/features/workspace/adapter';
 import type { Section } from '@/features/workspace/labels';
 import { SectionView } from '@/features/workspace/Sections';
+import '@/features/forecast/forecastAdapter';
 import '@/features/workspace/weeklyReportAdapter';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';

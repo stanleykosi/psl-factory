@@ -1,12 +1,12 @@
 // @vitest-environment jsdom
-// F-103: the cash forecast read mapping (periods, items, matches, disclosure, delivery, month actuals) and its error words.
+// F-103: the cash forecast read mapping (periods, items, matches, disclosure, delivery) and its error words.
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { ApiError } from '@/api/errors';
-import type { LiveForecast, LiveForecastMonth } from '@/api/types';
+import type { LiveForecast } from '@/api/types';
 import { forecastAdapter, forecastReadSections } from '@/features/forecast/forecastAdapter';
-import { entryText, errorWords, forecastSections, isUncertain, monthIsCut, monthSections, moneyCell, periodSections } from '@/features/forecast/labels';
+import { entryText, errorWords, forecastSections, isUncertain, moneyCell, periodSections } from '@/features/forecast/labels';
 import { adapterFor } from '@/features/workspace/adapter';
 import type { Section } from '@/features/workspace/labels';
 import { SectionView } from '@/features/workspace/Sections';
@@ -16,7 +16,6 @@ import { forecastLive } from '../mock/forecast-live.mjs';
 
 const get = (path: string) => forecastLive({ method: 'get', url: new URL(path, 'http://m.local'), persona: 'finance_lead' }) as [number, never];
 const forecast = (id: number) => get(`/api/v1/work/${id}/forecast`)[1] as LiveForecast;
-const month = (id: number, m: string) => get(`/api/v1/work/${id}/forecast/actuals/${m}`)[1] as LiveForecastMonth;
 const draw = (sections: Section[]) => render(<>{sections.map((s) => <SectionView key={s.key} section={s} level={2} />)}</>);
 const base = forecast(4301);
 const withPeriods = (periods: unknown[]) => ({ ...base.result!, periods } as NonNullable<LiveForecast['result']>);
@@ -115,27 +114,6 @@ describe('group disclosure (AC9, AC10, AC11)', () => {
     const json = JSON.stringify(forecastSections(f));
     expect(json).not.toMatch(/payroll|Ngozi/);
     expect(forecastSections(f).some((s) => s.key.startsWith('disclosure'))).toBe(false);
-  });
-});
-
-describe('month actuals (AC12-AC14)', () => {
-  it('rows, actuals with direction and Verified, history; a null amount reads Unknown; a cut list says so', () => {
-    const m = month(4301, '2026-11');
-    draw(monthSections(m, 'NGN'));
-    expect(screen.getByText('Actual 5 · In')).toBeTruthy();
-    expect(screen.getByText('Actual 6 · Out')).toBeTruthy();
-    expect(screen.getByText('Not verified')).toBeTruthy();
-    expect(screen.getAllByText('Unknown').length).toBeGreaterThan(0);
-    expect(monthIsCut(m)).toBe(true);
-    expect(monthIsCut(month(4301, '2026-09'))).toBe(false);
-  });
-
-  it('marks a reversed match; an empty month says so', () => {
-    draw(monthSections(month(4301, '2026-09'), 'NGN'));
-    expect(screen.getByText('Reversed')).toBeTruthy();
-    draw(monthSections(month(4301, '2026-10'), 'NGN'));
-    expect(screen.getByText('No actuals recorded for 2026-10.')).toBeTruthy();
-    expect(get('/api/v1/work/4301/forecast/actuals/2026-12')[0]).toBe(404);
   });
 });
 

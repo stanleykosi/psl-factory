@@ -110,19 +110,9 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       await expect(main.getByText('Restart allowed under rule 12')).toBeVisible();
       await expect(main.getByText(/Nothing has been resent from this page\./)).toBeVisible();
       await expect(main.getByText(/No receipt yet/)).toBeVisible();
-      await expect(main.getByText('No proof on file')).toBeVisible();
       for (const name of [/retry/i, /cancel/i, /record what happened/i, /resend/i]) await expect(main.getByRole('button', { name })).toHaveCount(0);
       if (SHOTS) await page.screenshot({ path: `${SHOTS}/4305-${viewport.width}.png`, fullPage: true });
       expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations.map((v) => v.id)).toEqual([]);
-    });
-
-    test('4306 proof on file: a link to the proof route that is not requested until clicked', async ({ page }) => {
-      const seen = watch(page);
-      await page.goto('/work/4306');
-      await loaded(page);
-      const link = page.getByRole('link', { name: 'Proof on file' });
-      await expect(link).toHaveAttribute('href', '/api/v1/work/4306/forecast/observations/8');
-      expect(seen.urls.filter((u) => u.includes('/observations/'))).toEqual([]);
     });
 
     test('4307 and an unknown id are unavailable in the same words', async ({ page }) => {
@@ -136,33 +126,6 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Cash forecast for PSL Technologies');
       await expect(page.getByText('This changed while you were reading it. Reload.')).toBeVisible();
       await expect(page.getByText('PSL Technologies Ltd')).toHaveCount(0);
-    });
-
-    test('actuals for a month: loaded once, rows, direction, Unknown, cut lists said so; no write; 404 keeps the forecast', async ({ page }) => {
-      const seen = watch(page);
-      await page.goto('/work/4301?month=2026-11');
-      await loaded(page);
-      const main = page.locator('main#main');
-      await expect(main.getByText('Actual 6 · Out')).toBeVisible();
-      await expect(main.getByText('Actual 5 · In').first()).toBeVisible();
-      await expect(main.getByText('Not verified')).toBeVisible();
-      await expect(main.getByText('Showing the first rows only. The rest isn’t available here.')).toBeVisible();
-      await expect(main.getByText(/show more/i)).toHaveCount(0);
-      expect(seen.urls.filter((u) => u.endsWith('/actuals/2026-11'))).toHaveLength(1);
-      await noWriteButtons(page);
-      expect(seen.writes).toEqual([]);
-      if (SHOTS) await page.screenshot({ path: `${SHOTS}/4301-actuals-${viewport.width}.png`, fullPage: true });
-      expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations.map((v) => v.id)).toEqual([]);
-      // choose another month with the control: no cut sentence for a month that is not cut, and the reversed match is marked
-      await main.getByRole('combobox', { name: /Show actuals for/ }).click();
-      await page.getByRole('option', { name: '2026-09' }).click();
-      await expect(main.getByText('Reversed')).toBeVisible();
-      await expect(main.getByText('Showing the first rows only. The rest isn’t available here.')).toHaveCount(0);
-      await page.goto('/work/4301?month=2026-10');
-      await expect(page.getByText('No actuals recorded for 2026-10.')).toBeVisible();
-      await page.goto('/work/4301?month=2026-12');
-      await expect(page.getByText('This record is unavailable.').first()).toBeVisible();
-      await expect(page.getByText('PSL Technologies Ltd')).toBeVisible();
     });
   });
 }

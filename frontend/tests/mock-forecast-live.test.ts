@@ -24,12 +24,9 @@ describe('the forecast mock', () => {
     expect(work(get(`/api/v1/work/${id}`)[1]), JSON.stringify(work.errors)).toBe(true);
   });
 
-  it('the month answers are valid, and 4307, an unlisted month and a scenario answer 404 or their status', () => {
-    const month = validator('/api/v1/work/{work_id}/forecast/actuals/{month}');
-    for (const m of ['2026-11', '2026-09', '2026-10']) expect(month(get(`/api/v1/work/4301/forecast/actuals/${m}`)[1]), JSON.stringify(month.errors)).toBe(true);
+  it('4307 answers 404 and a forecast-only scenario leaves the work item alone', () => {
     expect(get('/api/v1/work/4307/forecast')[0]).toBe(404);
     expect(get('/api/v1/work/4307')[0]).toBe(404);
-    expect(get('/api/v1/work/4301/forecast/actuals/2026-12')[0]).toBe(404);
     expect(get('/api/v1/work/4301/forecast', 'forecast:409')[0]).toBe(409);
     expect(get('/api/v1/work/4301', 'forecast:409')[0]).toBe(200);
   });

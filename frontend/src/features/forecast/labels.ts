@@ -1,9 +1,9 @@
-// F-103: the cash forecast reads (GET /work/{id}/forecast and .../actuals/{month}) turned into the words and Section objects the
+// F-103: the cash forecast reads (GET /work/{id}/forecast) turned into the words and Section objects the
 // workspace renderer draws. Presentation only: nothing here adds, subtracts or rounds an amount, decides access, or invents a
 // value. A missing, null or malformed amount is Unknown, never 0. Group view (audience 'group') draws only what the disclosure
 // lists, and an entry that is an object keeps only its label or key (E-26: no staff name or individual pay).
 import type { ApiError } from '@/api/errors';
-import type { LiveForecast, LiveForecastMonth } from '@/api/types';
+import type { LiveForecast } from '@/api/types';
 import { formatDate } from '@/components';
 import type { Cell, Item, Section } from '@/features/workspace/labels';
 
@@ -11,7 +11,6 @@ export const UNAVAILABLE = 'This record is unavailable.';
 export const NO_FIGURES = 'No forecast figures yet.';
 export const NO_MATCHES = 'No actuals matched yet.';
 export const NOT_RESENT = 'Nothing has been resent from this page.';
-export const CUT_LISTS = 'Showing the first rows only. The rest isn’t available here.';
 
 type Obj = Record<string, unknown>;
 type Result = NonNullable<LiveForecast['result']>;
@@ -219,18 +218,6 @@ export function forecastSections(f: LiveForecast): Section[] {
   return out;
 }
 
-/** The month list the control offers: the period months as 'YYYY-MM', in the order sent, each once. */
-export function monthKeys(f: LiveForecast): string[] {
-  const seen: string[] = [];
-  list(f.result?.periods).forEach((p) => {
-    const m = /^(\d{4}-\d{2})/.exec(text(obj(p)?.month) ?? '')?.[1];
-    if (m && !seen.includes(m)) seen.push(m);
-  });
-  return seen;
-}
-
-export const isMonth = (m: string | null): m is string => m !== null && /^\d{4}-(0[1-9]|1[0-2])$/.test(m);
-
 /** The page's words for a failed read; null leaves it to the shared panel frame (its own Try again). */
 export function errorWords(error: ApiError): string | null {
   switch (error.kind) {
@@ -250,48 +237,3 @@ export function errorWords(error: ApiError): string | null {
       return null;
   }
 }
-
-/** The actuals for one month: rows, actuals and history; "more" flags are said as such by the caller (`monthIsCut`). */
-export function monthSections(m: LiveForecastMonth, currency: string | null): Section[] {
-  if (m.rows.length === 0 && m.actuals.length === 0 && m.history.length === 0) {
-    return [{ key: 'month', kind: 'text', title: `Actuals for ${m.month}`, items: [{ id: 'none', text: `No actuals recorded for ${m.month}.` }] }];
-  }
-  const out: Section[] = [];
-  if (m.rows.length > 0) {
-    out.push({
-      key: 'month-rows',
-      kind: 'table',
-      title: `Expected and actual for ${m.month}`,
-      columns: [
-        { key: 'key', label: 'Item', kind: 'text' },
-        { key: 'expected', label: 'Expected', kind: 'money' },
-        { key: 'actual', label: 'Actual', kind: 'money' },
-        { key: 'status', label: 'Status', kind: 'text' },
-        { key: 'notes', label: 'Notes', kind: 'text' },
-      ],
-      items: m.rows.map((r, i): Item => ({
-        id: `r${i}`,
-        cells: [textCell('key', r.key), moneyCell('expected', r.expected, currency), moneyCell('actual', r.actual, currency), textCell('status', r.status), textCell('notes', list(r.notes).map((n) => text(obj(n)?.reason)).filter(Boolean).join('; '))],
-      })),
-    });
-  }
-  if (m.actuals.length > 0) {
-    out.push({
-      key: 'month-actuals',
-      kind: 'figures',
-      title: 'Actuals',
-      items: m.actuals.map((a) => ({ id: `a${a.id}`, label: `Actual ${a.id} · ${directionWords(a.direction)}`, money: itemMoney(a.amount, currency), detail: a.verified ? 'Verified' : 'Not verified' })),
-    });
-  }
-  if (m.history.length > 0) {
-    out.push({
-      key: 'month-history',
-      kind: 'figures',
-      title: 'Matches',
-      items: m.history.map((h) => ({ id: `h${h.id}`, label: `Item ${h.item_key} · Actual ${h.actual_id}`, money: itemMoney(h.amount, currency), ...(h.reversed ? { detail: 'Reversed' } : {}) })),
-    });
-  }
-  return out;
-}
-
-export const monthIsCut = (m: LiveForecastMonth) => m.more_actuals || m.more_history || m.more_notes;

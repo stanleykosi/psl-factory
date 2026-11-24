@@ -1,12 +1,11 @@
 // F-103: the cash forecast panel, read only (GET /work/{id}/forecast), through the shared line adapter. The panel key is
 // 'forecast' (the work item lists it with 'forecast/disclosure' and 'forecast/lifecycle', which are write routes and have no
-// adapter). Every write on this panel (review, withdraw, post, match, disclosure, observation, retry) is F-103B: `commands()` is absent.
+// adapter). Proof link and month actuals return on F-87's Actions slot (D-202). Every write on this panel (review, withdraw, post, match, disclosure, observation, retry) is F-103B: `commands()` is absent.
 import { ApiError } from '@/api/errors';
 import type { LiveForecast } from '@/api/types';
 import { readPanel, registerLineAdapter, type LineAdapter } from '@/features/workspace/adapter';
 import type { Section } from '@/features/workspace/labels';
 
-import { ForecastExtra } from './ForecastExtra';
 import { errorWords, forecastSections } from './labels';
 
 /** The read, or the page's own words for a read that failed in a way the person can act on (401, 403, 404, 409, 422).
@@ -32,7 +31,6 @@ export const forecastAdapter: LineAdapter<ForecastReadback> = {
   key: 'forecast',
   read: readForecast,
   sections: (readback) => forecastReadSections(readback),
-  Extra: ForecastExtra,
 };
 
 registerLineAdapter(forecastAdapter as LineAdapter);

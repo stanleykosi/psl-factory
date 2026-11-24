@@ -1,13 +1,12 @@
 // F-103: the cash forecast reads in the live shapes of contract 1.25.0 (GET /work/{id}, /forecast, /forecast/actuals/{month},
 // /forecast/observations/{id}). Integer ids 4301 to 4308 only; every other id falls through to work-live.mjs. Sample data; no business rules.
-// Months: 2026-11 is cut (more_actuals), 2026-09 has a reversed match, 2026-12 answers 404, the other forecast months have no rows.
 // A scenario 'forecast:<status>' answers only the forecast read.
 // 4301 verified management forecast, 4302 in review, 4303 investigating (no result), 4304 group disclosure, 4305 uncertain delivery,
 // 4306 delivery with proof on file, 4307 unavailable to everyone, 4308 group disclosure whose lists carry a payroll key and a row with
 // a staff name and pay (the page must draw the key text only). Read only: any other method answers 405.
 import { workLive } from './work-live.mjs';
 
-export const FORECAST_PATH = /^\/api\/v1\/work\/(430[1-8])(\/forecast(\/actuals\/(\d{4}-\d{2})|\/observations\/(\d+))?)?$/;
+export const FORECAST_PATH = /^\/api\/v1\/work\/(430[1-8])(\/forecast)?$/;
 
 const NOW = '2026-11-23T09:00:00Z';
 const BODIES = {
@@ -107,32 +106,6 @@ const FORECASTS = {
   ),
 };
 
-const MONTHS = {
-  '2026-11': {
-    rows: [
-      { key: 'inv-17', expected: '12400000.00', actual: '12400000.00', status: 'matched', notes: [] },
-      { key: 'rent', expected: '9800000.00', actual: null, status: 'open', notes: [{ id: 1, actual_id: 6, reason: 'Waiting for the landlord’s receipt.' }] },
-    ],
-    actuals: [
-      { id: 5, direction: 'inflow', amount: '12400000.00', verified: true },
-      { id: 6, direction: 'outflow', amount: null, verified: false },
-    ],
-    history: [{ id: 1, item_key: 'inv-17', actual_id: 5, amount: '12400000.00', reversed: false }],
-    more_actuals: true,
-    more_history: false,
-    more_notes: false,
-  },
-  '2026-09': {
-    rows: [{ key: 'inv-12', expected: '14000000.00', actual: '14000000.00', status: 'matched', notes: [] }],
-    actuals: [{ id: 3, direction: 'inflow', amount: '14000000.00', verified: true }],
-    history: [{ id: 2, item_key: 'inv-12', actual_id: 3, amount: '14000000.00', reversed: true }],
-    more_actuals: false,
-    more_history: false,
-    more_notes: false,
-  },
-};
-const EMPTY_MONTH = { rows: [], actuals: [], history: [], more_actuals: false, more_history: false, more_notes: false };
-
 const item = (id) => {
   const [, template] = workLive({ method: 'get', url: new URL('http://mock/api/v1/work/4101'), scenario: undefined, csrfOk: true, persona: 'finance_lead' });
   return {
@@ -161,10 +134,5 @@ export function forecastLive({ method, url, scenario, persona }) {
   const id = Number(found[1]);
   if (persona === 'none' || id === 4307) return [404, BODIES[404]];
   if (!found[2]) return [200, item(id)];
-  if (found[5]) return [200, Buffer.from('proof'), { 'Content-Type': 'application/octet-stream' }];
-  if (found[4]) {
-    const data = MONTHS[found[4]] ?? (found[4] !== '2026-12' && PERIODS.some((p) => p.month === found[4]) ? EMPTY_MONTH : null);
-    return data ? [200, { expected_revision: 4, case_revision: 9, scenario_id: 12, month: found[4], ...data }] : [404, BODIES[404]];
-  }
   return [200, FORECASTS[id]];
 }
