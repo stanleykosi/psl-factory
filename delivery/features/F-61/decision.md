@@ -39,3 +39,7 @@ Files to look at:
 - /Users/Hunchoo/psl-factory-main/delivery/features/F-61/round-1/review-technical.md
 - frontend/src/features/alerts/AlertSettingsPage.tsx
 - frontend/src/api/alerts.ts
+
+## Human decision (24 Nov 2026)
+- The design engineer's answer, relayed by the main coordinator, verbatim: "Merge now, fix after".
+- Follow-ups: LA-4 (a Reload control on a 422 stale save) and the live alert-creation proof. The main coordinator merges PR #112 once the conflict with main (F-71, #114) is resolved and CI passes.

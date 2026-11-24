@@ -25,3 +25,4 @@ Decide whether to merge now and treat the coordinator's psl_demo run as a follow
 ## Human decision (24 Nov 2026)
 - The design engineer's answer, relayed by the main coordinator, verbatim: "Merge now, prove after".
 - The live decision proof on psl_demo (approve, return, stale and not-yours) becomes a follow-up, run by the main coordinator. The main coordinator merges PR #111 once the conflict with main (F-71, #114) is resolved and CI passes.
+- Conflict resolved: main 811465d8 (F-71) merged as 9d93d66c; the only conflict was the tests/next-config.test.ts allow-list (both sides kept). No F-64 file changed in the merge. CI `checks` passed on 9d93d66c, and PR #111 is MERGEABLE/CLEAN.
