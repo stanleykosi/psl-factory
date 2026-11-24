@@ -183,14 +183,28 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T02:29:24Z",
           "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T03:44:04Z",
+          "refs": [
+            "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+          ],
+          "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
       ]
     },
     {
@@ -206,14 +220,28 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T02:29:24Z",
           "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T03:44:04Z",
+          "refs": [
+            "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+          ],
+          "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
       ]
     },
     {
@@ -229,14 +257,28 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T02:29:24Z",
           "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T03:44:04Z",
+          "refs": [
+            "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+          ],
+          "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
       ]
     },
     {
@@ -252,14 +294,28 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T02:29:24Z",
           "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T03:44:04Z",
+          "refs": [
+            "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+          ],
+          "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
       ]
     },
     {
@@ -275,14 +331,28 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T02:29:24Z",
           "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T03:44:04Z",
+          "refs": [
+            "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+          ],
+          "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
       ]
     },
     {
@@ -298,14 +368,28 @@
         "delivery/features/F-87/round-1/review-technical.md"
       ],
       "raised_by": "reviewer-technical",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-technical",
           "at": "2026-11-24T02:29:24Z",
           "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T03:44:04Z",
+          "refs": [
+            "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+          ],
+          "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
       ]
     },
     {
@@ -321,14 +405,28 @@
         "delivery/features/F-87/round-1/review-ux.md"
       ],
       "raised_by": "reviewer-ux",
-      "state": "OPEN",
+      "state": "FIX_SUBMITTED",
       "history": [
         {
           "action": "add",
           "by": "reviewer-ux",
           "at": "2026-11-24T02:29:24Z",
           "head": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a"
+        },
+        {
+          "action": "fix",
+          "by": "builder",
+          "at": "2026-11-24T03:44:04Z",
+          "refs": [
+            "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
+          ],
+          "head": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
+          "reason": null
         }
+      ],
+      "fix_by": "builder",
+      "fix_refs": [
+        "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f"
       ]
     },
     {
@@ -448,7 +546,7 @@
     "base_branch": "main",
     "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-connect-1-work-item-controls",
-    "head_sha": "4ebb3c05b15901d845bcbef2d566dc27fa4b7e6a",
+    "head_sha": "cab10c70cdbf110a59387b6e5bd6c0fb0efa470f",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-c",
     "pr_url": null,
     "pr_number": null,
