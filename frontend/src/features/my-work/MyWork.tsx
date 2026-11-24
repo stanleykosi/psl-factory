@@ -413,6 +413,10 @@ export function MyWork() {
             <p className="my-work__updated">{records ? `${records} · updated ${formatTime(asOf)}` : `Updated ${formatTime(asOf)}`}</p>
           ))}
       </div>
+      {/* D-182: until F-63 places it, Verified outputs is reached from under the My work heading. */}
+      <p className="my-work__verified">
+        <Link href="/verified">Verified outputs</Link>
+      </p>
 
       {notice && (
         <Callout kind="warning" className="my-work__notice">
