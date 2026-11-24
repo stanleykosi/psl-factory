@@ -74,7 +74,20 @@
     "frontend": "NOT_ASSESSED",
     "backend": "NOT_ASSESSED"
   },
-  "checks": [],
+  "checks": [
+    {
+      "kind": "gate",
+      "round": 1,
+      "attempt": 1,
+      "commit": "4a11ce3fad40faff4ec8634923caf253a05ea6e4",
+      "verdict": "PASS",
+      "exit_code": 0,
+      "protected_paths_changed": [],
+      "at": "2026-11-24T02:45:36Z",
+      "seconds": 598.7,
+      "evidence_ref": "delivery/features/F-60/round-1/checks.md"
+    }
+  ],
   "reviews": {
     "technical": {
       "status": "pending",
@@ -152,7 +165,7 @@
     "base_branch": "main",
     "base_sha": "e2f44656bb49fdf4e426b78438e7828ff2961804",
     "task_branch": "fe-signin-account-setup-from-invitation",
-    "head_sha": "4a11ce3fad40faff4ec8634923caf253a05ea6e4",
+    "head_sha": "f2a1ebfd541d2a248f6e0ef7985b31b561ca7582",
     "worktree": "/Users/Hunchoo/psl-factory-worktrees/lane-a-hot",
     "pr_url": null,
     "pr_number": null,
@@ -164,21 +177,33 @@
     "merge_sha": null,
     "merge_policy": "not_configured",
     "changed_paths": [
+      "frontend/e2e/document-review.spec.ts",
       "frontend/e2e/hr.spec.ts",
       "frontend/e2e/join.spec.ts",
       "frontend/e2e/rfp-intake.spec.ts",
       "frontend/e2e/start-work-ppe-forecast.spec.ts",
       "frontend/e2e/start-work-proof.spec.ts",
       "frontend/e2e/start-work.spec.ts",
+      "frontend/mock/documents.mjs",
+      "frontend/mock/fixtures/documents/review-2901.json",
+      "frontend/mock/fixtures/documents/review-2901.publication.json",
       "frontend/mock/invitations.mjs",
       "frontend/mock/server.mjs",
       "frontend/mock/session.mjs",
       "frontend/mock/start-live.mjs",
       "frontend/src/app/staff/join/page.tsx",
+      "frontend/src/features/documents/DocumentParts.tsx",
+      "frontend/src/features/documents/DocumentReview.tsx",
+      "frontend/src/features/documents/ReviewControls.tsx",
+      "frontend/src/features/documents/document-review.css",
+      "frontend/src/features/documents/documentModel.ts",
+      "frontend/src/features/documents/useDocument.ts",
+      "frontend/src/features/documents/useReview.ts",
       "frontend/src/features/join/JoinView.tsx",
       "frontend/src/features/join/join.css",
       "frontend/src/features/join/signInTarget.ts",
       "frontend/src/features/join/welcome.ts",
+      "frontend/src/features/projects/DocumentsTab.tsx",
       "frontend/src/features/sign-in/BrandColumn.tsx",
       "frontend/src/features/sign-in/NewPasswordFields.tsx",
       "frontend/src/features/sign-in/SignInView.tsx",
@@ -200,11 +225,15 @@
       "frontend/src/features/start-work/useStartWork.ts",
       "frontend/src/shell/AppShell.tsx",
       "frontend/tests/assistant.test.tsx",
+      "frontend/tests/document-review-model.test.ts",
+      "frontend/tests/document-review.test.tsx",
       "frontend/tests/issue-detail.test.tsx",
       "frontend/tests/join-target.test.ts",
       "frontend/tests/join.test.tsx",
       "frontend/tests/mock-invitations.test.ts",
+      "frontend/tests/mock-live-document-review.test.ts",
       "frontend/tests/next-config.test.ts",
+      "frontend/tests/project-tabs.test.tsx",
       "frontend/tests/rfp-intake.test.tsx",
       "frontend/tests/start-work-intake.test.ts",
       "frontend/tests/start-work-live.test.tsx",
@@ -280,9 +309,9 @@
   },
   "gate": {
     "round": 1,
-    "attempts": 0,
-    "verdict": null,
-    "commit": null
+    "attempts": 1,
+    "verdict": "PASS",
+    "commit": "4a11ce3fad40faff4ec8634923caf253a05ea6e4"
   },
   "blocked": null
 }
