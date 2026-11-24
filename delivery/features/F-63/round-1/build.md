@@ -65,3 +65,17 @@ None (round 1).
 
 ## Blocked
 Not blocked by a dependency: this is a hand-over. The remaining work above needs a builder with lock time for the full suite and the fidelity run.
+
+## Finish (D-210)
+COMMIT: 0b1db7014b218b4c586106e034a82a11ecae870b (pushed to fe-connect-1-my-work-live)
+
+No review agents, fidelity run or live Django check, by D-210.
+
+- Merged origin/main (043fd0c7, with F-75, F-78, F-119B, F-103) without conflicts; `node --check mock/server.mjs` is clean.
+- e2e changes (assertions moved to the specified behaviour, none weakened):
+  - `ceo.spec.ts`: the Done tab is now Verified and checks a verified output row (`INV-0398 · Lagoon Health`); the row link is `/work/5001`, then the test opens the sample decision page at `/work/W-5001` (the mock draws that page under its v7 id). The alerts test at line 79 is untouched (not My work).
+  - `hr.spec.ts:21`: Done to Verified, same verified row.
+  - `conformance.spec.ts:54`: the "Waiting on" select is gone from the filter panel (spec), so the 44px check covers the two remaining selects.
+- Checked against origin/main (same specs, same ports): these fail on main without F-63 and were left alone: `assistant.spec.ts` lines 47 (CV-2401 after the start, 1440 and 390), 158, 180, 284; `exceptions.spec.ts` lines 48 and 58 at both widths; `frame.spec.ts:381` (720px); `hr.spec.ts:94`. `assistant.spec.ts:321` failed once in the batch and passed alone, so flaky.
+- Not re-checked on main, not triaged: `delivery-release`, `engagement-planning:147`, `issue-detail:77`, `money:65`, `payments` (the round-1 full run; outside the specs named for this finish).
+- Results: Playwright on a production build, ports 4960/4961, through the lock: `my-work`, `ceo`, `hr`, `conformance`, `frame`, `exceptions`, `assistant`, `demo`, `decide-board` first run 98 passed, 16 failed, 3 skipped; after the fixes `ceo`, `hr`, `conformance`, `my-work` and `assistant:321` 38 passed, 2 failed (`ceo:33`, fixed and re-run 1 passed; `hr:94`, fails on main). Vitest `my-work`, `my-work-model`, `assign-pm`, `work-list`, `mock-live-my-work`, `shell-live`, `next-config`: 7 files, 235 tests passed. `tsc --noEmit` and eslint clean.
