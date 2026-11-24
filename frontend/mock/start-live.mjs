@@ -39,6 +39,7 @@ const LINES = [
   line(WEEKLY, 'Weekly client report', 'Friday report for a client', true, 'pmo-weekly-report', true),
   line('pmo-minutes/v1', 'Minutes after a meeting', 'Formal minutes and action handoff', false, 'pmo-minutes', true),
   line('finance-payroll/v1', 'Payroll', 'Monthly payroll preparation', true, 'finance-payroll', true),
+  line('received-bid', 'Log a received RFP', 'Record an RFP a client sent, with its file', false, 'received-bid', false),
   line('pmo-issues/v1', 'Chase an open issue', 'Issue investigation and owner follow-up', false, 'pmo-issues', true),
 ];
 
