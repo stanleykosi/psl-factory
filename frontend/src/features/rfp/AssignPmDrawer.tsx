@@ -278,6 +278,7 @@ export function AssignPmDrawer({ caseId, reloadList, onClose, pathname }: Props)
             </span>
             {data.proofs.length > 0 && (
               <Segmented
+                phone={phone}
                 labelledBy="ap-proof-label"
                 options={[
                   { value: 'listed' as Route, label: ASSIGN_PM_TEXT.listedProof, disabled: locked },

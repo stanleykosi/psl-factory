@@ -455,6 +455,7 @@ function OwnDrawer({ onBack, onClose, pathname }: { onBack: () => void; onClose:
             </span>
             <div aria-invalid={errors.deadline_status ? true : undefined}>
               <Segmented
+                phone={!wide}
                 labelledBy="rb-deadline-label"
                 className="sw-seg"
                 options={DEADLINES.map((o) => ({ value: o.value, label: o.label, disabled: readOnly }))}
