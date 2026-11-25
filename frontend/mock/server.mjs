@@ -51,6 +51,7 @@ import { delegationsList, resetDelegations, saveDelegation } from './delegations
 import { isLiveWorkRequest, liveWorkCounts, liveWorkItem, liveWorkList, ownsLiveWorkItem } from './live-work.mjs';
 import { workList } from './work-list.mjs';
 import { FORECAST_PATH, forecastLive } from './forecast-live.mjs';
+import { COMMERCIAL_PATH, commercialLive, resetCommercialLive } from './commercial-live.mjs';
 import { ENGAGEMENT_PATH, engagementLive, resetEngagementLive } from './engagement-live.mjs';
 import { issuesLog, issuesRoute, resetIssues } from './issues.mjs';
 import { liveDecideRoute, ownsLiveDecide, resetLiveDecide } from './live-decide.mjs';
@@ -306,6 +307,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetRetrospective();
         resetWorkLive();
         resetEngagementLive();
+        resetCommercialLive();
         resetInvitations();
         resetIssues();
         resetClients();
@@ -325,6 +327,13 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
         return send(res, ...engagementLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
+      }
+      // F-136: the client's response and SOW signature (ids 4660 to 4666, commercial-live.mjs); every other id falls through.
+      if (COMMERCIAL_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        return send(res, ...commercialLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
       }
       // F-103: the cash forecast reads (ids 4301 to 4308); every other id falls through to work-live.mjs.
       if (FORECAST_PATH.test(url.pathname)) {

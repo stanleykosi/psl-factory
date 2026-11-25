@@ -106,7 +106,7 @@ export function CommercialActions({ readback: d, ctx, commands, reload, onAccess
 
   return (
     <div className="wr-actions">
-      {witness && open && (
+      {witness && open && d.can_record && (
         <section className="wr-block" aria-label="Record the client’s response">
           <h3 className="wr-head">Record the client’s response</h3>
           <Select label="What the client answered" placeholder="Choose what was sent" options={receipts} value={field('receipt') || undefined} onChange={set('receipt')} error={shown('witness', field('receipt') ? null : 'Choose what the client was sent.')} />
