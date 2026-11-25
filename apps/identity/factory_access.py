@@ -15,6 +15,8 @@ LEAD_ACTIONS = {
         'case.read', 'factory.read', 'factory.start', 'agent.extract', 'evidence.add',
         'engagement.read', 'engagement.capture', 'planning.read', 'delivery.read', 'delivery.planning_decide',
         'issue.read', 'change.read', 'report.read', 'emergency.read', 'rfp.read', 'milestone.complete',
+        # D-212: the PMO Lead reviews weekly client reports and assigns the accountable PM (approved design F-36).
+        'document.review_controlled', 'rfp.assign', 'engagement.assign',
     }),
     'finance-lead': frozenset({
         'case.read', 'factory.read', 'factory.start', 'agent.extract', 'evidence.add',

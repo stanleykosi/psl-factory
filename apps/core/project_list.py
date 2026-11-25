@@ -163,7 +163,7 @@ def summaries(actor, cases):
                 definition, status = station[case.pk]
                 phase = STATIONS[definition]
                 state = 'Outcome recorded' if status == 'verified' else WORK_STATUS.get(status)
-            manager = _inspect(engagement_facts, (actor, case), 64) if (case.pk, 'engagement.read') in grants else None
+            manager = _inspect(engagement_facts, (actor, case), 128) if (case.pk, 'engagement.read') in grants else None
             milestone = _inspect(next_milestone, (case,), 64) if not closed and (case.pk, 'finance.read') in grants else None
             counts = _inspect(_counts, (actor, work.get(case.pk, ()),
                                         (case.pk, 'delivery.planning_decide') in grants), 190) if case.pk in visible_work else None
