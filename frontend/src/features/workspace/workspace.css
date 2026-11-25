@@ -351,3 +351,13 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .wr-buttons { flex-direction: column; align-items: stretch; }
   .wr-buttons .psl-btn { width: 100%; min-height: 44px; }
 }
+
+/* F-96: the RFP response panel's requirement rows (BidAnswersActions) */
+.bid-rows { display: flex; flex-direction: column; gap: var(--space-3); list-style: none; margin: 0; padding: 0; }
+.bid-row { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--rule-strong); }
+.bid-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.bid-key { margin: 0; font-weight: 600; }
+.bid-quote { margin: 0; font-style: italic; overflow-wrap: anywhere; }
+.bid-answer { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.bid-suggest { display: flex; flex-direction: column; gap: var(--space-1); }
+.bid-form { display: flex; flex-direction: column; gap: var(--space-2); }
