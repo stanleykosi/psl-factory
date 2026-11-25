@@ -238,9 +238,9 @@ describe('the page', () => {
     note('ok');
     fireEvent.click(btn('Approve')!);
     await waitFor(() => expect(posts()).toHaveLength(1));
-    await waitFor(() => expect(btn('Approve')!.disabled).toBe(false));
-    expect(screen.queryByText('Verified')).toBeNull();
-    expect(screen.queryByText(/This item is now: Verified/)).toBeNull();
+    await screen.findByText(/This item is now: Waiting/);
+    expect(screen.queryByText(/Verified/)).toBeNull();
+    expect(btn('Approve')).toBeTruthy();
   });
   it('409 says nothing was recorded, re-reads and keeps the note and evidence', async () => {
     scenario = 'w409';
