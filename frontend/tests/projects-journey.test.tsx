@@ -137,7 +137,7 @@ describe('journey reads GET /projects/{case_id}, drawn as SCR-07', () => {
       ['Actions', `${base}/actions`, 'false'],
     ]);
     expect(screen.getByRole('tabpanel', { name: 'Journey' })).toBeTruthy();
-    expect(document.querySelector('.projects__route')!.textContent).toBe('PM Tunde Bello · Route A · 8 pieces of work');
+    expect(document.querySelector('.projects__route')!.textContent).toBe('PM Tunde Bello · 8 pieces of work');
     expect(document.querySelector('.projects__phoneline')!.textContent).toBe('8 pieces of work · 2 waiting on people · 1 stopped');
     expect(screen.getByRole('region', { name: 'Facts earned' })).toBeTruthy();
     expect(facts()).toEqual([
@@ -189,17 +189,16 @@ describe('journey reads GET /projects/{case_id}, drawn as SCR-07', () => {
     expect(lineItems().map((li) => li.querySelector('a')!.textContent)).toEqual(['Zulu line, Verified', 'Alpha line', 'Zulu line, INV-5']);
   });
 
-  it('finance null reads Not available in both finance cells, never 0, and no partial line; no engagement leaves PM and route out', async () => {
+  it('finance null draws no contract tiles, and no partial line; no engagement leaves the PM out', async () => {
     respond = () => json(200, body({ title: 'Standalone fit-out', facts: { total: 0, waiting: 0, stopped: 0, finance: null, engagement: null }, items: [], assistant: [] }));
     await open();
     expect(screen.getByRole('navigation', { name: 'Breadcrumb' }).textContent).toBe('Projects');
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Standalone fit-out');
     expect(document.querySelector('.projects__route')!.textContent).toBe('0 pieces of work');
+    // finance null means the server gives this person no contract facts: those two tiles are not drawn at all.
     expect(facts()).toEqual([
-      ['CONTRACT STAGES', 'Not available', 'psl-fact psl-fact--unknown'],
       ['WAITING ON PEOPLE', '0', 'psl-fact'],
       ['STOPPED', '0', 'psl-fact'],
-      ['NEXT MILESTONE', 'Not available', 'psl-fact psl-fact--unknown'],
     ]);
     expect(screen.queryByText('Figures may be partial.')).toBeNull();
     expect(document.querySelector('.psl-empty')!.textContent).toBe('No work yetNo work on this project yet.');
@@ -207,10 +206,10 @@ describe('journey reads GET /projects/{case_id}, drawn as SCR-07', () => {
     expect(moreButton()).toBeNull();
   });
 
-  it('a null manager leaves the PM out of the route line; a null stage or next milestone reads Not available', async () => {
+  it('a null manager leaves the PM out of the route line; when contract facts exist, a null stage or next milestone reads Not available', async () => {
     respond = () => json(200, body({ facts: { total: 3, waiting: 0, stopped: 0, finance: { stages: null, delivered: null, next: null, limited: true }, engagement: { route: 'Route B', reference: 'ENG-1', manager: null } } }));
     await open();
-    expect(document.querySelector('.projects__route')!.textContent).toBe('Route B · 3 pieces of work');
+    expect(document.querySelector('.projects__route')!.textContent).toBe('3 pieces of work');
     expect(facts().map(([label, value]) => [label, value])).toEqual([
       ['CONTRACT STAGES', 'Not available'],
       ['WAITING ON PEOPLE', '0'],

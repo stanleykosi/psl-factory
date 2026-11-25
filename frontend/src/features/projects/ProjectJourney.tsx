@@ -29,11 +29,14 @@ import './projects.css';
 /** The four facts SCR-07 draws from live; a figure the response does not carry reads "Not available", never 0. */
 function ProjectFacts({ journey }: { journey: Journey }) {
   const { facts } = journey;
+  // The contract tiles are drawn only for people the server gives contract facts to (`facts.finance` is null for everyone else);
+  // for them, a figure the response does not carry still reads "Not available", never 0.
+  const contract = facts.finance != null;
   const cells: { label: string; value: number | string | null | undefined; current?: boolean }[] = [
-    { label: 'CONTRACT STAGES', value: facts.finance?.stages },
+    ...(contract ? [{ label: 'CONTRACT STAGES', value: facts.finance?.stages }] : []),
     { label: 'WAITING ON PEOPLE', value: facts.waiting, current: facts.waiting > 0 },
     { label: 'STOPPED', value: facts.stopped, current: facts.stopped > 0 },
-    { label: 'NEXT MILESTONE', value: facts.finance?.next },
+    ...(contract ? [{ label: 'NEXT MILESTONE', value: facts.finance?.next }] : []),
   ];
   return (
     <>
@@ -100,7 +103,8 @@ function AskPanel({ journey }: { journey: Journey }) {
 function JourneyTab({ journey, more, showMore }: { journey: Journey; more: MoreState; showMore: () => void }) {
   const counts = projectCounts(journey);
   const engagement = journey.facts.engagement;
-  const route = [engagement?.manager && `PM ${engagement.manager}`, engagement?.route, piecesText(counts.pieces)];
+  // engagement.route is the backend's route code (a letter); it means nothing to a reader, so it is not drawn.
+  const route = [engagement?.manager && `PM ${engagement.manager}`, piecesText(counts.pieces)];
   const phoneLine = [piecesText(counts.pieces), `${counts.waiting} waiting on people`, `${counts.stopped} stopped`];
   const rowsRef = useRef<HTMLDivElement>(null);
   // Show more: the keyboard moves to the first row it added.
