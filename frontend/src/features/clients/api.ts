@@ -1,51 +1,28 @@
-// The three client operations (E-CLIENTS, E-CLIENT, E-CLIENT-CONTACT), typed from the generated schema. The save
-// reads the raw reply because a 422 names fields, which ApiError does not carry.
-import { api, call } from '@/api/client';
-import { ApiError } from '@/api/errors';
-import type { PageSize } from '@/components';
-import type { paths } from '@/api/schema';
+// The client reads on the live contract (clients_directory, clients_group, workspaces_client, clients_contact_history).
+// Nothing here writes: recording a billing contact is held (no proof upload route yet).
+import { call, liveApi } from '@/api/client';
+import type { paths } from '@/api/live-schema';
 
-export type ClientList = paths['/api/v1/clients']['get']['responses'][200]['content']['application/json'];
-export type ClientRow = ClientList['items'][number];
-export type ClientDetail = paths['/api/v1/clients/{client_id}']['get']['responses'][200]['content']['application/json'];
-export type MoneyAmount = NonNullable<ClientRow['owed']>;
-export type FieldMessage = { name: string; message: string };
+type Json<P extends keyof paths> = paths[P] extends { get: { responses: { 200: { content: { 'application/json': infer T } } } } } ? T : never;
 
-export const fetchClients = (limit: PageSize, cursor?: string): Promise<ClientList> =>
-  call(api.GET('/api/v1/clients', { params: { query: cursor ? { limit, cursor } : { limit } } }));
+export type Directory = Json<'/api/v1/clients'>;
+export type GroupRow = Directory['groups'][number];
+export type ProjectRow = Directory['projects'][number];
+export type Group = Json<'/api/v1/clients/groups/{group}'>;
+export type Debt = NonNullable<Group['debt']>;
+export type Workspace = Json<'/api/v1/clients/{case_id}'>;
+export type Contact = Workspace['contacts'][number];
+export type History = Json<'/api/v1/clients/{case_id}/contacts/history'>;
+export type Billing = ProjectRow['billing'];
 
-export const fetchClient = (clientId: string): Promise<ClientDetail> =>
-  call(api.GET('/api/v1/clients/{client_id}', { params: { path: { client_id: clientId } } }));
+export type DirectoryQuery = { q?: string; billing?: Billing; clients_page?: number; page?: number };
 
-export type SaveOutcome =
-  | { kind: 'saved' }
-  | { kind: 'invalid'; message: string; fields?: FieldMessage[] }
-  | { kind: 'forbidden'; message: string }
-  | { kind: 'stale' }
-  | { kind: 'unauthenticated' }
-  | { kind: 'not_found' }
-  | { kind: 'uncertain' };
+export const fetchDirectory = (query: DirectoryQuery): Promise<Directory> => call(liveApi.GET('/api/v1/clients', { params: { query } }));
 
-const messageOf = (body: unknown) => (typeof (body as { message?: unknown })?.message === 'string' ? (body as { message: string }).message : '');
+export const fetchGroup = (group: string, page?: number): Promise<Group> =>
+  call(liveApi.GET('/api/v1/clients/groups/{group}', { params: { path: { group }, query: page ? { page } : {} } }));
 
-/** One PUT, never repeated here. A network failure or a 5xx is "uncertain": the caller reads the client, it does not resend. */
-export async function saveBillingContact(clientId: string, body: { expected_revision: number; name: string; email: string }): Promise<SaveOutcome> {
-  let result;
-  try {
-    result = await api.PUT('/api/v1/clients/{client_id}/billing-contact', { params: { path: { client_id: clientId } }, body });
-  } catch (error) {
-    return error instanceof ApiError && error.kind === 'unauthenticated' && error.status === 401 ? { kind: 'unauthenticated' } : { kind: 'uncertain' };
-  }
-  const { status } = result.response;
-  if (result.response.ok) return { kind: 'saved' };
-  if (status === 401) return { kind: 'unauthenticated' };
-  if (status === 403) return { kind: 'forbidden', message: messageOf(result.error) };
-  if (status === 404) return { kind: 'not_found' };
-  if (status === 409) return { kind: 'stale' };
-  if (status === 422) {
-    const fields = (result.error as { fields?: unknown })?.fields;
-    const valid = Array.isArray(fields) ? fields.filter((f): f is FieldMessage => typeof f?.name === 'string' && typeof f?.message === 'string') : undefined;
-    return { kind: 'invalid', message: messageOf(result.error), fields: valid };
-  }
-  return { kind: 'uncertain' };
-}
+export const fetchWorkspace = (caseId: string): Promise<Workspace> => call(liveApi.GET('/api/v1/clients/{case_id}', { params: { path: { case_id: caseId } } }));
+
+export const fetchHistory = (caseId: string, customer?: string, page?: number): Promise<History> =>
+  call(liveApi.GET('/api/v1/clients/{case_id}/contacts/history', { params: { path: { case_id: caseId }, query: { purpose: 'billing', ...(customer ? { customer } : {}), ...(page ? { page } : {}) } } }));
