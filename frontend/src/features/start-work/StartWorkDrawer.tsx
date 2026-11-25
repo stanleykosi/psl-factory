@@ -79,6 +79,7 @@ export function StartWorkDrawer({ onClose, prefill, onStarted: started, onConfli
       <LineDrawer
         key={view.line.key}
         form={form}
+        line={view.line}
         lineKey={view.line.key}
         onBack={() => setStep({ kind: 'chooser' })}
         onClose={onClose}

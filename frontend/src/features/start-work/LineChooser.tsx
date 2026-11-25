@@ -46,7 +46,12 @@ function LoadingLines() {
 
 
 /** Startable: the contract lets the API start it and a form is registered for it, or the line owns its own submit (F-88). */
-export const isStartable = (line: Line) => ownLineFor(line.key) !== undefined || (line.can_submit_via_api && lineFormFor(line.key) !== undefined);
+export const isStartable = (line: Line) => {
+  if (ownLineFor(line.key) !== undefined) return true;
+  const form = lineFormFor(line.key);
+  // F-92: an engine form says whether the served schema is one it can fully build.
+  return line.can_submit_via_api && form !== undefined && (form.available?.(line) ?? true);
+};
 
 function Unavailable({ line, wide }: { line: Line; wide: boolean }) {
   return (
