@@ -1,0 +1,74 @@
+{
+  "groups": [
+    {
+      "key": "a1b2c3d4a1b2c3d4a1b2c3d4a1b2c3d4a1b2c3d4a1b2c3d4a1b2c3d4a1b2c3d4",
+      "label": "Acme Logistics",
+      "projects": [
+        { "case_id": "0b6f9e1a-3c44-4d0a-9d52-000000000001", "title": "Warehouse portal", "client": "Acme Logistics", "billing": "needed" },
+        { "case_id": "0b6f9e1a-3c44-4d0a-9d52-000000000002", "title": "Fleet tracking", "client": "Acme Logistics", "billing": "recorded" },
+        { "case_id": "0b6f9e1a-3c44-4d0a-9d52-000000000003", "title": "Depot cabling", "client": "Acme Logistics", "billing": "unknown" }
+      ],
+      "debt": {
+        "as_of": "2026-11-23",
+        "workspace_count": 3,
+        "limited": false,
+        "totals": [
+          { "currency": "NGN", "basis": "sample basis", "known_owed": "1250000.00", "unknown_owed_count": 1 },
+          { "currency": "USD", "basis": "sample basis", "known_owed": null, "unknown_owed_count": 2 }
+        ]
+      }
+    },
+    {
+      "key": "c3d4e5f6c3d4e5f6c3d4e5f6c3d4e5f6c3d4e5f6c3d4e5f6c3d4e5f6c3d4e5f6",
+      "label": "Lagoon Health",
+      "projects": [{ "case_id": "0b6f9e1a-3c44-4d0a-9d52-000000000011", "title": "Clinic records", "client": "Lagoon Health", "billing": "needed" }],
+      "debt": { "as_of": "2026-11-23", "workspace_count": 1, "limited": false, "totals": [] }
+    },
+    {
+      "key": "d4e5f607d4e5f607d4e5f607d4e5f607d4e5f607d4e5f607d4e5f607d4e5f607",
+      "label": "Sabi Market",
+      "projects": [
+        { "case_id": "0b6f9e1a-3c44-4d0a-9d52-000000000021", "title": "Market stalls app", "client": "Sabi Market", "billing": "recorded" },
+        { "case_id": "0b6f9e1a-3c44-4d0a-9d52-000000000022", "title": "Supplier portal", "client": "Sabi Market", "billing": "recorded" }
+      ],
+      "debt": null
+    },
+    {
+      "key": "e5f60718e5f60718e5f60718e5f60718e5f60718e5f60718e5f60718e5f60718",
+      "label": "Tamarind Loans",
+      "projects": [{ "case_id": "0b6f9e1a-3c44-4d0a-9d52-000000000031", "title": "Loan desk", "client": "Tamarind Loans", "billing": "recorded" }],
+      "debt": {
+        "as_of": "2026-11-23",
+        "workspace_count": 1,
+        "limited": false,
+        "totals": [{ "currency": "NGN", "basis": "sample basis", "known_owed": null, "unknown_owed_count": 1 }]
+      }
+    }
+  ],
+  "ungrouped": [
+    { "case_id": "0b6f9e1a-3c44-4d0a-9d52-000000000101", "title": "Kitchen display screens", "client": "Kora Foods", "billing": "needed" },
+    { "case_id": "0b6f9e1a-3c44-4d0a-9d52-000000000102", "title": "Office move", "client": null, "billing": "unknown" },
+    { "case_id": "0b6f9e1a-3c44-4d0a-9d52-000000000103", "title": "Print portal", "client": "Delta Print", "billing": "recorded" }
+  ],
+  "workspaces": {
+    "0b6f9e1a-3c44-4d0a-9d52-000000000001": {
+      "sample": true,
+      "contacts": [
+        { "contact_id": 11, "version": 1, "purpose": "project", "customer": "Acme Logistics", "client_name": "Acme Logistics", "name": "Ife Balogun", "email": "ife@example.org", "role": "Sponsor" }
+      ]
+    },
+    "0b6f9e1a-3c44-4d0a-9d52-000000000002": {
+      "sample": false,
+      "contacts": [
+        { "contact_id": 21, "version": 2, "purpose": "billing", "customer": "Acme Logistics", "client_name": "Acme Logistics", "name": "Ada Okoye", "email": "ada@example.org", "role": "Accounts" },
+        { "contact_id": 22, "version": 1, "purpose": "project", "customer": "Acme Logistics", "client_name": "Acme Logistics", "name": "Ife Balogun", "email": "ife@example.org", "role": "Sponsor" }
+      ]
+    },
+    "0b6f9e1a-3c44-4d0a-9d52-000000000103": {
+      "sample": false,
+      "contacts": [
+        { "contact_id": 31, "version": 28, "purpose": "billing", "customer": "Delta Print", "client_name": "Delta Print", "name": "Chi Eze", "email": "chi@example.org", "role": "Finance" }
+      ]
+    }
+  }
+}

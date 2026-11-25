@@ -40,14 +40,13 @@ const operations = Object.entries(openapi.paths).flatMap(([path, ops]) =>
 );
 const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
-const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: 'CL-3501', template_id: 'T-01', tab: 'documents', document_id: 'D-2304', version: '1' };
+const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: '0b6f9e1a-3c44-4d0a-9d52-000000000001', template_id: 'T-01', tab: 'documents', document_id: 'D-2304', version: '1' };
 const PROJECT_UUID = '00000000-0000-4000-8000-000000000101';
 const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
 const BODY: Record<string, unknown> = {
   'E-TASK-CLAIM': { expected_revision: 2 },
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
   'E-SETUP-RULE-SAVE': { expected_revision: 2, value: { roles: ['pmo_lead'] } },
-  'E-CLIENT-CONTACT': { expected_revision: 3, name: 'Ada Okoye', email: 'ada@example.org' },
   'E-EVIDENCE-UPLOAD': { kind: 'rule_proof', filename: 'minutes.pdf', content_base64: 'JVBERi0xLjQK', case_revision: 1 },
   'E-TEMPLATE-VERSION': { expected_revision: 1, filename: 'invoice.pdf', content_base64: 'JVBERi0xLjQK' },
   'E-DELEGATION': { expected_revision: 2, from_person_id: 'P-KEMI', delegate: 'P-FEMI', starts: '2026-11-18', ends: '2026-11-25' },
@@ -58,7 +57,6 @@ const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-PROJECT-TAB': { none: 404, admin: 404, hr: 404, hr_lead: 404 },
   'E-CLIENTS': { none: 403 },
   'E-CLIENT': { none: 403 },
-  'E-CLIENT-CONTACT': { none: 403 },
   'E-EXCEPTIONS': { pm: 403, hr: 403, hr_lead: 403 },
   'E-MONTH-END': { pm: 403, none: 403 },
   'E-INVOICES': { pm: 403, none: 403 },
@@ -208,8 +206,8 @@ const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
 const liveOpenapi = JSON.parse(readFileSync(join(__dirname, '../../contracts/psl-factory.openapi.json'), 'utf8')) as { paths: Record<string, Record<string, Operation>> };
 const liveSchema = (path: string) => liveOpenapi.paths[path].get.responses['200'].content['application/json'].schema;
 const liveMeSchema = liveSchema('/api/v1/me');
-// GET /projects, GET /projects/{case_id} and the project tab answer the live shape too (F-70; the tab is Documents here): their 200s are checked against the live contract.
-const LIVE_200: Record<string, object> = { 'E-ME': liveMeSchema, 'E-PROJECTS': liveSchema('/api/v1/projects'), 'E-PROJECT': liveSchema('/api/v1/projects/{case_id}'), 'E-PROJECT-TAB': liveSchema('/api/v1/projects/{case_id}/{tab}') };
+// GET /projects, GET /projects/{case_id} and the project tab answer the live shape too (F-70; the tab is Documents here), and so do GET /clients and GET /clients/{case_id} (F-73): their 200s are checked against the live contract.
+const LIVE_200: Record<string, object> = { 'E-ME': liveMeSchema, 'E-CLIENTS': liveSchema('/api/v1/clients'), 'E-CLIENT': liveSchema('/api/v1/clients/{case_id}'), 'E-PROJECTS': liveSchema('/api/v1/projects'), 'E-PROJECT': liveSchema('/api/v1/projects/{case_id}'), 'E-PROJECT-TAB': liveSchema('/api/v1/projects/{case_id}/{tab}') };
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 
 let server: Server;
