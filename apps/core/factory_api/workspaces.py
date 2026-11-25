@@ -122,7 +122,8 @@ def project(request, case_id):
     journey = project_journey.work_timeline(discoverable_work(request.user, case_id=case_id), page_number(request))
     page = journey['page']
     prefix = f'/api/v1/projects/{case.pk}'
-    finance = project_journey.finance_facts(request.user, case) if 'finance.read' in grants else None
+    finance = (project_journey.finance_facts(request.user, case) if 'finance.read' in grants
+               else project_journey.finance_facts(request.user, case, milestones_only=True) if 'milestone.complete' in grants else None)
     engagement = project_journey.engagement_facts(request.user, case) if 'engagement.read' in grants else None
     return {**workspace(case), 'tabs': [
         {'key': tab['key'], 'title': tab['title'], 'django_url': tab['url'],

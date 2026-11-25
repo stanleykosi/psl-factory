@@ -58,18 +58,20 @@ def work_timeline(works, page_number):
             'stopped': counts.get('cancelled', 0) + counts.get('followup_needed', 0)}
 
 
-def finance_facts(actor, case):
+def finance_facts(actor, case, *, milestones_only=False):
+    """Contract stages, invoices delivered and the next milestone. With milestones_only (D-213: the PMO Lead, who
+    completes milestones, sees the stage count and the next milestone), it needs milestone.complete and reads no invoices."""
     from apps.core.read_budget import ReadBudget
     from apps.finance.models import BillingCoverage
     from apps.finance.project_money import STAGES, expected_milestone, invoice_rows, terms
     from apps.identity.services import require
 
-    require(actor, case, 'finance.read')
+    require(actor, case, 'milestone.complete' if milestones_only else 'finance.read')
     try:
         with limit_queries(260):
             stages, _, coverage_id, _ = terms(case)
             coverage = BillingCoverage.objects.filter(case=case, pk=coverage_id).first() if coverage_id else None
-            delivered = sum(hasattr(item, 'invoicedelivery') for item in invoice_rows(actor, case, ReadBudget()))
+            delivered = None if milestones_only else sum(hasattr(item, 'invoicedelivery') for item in invoice_rows(actor, case, ReadBudget()))
             next_milestone = None
             if coverage:
                 completions = Milestone.objects.filter(case=case, evidence__in=public_evidence(case.evidence.all()))
