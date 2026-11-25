@@ -10,10 +10,13 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import Client, TestCase
 
-from apps.core.models import Case
+from apps.core.models import Case, Evidence
 from apps.identity.team_models import StaffMembership
+from apps.pmo.costing_models import CostingRule, CostingRun
+from apps.pmo.engagement import Identifier
 from apps.pmo.issues import Issue
-from apps.pmo.models import Baseline, Milestone, RFPAssignment, RFPCase
+from apps.pmo.models import (Baseline, CommercialDecision, Milestone, RFPAssignment, RFPCase, RFPDisposition, RFPReview,
+                             RFPSubmission)
 from apps.workflows.models import FactoryWork
 
 LAGOON, DELTA, KORA, SABI = ('Lagoon Health · patient app', 'Delta Foods · ordering app',
@@ -27,7 +30,7 @@ PROJECTS_SEEN = {
 POSITIONS = {'tunde': [], 'chinedu': [], 'kemi': ['PMO Lead'], 'ada': ['Finance Lead'], 'folake': ['CEO'],
              'ngozi': ['HR'], 'amaka': ['Human resources']}
 # Work each person has in flight (the Active work queue): the PMs' own lines and everything the PMO Lead oversees.
-ACTIVE_WORK = {'tunde': 3, 'chinedu': 1, 'kemi': 4, 'ada': 0, 'folake': 0, 'ngozi': 0, 'amaka': 0}
+ACTIVE_WORK = {'tunde': 4, 'chinedu': 1, 'kemi': 5, 'ada': 0, 'folake': 0, 'ngozi': 0, 'amaka': 0}
 
 
 class SeedPslDemoTests(TestCase):
@@ -117,13 +120,62 @@ class SeedPslDemoTests(TestCase):
         for key in ('tunde', 'chinedu', 'ada', 'folake', 'ngozi', 'amaka'):
             self.assertEqual(self.client_for(key).get('/api/v1/role-dashboard').json()['decisions'], [], key)
 
-    def test_projects_reach_the_stages_the_backend_can_honestly_reach(self):
-        rows = {item['title']: item for item in self.client_for('kemi').get('/api/v1/projects').json()['items']}
-        self.assertEqual({title: row['phase'] for title, row in rows.items()},
-                         {LAGOON: 'Release', DELTA: 'Release', KORA: 'Pre-sale', SABI: None})
-        costing = FactoryWork.objects.get(definition='commercial/v1')
-        self.assertEqual(costing.case.title, KORA)
-        self.assertIn('Costing awaits source information', costing.finding)
+    def journey(self, title):
+        client = self.client_for('kemi')
+        items = client.get(f'/api/v1/projects/{self.case(title).pk}').json()['items']
+        return [(item['line'], item['state']) for item in items]
+
+    def test_each_project_journey_lists_its_real_history_in_order(self):
+        history = [('RFP response and project handoff', 'Verified'),
+                   ('Engagement identity and planning handoff', 'Verified')]
+        signed = history + [('Planning and delivery handoff', 'Verified'),
+                            ('Costing and commercial submission', 'Verified'),
+                            ('Delivery gates and release evidence', 'Waiting')]
+        self.assertEqual(self.journey(SABI), [])
+        # Kora stops at the costing approval; its planning handoff waits for a signed SOW baseline.
+        self.assertEqual(self.journey(KORA), history + [('Planning and delivery handoff', 'Needs attention'),
+                                                        ('Costing and commercial submission', 'Waiting')])
+        self.assertEqual(self.journey(DELTA), signed)
+        self.assertEqual(self.journey(LAGOON), signed + [('Reviewed weekly client report', 'Waiting')])
+
+    def test_history_runs_through_the_bid_engagement_planning_and_costing_records(self):
+        for title in (KORA, DELTA, LAGOON):
+            case = self.case(title)
+            disposition = RFPDisposition.objects.get(rfp__case=case)
+            self.assertEqual(disposition.kind, 'route_a', title)
+            self.assertEqual(RFPSubmission.objects.get(response__rfp__case=case).outcomes.get().result, 'won', title)
+            self.assertEqual(RFPAssignment.objects.get(intake__rfp__case=case).role, 'PMO Lead', title)
+            self.assertTrue(Identifier.objects.filter(case=case).exists(), title)
+            self.assertEqual(CostingRun.objects.get(case=case).result['status'], 'known', title)
+        # The bid is reviewed, costed and sent before the project contract: the PM and the PMO Lead log the
+        # engineering review for the placeholder engineering lead (D-214), never a separate login.
+        for title in (KORA, DELTA, LAGOON):
+            review = RFPReview.objects.get(response__rfp__case=self.case(title), role='Engineering Lead')
+            self.assertIn('Placeholder engineering lead (D-214)', review.note)
+            self.assertEqual(review.actor.username.split('@')[0], 'tunde.bello' if title != DELTA else 'chinedu.okeke')
+
+    def test_costing_uses_the_labelled_template_rule_and_placeholder_roles(self):
+        for title in (KORA, DELTA, LAGOON):
+            case = self.case(title)
+            rule = CostingRule.objects.get(case=case)
+            parameter = Evidence.objects.get(pk=rule.payload['parameters'][0]['evidence_id'])
+            self.assertIn('Template costing rule (D-214)', parameter.body)
+            policy = Evidence.objects.filter(case=case, kind='policy_decision').order_by('pk').first()
+            self.assertIn('Placeholder engineering lead (D-214)', policy.body)
+            self.assertIn('Template costing rule (D-214)', policy.body)
+        placeholder = get_user_model().objects.get(username='psl-demo-placeholder-engineering-lead')
+        self.assertEqual(placeholder.first_name, 'Placeholder engineering lead (D-214)')
+        self.assertFalse(placeholder.has_usable_password())
+
+    def test_kora_costing_waits_for_its_approvals_after_the_pm(self):
+        work = FactoryWork.objects.get(case=self.case(KORA), definition='commercial/v1')
+        self.assertEqual(work.status, 'waiting')
+        self.assertIn('commercial costing and document-quality decisions', work.finding)
+        decisions = CommercialDecision.objects.filter(revision__dossier__case=self.case(KORA),
+                                                      revision__previous__isnull=False)
+        self.assertEqual([(item.role, item.verdict) for item in decisions], [('PM', 'approve')])
+        # CEO and PMO staff scopes carry no commercial.decide mapping, so neither queue holds this approval yet.
+        self.assertEqual(self.client_for('folake').get('/api/v1/work?queue=needs_me').json()['items'], [])
 
     def test_signed_baselines_milestones_issue_and_unassigned_bid(self):
         for title in (LAGOON, DELTA):

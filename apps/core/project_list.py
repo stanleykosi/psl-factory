@@ -30,7 +30,7 @@ STATIONS = {
 }
 READ_ACTIONS = ('engagement.read', 'finance.read', 'factory.read', 'delivery.planning_decide')
 WORK_LIMIT = 8
-PAGE_QUERIES = 540
+PAGE_QUERIES = 1500
 PAGE_SECONDS = 8
 
 

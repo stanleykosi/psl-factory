@@ -7,7 +7,6 @@ the PM or PMO Lead logs the engineering decisions. Both are labelled as placehol
 import json
 from datetime import timedelta
 from pathlib import Path
-from uuid import uuid4
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -17,17 +16,21 @@ from apps.core.services import add_evidence
 from apps.documents.controlled import register_template, review_version
 from apps.documents.models import PublicationReceipt
 from adapters.commercial_intake import FIELDS
-from apps.pmo import commercial, commercial_intake, costing, engagement, rfp
-from apps.pmo.models import CommercialCase, RFPDisposition, RFPSubmission
+from apps.pmo import approvals, commercial, commercial_intake, costing, engagement, planning, rfp
+from apps.pmo.models import ApprovalRequest, CommercialCase, RFPDisposition, RFPSubmission
 from apps.policy.approval_drafts import draft_approval_policy
 from apps.policy.approval_validators import CONTRACTS, ROUTES
 from apps.policy.costing_drafts import draft_costing_policy
 from apps.policy.engagement_validators import ASSIGN, REGISTER
 from apps.policy.operator_drafts import draft_operator_policy
+from apps.policy.planning_validators import COMPONENT as PLANNING_CRITERIA
 from apps.policy.services import register_reference, transition
+from apps.pmo.meetings import record_meeting
 from apps.workflows import factory, factory_commercial, factory_engagement, factory_rfp
+from apps.workflows.models import FactoryWork
 
 PLACEHOLDER_ENGINEERING_LEAD = 'Placeholder engineering lead (D-214)'
+PLACEHOLDER_PRODUCT_OWNER = 'Placeholder product owner (D-214, extended)'
 TEMPLATE_RULE = 'Template costing rule (D-214)'
 RFP_DEFINITION = {
     'document_type': 'rfp_response',
@@ -37,6 +40,7 @@ RFP_DEFINITION = {
 SOW_DEFINITION = {
     'document_type': 'sow', 'required_fields': ['executive_summary', 'scope', 'timeline'],
     'audience_fields': {'client': ['executive_summary', 'scope', 'timeline', 'risks', 'dependencies', 'status']}}
+PLANNING_SYSTEMS = {'scope': 'synthetic-planning-scope', 'estimates': 'synthetic-planning-estimates'}
 RFP_KINDS = ['rfp_intake', 'rfp_commercial_terms', 'rfp_response', 'rfp_outcome', 'rfp_lessons', 'qa_estimate',
              'product_input']
 # What the PMs and the PMO Lead need on a project to run its history; staff scopes still apply on top.
@@ -47,14 +51,14 @@ JOURNEY_PM = [
     'costing.source.read', 'costing.calculate', 'costing.bind', 'engagement.assign', 'engagement.register',
     'planning.read', 'planning.prepare', 'planning.coordinate', 'planning.route', 'planning.participate',
     'approval.read', 'approval.request', 'approval.route', 'policy.read', 'agent.rfp', 'agent.commercial',
-    'agent.engagement', 'agent.planning', 'agent.costing', 'agent.extract',
+    'agent.engagement', 'agent.planning', 'agent.costing', 'agent.extract', 'delivery.source', 'delivery.verify',
 ]
 JOURNEY_PMO_LEAD = [
     'rfp.assign', 'rfp.read', 'rfp.review', 'commercial.decide', 'commercial.read', 'engagement.register',
     'engagement.capture', 'costing.read', 'costing.source.read', 'costing.rule.review', 'document.review_controlled',
-    'document.read', 'planning.read', 'meeting.read', 'factory.read',
+    'document.read', 'planning.read', 'planning.compare', 'meeting.read', 'factory.read',
 ]
-JOURNEY_FOLAKE = ['commercial.decide', 'commercial.read']
+JOURNEY_FOLAKE = ['commercial.decide', 'commercial.read', 'factory.read']
 JOURNEY_ADA = ['costing.read', 'costing.source.read', 'costing.oracle.review']
 
 
@@ -134,7 +138,8 @@ class JourneyMixin:
             rfp.contribute(pm, case.pk, team, evidence[kind].pk if kind in evidence else e[kind].pk, self.rev(case))
         value = self.profile(case, 'OPS.factory_rfp_execution', 'factory-rfp.json', e['policy_decision'],
                              executor_id=pm.pk, template_id=self.templates[key]['rfp'].pk, route_key='client_bid')
-        payload = {'response_evidence': evidence['rfp_response'].pk, 'public_terms': evidence['rfp_commercial_terms'].pk,
+        payload = {'response_evidence': evidence['rfp_response'].pk,
+                   'public_terms': evidence['rfp_commercial_terms'].pk,
                    'sources': {kind: e[kind].pk for kind in ['requirements', 'plan', 'costing']},
                    'matrix': [{'key': 'R1', 'evidence_id': e['requirements'].pk, 'response': 'Cited coverage',
                                'disposition': 'addressed'}],
@@ -209,7 +214,8 @@ class JourneyMixin:
         oracle = {'rule_sha256': rule_row.sha256, 'calculator_ref': rule['calculator_ref'],
                   'calculator_version': rule['calculator_version'], 'source_class': 'synthetic_fixture',
                   'source_locator': 'independently-entered-example-fixture', 'scenarios': values['scenarios']}
-        oracle_row = costing.capture_oracle(self.admin, case.pk, rule_row.pk, 'independent', record('p14_oracle', oracle).pk)
+        oracle_row = costing.capture_oracle(self.admin, case.pk, rule_row.pk, 'independent',
+                                            record('p14_oracle', oracle).pk)
         oracle_review = costing.review(ada, case.pk, rule_row.pk, oracle_row.pk, 'confirm', f'oracle-{key}', note.pk)
         config = draft_costing_policy(self.admin, case.pk, {
             'rule_id': rule_row.pk, 'rule_sha256': rule_row.sha256, 'rule_review_id': rule_review.pk,
@@ -228,7 +234,8 @@ class JourneyMixin:
         sources.update({name: e[name].pk for name in commercial_intake.PUBLIC})
         # The project contract follows the won bid's proposal, which is the case's current commercial record.
         bid = CommercialCase.objects.filter(case=case).values_list('current_id', flat=True).first()
-        sources.update(predecessor_id=bid, inputs=inputs.pk, rule_id=rule.pk, oracle_id=oracle.pk, template_id=self.templates[key]['sow'].pk,
+        sources.update(predecessor_id=bid, inputs=inputs.pk, rule_id=rule.pk, oracle_id=oracle.pk,
+                       template_id=self.templates[key]['sow'].pk,
                        context_id=e['requirements'].pk)
         head = commercial_intake.capture(pm, case.pk, sources, None, self.rev(case))
         self.profile(case, 'OPS.factory_commercial_execution', 'factory-commercial.json', e['policy_decision'],
@@ -263,3 +270,94 @@ class JourneyMixin:
         self.signature_packet(case, e, pm, revision)
         commercial.adopt_signed(pm, case.pk, revision.pk, response.pk, self.rev(case))
 
+
+    # -- planning -------------------------------------------------------------------------------------
+
+    def planning_history(self, key, handoff=False):
+        """Planning hands the engagement to delivery: two alignment meetings and two department observations."""
+        case, e = self.cases[key], self.e[key]
+        pm, owner = self.users[self.projects[key]['pm']], e['policy_decision']
+        work = FactoryWork.objects.get(case=case, definition='planning/v1')
+        examples = json.loads(Path(settings.BASE_DIR, 'fixtures/planning-packet.json').read_text())
+        approval = json.loads(Path(settings.BASE_DIR, 'fixtures/approval-routing.json').read_text())
+        self.profile(case, 'OPS.factory_planning_execution', 'factory-planning.json', owner)
+        # Once the SOW is signed the plan is compared with it; the PMO Lead is the independent reviewer.
+        criteria = dict(examples['criteria'], comparison_reviewer_id=self.users['kemi'].pk,
+                        comparison_reviewer_role='PMO Lead')
+        config = draft_operator_policy(self.admin, case.pk, PLANNING_CRITERIA, criteria, owner.pk,
+                                       timezone.now() - timedelta(minutes=1))
+        transition(self.admin, config.pk, 'validated')
+        transition(self.admin, config.pk, 'active')
+        owners = {'scope': self.users['placeholder_po'], 'estimates': self.users['placeholder_eng']}
+        for person in owners.values():
+            self.grant_user(case, person, ['case.read', 'approval.read', 'approval.contract', 'approval.verify',
+                                           'approval.receive'])
+        routes, contracts = approval['routes'], approval['contracts']
+        route, contract = routes['routes'][0], contracts['contracts'][0]
+        routes['routes'], contracts['contracts'] = [], []
+        for name, kind in planning.SUBJECTS.items():
+            routes['routes'].append(dict(
+                route, kind=kind, gate_kind=None, source_owner=planning.OWNER_ROLES[name], owner_id=owners[name].pk,
+                owner_role=planning.OWNER_ROLES[name], source_actor_ref=f'synthetic-{name}',
+                system=PLANNING_SYSTEMS[name]))
+            contracts['contracts'].append(dict(contract, kind=kind, contract_evidence_id=owner.pk,
+                                               required_subject_fields=[]))
+        for component, value in ((ROUTES, routes), (CONTRACTS, contracts)):
+            config = draft_approval_policy(self.admin, case.pk, component, value, owner.pk,
+                                           timezone.now() - timedelta(minutes=1))
+            transition(self.admin, config.pk, 'validated')
+            transition(self.admin, config.pk, 'active')
+        for name, person in owners.items():
+            self.grant_user(case, person, ['approval.source.read:' + PLANNING_SYSTEMS[name]])
+            self.grant_user(case, self.admin, ['approval.source.read:' + PLANNING_SYSTEMS[name]])
+            self.grant_user(case, pm, ['approval.source.read:' + PLANNING_SYSTEMS[name]])
+            proof = self.evidence(case, 'approval_contract_review',
+                                  f'{planning.OWNER_ROLES[name]} accepts the evidence contract (placeholder owner)')
+            approvals.review_contract(person, case.pk, planning.SUBJECTS[name], proof.pk)
+        packet = planning.latest(case, 'packet')
+        # The packet taken from the won bid declares where each source stands against the PRD and scope.
+        payload = planning.packet(case, packet.pk)[1]['payload']
+        payload['source_correlations'] = [
+            {'key': field, 'source_field': field, 'source_id': payload[field], 'document_version': 'psl-demo-v1',
+             'target_prd_id': payload['prd_id'], 'target_scope_id': payload['scope_id'], 'evidence_id': payload[field],
+             'state': 'current', 'detail': 'Declared in the won bid and checked by the PM (demo record).',
+             'resolution_id': None} for field in ('scope_id', 'engineering_estimate_id', 'security_estimate_id')]
+        packet = planning.capture(pm, case.pk, payload, packet.pk)
+        now = timezone.now()
+        for offset, purpose in enumerate(planning.PURPOSES):
+            meeting = record_meeting(pm, case.pk, f'PSL-DEMO-ALIGN-{key.upper()}-{offset}', 'alignment',
+                                     now - timedelta(minutes=10 - offset), purpose,
+                                     'Planning alignment held with the team (demo record)', [pm.pk], [],
+                                     e['requirements'].pk, self.rev(case))
+            planning.align(pm, case.pk, packet.pk, purpose, meeting.pk)
+        self.run(work)
+        requests = planning.open_requests(pm, case.pk, packet.pk)['requests']
+        for name, request_id in requests.items():
+            source = self.evidence(case, 'approval_source', json.dumps({
+                'request_id': request_id, 'kind': planning.SUBJECTS[name],
+                'subject': ApprovalRequest.objects.get(pk=request_id).subject,
+                'system': PLANNING_SYSTEMS[name], 'source_owner': planning.OWNER_ROLES[name],
+                'source_actor_ref': f'synthetic-{name}', 'external_ref': f'PSL-DEMO-{key.upper()}-{name.upper()}',
+                'source_version': 'v1', 'decision': 'accepted', 'decided_at': timezone.now().isoformat(),
+                'signature_ref': 'synthetic-owner-signature-reference', 'critical_defects': None}))
+            receipt = approvals.capture(self.admin, case.pk, request_id, source.pk)
+            observation = self.evidence(case, 'approval_observation', json.dumps({
+                'receipt_id': receipt.pk, 'system': receipt.system, 'external_ref': receipt.external_ref,
+                'source_version': receipt.source_version, 'observed_at': timezone.now().isoformat(),
+                'outcome': 'available', 'payload_sha256': receipt.sha256, 'decision': 'accepted'}))
+            approvals.observe(owners[name], case.pk, receipt.pk, observation.pk)
+        if handoff:
+            self.run(work)
+
+    def planning_handoff(self, key):
+        """The backend creates the plan, costing and SOW baseline only when the SOW is signed.
+
+        For a project that is not signed (Kora) the handoff stops with that finding.
+        """
+        case, e = self.cases[key], self.e[key]
+        work = FactoryWork.objects.get(case=case, definition='planning/v1')
+        packet = planning.latest(case, 'packet')
+        comparison = self.evidence(case, 'sow', 'The signed SOW matches the planning packet, as compared by the PMO '
+                                                'Lead (demo record).')
+        planning.compare(self.users['kemi'], case.pk, packet.pk, 'no_difference', comparison.pk)
+        self.run(work)

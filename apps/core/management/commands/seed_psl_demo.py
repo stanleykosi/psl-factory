@@ -1,7 +1,9 @@
 """Fill a fresh local database with the PSL design demo: people, clients and four projects.
 
-Synthetic tenant only. Every record is made through the real service functions; policy values come from
-the repo fixtures and are demo values, not PSL business policy.
+Synthetic tenant only. Every record is made through the real service functions and factory lines; policy values come
+from the repo fixtures and are demo values, not PSL business policy. Three projects run the real journey (bid, won,
+engagement, planning, costing); Kora stops at its costing approval and Delta and Lagoon go on to the signed SOW.
+Until go-live the costing rule is a template and the engineering lead a placeholder (D-214).
 """
 import json
 import os
@@ -39,7 +41,7 @@ from apps.policy.services import register_reference, save_draft, transition
 from apps.workflows import factory_delivery, factory_reporting
 
 from ._psl_demo_journey import (JOURNEY_ADA, JOURNEY_FOLAKE, JOURNEY_PM, JOURNEY_PMO_LEAD, PLACEHOLDER_ENGINEERING_LEAD,
-                                TEMPLATE_RULE, JourneyMixin)
+                                PLACEHOLDER_PRODUCT_OWNER, PLANNING_SYSTEMS, TEMPLATE_RULE, JourneyMixin)
 
 TENANT = 'psl-demo'
 ROOT = 'psl-demo-root'
@@ -85,7 +87,7 @@ def username(key):
 
 
 class Command(JourneyMixin, BaseCommand):
-    help = ('Seed the PSL design demo (people, clients, four projects) in its own synthetic tenant. '
+    help = ('Seed the PSL design demo (people, clients, four projects and their history) in its synthetic tenant. '
             'Writes sign-in names and passwords to --credentials-file only.')
 
     def add_arguments(self, parser):
@@ -141,7 +143,9 @@ class Command(JourneyMixin, BaseCommand):
         self.admin.save()
         intake.provision(root, self.admin, TENANT, {
             'format': 'psl.tenant-access/v3', 'create_cases': True, 'manage_access': True, 'kinds': ['project'],
-            'allowed_actions': sorted(set(ACTIONS)), 'initial_actions': sorted(set(ACTIONS)),
+            'allowed_actions': sorted(set(ACTIONS)) + [f'approval.source.read:{system}'
+                                                        for system in PLANNING_SYSTEMS.values()],
+            'initial_actions': sorted(set(ACTIONS)),
             'classification': 'synthetic',
             'staff_lifecycle': {'invite_minutes': 60, 'allow_invite': True, 'allow_deactivation': True,
                                 'allow_profile_edit': True, 'allow_roster': True},
@@ -157,6 +161,8 @@ class Command(JourneyMixin, BaseCommand):
             self.cases[key] = case
         self.users['placeholder_eng'] = self.technical_person('psl-demo-placeholder-engineering-lead',
                                                               PLACEHOLDER_ENGINEERING_LEAD)
+        self.users['placeholder_po'] = self.technical_person('psl-demo-placeholder-product-owner',
+                                                             PLACEHOLDER_PRODUCT_OWNER)
         for key in PROJECTS:
             self.start_project(key)
         # Each project's history runs the real journey; Kora stops at its costing approval, Delta and Lagoon are signed.
@@ -165,9 +171,11 @@ class Command(JourneyMixin, BaseCommand):
             self.documents_setup(key)
             self.rfp_history(key)
             self.engagement_history(key)
+            self.planning_history(key, handoff=len(approvals) < 4)
             work, revision = self.costing_history(key, approvals)
             if len(approvals) == 4:
                 self.sign_sow(key, revision)
+                self.planning_handoff(key)
         self.rfp_received('sabi')
         self.lagoon_money_and_milestones()
         self.open_issue('lagoon')
@@ -218,6 +226,7 @@ class Command(JourneyMixin, BaseCommand):
             # D-214: the PM logs engineering decisions for the placeholder engineering lead. The template costing rule
             # is owned by the PMO and tested by Finance; the client answers through the PM (staff-recorded).
             assigned += [('Engineering Lead', 'placeholder_eng'), ('Engineering Lead', pm), ('Client', pm),
+                         ('Product Owner', 'placeholder_po'),
                          ('PMO', 'kemi'), ('Finance', 'ada')]
         refs = []
         for index, (role, key) in enumerate(assigned):
@@ -240,13 +249,17 @@ class Command(JourneyMixin, BaseCommand):
                 self.grant(case, nominee, ['case.read', 'rfp.read', 'rfp.prepare'])
         self.grant(case, 'kemi', LEAD_REVIEW_ACTIONS + (JOURNEY_PMO_LEAD if pm else []))
         self.grant(case, 'folake', ['case.read', 'decision.record'] + (JOURNEY_FOLAKE if pm else []))
-        e = {kind: self.evidence(case, kind, f'{project["title"]}: {kind.replace("_", " ")} (demo record).' + (PLACEHOLDERS if kind == 'policy_decision' else ''))
+        e = {kind: self.evidence(case, kind, f'{project["title"]}: {kind.replace("_", " ")} (demo record).'
+                                 + (PLACEHOLDERS if kind == 'policy_decision' else ''))
              for kind in EVIDENCE_KINDS}
         self.e[key] = e
         self.roles(case, e['policy_decision'], pm)
         # D-212: the PMO Lead assigns the accountable PM. The rest is the repo fixture's synthetic matrix.
         matrix = json.loads(Path(settings.BASE_DIR, 'fixtures/rfp.json').read_text())['decision_matrix']
         matrix['rfp']['assignment_roles'] = ['PMO Lead']
+        if key != 'sabi':
+            # The PMO Lead's weekly report review stays approve-only; only the engineering review can be returned.
+            matrix['rules'] = [rule for rule in matrix['rules'] if rule['role'] == 'Engineering Lead']
         config = draft_standard_policy(self.admin, case.pk, 'D05.decision_action_matrix', matrix,
                                        e['policy_decision'].pk, timezone.now() - timedelta(minutes=1))
         transition(self.admin, config.pk, 'validated')
