@@ -20,9 +20,22 @@
 .payments__cell--received { background: var(--verified); color: var(--on-strong); }
 .payments__celllabel { font-family: var(--font-mono); font-size: var(--text-label-size); letter-spacing: 0.06em; }
 .payments__cellvalue { font-family: var(--font-display); font-weight: 700; font-size: var(--text-amount-size); overflow-wrap: anywhere; }
+.payments__cellvalue { display: flex; flex-direction: column; }
+.payments__cellnote { font-family: var(--font-body); font-weight: 400; font-size: var(--text-hint-size); }
+.payments__partial { margin: 0; padding: var(--space-3) var(--space-14px); border: var(--rule-strong) solid var(--ink); background: var(--waiting-tint); color: var(--waiting-ink); }
+.payments__more { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+.payments__more p { margin: 0; }
+.payments__reason { display: block; font-size: var(--text-hint-size); color: var(--ink-muted); }
+.payments__actions { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+/* a 24px target at least (WCAG 2.2 target size), also where the links are stacked */
+.payments__action a, .payments__action--off { min-height: 24px; display: inline-flex; align-items: center; }
+.payments__action { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.payments__action--off { color: var(--ink-muted); text-decoration: line-through; cursor: not-allowed; }
+.payments__draft { font-size: var(--text-hint-size); color: var(--ink-muted); }
+.payments__why { font-size: var(--text-hint-size); color: var(--ink-muted); }
 .payments__coverage { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
 
-/* the list and Chidi's note side by side */
+/* the list */
 .payments__row { display: flex; flex-wrap: wrap; gap: var(--space-22px); align-items: flex-start; }
 .payments__main { flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .payments__toolbar { margin: 0; }
@@ -30,12 +43,6 @@
 .payments__table td { vertical-align: middle; }
 .payments__refcell { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 
-.payments__note { flex: 1 1 300px; max-width: 380px; background: var(--action-tint); border: var(--rule-strong) solid var(--action); }
-.payments__notehead { padding: var(--space-3) var(--space-4); border-bottom: var(--rule-strong) solid var(--action); display: flex; align-items: center; gap: var(--space-10px); }
-.payments__notename { font-weight: 600; }
-.payments__noterole { font-weight: 500; font-size: var(--text-hint-size); color: var(--action-ink); }
-.payments__notebody { padding: var(--space-14px) var(--space-4); display: flex; flex-direction: column; gap: var(--space-10px); color: var(--action-ink); line-height: 1.55; }
-.payments__notebody p { margin: 0; }
 
 .payments__cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
 .payments__card { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6px); padding: var(--space-3); background: var(--surface); border: var(--rule-strong) solid var(--ink); }
@@ -47,7 +54,7 @@
 .payments__noaccesstag { align-self: flex-start; }
 
 @media (max-width: 719.98px) {
-  /* one column in the phone board's order: title, toolbar, figures, the cards, then Chidi's note */
+  /* one column in the phone board's order: title, toolbar, figures, the cards */
   .payments { gap: var(--space-3); }
   .payments__eyebrow { display: none; }
   .payments__row, .payments__main { display: contents; }
@@ -60,7 +67,6 @@
   .payments__cell:last-child { border-bottom: none; }
   .payments__coverage { order: 3; }
   .payments__main > :not(.payments__toolbar) { order: 4; }
-  .payments__note { order: 5; max-width: none; flex-basis: auto; }
-  /* a standalone link on a phone: a 44px target, its look unchanged (D-92c) */
-  .payments__notebody a { display: inline-flex; align-items: center; min-height: var(--control-md); }
+  /* an action on a phone: a 44px target, its look unchanged (D-92c) */
+  .payments__action a, .payments__action--off { display: inline-flex; align-items: center; min-height: var(--control-md); }
 }

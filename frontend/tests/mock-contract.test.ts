@@ -19,10 +19,6 @@ import { contractEvidence } from '../mock/evidence.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractBody as exceptionsBody } from '../mock/exceptions.mjs';
 // @ts-expect-error plain ESM module without type declarations
-import { contractBody as monthEndBody } from '../mock/finance.mjs';
-// @ts-expect-error plain ESM module without type declarations
-import { contractBody as invoicesBody } from '../mock/invoices.mjs';
-// @ts-expect-error plain ESM module without type declarations
 import { contractRules } from '../mock/setup.mjs';
 // @ts-expect-error plain ESM module without type declarations
 import { contractDelegation, contractDelegations } from '../mock/delegations.mjs';
@@ -42,7 +38,7 @@ const byId = (id: string) => operations.find((o) => o.op.operationId === id)!;
 
 const PATH_VALUES: Record<string, string> = { work_id: 'W-1001', task_id: 'T-2001', component: 'documents.client_reviewer', case_id: 'C-SETUP-1', client_id: '0b6f9e1a-3c44-4d0a-9d52-000000000001', template_id: 'T-01', tab: 'documents', document_id: 'D-2304', version: '1' };
 const PROJECT_UUID = '00000000-0000-4000-8000-000000000101';
-const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all', 'E-MONTH-END': '?period=2026-10' };
+const QUERY: Record<string, string> = { 'E-WORK-LIST': '?queue=needs_me', 'E-WORK-HISTORY': '?kind=all' };
 const BODY: Record<string, unknown> = {
   'E-TASK-CLAIM': { expected_revision: 2 },
   'E-TASK-DECIDE': { expected_revision: 2, verdict: 'approve' },
@@ -51,15 +47,13 @@ const BODY: Record<string, unknown> = {
   'E-TEMPLATE-VERSION': { expected_revision: 1, filename: 'invoice.pdf', content_base64: 'JVBERi0xLjQK' },
   'E-DELEGATION': { expected_revision: 2, from_person_id: 'P-KEMI', delegate: 'P-FEMI', starts: '2026-11-18', ends: '2026-11-25' },
 };
-// Operations a persona may not use answer the declared status instead of 200 (Setup is for Leads and Admin; E-EXCEPTIONS is Leads only; E-MONTH-END Finance only).
+// Operations a persona may not use answer the declared status instead of 200 (Setup is for Leads and Admin; E-EXCEPTIONS is Leads only).
 const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-PROJECT': { none: 404, admin: 404, hr: 404, hr_lead: 404 },
   'E-PROJECT-TAB': { none: 404, admin: 404, hr: 404, hr_lead: 404 },
   'E-CLIENTS': { none: 403 },
   'E-CLIENT': { none: 403 },
   'E-EXCEPTIONS': { pm: 403, hr: 403, hr_lead: 403 },
-  'E-MONTH-END': { pm: 403, none: 403 },
-  'E-INVOICES': { pm: 403, none: 403 },
   'E-SETUP-RULES': { pm: 403, none: 403 },
   'E-SETUP-RULE-SAVE': { pm: 403, none: 403 },
   'E-EVIDENCE-UPLOAD': { pm: 403, none: 403 },
@@ -195,8 +189,6 @@ function minutesProposalsStripped(body: unknown): unknown {
 const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
   'E-WORK-ITEM': minutesProposalsStripped,
   'E-EXCEPTIONS': exceptionsBody,
-  'E-MONTH-END': monthEndBody,
-  'E-INVOICES': invoicesBody,
   'E-SETUP-RULES': contractRules,
   'E-EVIDENCE-UPLOAD': contractEvidence,
   'E-DELEGATIONS': contractDelegations,

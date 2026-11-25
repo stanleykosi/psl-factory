@@ -1,15 +1,14 @@
 'use client';
 
-// SCR-20 Payments and follow-up: the invoices E-INVOICES returns for this person, in returned order. Invoiced, received
-// and still owed are three separate backend amounts; the state, overdue days, totals and count are the backend's. The
-// page adds, filters and counts nothing itself (INV-UNKNOWN, D-94), reads no /me and decides nothing about access.
-// Recording a payment received and the short-payment decision are not on this page (FE-PAYMENTS-RECEIPT, held).
+// SCR-20 Payments and follow-up: the invoices the live GET /payments returns for this person, in returned order. Billed,
+// received and still owed are three separate amounts; the status, days overdue and totals are the backend's. The page adds,
+// filters and counts nothing itself (INV-UNKNOWN, D-94), reads no /me and decides nothing about access. Recording a payment
+// is not on this page: the action is a link to the returned address or its disabled form (FE-PAYMENTS-RECEIPT, held).
 import NextLink from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
-  AgentAvatar,
   Button,
   buttonClass,
   EmptyState,
@@ -18,9 +17,6 @@ import {
   PageTitle,
   RadioGroup,
   SEARCH_MIN_CHARS,
-  ShowMore,
-  usePagedRows,
-  type ShowMoreProps,
   Table,
   Tag,
   Unknown,
@@ -32,37 +28,38 @@ import { tagTone } from '@/features/workspace/labels';
 import { WorkErrorCard } from '@/features/work-item/WorkItemStates';
 import { usePhoneBack } from '@/shell/AppShell';
 import { LoadingState, SignedOutState } from '@/shell/FrameStates';
-import { SampleLabel } from '@/shell/SampleLabel';
 
 import {
-  amountText,
-  bankDataText,
-  cardOverdue,
+  coverageText,
+  dataDate,
+  figureText,
   filterLabel,
+  linkOf,
   monthName,
+  NOT_AVAILABLE,
   overdueText,
+  overdueValues,
+  owedValues,
   parseQuery,
   PAYMENTS_PATH,
   querySearch,
-  countText,
-  updatedText,
-  stripText,
-  stripValue,
+  receivedValues,
+  STATES,
+  STATUS_TONE,
   UNKNOWN,
-  workHref,
   workText,
   type StripValue,
 } from './model';
-import { agentNote, coverage, period, RECORD_ID, type Amount, type InvoiceList, type InvoiceQuery, type InvoiceRow } from './proposal';
+import type { InvoiceList, InvoiceQuery, InvoiceRow } from './types';
 import { usePayments } from './usePayments';
 
 import './payments.css';
 
 const ANY = '';
 
-/** A row amount as sent, or the amber Unknown with "amount not known" spoken; never 0 for a missing value. */
-function AmountValue({ amount }: { amount: Amount | undefined }) {
-  const text = amountText(amount);
+/** A row amount with its currency and basis, or the amber Unknown with "amount not known" spoken; never 0 for a missing value. */
+function AmountValue({ amount, row }: { amount: string | null; row: InvoiceRow }) {
+  const text = figureText(amount, row.currency, row.basis);
   if (text === undefined) {
     return (
       <>
@@ -71,16 +68,18 @@ function AmountValue({ amount }: { amount: Amount | undefined }) {
       </>
     );
   }
-  // the SCR-20 boards write amounts in the body face, in full
   return <>{text}</>;
 }
 
+/** The status chip with the backend's label; its reason, when there is one, is the helper text under it. */
 function StateTag({ row }: { row: InvoiceRow }) {
-  if (!row.status) return <Unknown />;
   return (
-    <Tag tone={tagTone(row.status.tone)} className="payments__tag">
-      {row.status.label}
-    </Tag>
+    <>
+      <Tag tone={tagTone(STATUS_TONE[row.status])} className="payments__tag">
+        {row.label}
+      </Tag>
+      {row.reason && <span className="payments__reason">{row.reason}</span>}
+    </>
   );
 }
 
@@ -89,13 +88,14 @@ function Overdue({ row }: { row: InvoiceRow }) {
   return text === UNKNOWN ? <Unknown /> : <>{text}</>;
 }
 
-/** The reference: a link to its work item when the backend names one, else plain text. It takes focus after Show more. */
+/** The reference: a link to the returned records address when it is a path, else plain text. It takes focus after Show more. */
 function Reference({ row }: { row: InvoiceRow }) {
-  if (row.work_id && RECORD_ID.test(row.work_id)) {
+  const href = linkOf(row.records_url);
+  if (href) {
     return (
-      <NextLink href={workHref(row.work_id)} className="psl-mono" data-invoice-row="">
+      <a href={href} className="psl-mono" data-invoice-row="">
         {row.reference}
-      </NextLink>
+      </a>
     );
   }
   return (
@@ -105,42 +105,76 @@ function Reference({ row }: { row: InvoiceRow }) {
   );
 }
 
+/** Open the reminder, Record a payment, Review the payment: a plain link to the returned address, or its disabled form with the reason. */
+function Actions({ row }: { row: InvoiceRow }) {
+  const reasonId = `payments-why-${row.invoice_id}`;
+  const actions = [
+    { key: 'reminder', label: 'Open the reminder', href: linkOf(row.reminder_url), extra: row.has_reminder_draft ? 'Draft ready' : undefined },
+    { key: 'record', label: 'Record a payment', href: linkOf(row.record_payment_url) },
+    { key: 'review', label: 'Review the payment', href: linkOf(row.review_payment_url) },
+  ];
+  return (
+    <span className="payments__actions">
+      {actions.map((action) =>
+        action.href ? (
+          <span key={action.key} className="payments__action">
+            <a href={action.href}>{action.label}</a>
+            {action.extra && <span className="payments__draft">{action.extra}</span>}
+          </span>
+        ) : (
+          <span key={action.key} className="payments__action payments__action--off" aria-disabled="true" aria-describedby={reasonId}>
+            {action.label}
+          </span>
+        ),
+      )}
+      {actions.some((action) => !action.href) && (
+        <span id={reasonId} className="payments__why">
+          {NOT_AVAILABLE}
+        </span>
+      )}
+    </span>
+  );
+}
+
 const COLUMNS: Column<InvoiceRow>[] = [
-  {
-    key: 'invoice',
-    header: 'INVOICE',
-    cell: (row) => (
-      <span className="payments__refcell">
-        <Reference row={row} />
-        <SampleLabel show={row.sample} />
-      </span>
-    ),
-  },
+  { key: 'invoice', header: 'INVOICE', cell: (row) => <Reference row={row} /> },
   { key: 'work', header: 'WORK', cell: workText },
-  { key: 'invoiced', header: 'INVOICED', cell: (row) => <AmountValue amount={row.invoiced} /> },
-  { key: 'received', header: 'RECEIVED', cell: (row) => <AmountValue amount={row.received} /> },
+  { key: 'billed', header: 'BILLED', cell: (row) => <AmountValue amount={row.face} row={row} /> },
+  { key: 'received', header: 'RECEIVED', cell: (row) => <AmountValue amount={row.paid} row={row} /> },
   {
     key: 'owed',
     header: 'STILL OWED',
     cell: (row) => (
       <strong>
-        <AmountValue amount={row.owed} />
+        <AmountValue amount={row.owed} row={row} />
       </strong>
     ),
   },
   { key: 'state', header: 'STATE', cell: (row) => <StateTag row={row} /> },
   { key: 'overdue', header: 'OVERDUE BY', cell: (row) => <Overdue row={row} /> },
+  { key: 'actions', header: '', cell: (row) => <Actions row={row} /> },
 ];
 
-function InvoiceTable({ items, paging }: { items: InvoiceRow[]; paging: ShowMoreProps }) {
-  return <Table className="payments__table" caption="Invoices" columns={COLUMNS} rows={items} rowKey={(row) => row.invoice_id} empty="No invoices to show yet." paging={paging} />;
+function MoreButton({ more, onMore }: { more: 'idle' | 'loading' | 'error'; onMore: () => void }) {
+  return (
+    <div className="payments__more">
+      {more === 'error' && <p role="alert">We couldn’t load more invoices. The ones above are still here.</p>}
+      <Button kind="secondary" disabled={more === 'loading'} onClick={onMore}>
+        {more === 'error' ? 'Try again' : 'Show more'}
+      </Button>
+    </div>
+  );
+}
+
+function InvoiceTable({ items }: { items: InvoiceRow[] }) {
+  return <Table className="payments__table" caption="Invoices" columns={COLUMNS} rows={items} rowKey={(row) => String(row.invoice_id)} empty="No invoices to show yet." />;
 }
 
 function InvoiceCards({ items }: { items: InvoiceRow[] }) {
   return (
     <ul className="payments__cards" aria-label="Invoices">
       {items.map((row) => {
-        const overdue = cardOverdue(row);
+        const overdue = overdueText(row);
         return (
           <li key={row.invoice_id} className="payments__card">
             <span className="payments__cardhead">
@@ -150,21 +184,24 @@ function InvoiceCards({ items }: { items: InvoiceRow[] }) {
             <span>
               Still owed{' '}
               <strong>
-                <AmountValue amount={row.owed} />
+                <AmountValue amount={row.owed} row={row} />
               </strong>
+            </span>
+            <span>
+              Billed <AmountValue amount={row.face} row={row} /> · Received <AmountValue amount={row.paid} row={row} />
             </span>
             <span className="payments__cardref">
               <Reference row={row} />
-              {overdue === 'unknown' ? (
+              {overdue === UNKNOWN ? (
                 <>
-                  {' · overdue '}
+                  {' · '}
                   <Unknown />
                 </>
-              ) : overdue !== 'none' ? (
-                ` · overdue ${overdue}`
+              ) : overdue !== '—' ? (
+                ` · ${overdue}`
               ) : null}
             </span>
-            <SampleLabel show={row.sample} />
+            <Actions row={row} />
           </li>
         );
       })}
@@ -172,56 +209,36 @@ function InvoiceCards({ items }: { items: InvoiceRow[] }) {
   );
 }
 
-function StripCell({ label, value, tone, spoken }: { label: string; value: StripValue | string; tone: string; spoken?: string }) {
-  const text = typeof value === 'string' ? value : stripText(value);
-  const known = text !== UNKNOWN;
-  // a cell with no known part is drawn neutral: the amber Unknown never sits on a coloured fill
+function StripCell({ label, values, tone, date, spoken }: { label: string; values?: StripValue[]; tone: string; date?: string; spoken?: string }) {
+  const shown = values ?? [{ key: 'date', text: date ?? UNKNOWN, unknown: (date ?? UNKNOWN) === UNKNOWN }];
+  const known = shown.every((value) => !value.unknown);
+  // a cell with an Unknown part is drawn neutral: the amber Unknown never sits on a coloured fill
   return (
     <div className={`payments__cell${known ? ` payments__cell--${tone}` : ''}`}>
       <span className="payments__celllabel">
         {label}
         {spoken && <VisuallyHidden> {spoken}</VisuallyHidden>}
       </span>
-      <span className="payments__cellvalue">{known ? text : <Unknown />}</span>
+      {shown.map((value) => (
+        <span key={value.key} className="payments__cellvalue">
+          {value.text === UNKNOWN ? <Unknown /> : value.text}
+          {value.note && <span className="payments__cellnote">{value.note}</span>}
+        </span>
+      ))}
     </div>
   );
 }
 
-/** The four figures the backend composed; a missing one reads Unknown. Nothing here is added up from the rows. */
+/** The figures the backend composed, one value per currency and basis; nothing here is added up from the rows. */
 function Strip({ body }: { body: InvoiceList }) {
-  const month = monthName(period(body));
+  const month = monthName(body.received_this_month.month);
   return (
     <section aria-label="Facts earned" className="payments__strip">
-      <StripCell label="OWED TO PSL" value={stripValue(body, 'owed')} tone="owed" />
-      <StripCell label="OVERDUE" value={stripValue(body, 'overdue')} tone="overdue" />
-      <StripCell label="RECEIVED THIS MONTH" value={stripValue(body, 'received_this_month')} tone="received" spoken={month ? `(${month})` : undefined} />
-      <StripCell label="BANK DATA TO" value={bankDataText(body)} tone="bank" />
+      <StripCell label="OWED TO PSL" values={owedValues(body.totals)} tone="owed" />
+      <StripCell label="OVERDUE" values={overdueValues(body.totals)} tone="overdue" />
+      <StripCell label="RECEIVED THIS MONTH" values={receivedValues(body.received_this_month)} tone="received" spoken={month ? `(${month})` : undefined} />
+      <StripCell label="DATA DATE" date={dataDate(body.as_of)} tone="bank" />
     </section>
-  );
-}
-
-function Note({ body }: { body: InvoiceList }) {
-  const note = agentNote(body);
-  if (!note) return null;
-  return (
-    <aside className="payments__note" aria-label="Chidi · Finance agent">
-      <div className="payments__notehead">
-        <AgentAvatar agent="chidi" />
-        <span className="payments__notename">
-          Chidi <span className="payments__noterole">· Finance agent</span>
-        </span>
-      </div>
-      <div className="payments__notebody">
-        {note.lines.map((line, i) => (
-          <p key={i}>{note.strong.has(i) ? <strong>{line}</strong> : line}</p>
-        ))}
-        {note.workId && (
-          <p>
-            <NextLink href={workHref(note.workId)}>Open the reminder draft</NextLink>
-          </p>
-        )}
-      </div>
-    </aside>
   );
 }
 
@@ -244,11 +261,11 @@ function PaymentsNoAccess() {
   );
 }
 
-function StateFilter({ filters, applied, onApply, onClose }: { filters: NonNullable<InvoiceList['filters']>; applied?: string; onApply: (value: string | undefined) => void; onClose: () => void }) {
+function StateFilter({ applied, onApply, onClose }: { applied?: string; onApply: (value: string | undefined) => void; onClose: () => void }) {
   const [draft, setDraft] = useState<string>(applied ?? ANY);
   return (
     <FilterPanel applyLabel="Show results" onApply={() => onApply(draft === ANY ? undefined : draft)} onClear={() => setDraft(ANY)} onClose={onClose}>
-      <RadioGroup legend="State" name="payments-state" value={draft} onChange={setDraft} options={[{ value: ANY, label: 'Any state' }, ...filters.map((f) => ({ value: f.value, label: f.label }))]} />
+      <RadioGroup legend="State" name="payments-state" value={draft} onChange={setDraft} options={[{ value: ANY, label: 'Any state' }, ...STATES.map((f) => ({ value: f.value, label: f.label }))]} />
     </FilterPanel>
   );
 }
@@ -283,40 +300,27 @@ export function PaymentsView() {
     if (q !== queryRef.current.q) navigate({ q });
   };
 
-  const bodyReady = state.status === 'ready' ? state.body : undefined;
-  const { rows: shownRows, paging } = usePagedRows({
-    items: bodyReady?.items ?? [],
-    next: Boolean(bodyReady?.next_cursor),
-    busy: more === 'loading',
-    failed: more === 'error',
-    loadMore: (limit) => void showMore(limit),
-    resetKey: `${query.q ?? ''}|${query.status ?? ''}`,
-    total: bodyReady?.total,
-  });
+  const items = state.status === 'ready' ? state.body.items : [];
 
   useEffect(() => {
-    if (focusRow.current !== null && state.status === 'ready' && shownRows.length > focusRow.current) {
+    if (focusRow.current !== null && state.status === 'ready' && items.length > focusRow.current) {
       rows.current?.querySelectorAll<HTMLElement>('[data-invoice-row]')[focusRow.current]?.focus();
       focusRow.current = null;
     }
-  }, [state, shownRows.length]);
+  }, [state, items.length]);
 
 
   if (state.status === 'error' && state.error.kind === 'unauthenticated') return <SignedOutState pathname={`${PAYMENTS_PATH}${querySearch(query)}`} />;
   if (state.status === 'error' && (state.error.kind === 'forbidden' || state.error.kind === 'not_found')) return <PaymentsNoAccess />;
 
   const body = state.status === 'ready' ? state.body : undefined;
-  const filters = body?.filters ?? [];
   const closeFilter = () => setFilterOpen(false);
   const narrowed = query.q !== undefined || query.status !== undefined;
 
   // Show more: the keyboard moves to the first row it added.
-  const footer: ShowMoreProps = {
-    ...paging,
-    onMore: () => {
-      if (more !== 'error') focusRow.current = shownRows.length;
-      paging.onMore();
-    },
+  const onMore = () => {
+    if (more !== 'error') focusRow.current = items.length;
+    void showMore();
   };
 
   let list;
@@ -324,7 +328,7 @@ export function PaymentsView() {
     list = <LoadingState />;
   } else if (state.status === 'error') {
     list = <WorkErrorCard message="We couldn’t load the payments. Nothing was changed." error={state.error} onRetry={() => void retry()} />;
-  } else if (state.body.items.length === 0 && !state.body.next_cursor) {
+  } else if (state.body.items.length === 0 && !state.body.cursor) {
     list = narrowed ? (
       <EmptyState
         title="No invoices match"
@@ -342,22 +346,18 @@ export function PaymentsView() {
   } else {
     list = (
       <>
-        <div ref={rows}>
-          {phone ? (
-            <>
-              <InvoiceCards items={shownRows} />
-              <ShowMore solo {...footer} />
-            </>
-          ) : (
-            <InvoiceTable items={shownRows} paging={footer} />
-          )}
-        </div>
+        {state.body.limited && (
+          <p role="note" className="payments__partial">
+            Partial result. The totals cover the rows returned, not every invoice. Use Show more for the rest.
+          </p>
+        )}
+        <div ref={rows}>{phone ? <InvoiceCards items={items} /> : <InvoiceTable items={items} />}</div>
+        {state.body.cursor && <MoreButton more={more} onMore={onMore} />}
       </>
     );
   }
 
-  const sentence = body ? coverage(body) : undefined;
-  const updated = body ? updatedText(body.as_of) : undefined;
+  const sentence = body ? coverageText(body.received_this_month) : undefined;
   return (
     <div className="payments">
       <p className="payments__eyebrow">FINANCE / PAYMENTS</p>
@@ -365,7 +365,6 @@ export function PaymentsView() {
         <PageTitle size={36} phoneSize={26}>
           {phone ? 'Payments' : 'Payments and follow-up'}
         </PageTitle>
-        {updated && <p className="payments__updated">{updated}</p>}
       </div>
       {body && <Strip body={body} />}
       {sentence && <p className="payments__coverage">{sentence}</p>}
@@ -383,12 +382,10 @@ export function PaymentsView() {
           >
             <ListToolbar
               search={{ label: 'Search', placeholder: phone ? 'Search invoices' : 'Search invoice, client or reference', value: text, onChange: setText, onSearch: applySearch }}
-              filterCount={query.status ? 1 : 0}
               filterOpen={filterOpen}
-              onFilterToggle={filters.length > 0 ? () => setFilterOpen(!filterOpen) : undefined}
+              onFilterToggle={() => setFilterOpen(!filterOpen)}
               filterPanel={
                 <StateFilter
-                  filters={filters}
                   applied={query.status}
                   onApply={(status) => {
                     closeFilter();
@@ -397,14 +394,13 @@ export function PaymentsView() {
                   onClose={closeFilter}
                 />
               }
-              resultText={body ? countText(body.total) : ''}
-              chips={query.status ? [{ key: 'status', name: 'State', value: filterLabel(body?.filters, query.status), onRemove: () => navigate({ status: undefined }) }] : []}
+              resultText=""
+              chips={query.status ? [{ key: 'status', name: 'State', value: filterLabel(query.status), onRemove: () => navigate({ status: undefined }) }] : []}
               onClearAll={() => navigate({ status: undefined })}
             />
           </form>
           {list}
         </div>
-        {body && <Note body={body} />}
       </div>
     </div>
   );
