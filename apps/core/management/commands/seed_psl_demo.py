@@ -20,26 +20,26 @@ from django.utils import timezone
 from apps.core import client_contacts
 from apps.core.models import Case
 from apps.core.services import add_evidence
-from apps.documents.controlled import register_template
-from apps.documents.models import Template
 from apps.finance import billing
 from apps.identity import intake, role_factory_decisions, scope_moves, teams
 from apps.identity.actions import ACTIONS
 from apps.identity.team_models import StaffMembership
-from apps.pmo import commercial_intake, engagement, rfp
+from apps.pmo import rfp
 from apps.pmo.delivery import open_dossier
 from apps.pmo.gates import register_candidate
 from apps.pmo.issues import log_issue
 from apps.pmo.meetings import record_meeting
-from apps.pmo.services import complete_milestone, decide, prepare_baseline, sign_baseline
+from apps.pmo.services import complete_milestone
 from apps.pmo.signatures import capture_packet
 from apps.policy.change_drafts import draft_standard_policy
-from apps.policy.engagement_validators import ASSIGN
 from apps.policy.finance_drafts import draft_finance_policy
 from apps.policy.operator_drafts import draft_operator_policy
 from apps.policy.registry import components
 from apps.policy.services import register_reference, save_draft, transition
-from apps.workflows import factory_commercial, factory_delivery, factory_reporting
+from apps.workflows import factory_delivery, factory_reporting
+
+from ._psl_demo_journey import (JOURNEY_ADA, JOURNEY_FOLAKE, JOURNEY_PM, JOURNEY_PMO_LEAD, PLACEHOLDER_ENGINEERING_LEAD,
+                                TEMPLATE_RULE, JourneyMixin)
 
 TENANT = 'psl-demo'
 ROOT = 'psl-demo-root'
@@ -72,7 +72,7 @@ PM_ACTIONS = [
 LEAD_REVIEW_ACTIONS = ['case.read', 'decision.record', 'engagement.read', 'engagement.assign', 'milestone.complete',
                        'evidence.add']
 FIELDS = ['executive_summary', 'scope', 'status', 'risks', 'timeline', 'dependencies', 'next_steps']
-REPORT_TEMPLATE = 'Weekly client report'
+PLACEHOLDERS = f' {PLACEHOLDER_ENGINEERING_LEAD} and {TEMPLATE_RULE} apply until PSL supplies the real ones.'
 
 
 def person_name(key):
@@ -84,7 +84,7 @@ def username(key):
     return PEOPLE[key][2] + DOMAIN
 
 
-class Command(BaseCommand):
+class Command(JourneyMixin, BaseCommand):
     help = ('Seed the PSL design demo (people, clients, four projects) in its own synthetic tenant. '
             'Writes sign-in names and passwords to --credentials-file only.')
 
@@ -102,6 +102,10 @@ class Command(BaseCommand):
         self.passwords = {key: secrets.token_urlsafe(18) for key in PEOPLE}
         self.cases = {}
         self.e = {}
+        self.projects = PROJECTS
+        self.templates, self.recipients, self.engagement_work, self.commercial_work = {}, {}, {}, {}
+        self.report_definition = {'document_type': 'status_report', 'required_fields': FIELDS,
+                                  'audience_fields': {'client': FIELDS}}
         self.work_ids = []
         self.write_credentials(path)
         try:
@@ -151,15 +155,20 @@ class Command(BaseCommand):
         for key, project in PROJECTS.items():
             case = intake.create_case(self.admin, TENANT, 'PSL-DEMO-' + key.upper(), project['title'], 'project')
             self.cases[key] = case
+        self.users['placeholder_eng'] = self.technical_person('psl-demo-placeholder-engineering-lead',
+                                                              PLACEHOLDER_ENGINEERING_LEAD)
         for key in PROJECTS:
             self.start_project(key)
-        for key in ('lagoon', 'delta'):
-            self.signed_project(key)
-        self.costing_approval('kora')
-        self.commercial_work('kora')
+        # Each project's history runs the real journey; Kora stops at its costing approval, Delta and Lagoon are signed.
+        for key, approvals in (('kora', ['PM']), ('delta', ['PM', 'Head of PMO', 'CEO', 'PMO Lead']),
+                               ('lagoon', ['PM', 'Head of PMO', 'CEO', 'PMO Lead'])):
+            self.documents_setup(key)
+            self.rfp_history(key)
+            self.engagement_history(key)
+            work, revision = self.costing_history(key, approvals)
+            if len(approvals) == 4:
+                self.sign_sow(key, revision)
         self.rfp_received('sabi')
-        for key in ('lagoon', 'delta', 'kora'):
-            self.manager(key)
         self.lagoon_money_and_milestones()
         self.open_issue('lagoon')
         self.release_work('lagoon')
@@ -172,13 +181,12 @@ class Command(BaseCommand):
         self.staff_roles()
         self.assign_report_review()
 
-    def rev(self, case):
-        case.refresh_from_db()
-        return case.revision
-
     def grant(self, case, key, actions):
+        self.grant_user(case, self.users[key], actions)
+
+    def grant_user(self, case, user, actions):
         for action in actions:
-            intake.change_access(self.admin, case.pk, self.users[key].pk, action, True, 'Synthetic PSL demo access')
+            intake.change_access(self.admin, case.pk, user.pk, action, True, 'Synthetic PSL demo access')
 
     def evidence(self, case, kind, text):
         return add_evidence(self.admin, case.pk, kind, text, 'synthetic:psl-demo')
@@ -206,6 +214,11 @@ class Command(BaseCommand):
     def roles(self, case, owner, pm):
         assigned = [('PM', pm)] if pm else [('PM', 'tunde'), ('PM', 'chinedu')]
         assigned += [('Head of PMO', 'kemi'), ('CEO', 'folake'), ('PMO Lead', 'kemi')]
+        if pm:
+            # D-214: the PM logs engineering decisions for the placeholder engineering lead. The template costing rule
+            # is owned by the PMO and tested by Finance; the client answers through the PM (staff-recorded).
+            assigned += [('Engineering Lead', 'placeholder_eng'), ('Engineering Lead', pm), ('Client', pm),
+                         ('PMO', 'kemi'), ('Finance', 'ada')]
         refs = []
         for index, (role, key) in enumerate(assigned):
             ref = f'psl-demo:role:{index}'
@@ -219,47 +232,29 @@ class Command(BaseCommand):
         project, case = PROJECTS[key], self.cases[key]
         pm = project['pm']
         if pm:
-            self.grant(case, pm, PM_ACTIONS)
+            self.grant(case, pm, PM_ACTIONS + JOURNEY_PM)
+            self.grant(case, 'ada', ['case.read'] + JOURNEY_ADA)
         else:
             # Both PMs are nominated for Sabi, so the PMO Lead has someone to choose; neither is assigned.
             for nominee in ('tunde', 'chinedu'):
                 self.grant(case, nominee, ['case.read', 'rfp.read', 'rfp.prepare'])
-        self.grant(case, 'kemi', LEAD_REVIEW_ACTIONS)
-        self.grant(case, 'folake', ['case.read', 'decision.record'])
-        e = {kind: self.evidence(case, kind, f'{project["title"]}: {kind.replace("_", " ")} (demo record).')
+        self.grant(case, 'kemi', LEAD_REVIEW_ACTIONS + (JOURNEY_PMO_LEAD if pm else []))
+        self.grant(case, 'folake', ['case.read', 'decision.record'] + (JOURNEY_FOLAKE if pm else []))
+        e = {kind: self.evidence(case, kind, f'{project["title"]}: {kind.replace("_", " ")} (demo record).' + (PLACEHOLDERS if kind == 'policy_decision' else ''))
              for kind in EVIDENCE_KINDS}
         self.e[key] = e
         self.roles(case, e['policy_decision'], pm)
-        if key == 'sabi':
-            # D-212: the PMO Lead assigns the accountable PM. The rest is the repo fixture's synthetic matrix.
-            matrix = json.loads(Path(settings.BASE_DIR, 'fixtures/rfp.json').read_text())['decision_matrix']
-            matrix['rfp']['assignment_roles'] = ['PMO Lead']
-            config = draft_standard_policy(self.admin, case.pk, 'D05.decision_action_matrix', matrix,
-                                           e['policy_decision'].pk, timezone.now() - timedelta(minutes=1))
-            transition(self.admin, config.pk, 'validated')
-            transition(self.admin, config.pk, 'active')
+        # D-212: the PMO Lead assigns the accountable PM. The rest is the repo fixture's synthetic matrix.
+        matrix = json.loads(Path(settings.BASE_DIR, 'fixtures/rfp.json').read_text())['decision_matrix']
+        matrix['rfp']['assignment_roles'] = ['PMO Lead']
+        config = draft_standard_policy(self.admin, case.pk, 'D05.decision_action_matrix', matrix,
+                                       e['policy_decision'].pk, timezone.now() - timedelta(minutes=1))
+        transition(self.admin, config.pk, 'validated')
+        transition(self.admin, config.pk, 'active')
         proof = self.evidence(case, 'engagement_source', f'{project["client"]} engagement source (demo record).')
         client_contacts.save(self.users[pm] if pm else self.admin, case, 'project', {
             'customer': '', 'client_name': project['client'], 'name': f'{project["client"]} project contact',
             'email': '', 'role': '', 'evidence': proof, 'revision': self.rev(case)})
-
-    def signed_project(self, key):
-        case, pm, e = self.cases[key], PROJECTS[key]['pm'], self.e[key]
-        prepare_baseline(self.admin, case.pk, e['plan'].pk, e['costing'].pk, e['sow'].pk, self.rev(case))
-        for role, who in [('PM', pm), ('Head of PMO', 'kemi'), ('CEO', 'folake'), ('PMO Lead', 'kemi')]:
-            decide(self.users[who], case.pk, role, self.rev(case))
-        self.signature_packet(case, e, self.users[pm])
-        sign_baseline(self.users[pm], case.pk, e['signature'].pk, self.rev(case))
-
-    def costing_approval(self, key):
-        """The PM approves the supplied costing; the Head of PMO and CEO decisions are still to come.
-
-        The pre-sale proposal route also needs an Engineering Lead reviewer, which PSL has not named, and the
-        costing rule (F-77) is undecided, so this stays with the supplied costing and the first decision.
-        """
-        case, e = self.cases[key], self.e[key]
-        prepare_baseline(self.admin, case.pk, e['plan'].pk, e['costing'].pk, e['sow'].pk, self.rev(case))
-        decide(self.users[PROJECTS[key]['pm']], case.pk, 'PM', self.rev(case))
 
     def rfp_received(self, key):
         case = self.cases[key]
@@ -274,7 +269,7 @@ class Command(BaseCommand):
                   'Reproduce on an older Android phone and confirm the fix', incident.pk,
                   'Raised during UAT with the client', self.rev(case), 'High')
 
-    def signature_packet(self, case, e, pm):
+    def signature_packet(self, case, e, pm, revision):
         identity = self.evidence(case, 'client_identity', 'Demo client representative (synthetic).')
         self.artifact(case, e['policy_decision'], 'D11.client_signature_contract',
                       'schema:psl/client-signature-contract/v1', {
@@ -290,21 +285,7 @@ class Command(BaseCommand):
                              'human_verified': True}
                       for kind, source in [('sow', e['signature']), ('prd', prd_signature)]}
         capture_packet(pm, case.pk, prd.pk, signatures, 'Demo human-verified signature references',
-                       str(uuid4()), self.rev(case), None, None)
-
-    def manager(self, key):
-        """Capture the engagement, then the PMO Lead names the project manager."""
-        case, project = self.cases[key], PROJECTS[key]
-        rules = json.loads(Path(settings.BASE_DIR, 'fixtures/engagement-intake.json').read_text())['assignment']
-        owner = self.e[key]['policy_decision']
-        source = self.evidence(case, 'engagement_source', f'{project["client"]} ownership and scope (demo record).')
-        pm = self.users[project['pm']]
-        engagement.capture(pm, case.pk, 'B', source.pk, 'PSL-DEMO-' + key.upper(), 'psl-demo-engagement')
-        config = draft_operator_policy(self.admin, case.pk, ASSIGN,
-                                       rules, owner.pk, timezone.now() - timedelta(minutes=1))
-        transition(self.admin, config.pk, 'validated')
-        transition(self.admin, config.pk, 'active')
-        engagement.assign(self.users['kemi'], case.pk, pm.pk, 'PMO Lead', source.pk, 'psl-demo-assignment')
+                       str(uuid4()), self.rev(case), revision.pk, None)
 
     def lagoon_money_and_milestones(self):
         case, e = self.cases['lagoon'], self.e['lagoon']
@@ -354,20 +335,7 @@ class Command(BaseCommand):
             'case.read', 'report.read', 'factory.execute', 'report.draft', 'document.draft',
             'document.request_review', 'evidence.add', 'meeting.read', 'issue.read', 'change.read',
             'delivery.read', 'rfp.read'])
-        recipient = self.technical_user('psl-demo-client-recipient', f'{project["client"]} project contact',
-                                        ['document.receive:client'])
-        ref = register_reference(self.admin, case.pk, 'psl-demo:recipient', 'schema:psl/document-recipient/v1',
-                                 {'audience': 'client', 'user_id': recipient.pk}, owner.pk)
-        self.activate(case, owner, 'D11.recipient_grant_refs', [ref.ref])
-        template = register_template(self.admin, case.pk, REPORT_TEMPLATE, {
-            'document_type': 'status_report', 'required_fields': FIELDS, 'audience_fields': {'client': FIELDS}},
-            owner.pk, self.rev(case))
-        storage = register_reference(self.admin, case.pk, 'psl-demo:storage', 'schema:psl/document-storage/v1', {
-            'template_ids': list(Template.objects.filter(case=case).values_list('pk', flat=True)),
-            'repository': 'internal-versioned', 'retention_days': 30}, owner.pk)
-        self.activate(case, owner, 'D11.template_storage_retention_rules', {
-            'artifact_ref': storage.ref, 'artifact_version': storage.version, 'sha256': storage.sha256,
-            'schema_ref': storage.schema_ref})
+        template = self.templates[key]['report']
         profile = json.loads(Path(settings.BASE_DIR, 'fixtures/factory-reporting.json').read_text())
         profile.pop('classification')
         profile.update(preparer_id=preparer.pk, executor_id=pm.pk)
@@ -440,24 +408,4 @@ class Command(BaseCommand):
         transition(self.admin, config.pk, 'active')
         work = factory_delivery.start(pm, case.pk, 'PSL-DEMO-RELEASE', dossier.pk,
                                       f'Release: {PROJECTS[key]["title"]}', self.rev(case))
-        self.work_ids.append(work.pk)
-
-    def commercial_work(self, key):
-        """Start the costing and commercial line; it stops where the costing rule (F-77) is needed."""
-        case, e, pm = self.cases[key], self.e[key], self.users[PROJECTS[key]['pm']]
-        self.grant(case, PROJECTS[key]['pm'], ['commercial.prepare', 'costing.read', 'costing.source.read'])
-        sources = {name: None for name in ('requirements', 'plan', 'engineering_estimate', 'security_estimate', 'sow',
-                                           'context_id', 'inputs', 'oracle_id', 'rule_id', 'template_id',
-                                           'predecessor_id')}
-        sources.update({name: e[name].pk for name in ('requirements', 'plan', 'engineering_estimate',
-                                                      'security_estimate', 'sow')})
-        head = commercial_intake.capture(pm, case.pk, sources, None, self.rev(case))
-        profile = json.loads(Path(settings.BASE_DIR, 'fixtures/factory-commercial.json').read_text())
-        profile.pop('classification')
-        config = draft_operator_policy(self.admin, case.pk, 'OPS.factory_commercial_execution', profile,
-                                       e['policy_decision'].pk, timezone.now() - timedelta(minutes=1))
-        transition(self.admin, config.pk, 'validated')
-        transition(self.admin, config.pk, 'active')
-        work = factory_commercial.start(pm, case.pk, 'PSL-DEMO-COMMERCIAL', head.pk,
-                                        f'Costing: {PROJECTS[key]["title"]}', self.rev(case))
         self.work_ids.append(work.pk)
