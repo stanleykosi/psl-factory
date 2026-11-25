@@ -1,201 +1,95 @@
 {
+  "as_of": "2026-11-12",
+  "limited": false,
+  "cursor": null,
+  "totals": [
+    {
+      "currency": "NGN",
+      "basis": "gross",
+      "owed": null,
+      "overdue": null,
+      "known_owed": null,
+      "unknown_owed_count": 3
+    }
+  ],
+  "received_this_month": {
+    "month": "2026-11",
+    "scope": "workspaces_in_results",
+    "workspaces_read": 0,
+    "workspaces_unknown": 3,
+    "last_received_at": null,
+    "last_verified_at": null,
+    "totals": []
+  },
   "items": [
     {
-      "invoice_id": "INV-0398",
+      "invoice_id": 398,
+      "issue_id": 41,
+      "case_id": "00000000-0000-4000-8000-000000000101",
       "reference": "INV-0398",
-      "client": "Lagoon Health",
-      "project": {
-        "case_id": "P-0101",
-        "title": "Lagoon Health · patient app"
-      },
-      "issued_on": "2026-10-03",
-      "due": {
-        "date": "2026-11-03",
-        "unknown": false
-      },
-      "invoiced": {
-        "amount": "3000000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "received": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "owed": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "status": {
-        "label": "PART PAID",
-        "tone": "uncertain"
-      },
-      "revision": 1,
-      "sample": true,
-      "overdue": {
-        "unknown": true
-      },
-      "milestone_label": "M1"
+      "workspace": "Lagoon Health patient app",
+      "customer": "Lagoon Health",
+      "contract": "Phase 1",
+      "currency": "NGN",
+      "basis": "gross",
+      "status": "part-paid",
+      "label": "Part paid",
+      "records_url": "/projects/00000000-0000-4000-8000-000000000101",
+      "record_payment_url": null,
+      "review_payment_url": "/finance/review/41",
+      "reminder_url": "/work/new?invoice=398",
+      "age_days": null,
+      "paid": null,
+      "owed": null,
+      "face": null,
+      "reason": null,
+      "has_reminder_draft": false
     },
     {
-      "invoice_id": "INV-0391",
+      "invoice_id": 391,
+      "issue_id": 34,
+      "case_id": "00000000-0000-4000-8000-000000000102",
       "reference": "INV-0391",
-      "client": "Harmattan Bank",
-      "project": {
-        "case_id": "P-0102",
-        "title": "Harmattan Bank · mobile onboarding"
-      },
-      "issued_on": "2026-09-22",
-      "due": {
-        "date": "2026-10-22",
-        "unknown": false
-      },
-      "invoiced": {
-        "amount": "6800000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "received": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "owed": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "status": {
-        "label": "OVERDUE",
-        "tone": "stopped"
-      },
-      "revision": 1,
-      "reminder": {
-        "status": "drafted",
-        "work_id": "W-3801"
-      },
-      "sample": true,
-      "overdue": {
-        "unknown": true
-      },
-      "milestone_label": "M1"
+      "workspace": "Harmattan Bank mobile onboarding",
+      "customer": "Harmattan Bank",
+      "contract": "Phase 2",
+      "currency": "NGN",
+      "basis": "gross",
+      "status": "overdue",
+      "label": "Overdue",
+      "records_url": "/projects/00000000-0000-4000-8000-000000000102",
+      "record_payment_url": "/finance/record/34",
+      "review_payment_url": null,
+      "reminder_url": "/work/new?invoice=391",
+      "age_days": null,
+      "paid": null,
+      "owed": null,
+      "face": null,
+      "reason": null,
+      "has_reminder_draft": true
     },
     {
-      "invoice_id": "INV-0402",
-      "reference": "INV-0402",
-      "client": "Kora Logistics",
-      "project": {
-        "case_id": "P-0103",
-        "title": "Kora Logistics · fleet tracker"
-      },
-      "issued_on": "2026-10-07",
-      "due": {
-        "date": "2026-11-06",
-        "unknown": false
-      },
-      "invoiced": {
-        "amount": "4100000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "received": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "owed": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "status": {
-        "label": "BANK DATA MISSING",
-        "tone": "uncertain"
-      },
-      "revision": 1,
-      "sample": true,
-      "overdue": {
-        "unknown": true
-      },
-      "milestone_label": "M1"
-    },
-    {
-      "invoice_id": "INV-0388",
+      "invoice_id": 388,
+      "issue_id": 31,
+      "case_id": "00000000-0000-4000-8000-000000000103",
       "reference": "INV-0388",
-      "client": "Sabi Market",
-      "project": {
-        "case_id": "P-0105",
-        "title": "Sabi Market · web store"
-      },
-      "issued_on": "2026-09-15",
-      "due": {
-        "date": "2026-10-15",
-        "unknown": false
-      },
-      "invoiced": {
-        "amount": "2200000.00",
-        "currency": "NGN",
-        "unknown": false
-      },
-      "received": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "owed": {
-        "currency": "NGN",
-        "unknown": true
-      },
-      "status": {
-        "label": "PAID",
-        "tone": "verified"
-      },
-      "revision": 1,
-      "sample": true,
-      "overdue": {
-        "unknown": true
-      },
-      "milestone_label": "final"
+      "workspace": "Kora Foods portal",
+      "customer": "Kora Foods",
+      "contract": "Phase 1",
+      "currency": "NGN",
+      "basis": "gross",
+      "status": "paid",
+      "label": "Paid",
+      "records_url": "/projects/00000000-0000-4000-8000-000000000103",
+      "record_payment_url": null,
+      "review_payment_url": null,
+      "reminder_url": null,
+      "age_days": null,
+      "paid": null,
+      "owed": null,
+      "face": null,
+      "reason": null,
+      "has_reminder_draft": false
     }
-  ],
-  "as_of": "2026-11-12T09:00:00Z",
-  "filters": [
-    {
-      "value": "issued",
-      "label": "Issued"
-    },
-    {
-      "value": "overdue",
-      "label": "Overdue"
-    },
-    {
-      "value": "part_paid",
-      "label": "Part paid"
-    },
-    {
-      "value": "paid",
-      "label": "Paid"
-    }
-  ],
-  "total": 4,
-  "totals_detail": {
-    "owed": {
-      "has_unknown": true
-    },
-    "overdue": {
-      "has_unknown": true
-    },
-    "received_this_month": {
-      "has_unknown": true
-    }
-  },
-  "period": "2026-11",
-  "coverage": "\"Unknown\" means the October bank statement hasn't been imported for that account, so the factory won't assume nothing was paid.",
-  "agent_note": {
-    "agent": "chidi",
-    "lines": [
-      "Harmattan Bank is 21 days overdue. I drafted a reminder from the invoice and the SOW payment terms.",
-      "You send it.",
-      "I can't send messages to clients or change what is owed."
-    ],
-    "strong_lines": [
-      1
-    ],
-    "work_id": "W-3801"
-  }
+  ]
 }

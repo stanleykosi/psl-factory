@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type APIRequestContext, type BrowserContext, type Locator, type Page } from '@playwright/test';
 
-// F-41: SCR-20 Payments and follow-up and the SCR-32 payment reminder against the contract mock, at 1440 and 390, axe
+// F-41, F-79: SCR-20 Payments and follow-up (the live GET /payments) and the SCR-32 payment reminder against the contract mock, at 1440 and 390, axe
 // WCAG 2.2 AA. Every request goes to the local mock; it sends no email and writes no money record.
 const DESKTOP = { width: 1440, height: 900 };
 const PHONE = { width: 390, height: 844 };
@@ -21,7 +21,7 @@ async function setCookies(context: BrowserContext, cookies: Record<string, strin
 }
 
 const requests: { method: string; url: URL }[] = [];
-const invoiceReads = () => requests.filter((r) => r.method === 'GET' && r.url.pathname === '/api/v1/finance/invoices');
+const invoiceReads = () => requests.filter((r) => r.method === 'GET' && r.url.pathname === '/api/v1/payments');
 const stepPosts = () => requests.filter((r) => r.method === 'POST' && /\/api\/v1\/work\/W-\d+\/steps$/.test(r.url.pathname));
 const log = async (request: APIRequestContext) => (await (await request.get(`${MOCK}/__mock/workspace-log`)).json()) as { entries: { idempotency_key: string; step: string; replay: boolean }[]; sends: Record<string, number> };
 
@@ -57,7 +57,9 @@ async function expectTouchTargets(page: Page) {
 }
 
 const LIST_STATES: [string, Record<string, string>, (page: Page) => Promise<unknown>][] = [
-  ['board', {}, (page) => openList(page, '?status=issued')],
+  ['board', {}, (page) => openList(page, '?status=overdue')],
+  ['limited and two currencies', { psl_mock_invoices: 'limited' }, (page) => openList(page)],
+  ['links not available', { psl_mock_invoices: 'links' }, (page) => openList(page)],
   ['unknown', { psl_mock_invoices: 'unknown' }, (page) => openList(page)],
   ['empty', { psl_mock_invoices: 'empty' }, (page) => openList(page)],
   [
@@ -134,30 +136,35 @@ for (const [label, viewport] of [
       });
     }
 
-    test('the board rows, strip and note from the mock; no record-a-payment control; the note opens the reminder', async ({ page }) => {
-      await openList(page, '?status=issued');
+    test('the rows, strip and actions from the mock; the links go where the API says and nothing is posted', async ({ page }) => {
+      await openList(page);
       if (phone) {
         const cards = page.locator('.payments__card');
         await expect(cards).toHaveCount(4);
-        await expect(cards.nth(0)).toContainText('INV-0398 · overdue 9 days');
-        await expect(cards.nth(3)).toContainText('PAID');
+        await expect(cards.nth(0)).toContainText('INV-0398 · 9 days overdue');
+        await expect(cards.nth(3)).toContainText('Unknown');
       } else {
         await expect(page.getByRole('table', { name: 'Invoices' }).getByRole('row')).toHaveCount(5);
-        await expect(page.locator('.psl-resultcount')).toHaveText('4 INVOICES');
-        await expect(page.getByText('Updated 12 Nov 10:00')).toBeVisible();
+        await expect(page.getByRole('columnheader', { name: 'OVERDUE BY' })).toBeVisible();
       }
-      await expect(page.getByText('₦7,300,000.00 + Unknown')).toBeVisible();
-      await expect(page.getByRole('button', { name: 'Remove State filter' })).toBeVisible();
-      await expect(page.getByText(/Record a payment/)).toHaveCount(0);
-      // UI-2-1: the note's standalone link is a 44px target on a phone
-      if (phone) expect((await page.getByRole('link', { name: 'Open the reminder draft' }).boundingBox())!.height).toBeGreaterThanOrEqual(44);
-      await expect(page.getByText(/7\.3M/)).toHaveCount(0);
+      await expect(page.getByText('₦7,300,000.00 gross + Unknown')).toBeVisible();
+      await expect(page.getByText('1 invoice has no known balance')).toBeVisible();
+      await expect(page.getByText('Received this month covers 2 of 3 projects; 1 could not be read.')).toBeVisible();
+      await expect(page.getByText('BANK DATA TO')).toHaveCount(0);
+      await expect(page.getByText(/Not available to you for this invoice/).first()).toBeVisible();
+      const link = page.getByRole('link', { name: 'Open the reminder' }).first();
+      await expect(link).toHaveAttribute('href', '/work/new?invoice=398');
+      if (phone) expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
       expect(invoiceReads()).toHaveLength(1);
-      expect(invoiceReads()[0].url.searchParams.get('status')).toBe('issued');
-      await page.getByRole('link', { name: 'Open the reminder draft' }).click();
-      await expect(page).toHaveURL(/\/work\/W-3801$/);
-      await expect(page.getByRole('heading', { level: 1, name: 'Payment reminder · Harmattan Bank' })).toBeVisible();
-      expect(stepPosts()).toHaveLength(0);
+      expect(requests.filter((r) => r.method !== 'GET' || r.url.pathname.includes('/finance/invoices'))).toEqual([]);
+    });
+
+    test('Show more appends the next page by cursor', async ({ page, context }) => {
+      await setCookies(context, { psl_mock_invoices: 'paged' });
+      await openList(page);
+      await page.getByRole('button', { name: 'Show more' }).click();
+      await expect.poll(() => invoiceReads().map((r) => r.url.searchParams.get('cursor'))).toEqual([null, 'c2']);
+      await expect(page.getByText('INV-0402').first()).toBeVisible();
     });
 
     if (phone) {
@@ -196,14 +203,14 @@ test.describe('requests (desktop)', () => {
     await box.fill('H');
     await page.waitForTimeout(500);
     expect(invoiceReads()).toHaveLength(1);
-    await box.fill('Harm');
-    await expect(page.getByRole('table', { name: 'Invoices' }).getByRole('row')).toHaveCount(2);
+    await box.fill('Kora');
+    await expect(page.getByRole('table', { name: 'Invoices' }).getByRole('row')).toHaveCount(3);
     expect(invoiceReads()).toHaveLength(2);
-    expect(invoiceReads()[1].url.searchParams.get('q')).toBe('Harm');
-    await expect(page).toHaveURL(/\/finance\/payments\?q=Harm$/);
+    expect(invoiceReads()[1].url.searchParams.get('q')).toBe('Kora');
+    await expect(page).toHaveURL(/\/finance\/payments\?q=Kora$/);
     await page.reload();
-    await expect(page.getByRole('table', { name: 'Invoices' }).getByRole('row')).toHaveCount(2);
-    expect(invoiceReads().at(-1)!.url.searchParams.get('q')).toBe('Harm');
+    await expect(page.getByRole('table', { name: 'Invoices' }).getByRole('row')).toHaveCount(3);
+    expect(invoiceReads().at(-1)!.url.searchParams.get('q')).toBe('Kora');
   });
 
   test('error: the problem card; Try again sends one new read', async ({ page, context }) => {
@@ -262,7 +269,7 @@ test.describe('requests (desktop)', () => {
 });
 
 /** Keyboard focus is visible on the list's controls. */
-test('visible focus on the search box and the note link', async ({ page }) => {
+test('visible focus on the search box and an action link', async ({ page }) => {
   await page.setViewportSize(DESKTOP);
   await openList(page);
   const ring = async (target: Locator) => {
@@ -274,5 +281,5 @@ test('visible focus on the search box and the note link', async ({ page }) => {
     return target.evaluate((el) => (getComputedStyle(el).outlineStyle !== 'none' ? getComputedStyle(el).outlineStyle : /rgb\(36, 89, 214\)|0px 0px 0px 2px inset/.test(getComputedStyle(el).boxShadow + getComputedStyle(el).borderTopColor + getComputedStyle(el).textDecorationColor) ? 'solid' : 'none') !== 'none');
   };
   expect(await ring(page.getByRole('searchbox', { name: 'Search' }))).toBe(true);
-  expect(await ring(page.getByRole('link', { name: 'Open the reminder draft' }))).toBe(true);
+  expect(await ring(page.getByRole('link', { name: 'Open the reminder' }).first())).toBe(true);
 });

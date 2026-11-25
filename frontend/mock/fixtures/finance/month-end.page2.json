@@ -1,0 +1,44 @@
+{
+  "month": "2026-10",
+  "as_of": "2026-11-12T09:42:00Z",
+  "workspaces": [],
+  "page": 2,
+  "next_page": null,
+  "work": [
+    {
+      "title": "Fixed asset schedule",
+      "workspace_id": "00000000-0000-4000-8000-000000000103",
+      "workspace": "Kora Foods portal",
+      "state": "stopped",
+      "label": "Stopped: register not reviewed",
+      "at": "2026-11-10T09:00:00Z",
+      "url": "/projects/00000000-0000-4000-8000-000000000103"
+    },
+    {
+      "title": "Payroll summary",
+      "workspace_id": "00000000-0000-4000-8000-000000000102",
+      "workspace": "Harmattan Bank mobile onboarding",
+      "state": "waiting",
+      "label": "Waiting for HR",
+      "at": "2026-11-09T09:00:00Z",
+      "url": "https://elsewhere.example/x"
+    }
+  ],
+  "cash": [
+    {
+      "workspace_id": "00000000-0000-4000-8000-000000000101",
+      "workspace": "Lagoon Health patient app",
+      "currency": "NGN",
+      "basis": "gross",
+      "amount": "4700000.00",
+      "sample": true
+    }
+  ],
+  "more_cash_groups": false,
+  "counts": {
+    "done": 2,
+    "waiting": 1,
+    "in_progress": 3,
+    "stopped": 1
+  }
+}
