@@ -40,6 +40,9 @@ export type LiveStation = LiveTracking['stations'][number];
 export type LiveWeeklyReport = LiveGet<'/api/v1/work/{work_id}/weekly-report'>;
 export type LiveBidAnswers = LiveGet<'/api/v1/work/{work_id}/bid-answers'>;
 export type LiveBidAnswerRow = LiveBidAnswers['rows'][number];
+// F-98: the bid pack, its submission and the send/review writes (contract 1.26.0).
+export type LiveBidPack = LiveGet<'/api/v1/work/{work_id}/bid-pack'>;
+export type LiveBidSubmission = LiveGet<'/api/v1/work/{work_id}/bid-submission'>;
 
 // F-103: the cash forecast reads (contract 1.25.0). The four result arrays and the disclosure arrays are untyped in the contract.
 export type LiveForecast = LiveGet<'/api/v1/work/{work_id}/forecast'>;

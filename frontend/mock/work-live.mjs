@@ -1,3 +1,4 @@
+// F-98: the bid pack and RFP submission (ids 4501 to 4509, and a pack on 4401) are in bid-pack-live.mjs.
 // F-96: GET and POST /work/{id}/bid-answers for ids 4401 to 4404 are in bid-answers-live.mjs.
 // F-85: the live work item reads and the case file upload, in the live shapes of contract 1.22.0
 // (GET /work/{id}, GET /work/{id}/history, GET /work/{id}/weekly-report, POST /cases/{case_id}/files and the file-draft
@@ -13,9 +14,10 @@
 // null revision (reconcile and cancel listed), 4111 nothing listed, 4123 lists adopt_profile and release_invoice (never drawn).
 // Write scenarios answer only the three write routes, so the re-read still works: w403, w403csrf, w409 (the item moves on to
 // a higher revision), w422, w429, w503, w500, wdrop (the connection is cut after the write ran). `ready` makes a reconcile find the item ready.
+import { BID_PACK_IDS, packMoved, packReads, packWrite, resetBidPack } from './bid-pack-live.mjs';
 import { BID_ANSWERS_IDS, bidAnswersRead, bidAnswersWrite, bidMoved, resetBidAnswers } from './bid-answers-live.mjs';
 
-export const WORK_LIVE_PATH = /^\/api\/v1\/work\/(\d+)(\/history|\/tracking|\/weekly-report|\/bid-answers|\/reviews|\/actions|\/control|\/background)?$/;
+export const WORK_LIVE_PATH = /^\/api\/v1\/work\/(\d+)(\/history|\/tracking|\/weekly-report|\/bid-answers|\/bid-pack|\/bid-pack\/review-request|\/bid-submission|\/reviews|\/actions|\/control|\/background)?$/;
 export const CASE_FILES_PATH = /^\/api\/v1\/cases\/([^/]+)\/(files|files\/(\d+)\/drafts|file-drafts\/(\d+)\/review)$/;
 
 const CASE = '6c2f1d3e-1a4b-4b8e-9d0a-0a1b2c3d4e5f';
@@ -123,6 +125,13 @@ const WORK = {
       item(id, { title: 'RFP response for Lagoon Health', line: 'rfp-response/v1', state: 'action_needed', status_label: 'Action needed', revision: 6, case_revision: 12, panels: [{ key: 'bid-answers', url: `/api/v1/work/${id}/bid-answers`, contract_path: null }] }),
     ]),
   ),
+  // F-98: RFP submissions (readbacks and writes in bid-pack-live.mjs); item revision 9, case revision 89
+  ...Object.fromEntries(
+    BID_PACK_IDS.map((id) => [
+      id,
+      item(id, { title: 'RFP submission for Lagoon Health', line: 'rfp-response/v1', revision: 9, case_revision: 89, panels: [{ key: 'bid-submission', url: `/api/v1/work/${id}/bid-submission`, contract_path: null }] }),
+    ]),
+  ),
   // F-89: weekly reports under review, returned and received (readbacks in REPORTS below); item revision 6, case revision 12
   ...Object.fromEntries(
     [4130, 4131, 4132, 4133, 4134, 4135, 4136, 4137, 4138].map((id) => [
@@ -135,7 +144,7 @@ const WORK = {
 // what a write changed: id -> { state, status_label, revision }; reset with the mock
 let moved = {};
 let movedReport = {};
-const current = (id) => (WORK[id] ? { ...WORK[id], ...moved[id], ...bidMoved(id) } : undefined);
+const current = (id) => (WORK[id] ? { ...WORK[id], ...moved[id], ...bidMoved(id), ...packMoved(id) } : undefined);
 const STATUS_LABEL = { ready: 'Ready', cancelled: 'Cancelled', awaiting_reconciliation: 'Awaiting reconciliation', processing: 'Processing' };
 const WRITE_SCENARIOS = {
   w403: [403, BODIES[403]],
@@ -281,6 +290,7 @@ export const resetWorkLive = () => {
   moved = {};
   movedReport = {};
   resetBidAnswers();
+  resetBidPack();
 };
 /** The uploads, drafts and reviews the mock accepted: tests read it to count what was sent. */
 export const workLiveLog = () => log;
@@ -356,6 +366,10 @@ export function workLive({ method, url, scenario, csrfOk, persona, rawBytes }) {
   const read = WORK_LIVE_PATH.exec(url.pathname);
   const write = CASE_FILES_PATH.exec(url.pathname);
   const status = Number(scenario);
+  const packId = Number(read?.[1]);
+  const packRoute = read?.[2];
+  // F-98: the bid pack's writes, and the RFP review (kind bid), come before the weekly report's reviews
+  if (read && method === 'post' && (packRoute === '/bid-pack/review-request' || packRoute === '/bid-submission' || (packRoute === '/reviews' && (BID_PACK_IDS.includes(packId) || packId === 4401)))) return packWrite(packId, packRoute, scenario, csrfOk, rawBytes, current(packId));
   if (read && method === 'post' && read[2] === '/bid-answers') return bidAnswersWrite(Number(read[1]), scenario, csrfOk, rawBytes);
   if (read && method === 'post' && read[2] && /^\/(reviews|weekly-report)$/.test(read[2])) return reportWrite(Number(read[1]), read[2].slice(1), scenario, csrfOk, rawBytes);
   if (read && method === 'post' && read[2] && /^\/(actions|control|background)$/.test(read[2])) return workWrite(Number(read[1]), read[2].slice(1), scenario, csrfOk, rawBytes);
@@ -377,6 +391,7 @@ export function workLive({ method, url, scenario, csrfOk, persona, rawBytes }) {
       return TRACKING[id] ? send(200, TRACKING[id]()) : send(404, BODIES[404]);
     }
     if (read[2] === '/bid-answers') return bidAnswersRead(id, persona);
+    if (read[2] === '/bid-pack' || read[2] === '/bid-submission') return packReads(id, read[2], persona);
     return REPORTS[id] ? send(200, { ...REPORTS[id], ...movedReport[id] }) : send(404, BODIES[404]);
   }
   if (write && method === 'post') {

@@ -2,6 +2,7 @@
 // registerLineAdapter call) here, in its own commit.
 import { registerLineAdapter, type LineAdapter } from '../adapter';
 import { bidAnswersAdapter } from '../bidAnswersAdapter';
+import { bidSubmissionAdapter } from '../bidSubmissionAdapter';
 import { weeklyReportAdapter } from '../weeklyReportAdapter';
 import '@/features/issue-followup/issueFollowupAdapter'; // F-111 (lane D): self-registers on import
 import '@/features/forecast/forecastAdapter'; // F-103 (lane D): self-registers on import
@@ -10,3 +11,4 @@ import '@/features/engagement/planningAdapter'; // F-97: self-registers on impor
 
 registerLineAdapter(weeklyReportAdapter as LineAdapter);
 registerLineAdapter(bidAnswersAdapter as LineAdapter);
+registerLineAdapter(bidSubmissionAdapter as LineAdapter);
