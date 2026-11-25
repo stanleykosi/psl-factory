@@ -58,6 +58,7 @@ import { COSTING_PATH, costingLive, resetCostingLive } from './costing-live.mjs'
 import { INCOME_SCHEDULES_PATH, incomeSchedulesLive, resetIncomeSchedulesLive } from './income-schedules-live.mjs';
 import { INVOICE_RELEASE_PATH, invoiceReleaseLive, resetInvoiceRelease } from './invoice-release-live.mjs';
 import { issuesLog, issuesRoute, resetIssues } from './issues.mjs';
+import { issueRecord, RECORD_PATH, resetIssueRecord } from './issue-record.mjs';
 import { liveDecideRoute, ownsLiveDecide, resetLiveDecide } from './live-decide.mjs';
 import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
 import { INVITATION_PATHS, invitationRoute, resetInvitations } from './invitations.mjs';
@@ -320,6 +321,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetClients();
         resetDocumentReviews();
         resetMilestoneComplete();
+        resetIssueRecord();
         assistant.reset();
         runs.reset();
         resetLiveDecide();
@@ -402,6 +404,16 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const cookies = parseCookies(req.headers.cookie);
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         return send(res, ...retrospectiveRoute({ method, url, raw, token: req.headers['x-csrftoken'], expected: me[persona].csrf_token }));
+      }
+      // F-137 (not in v7): the register read with the owner and proof choices, and the write that records an issue (issue-record.mjs).
+      if ((method === 'get' || method === 'post') && RECORD_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (scenario && SCENARIO_BODIES[scenario] && (method === 'post' || ['401', '403', '404'].includes(String(scenario)))) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        if (method === 'post' && req.headers['x-csrftoken'] !== me[persona].csrf_token) return send(res, 403, CSRF_FAILED);
+        const r = issueRecord({ method, url, raw, persona, cookies, canSee: caseVisible });
+        return send(res, r.status, r.body);
       }
       // F-111: the issue follow-up reads (work 51xx and the project's issue reads); anything else falls through.
       if (method === 'get') {

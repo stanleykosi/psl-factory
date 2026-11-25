@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { demoProject, demoVisible } from './demo-projects.mjs';
+import { recordedItems } from './issue-record.mjs';
 import { NO_ACCESS_CASE_ID, uuidOf } from './projects.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -64,7 +65,8 @@ function sectionsTab(caseId, tab, params, persona) {
   const sections = fixture.sections
     .filter((section) => persona !== NO_ISSUE_READ_PERSONA || !['issues', 'escalations'].includes(section.key))
     .map((section) => {
-      const matching = section.items.filter((item) => !needle || [item.title, item.reference, item.detail].some((text) => text?.toLowerCase().includes(needle)));
+      const held = tab === 'registers' && section.key === 'issues' ? recordedItems(caseId) : []; // F-137: issues recorded in this session, newest first
+      const matching = [...held, ...section.items].filter((item) => !needle || [item.title, item.reference, item.detail].some((text) => text?.toLowerCase().includes(needle)));
       const pages = Math.max(1, Math.ceil(matching.length / SECTION_PAGE));
       const answered = Math.min(page, pages);
       const counts =

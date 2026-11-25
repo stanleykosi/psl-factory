@@ -40,6 +40,7 @@ from apps.policy.registry import components
 from apps.policy.services import register_reference, save_draft, transition
 from apps.workflows import factory_delivery, factory_reporting
 
+from .seed_demo_templates import seed_demo_templates
 from ._psl_demo_journey import (JOURNEY_ADA, JOURNEY_FOLAKE, JOURNEY_PM, JOURNEY_PMO_LEAD, PLACEHOLDER_ENGINEERING_LEAD,
                                 PLACEHOLDER_PRODUCT_OWNER, PLANNING_SYSTEMS, TEMPLATE_RULE, JourneyMixin)
 
@@ -122,6 +123,7 @@ class Command(JourneyMixin, BaseCommand):
             else:
                 call_command(command, stdout=self.stdout)
         self.place_people()
+        seed_demo_templates(self.admin)
         self.stdout.write('PSL demo seeded: ' + ', '.join(project['title'] for project in PROJECTS.values()))
 
     # -- people and workspaces -------------------------------------------------------------------------
