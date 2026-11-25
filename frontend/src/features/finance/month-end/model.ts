@@ -1,13 +1,12 @@
-// SCR-36 month-end values to the words on the boards. Presentation only: every count, label, tone, restriction and
-// link comes from the response; nothing here counts tasks, buckets states, totals cash or picks a month.
-// Money is read from the decimal string (never a float) and unknown stays Unknown, never 0 (INV-UNKNOWN).
-import { formatAmount } from '@/features/decide/format';
-import { formatClock, STATE_TAGS, type TagTone } from '@/components';
+// SCR-36 month-end values to the words on the boards. Presentation only: every count, label, state, link and amount
+// comes from the response; nothing here counts tasks, buckets states, adds cash across projects, currencies or bases,
+// or picks a month. Money is read from the decimal string (never a float) and unknown stays Unknown, never 0 (INV-UNKNOWN).
+import { formatAmount, formatClock, groupDigits, STATE_TAGS, type TagTone } from '@/components';
 
-import type { AgentKey, MonthEnd, MonthEndTask, MonthEndTone } from './proposal';
+import type { MonthEnd, MonthEndCash, MonthEndWork } from './types';
 
 export const UNKNOWN = 'Unknown';
-const PERIOD = /^[0-9]{4}-(0[1-9]|1[0-2])$/;
+const PERIOD = /^[1-9][0-9]{3}-(0[1-9]|1[0-2])$/;
 const DECIMAL = /^(-?)([0-9]+)\.[0-9]{2}$/;
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -23,10 +22,10 @@ export function periodNames(period: string): { long: string; short: string } | u
   return { long: `${month} ${period.slice(0, 4)}`, short: month.slice(0, 3) };
 }
 
-/** "FROM RECORDS YOU CAN SEE · UPDATED 10:42" (Africa/Lagos, as the SCR-36 board writes it); either part alone when the other is missing. */
-export function asOfLine(body: Pick<MonthEnd, 'as_of' | 'coverage'>): string | undefined {
-  const parts = [body.coverage, body.as_of ? `UPDATED ${formatClock(body.as_of)}` : undefined].filter(Boolean);
-  return parts.length ? parts.join(' · ') : undefined;
+/** "UPDATED 10:42" (Africa/Lagos, as the SCR-36 board writes it); undefined when `as_of` cannot be read. */
+export function asOfLine(asOf: string | undefined): string | undefined {
+  const clock = asOf ? formatClock(asOf) : UNKNOWN;
+  return clock === UNKNOWN ? undefined : `UPDATED ${clock}`;
 }
 
 const isCount = (value: unknown): value is number => typeof value === 'number' && Number.isInteger(value) && value >= 0;
@@ -36,18 +35,10 @@ export function countText(value: number | undefined): string {
   return isCount(value) ? String(value) : UNKNOWN;
 }
 
-/** "2 of 7" from the returned summary; Unknown when either number is missing. */
-export function doneText(summary: MonthEnd['summary']): string {
-  return isCount(summary?.done) && isCount(summary?.total) ? `${summary.done} of ${summary.total}` : UNKNOWN;
-}
+type Amount = { amount: string; currency: string };
 
-type Amount = { amount?: string; currency: string; unknown: boolean };
-
-function knownAmount(amount: Amount | undefined): (Amount & { amount: string }) | undefined {
-  return amount && amount.unknown === false && typeof amount.amount === 'string' && DECIMAL.test(amount.amount)
-    ? (amount as Amount & { amount: string })
-    : undefined;
-}
+/** A two-decimal amount as returned; anything else is not a known amount. */
+const isKnown = (amount: unknown): amount is string => typeof amount === 'string' && DECIMAL.test(amount);
 
 const UNITS: readonly [string, bigint][] = [
   ['B', 1_000_000_000n],
@@ -61,11 +52,11 @@ function roundTenths(whole: bigint, size: bigint): bigint {
 }
 
 /** "₦4.7M", "-₦1.3K", "USD 1.2K": one decimal, half away from zero, from the integer digits; below 1,000 in full. */
-export function compactAmount(amount: Amount & { amount: string }): string {
+export function compactAmount(amount: Amount): string {
   const [, sign, digits] = DECIMAL.exec(amount.amount)!;
   const whole = BigInt(digits);
   let index = UNITS.findIndex(([, size]) => whole >= size);
-  if (index < 0) return formatAmount(amount)!;
+  if (index < 0) return amount.currency === 'NGN' ? formatAmount(amount.amount) : `${amount.currency} ${groupDigits(amount.amount)}`;
   let tenths = roundTenths(whole, UNITS[index][1]);
   // 999.95K rounds to 1000K: step up to the next unit (1M).
   if (tenths >= 10_000n && index > 0) tenths = roundTenths(whole, UNITS[--index][1]);
@@ -74,58 +65,68 @@ export function compactAmount(amount: Amount & { amount: string }): string {
   return `${sign}${prefix}${number}${UNITS[index][0]}`;
 }
 
-export type CashView = { text: string; description: string; unknown: boolean };
+export type CashLine = { key: string; workspace: string; text: string; unknown: boolean; basis?: string };
+export type CashView = {
+  /** The strip cell: the single amount, "By project", or Unknown. */
+  cell: string;
+  cellUnknown: boolean;
+  /** One line per cash row; empty when the cell stands alone. */
+  lines: CashLine[];
+  more: boolean;
+};
 
-const NOT_KNOWN: CashView = { text: UNKNOWN, description: 'Not known yet.', unknown: true };
+const NO_NAME = 'Project not named';
 
-/** The CASH RECEIVED cell: the known part plus Unknown, the known amount, or Unknown; never 0 and never blank. */
-export function cashView(body: Pick<MonthEnd, 'cash_received' | 'cash_received_detail'>): CashView {
-  const detail = body.cash_received_detail;
-  const known = knownAmount(detail ? detail.known : body.cash_received);
-  if (!known) return NOT_KNOWN;
-  if (detail?.has_unknown) {
+/**
+ * The CASH RECEIVED cell and the lines under the strip. One amount stands alone only when it is the only row, no more
+ * groups exist and no workspace says its cash cannot be read; otherwise "By project" and one line per row. A workspace
+ * whose cash is unavailable reads Unknown whatever its row says. Nothing is added across rows, currencies or bases.
+ */
+export function cashView(body: Pick<MonthEnd, 'cash' | 'workspaces' | 'more_cash_groups'>): CashView {
+  const unavailable = new Set(body.workspaces.filter((w) => w.cash_unavailable).map((w) => w.workspace.case_id));
+  const anyUnavailable = unavailable.size > 0;
+  const row = (item: MonthEndCash, i: number): CashLine => {
+    const hidden = item.workspace_id !== null && unavailable.has(item.workspace_id);
+    const known = !hidden && isKnown(item.amount);
     return {
-      text: `${compactAmount(known)} + ${UNKNOWN}`,
-      description: `Known so far ${formatAmount(known)}; the rest is not known yet.`,
-      unknown: true,
+      key: `${i}`,
+      workspace: item.workspace ?? NO_NAME,
+      text: known ? compactAmount({ amount: item.amount, currency: item.currency }) : UNKNOWN,
+      unknown: !known,
+      basis: known ? item.basis : undefined,
     };
-  }
-  return { text: compactAmount(known), description: formatAmount(known)!, unknown: false };
+  };
+  const lines = body.cash.map(row);
+  // a workspace with unavailable cash and no row of its own still reads Unknown
+  const named = new Set(body.cash.map((c) => c.workspace_id));
+  body.workspaces
+    .filter((w) => w.cash_unavailable && !named.has(w.workspace.case_id))
+    .forEach((w, i) => lines.push({ key: `u${i}`, workspace: w.workspace.title, text: UNKNOWN, unknown: true }));
+  const single = body.cash.length === 1 && !body.more_cash_groups && !anyUnavailable;
+  if (single) return { cell: lines[0].text, cellUnknown: lines[0].unknown, lines: [], more: false };
+  if (lines.length === 0 && !body.more_cash_groups) return { cell: UNKNOWN, cellUnknown: true, lines: [], more: false };
+  return { cell: 'By project', cellUnknown: false, lines, more: body.more_cash_groups };
 }
 
-const TONE: Record<MonthEndTone, TagTone> = {
-  neutral: 'neutral',
-  person: 'person',
-  stopped: 'person',
-  agent: 'agent',
-  uncertain: 'waiting',
-  restricted: 'waiting',
-  verified: 'done',
+/** The full amount for the single cash cell's description, e.g. "₦4,700,000.00 gross"; undefined when it is not one known amount. */
+export function cashDescription(body: Pick<MonthEnd, 'cash' | 'workspaces' | 'more_cash_groups'>): string | undefined {
+  const [only] = body.cash;
+  if (body.cash.length !== 1 || body.more_cash_groups || body.workspaces.some((w) => w.cash_unavailable) || !isKnown(only.amount)) return undefined;
+  return `${only.currency === 'NGN' ? formatAmount(only.amount) : `${only.currency} ${groupDigits(only.amount)}`} ${only.basis}`;
+}
+
+const STATE_TONE: Record<MonthEndWork['state'], { tone: TagTone }> = {
+  done: STATE_TAGS.verified,
+  waiting: STATE_TAGS.waiting,
+  in_progress: STATE_TAGS.processing,
+  // the boards' stopped tone (a person must act)
+  stopped: STATE_TAGS.action_needed,
 };
 
-/** CMP-05 tag: the backend's label and tone, else the StateTag words and colour for the state. */
-export function taskTag(task: MonthEndTask): { text: string; tone: TagTone } {
-  const tag = STATE_TAGS[task.state];
-  return { text: task.status_label ?? tag.text, tone: task.tone ? TONE[task.tone] : tag.tone };
+/** CMP-05 tag: the returned label, in the tone of the existing state tag for the returned state. */
+export function taskTag(task: Pick<MonthEndWork, 'state' | 'label'>): { text: string; tone: TagTone } {
+  return { text: task.label, tone: STATE_TONE[task.state]?.tone ?? 'neutral' };
 }
 
-export const workHref = (workId: string) => `/work/${encodeURIComponent(workId)}`;
-
-/** The last desktop cell: a restricted row never links, whatever work_id says (INV-RESTRICTED). */
-export function taskEnd(task: MonthEndTask): { kind: 'restricted'; text: string } | { kind: 'link'; href: string } | { kind: 'none' } {
-  if (task.restricted === true) return { kind: 'restricted', text: task.restricted_label ?? 'Restricted' };
-  if (task.work_id) return { kind: 'link', href: workHref(task.work_id) };
-  return { kind: 'none' };
-}
-
-/** The primary action, only when the backend names the work item it opens (D-07). */
-export function nextAction(body: Pick<MonthEnd, 'next_action'>): { label: string; href: string } | undefined {
-  const action = body.next_action;
-  return action?.work_id ? { label: action.label, href: workHref(action.work_id) } : undefined;
-}
-
-export const AGENT_NAMES: Record<AgentKey, { name: string; role: string }> = {
-  tola: { name: 'Tola', role: 'PMO agent' },
-  chidi: { name: 'Chidi', role: 'Finance agent' },
-  zainab: { name: 'Zainab', role: 'HR agent' },
-};
+/** The returned url when it is an app or Django path (starts with one "/"); otherwise the title is not a link. */
+export const taskHref = (url: string): string | undefined => (/^\/(?![/\\])/.test(url) ? url : undefined);

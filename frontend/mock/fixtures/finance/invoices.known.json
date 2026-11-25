@@ -1,0 +1,101 @@
+{
+  "as_of": "2026-11-12",
+  "limited": false,
+  "cursor": null,
+  "totals": [
+    {
+      "currency": "NGN",
+      "basis": "gross",
+      "owed": "7300000.00",
+      "overdue": "6800000.00",
+      "known_owed": "7300000.00",
+      "unknown_owed_count": 0
+    }
+  ],
+  "received_this_month": {
+    "month": "2026-11",
+    "scope": "workspaces_in_results",
+    "workspaces_read": 2,
+    "workspaces_unknown": 0,
+    "last_received_at": "2026-11-10T14:00:00Z",
+    "last_verified_at": null,
+    "totals": [
+      {
+        "currency": "NGN",
+        "basis": "gross",
+        "amount": "1500000.00"
+      }
+    ]
+  },
+  "items": [
+    {
+      "invoice_id": 398,
+      "issue_id": 41,
+      "case_id": "00000000-0000-4000-8000-000000000101",
+      "reference": "INV-0398",
+      "workspace": "Lagoon Health patient app",
+      "customer": "Lagoon Health",
+      "contract": "Phase 1",
+      "currency": "NGN",
+      "basis": "gross",
+      "status": "part-paid",
+      "label": "Part paid",
+      "records_url": "/projects/00000000-0000-4000-8000-000000000101",
+      "record_payment_url": null,
+      "review_payment_url": "/finance/review/41",
+      "reminder_url": "/work/new?invoice=398",
+      "age_days": 9,
+      "paid": "2500000.00",
+      "owed": "500000.00",
+      "face": "3000000.00",
+      "reason": null,
+      "has_reminder_draft": false
+    },
+    {
+      "invoice_id": 391,
+      "issue_id": 34,
+      "case_id": "00000000-0000-4000-8000-000000000102",
+      "reference": "INV-0391",
+      "workspace": "Harmattan Bank mobile onboarding",
+      "customer": "Harmattan Bank",
+      "contract": "Phase 2",
+      "currency": "NGN",
+      "basis": "gross",
+      "status": "overdue",
+      "label": "Overdue",
+      "records_url": "/projects/00000000-0000-4000-8000-000000000102",
+      "record_payment_url": "/finance/record/34",
+      "review_payment_url": null,
+      "reminder_url": "/work/new?invoice=391",
+      "age_days": 21,
+      "paid": "0.00",
+      "owed": "6800000.00",
+      "face": "6800000.00",
+      "reason": null,
+      "has_reminder_draft": true
+    },
+    {
+      "invoice_id": 388,
+      "issue_id": 31,
+      "case_id": "00000000-0000-4000-8000-000000000103",
+      "reference": "INV-0388",
+      "workspace": "Kora Foods portal",
+      "customer": "Kora Foods",
+      "contract": "Phase 1",
+      "currency": "NGN",
+      "basis": "gross",
+      "status": "paid",
+      "label": "Paid",
+      "records_url": "/projects/00000000-0000-4000-8000-000000000103",
+      "record_payment_url": null,
+      "review_payment_url": null,
+      "reminder_url": null,
+      "age_days": 0,
+      "paid": "2400000.00",
+      "owed": "0.00",
+      "face": "2400000.00",
+      "reason": null,
+      "has_reminder_draft": false
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "as_of": "2026-11-12",
+  "limited": false,
+  "cursor": null,
+  "totals": [],
+  "received_this_month": {
+    "month": "2026-11",
+    "scope": "workspaces_in_results",
+    "workspaces_read": 0,
+    "workspaces_unknown": 0,
+    "last_received_at": null,
+    "last_verified_at": null,
+    "totals": []
+  },
+  "items": []
+}
