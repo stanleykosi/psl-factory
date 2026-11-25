@@ -17,7 +17,7 @@
 // Alerts (F-12, F-61): the four alert paths go to alerts.mjs, in the live 1.24.0 shapes (not the v7 operations).
 // Assistant (F-24): the five assistant operations go to assistant.mjs, which also recognises a draft's E-WORK-START.
 // Delegation (F-27): E-DELEGATIONS and E-DELEGATION go to delegations.mjs (scenario and save cookies, overlay proposals).
-// Invoices (F-41): E-INVOICES answers from invoices.mjs (variant cookie psl_mock_invoices, q, status, paging, overlay proposals).
+// Invoices (F-79): the live GET /payments answers from invoices.mjs (variant cookie psl_mock_invoices, q, state, cursor); month-end from finance.mjs.
 // Live decision desk (F-64): live-decide.mjs answers the integer-id task and work routes of SCR-03 in the live shapes.
 // Document review (F-72): the live document-review reads and decision (documents.mjs, cookie psl_mock_docreview); the v7 E-DOCUMENT stays for the work item's document link.
 // Live demo (F-54, D-155): demo.mjs holds the switches and the answer delay; with the demo off nothing changes.
@@ -69,7 +69,7 @@ import { resetWorkspace, WORKSPACE_LOG_PATH, WORKSPACE_OPERATIONS, workspaceLog,
 const here = dirname(fileURLToPath(import.meta.url));
 export const OPENAPI_PATH = join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json');
 
-export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-MONTH-END', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-PROJECT-TAB', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DELEGATIONS', 'E-DELEGATION', 'E-INVOICES', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS, 'E-DOCUMENT'];
+export const M1_OPERATIONS = ['E-ME', 'E-WORK-LIST', 'E-WORK-ITEM', 'E-WORK-HISTORY', 'E-TASK-CLAIM', 'E-TASK-DECIDE', 'E-EXCEPTIONS', 'E-SETUP-RULES', 'E-SETUP-RULE-SAVE', 'E-EVIDENCE-UPLOAD', 'E-PROJECTS', 'E-PROJECT', 'E-PROJECT-TAB', 'E-TEMPLATES', 'E-TEMPLATE-VERSION', 'E-DELEGATIONS', 'E-DELEGATION', ...CLIENT_OPERATIONS, ...START_OPERATIONS, ...ASSISTANT_OPERATIONS, 'E-DOCUMENT'];
 export const PERSONAS = ['finance_lead', 'pm', 'ceo', 'none', 'admin', 'pmo_lead', 'hr', 'hr_lead'];
 export const DEFAULT_PERSONA = 'finance_lead';
 const WRITE_METHODS = new Set(['post', 'put', 'patch', 'delete']);
@@ -261,7 +261,7 @@ function send(res, status, body, headers = {}) {
 export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')), { liveStart = false } = {}) {
   const routes = loadRoutes(openapi);
   const me = Object.fromEntries(PERSONAS.map((p) => [p, readFixture(`me.${p}`)]));
-  const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME' && id !== 'E-PROJECT-TAB' && id !== 'E-INVOICES' && !START_OPERATIONS.includes(id) && !ASSISTANT_OPERATIONS.includes(id)).map((id) => [id, readFixture(id)]));
+  const fixtures = Object.fromEntries(M1_OPERATIONS.filter((id) => id !== 'E-ME' && id !== 'E-PROJECT-TAB' && !START_OPERATIONS.includes(id) && !ASSISTANT_OPERATIONS.includes(id)).map((id) => [id, readFixture(id)]));
   const work = readWorkFixtures();
   const validators = bodyValidators(openapi);
   const startWork = createStartWorkMock(openapi);
@@ -517,6 +517,15 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const r = clients({ url, persona, cookies });
         return send(res, r.status, r.body);
       }
+      // F-79 (SCR-36, SCR-20): the live month-end and payments reads (finance.mjs, invoices.mjs); the v7 routes of the same data are retired.
+      if (method === 'get' && (url.pathname === '/api/v1/month-end' || url.pathname === '/api/v1/payments')) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (scenario && SCENARIO_BODIES[scenario] && ['401', '403', '404'].includes(String(scenario))) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        const r = (url.pathname === '/api/v1/month-end' ? monthEnd : invoices)({ url, persona, cookies });
+        return send(res, r.status, r.body);
+      }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
       // F-17, F-30: E-WORK-STEP and E-WORK-ASSIGN go to workspace.mjs (fixture scripts, the mock's idempotency map and log).
@@ -562,8 +571,6 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-PROJECTS' || route.operationId === 'E-PROJECT') { const r = projects({ operationId: route.operationId, url, persona }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECT-TAB') { const r = projectTab({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-EXCEPTIONS') { const r = exceptionsList({ url, persona, cookies }); return send(res, r.status, r.body); }
-      if (route.operationId === 'E-MONTH-END') { const r = monthEnd({ url, persona, cookies }); return send(res, r.status, r.body); }
-      if (route.operationId === 'E-INVOICES') { const r = invoices({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-SETUP-RULES' || route.operationId === 'E-SETUP-RULE-SAVE') { const r = (route.operationId === 'E-SETUP-RULES' ? setupRules : saveSetupRule)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-TEMPLATES' || route.operationId === 'E-TEMPLATE-VERSION') { const r = (route.operationId === 'E-TEMPLATES' ? templatesList : templateVersion)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-DELEGATIONS' || route.operationId === 'E-DELEGATION') { const r = (route.operationId === 'E-DELEGATIONS' ? delegationsList : saveDelegation)({ url, raw, persona, cookies }); return send(res, r.status, r.body); }
