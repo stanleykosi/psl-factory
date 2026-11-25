@@ -172,7 +172,8 @@ def project(request, case_id, tab='journey'):
         })
     works = discoverable_work(request.user, case_id=case.pk)
     journey = project_journey.work_timeline(works, request.GET.get('page'))
-    finance = project_journey.finance_facts(request.user, case) if 'finance.read' in actions else None
+    finance = (project_journey.finance_facts(request.user, case) if 'finance.read' in actions
+               else project_journey.finance_facts(request.user, case, milestones_only=True) if 'milestone.complete' in actions else None)
     engagement = project_journey.engagement_facts(request.user, case) if 'engagement.read' in actions else None
     from apps.agents.assistant import cases_for
     from apps.identity.factory_access import PERSONA_ROLES, department_cases
