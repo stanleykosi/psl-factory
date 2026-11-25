@@ -32,8 +32,8 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       for (const [key, status] of [['R2', 'Suggestion ready'], ['R4', 'Queued'], ['R5', 'Tola is working'], ['R6', 'On hold'], ['R7', 'Out of date']] as const) await expect(row(page, key).getByText(status, { exact: true })).toBeVisible();
       await expect(row(page, 'R8').getByText('Needs clarification')).toBeVisible();
       await expect(main.getByText(/Before review|filter/i)).toHaveCount(0);
-      await expect(main.getByRole('button', { name: 'Send for review' })).toBeDisabled();
-      await expect(main.getByText(/needs the bid pack/)).toBeVisible();
+      // F-98: the bid pack read gives the pack and version, so the PM's send is live
+      await expect(main.getByRole('button', { name: 'Send for review' })).toBeEnabled();
       expect(sent).toEqual([]);
       // no page-wide sideways scroll
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
