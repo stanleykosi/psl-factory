@@ -84,7 +84,7 @@ export const bidAnswersAdapter: LineAdapter<BidAnswersReadback> = {
   key: 'bid-answers',
   read: async (ref, ctx) => {
     const answers = await readPanel<LiveBidAnswers>(ref);
-    const workId = ctx?.workId ?? Number(/\/work\/(\d+)\//.exec(ref.url)?.[1]);
+    const workId = ctx?.workId ?? parseInt(/\/work\/(\d+)\//.exec(ref.url)?.[1] ?? '', 10);
     return { ...answers, pack: await readPackContext(workId) };
   },
   sections: (readback) => sections(readback),

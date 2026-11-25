@@ -27,7 +27,7 @@ export const VERDICTS = [
 ] as const;
 const NOT_RECORDED = 'Not recorded';
 
-export const sizeWords = (bytes: number) => (bytes >= 1_000_000 ? `${(bytes / 1_000_000).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1000))} KB`);
+export const sizeWords = (bytes: number) => (bytes >= 1_000_000 ? `${Math.round(bytes / 100_000) / 10} MB` : `${Math.max(1, Math.round(bytes / 1000))} KB`);
 
 /** Where the pack stands for the person reading: what the read says, in words. */
 export function reviewState(readback: BidSubmissionReadback): string {
@@ -147,7 +147,7 @@ export const bidSubmissionAdapter: LineAdapter<BidSubmissionReadback> = {
   key: 'bid-submission',
   read: async (ref, ctx) => {
     const submission = await readPanel<LiveBidSubmission>(ref);
-    const workId = ctx?.workId ?? Number(/\/work\/(\d+)\//.exec(ref.url)?.[1]);
+    const workId = ctx?.workId ?? parseInt(/\/work\/(\d+)\//.exec(ref.url)?.[1] ?? '', 10);
     return { ...submission, context: await readPackContext(workId) };
   },
   sections: (readback) => sections(readback),
