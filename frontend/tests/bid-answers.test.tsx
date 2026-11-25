@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 // F-96: the RFP response panel on a live work item (reads), against the mock itself.
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { setCsrfToken } from '@/api/client';
@@ -116,5 +116,145 @@ describe('the descriptors', () => {
     expect(bidAnswersAdapter.commands!(read(4402), ctx).every((c) => /can’t change/.test(c.disabledReason ?? ''))).toBe(true);
     const unknown = { ...read(4401), expected_revision: null } as unknown as LiveBidAnswers;
     expect(bidAnswersAdapter.commands!(unknown, ctx).every((c) => /current version/.test(c.disabledReason ?? ''))).toBe(true);
+  });
+});
+
+const inRow = (key: string, name: string) => within(rowOf(key)).queryByRole('button', { name }) as HTMLButtonElement | null;
+const reviewBody = (patch: Record<string, unknown> = {}) => ({
+  action: 'review',
+  expected_revision: 6,
+  case_revision: 12,
+  decisions: [{ suggestion: 501, predecessor: 0, verdict: 'accept', answer: 'Data is encrypted at rest and in transit.', disposition: 'addressed', note: '', ...patch }],
+});
+
+describe('who sees which control', () => {
+  it('the buttons follow the row’s own flags, and nothing is sent until a press', async () => {
+    await open(4401);
+    for (const n of ['Accept', 'Edit', 'Write your own']) expect(inRow('R2', n)).toBeTruthy();
+    expect(inRow('R2', 'Ask Tola')).toBeNull();
+    expect(inRow('R3', 'Undo')).toBeTruthy();
+    expect(inRow('R3', 'Ask Tola')).toBeNull();
+    for (const k of ['R1', 'R7', 'R8']) expect(inRow(k, 'Ask Tola')).toBeTruthy();
+    for (const k of ['R4', 'R5', 'R6']) expect(inRow(k, 'Ask Tola')).toBeNull();
+    expect(within(rowOf('R6')).getByText(/on hold/)).toBeTruthy();
+    expect(inRow('R1', 'Accept')).toBeNull();
+    expect(posts).toEqual([]);
+  });
+  it('a read-only response, and a suggestion with no source, draw no controls', async () => {
+    await open(4402);
+    expect(screen.queryAllByRole('button').filter((b) => /Accept|Edit|Ask Tola|Undo|Send for review/.test(b.textContent ?? ''))).toEqual([]);
+    cleanup();
+    await open(4404);
+    expect(inRow('R1', 'Accept')).toBeNull();
+  });
+  it('Send for review is held with its reason', async () => {
+    await open(4401);
+    const send = screen.getByRole('button', { name: 'Send for review' }) as HTMLButtonElement;
+    expect(send.disabled).toBe(true);
+    expect(screen.getByText(/needs the bid pack/)).toBeTruthy();
+    fireEvent.click(send);
+    expect(posts).toEqual([]);
+  });
+});
+
+describe('review decisions', () => {
+  it('Accept sends the exact body, re-reads and then shows the saved answer with Undo', async () => {
+    await open(4401);
+    fireEvent.click(inRow('R2', 'Accept')!);
+    await screen.findByText(/Your answer for R2 was saved\. This item is now:/);
+    expect(posts).toEqual([{ path: '/api/v1/work/4401/bid-answers', body: reviewBody() }]);
+    await waitFor(() => expect(within(rowOf('R2')).getByText('Reviewed')).toBeTruthy());
+    expect(inRow('R2', 'Undo')).toBeTruthy();
+    expect(inRow('R2', 'Accept')).toBeNull();
+    expect(within(rowOf('R2')).getAllByText('Data is encrypted at rest and in transit.')).toHaveLength(1);
+  });
+  it('Edit starts from the suggestion, sends the edited wording and the chosen disposition', async () => {
+    await open(4401);
+    fireEvent.click(inRow('R2', 'Edit')!);
+    const answer = screen.getByLabelText(/Answer/) as HTMLTextAreaElement;
+    expect(answer.value).toBe('Data is encrypted at rest and in transit.');
+    fireEvent.change(answer, { target: { value: 'Data is encrypted with keys we hold.' } });
+    fireEvent.change(screen.getByLabelText(/Note/), { target: { value: 'tightened' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save answer' }));
+    await screen.findByText(/Your answer for R2 was saved\./);
+    expect(posts[0].body).toEqual(reviewBody({ verdict: 'edit', answer: 'Data is encrypted with keys we hold.', note: 'tightened' }));
+    await waitFor(() => expect(within(rowOf('R2')).getByText('Data is encrypted with keys we hold.')).toBeTruthy());
+  });
+  it('Write your own starts blank, will not send blank, then sends verdict replace', async () => {
+    await open(4401);
+    fireEvent.click(inRow('R2', 'Write your own')!);
+    expect((screen.getByLabelText(/Answer/) as HTMLTextAreaElement).value).toBe('');
+    expect(await screen.findByText('Write the answer first.')).toBeTruthy();
+    expect((screen.getByRole('button', { name: 'Save answer' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText(/Answer/), { target: { value: 'Our own words.' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save answer' }));
+    await screen.findByText(/Your answer for R2 was saved\./);
+    expect(posts[0].body).toEqual(reviewBody({ verdict: 'replace', answer: 'Our own words.' }));
+  });
+  it('Undo sends the review id and the suggestion can be reviewed again, with the new review as its predecessor', async () => {
+    await open(4401);
+    fireEvent.click(inRow('R3', 'Undo')!);
+    await screen.findByText(/The earlier answer for R3 is back\./);
+    expect(posts).toEqual([{ path: '/api/v1/work/4401/bid-answers', body: { action: 'undo', expected_revision: 6, case_revision: 12, review_id: 7001 } }]);
+    await waitFor(() => expect(inRow('R3', 'Accept')).toBeTruthy());
+    fireEvent.click(inRow('R3', 'Accept')!);
+    await screen.findByText(/Your answer for R3 was saved\./);
+    const decision = (posts[1].body.decisions as Record<string, unknown>[])[0];
+    expect(decision).toMatchObject({ suggestion: 502, predecessor: 9001 });
+    expect(posts[1].body.expected_revision).toBe(7);
+  });
+});
+
+describe('ask Tola', () => {
+  it('sends the key, one operation key and no prior answer, then shows the row queued', async () => {
+    await open(4401);
+    fireEvent.click(inRow('R1', 'Ask Tola')!);
+    await screen.findByText(/Tola was asked for R1\./);
+    expect(posts[0].body).toMatchObject({ action: 'suggest', key: 'R1', expected_revision: 6, case_revision: 12 });
+    expect(posts[0].body.operation_key).toMatch(/^[0-9a-f-]{36}$/);
+    expect(posts[0].body).not.toHaveProperty('prior_answer');
+    await waitFor(() => expect(within(rowOf('R1')).getByText('Queued')).toBeTruthy());
+    expect(inRow('R1', 'Ask Tola')).toBeNull();
+  });
+  it('offers the earlier winning answers and sends the picked token', async () => {
+    await open(4401);
+    const r8 = within(rowOf('R8'));
+    fireEvent.click(r8.getByRole('combobox', { name: /earlier answer/i }));
+    fireEvent.click(await screen.findByRole('option', { name: 'Lagos health RFP, won 2025' }));
+    fireEvent.click(inRow('R8', 'Ask Tola')!);
+    await screen.findByText(/Tola was asked for R8\./);
+    expect(posts[0].body).toMatchObject({ key: 'R8', prior_answer: 'won-2025-lagos' });
+  });
+});
+
+describe('when a write goes wrong', () => {
+  it('422 shows the server words and keeps the person’s answer', async () => {
+    scenario = 'w422';
+    await open(4401);
+    fireEvent.click(inRow('R2', 'Write your own')!);
+    fireEvent.change(screen.getByLabelText(/Answer/), { target: { value: 'Kept words.' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save answer' }));
+    await screen.findByText(/The answer was not accepted\./);
+    expect((screen.getByLabelText(/Answer/) as HTMLTextAreaElement).value).toBe('Kept words.');
+    expect(posts).toHaveLength(1);
+  });
+  it('409 re-reads, says it changed, and keeps the form words', async () => {
+    scenario = 'w409';
+    await open(4401);
+    fireEvent.click(inRow('R2', 'Edit')!);
+    fireEvent.change(screen.getByLabelText(/Answer/), { target: { value: 'Mine.' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save answer' }));
+    await screen.findByText(/This changed while you were working/);
+    expect((screen.getByLabelText(/Answer/) as HTMLTextAreaElement).value).toBe('Mine.');
+  });
+  it('a dropped answer says it could not confirm, and locks the buttons until the page moves', async () => {
+    scenario = 'wdrop0';
+    await open(4401);
+    fireEvent.click(inRow('R2', 'Accept')!);
+    await screen.findByText(/We couldn’t confirm that this happened/);
+    expect(inRow('R2', 'Accept')!.disabled).toBe(true);
+    expect(inRow('R1', 'Ask Tola')!.disabled).toBe(true);
+    fireEvent.click(inRow('R2', 'Accept')!);
+    expect(posts).toHaveLength(1);
   });
 });

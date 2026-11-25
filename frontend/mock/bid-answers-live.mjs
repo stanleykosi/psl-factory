@@ -80,7 +80,7 @@ const readOf = (id) => {
     expected_revision: p.rev,
     case_revision: p.case,
     can_write: id !== 4402,
-    rows: p.rows.map(({ previous: _previous, prior_answer: _prior, ...r }) => r),
+    rows: p.rows.map((r) => Object.fromEntries(Object.entries(r).filter(([name]) => name !== 'previous' && name !== 'prior_answer'))),
     next_page: null,
     response_review: REVIEW[id] ?? null,
     counts: { total: id === 4402 ? 3 : p.rows.length, visible: id === 4402 ? 2 : visible.length, answered: visible.filter((r) => r.response).length, clarification: visible.filter((r) => r.disposition === 'clarification').length, reviewed: visible.filter((r) => r.status === 'reviewed').length },
