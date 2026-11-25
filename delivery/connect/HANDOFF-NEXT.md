@@ -74,7 +74,7 @@ Two builders at a time works well. Each build costs about 1% of the weekly limit
 ### Blocked
 - F-77: The Setup costing rule page reads the live costing rule, with changes only as far as the c
 - F-114C: Go-live document review records the reviewer's verdict on the exact version
-(F-101 and F-102 were building when this was written; check `git log origin/main` for what landed.)
+**Landed after this list was made:** F-90 invoice release (#144), F-79 month-end and payments (#143), F-102 fixed assets (#145), F-101 income schedules (#146). Their rows above are out of date; the authoritative list is `git log origin/main` and `review-later.md`.
 
 ## First things to do next week (the weekly limit resets Sunday 29 Nov, about 02:00 UTC)
 1. **Reviews.** Work down `review-later.md`, with F-90 (invoice release, money) first: the payments and security reviews its spec requires, then a live check against Django. Then the sign-in and permission changes (#129 to #133). Turn the factory's review lenses back on from then.
