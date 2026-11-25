@@ -624,3 +624,6 @@ The design engineer: the wired demo is enough proof, but the data must be "as re
   - names, clients, amounts and dates taken from the design version's mock fixtures, which are approved design content and not new business rules.
 - **Switching roles** means signing out and in as each person. Their sign-in names and one-time passwords go only to `.runtime/demo-people.txt`, which the design engineer reads and the coordinator never does.
 - **New demo database** `psl_demo3`, built from this command alone.
+
+## D-212 (25 Nov 2026): the PMO Lead reviews weekly reports and assigns PMs
+Asked whether the PMO Lead staff role should get three missing actions, the design engineer answered "Yes, add all three". The actions are `document.review_controlled` (the backend names the step "Awaiting PMO Lead review"), `rfp.assign` and `engagement.assign` (approved design F-36: the PMO Lead assigns the accountable PM). They are added to `LEAD_ACTIONS['pmo-lead']` in `apps/identity/factory_access.py`, the same kind of change as LB-2. The demo's synthetic decision matrix in `seed_psl_demo` names the PMO Lead as the PM-assignment role, to match.
