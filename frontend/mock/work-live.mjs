@@ -12,7 +12,7 @@
 // null revision (reconcile and cancel listed), 4111 nothing listed, 4123 lists adopt_profile and release_invoice (never drawn).
 // Write scenarios answer only the three write routes, so the re-read still works: w403, w403csrf, w409 (the item moves on to
 // a higher revision), w422, w429, w503, w500, wdrop (the connection is cut after the write ran). `ready` makes a reconcile find the item ready.
-export const WORK_LIVE_PATH = /^\/api\/v1\/work\/(\d+)(\/history|\/tracking|\/weekly-report|\/actions|\/control|\/background)?$/;
+export const WORK_LIVE_PATH = /^\/api\/v1\/work\/(\d+)(\/history|\/tracking|\/weekly-report|\/reviews|\/actions|\/control|\/background)?$/;
 export const CASE_FILES_PATH = /^\/api\/v1\/cases\/([^/]+)\/(files|files\/(\d+)\/drafts|file-drafts\/(\d+)\/review)$/;
 
 const CASE = '6c2f1d3e-1a4b-4b8e-9d0a-0a1b2c3d4e5f';
@@ -113,10 +113,18 @@ const WORK = {
   4121: item(4121, { state: 'action_needed', status_label: 'Stopped', revision: 3, available_control: ['resume', 'cancel'] }),
   4122: item(4122, { state: 'processing', status_label: 'Processing', revision: 7, actions: ['background'], current_activity: { label: 'Drafting the weekly update', watching: false } }),
   4123: item(4123, { state: 'action_needed', status_label: 'Stopped', revision: 2, actions: ['release_invoice'], available_control: ['adopt_profile'] }),
+  // F-89: weekly reports under review, returned and received (readbacks in REPORTS below); item revision 6, case revision 12
+  ...Object.fromEntries(
+    [4130, 4131, 4132, 4133, 4134, 4135, 4136, 4137, 4138].map((id) => [
+      id,
+      item(id, { state: id === 4132 ? 'action_needed' : 'waiting', status_label: id === 4132 ? 'Action needed' : 'Waiting for a decision', revision: 6, case_revision: 12, panels: [{ key: 'weekly-report', url: `/api/v1/work/${id}/weekly-report`, contract_path: null }] }),
+    ]),
+  ),
 };
 
 // what a write changed: id -> { state, status_label, revision }; reset with the mock
 let moved = {};
+let movedReport = {};
 const current = (id) => (WORK[id] ? { ...WORK[id], ...moved[id] } : undefined);
 const STATUS_LABEL = { ready: 'Ready', cancelled: 'Cancelled', awaiting_reconciliation: 'Awaiting reconciliation', processing: 'Processing' };
 const WRITE_SCENARIOS = {
@@ -147,6 +155,29 @@ const REPORT = (patch) => ({
   ...patch,
 });
 const part = (text, ids) => ({ text, evidence_ids: ids });
+const EDITABLE = { status: part('Build is on track.', [301]), risks: part('One supplier is late.', [302, 303]), timeline: part('Hand-over on 5 Dec.', []), next_steps: part('Confirm the test date.', [304]) };
+const PREVIEW = {
+  id: 9101,
+  title: 'Weekly update',
+  number: 1,
+  sections: [
+    { key: 'status', text: 'Build is <b>on track</b>.\nTesting starts Monday.' },
+    { key: 'risks', text: 'One supplier is late.' },
+    { key: 'timeline', text: 'Hand-over on 5 Dec.' },
+    { key: 'next_steps', text: 'Confirm the test date.' },
+  ],
+};
+const REVIEW_REPORT = (patch) =>
+  REPORT({
+    expected_revision: 6,
+    case_revision: 12,
+    document_version_id: 9101,
+    review_verdicts: ['approve', 'return', 'reject'],
+    preview: PREVIEW,
+    review_notes: [{ section: 'risks', text: 'Agent note: the supplier date is unconfirmed.', recorded_at: '2026-11-22T09:00:00Z' }],
+    recipients: [{ name: 'Amaka Eze', status: 'pending', receipt_id: null, recorded_at: null }],
+    ...patch,
+  });
 const REPORTS = {
   4102: REPORT({
     editable_parts: { status: part('Build is on track.', [11, 12, 13]), risks: part('One supplier is late.', [14]), timeline: part('Hand-over on 5 Dec.', []), next_steps: part('Confirm the test date.', [15, 16]) },
@@ -159,6 +190,19 @@ const REPORTS = {
     evidence: [{ id: 11, version: 1, kind: 'status_note' }],
   }),
   4107: REPORT({}),
+  ...Object.fromEntries(
+    [
+      [4130, {}],
+      [4131, { review_verdicts: ['approve', 'return'] }],
+      [4132, { return_review_id: 7001, return_note: 'Please add the 14 Nov supplier delay to Risks.', can_correct: true, editable_parts: EDITABLE, review_verdicts: [], preview: null, review_notes: [] }],
+      [4133, { review_verdicts: [], preview: null, review_notes: [] }],
+      [4134, { document_version_id: null }],
+      [4135, { return_review_id: 7001, can_correct: true, editable_parts: null, review_verdicts: [], preview: null, review_notes: [] }],
+      [4136, { preview: null }],
+      [4137, { preview: { ...PREVIEW, id: 9102 } }],
+      [4138, { review_notes: [{ section: 'scope', text: 'Agent note: scope is not in this version.', recorded_at: '2026-11-22T09:30:00Z' }] }],
+    ].map(([id, patch]) => [id, REVIEW_REPORT(patch)]),
+  ),
 };
 
 // F-91: GET /work/{id}/tracking. 4102 processing, 4101 verified, 4103 a decision waiting (reviewed unknown), 4104 stuck with one
@@ -225,6 +269,7 @@ export const resetWorkLive = () => {
   uploads = 0;
   log = [];
   moved = {};
+  movedReport = {};
 };
 /** The uploads, drafts and reviews the mock accepted: tests read it to count what was sent. */
 export const workLiveLog = () => log;
@@ -261,11 +306,46 @@ function workWrite(id, route, scenario, csrfOk, rawBytes) {
   return send(route === 'control' ? 200 : 202, { work_id: id, state, revision });
 }
 
+/** F-89: POST /work/{id}/reviews and /weekly-report. Scenarios: w403, w403csrf, w409 (the report moves on), w422 (a note or reason field), w429, w503, w500 and wdrop (the write ran, the answer is lost) or wdrop0 (the answer is lost, the write did not run). */
+function reportWrite(id, route, scenario, csrfOk, rawBytes) {
+  const report = REPORTS[id] && { ...REPORTS[id], ...movedReport[id] };
+  const item = current(id);
+  if (!report || !item) return send(404, BODIES[404]);
+  if (scenario === 'w403csrf' || !csrfOk) return send(403, CSRF_FAILED);
+  let body = {};
+  try {
+    body = JSON.parse(Buffer.from(rawBytes ?? []).toString('utf8') || '{}');
+  } catch {
+    return send(400, BODIES[400]);
+  }
+  const review = route === 'reviews';
+  log.push({ route, work_id: id, body });
+  const listed = review ? report.review_verdicts.includes(body.verdict) && body.version_id === report.document_version_id : report.can_correct;
+  if (!listed || body.expected_revision !== report.expected_revision) return send(409, { code: 'stale_version', message: 'Someone changed this since you opened it.' });
+  const move = (state) => {
+    movedReport[id] = { expected_revision: report.expected_revision + 1, review_verdicts: [], can_correct: false };
+    moved[id] = { state, status_label: STATUS_LABEL[state] ?? item.status_label, revision: item.revision + 1 };
+  };
+  if (scenario === 'w409') {
+    movedReport[id] = { expected_revision: report.expected_revision + 2 };
+    return send(409, WRITE_SCENARIOS.w409[1]);
+  }
+  if (scenario === 'w403') return send(403, { code: 'forbidden', message: 'You wrote this report, so you can’t review it.' });
+  if (scenario === 'w422') return send(422, { code: 'invalid', message: review ? 'The review was not accepted.' : 'The update was not accepted.', fields: [review ? { name: 'note', message: 'A note is needed to return a report.' } : { name: 'reason', message: 'Say why the report changed.' }] });
+  if (WRITE_SCENARIOS[scenario]) return send(...WRITE_SCENARIOS[scenario]);
+  const state = review ? 'waiting' : 'processing';
+  if (scenario === 'wdrop0') return ['drop'];
+  move(state);
+  if (scenario === 'wdrop') return ['drop'];
+  return review ? send(200, { work_id: id, state, revision: moved[id].revision, review_id: 8001 }) : send(201, { work_id: id, state, revision: moved[id].revision });
+}
+
 /** One live read or upload. `scenario` is the cookie or header value; `csrfOk` is whether the write carried the persona's token. */
 export function workLive({ method, url, scenario, csrfOk, persona, rawBytes }) {
   const read = WORK_LIVE_PATH.exec(url.pathname);
   const write = CASE_FILES_PATH.exec(url.pathname);
   const status = Number(scenario);
+  if (read && method === 'post' && read[2] && /^\/(reviews|weekly-report)$/.test(read[2])) return reportWrite(Number(read[1]), read[2].slice(1), scenario, csrfOk, rawBytes);
   if (read && method === 'post' && read[2] && /^\/(actions|control|background)$/.test(read[2])) return workWrite(Number(read[1]), read[2].slice(1), scenario, csrfOk, rawBytes);
   if (BODIES[status]) return send(status, BODIES[status]);
   if (read && method === 'get') {
@@ -284,7 +364,7 @@ export function workLive({ method, url, scenario, csrfOk, persona, rawBytes }) {
       if (id === 4107) return send(503, BODIES[503]);
       return TRACKING[id] ? send(200, TRACKING[id]()) : send(404, BODIES[404]);
     }
-    return REPORTS[id] ? send(200, REPORTS[id]) : send(404, BODIES[404]);
+    return REPORTS[id] ? send(200, { ...REPORTS[id], ...movedReport[id] }) : send(404, BODIES[404]);
   }
   if (write && method === 'post') {
     if (scenario === 'csrf_failed' || !csrfOk) return send(403, CSRF_FAILED);

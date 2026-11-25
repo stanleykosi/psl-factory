@@ -94,11 +94,13 @@ type CommandSpec = Pick<CommandDescriptor, 'id' | 'label' | 'url' | 'tokens' | '
   keyField?: NonNullable<CommandDescriptor['idempotency']['field']>;
   /** The body's `action`; default the part of the id after the dot, `null` for a body that has none. */
   action?: string | null;
+  /** Fixed body members merged in (e.g. `kind: 'document'`); the tokens still win. */
+  fixed?: Record<string, unknown>;
 };
 
 /** Builds a descriptor; the action in the body is the part of the id after the dot. The key is made here, once. */
 export function makeCommand(spec: CommandSpec): CommandDescriptor {
-  const { keyField, action: given, ...rest } = spec;
+  const { keyField, action: given, fixed, ...rest } = spec;
   const action = given === undefined ? spec.id.slice(spec.id.indexOf('.') + 1) : given;
   const idempotency = keyField ? { field: keyField, value: newIdempotencyKey() } : { field: null, value: null };
   return {
@@ -108,6 +110,7 @@ export function makeCommand(spec: CommandSpec): CommandDescriptor {
     body: (inputs) => {
       const body = {
         ...inputs,
+        ...fixed,
         ...(action === null ? {} : { action }),
         ...spec.tokens,
         ...(idempotency.field ? { [idempotency.field]: idempotency.value } : {}),

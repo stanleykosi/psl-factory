@@ -208,7 +208,8 @@ describe('four states from data (AC 1, 7, 8, 10)', () => {
       }
     };
     walk(join(__dirname, '../src'));
-    const text = files.map((f) => readFileSync(f, 'utf8')).join('\n');
+    // F-89: the weekly client report's own review button is drawn "Approve and send" on its board (SCR-25); that file is not the leadership report.
+    const text = files.filter((f) => !/(WeeklyReportActions\.tsx|weeklyReportAdapter\.ts)$/.test(f)).map((f) => readFileSync(f, 'utf8')).join('\n');
     for (const board of ['YOUR REVIEW', 'PUBLISHED · NO REVIEW', 'RECEIVED BY EVERY RECIPIENT', 'PMO staff', 'Leadership reviewer', 'paid is reported by Finance', 'Approve and send', 'Send for leadership review']) expect(text, board).not.toContain(board);
   });
 });
