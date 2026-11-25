@@ -45,6 +45,8 @@ describe('isSectionsBody', () => {
     expect(isSectionsBody(body(), 'registers')).toBe(true);
     expect(isSectionsBody(body({ sections: [] }), 'registers')).toBe(true);
     expect(isSectionsBody(body({ sections: [section('meetings', [], { counts: { total: 0, overdue: 0, unassigned: 0 } })], tab: 'actions' }), 'actions')).toBe(true);
+    expect(isSectionsBody(body({ tab: 'documents' }), 'documents')).toBe(true);
+    expect(isSectionsBody(body({ tab: 'documents' }), 'registers')).toBe(false);
   });
 
   it('refuses another tab, a non-object, a missing key, total, page, has_more or state_code, bad counts and a bad age', () => {

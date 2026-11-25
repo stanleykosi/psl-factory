@@ -1,5 +1,12 @@
 {
-  "items": [],
   "as_of": "2026-11-12T15:40:00Z",
-  "documents": []
+  "sections": [
+    {
+      "key": "documents",
+      "title": "Project evidence",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000106/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000106/documents",
+      "items": []
+    }
+  ]
 }

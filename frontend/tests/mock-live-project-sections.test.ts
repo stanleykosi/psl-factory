@@ -39,7 +39,7 @@ const read = async (path: string, persona = 'finance_lead') => {
   const response = await fetch(base + path, { headers: { Cookie: `psl_mock_persona=${persona}` } });
   return { status: response.status, body: await response.json() };
 };
-const get = async (id: string, tab: 'registers' | 'actions', query = '', persona = 'finance_lead') => {
+const get = async (id: string, tab: 'registers' | 'actions' | 'documents', query = '', persona = 'finance_lead') => {
   const result = await read(`/api/v1/projects/${id}/${tab}${query ? `?${query}` : ''}`, persona);
   if (result.status === 200) expect(valid(result.body), `${id}/${tab}?${query}: ${ajv.errorsText(valid.errors)}`).toBe(true);
   return result as { status: number; body: Body };
@@ -48,10 +48,10 @@ const section = (body: Body, key: string) => body.sections.find((s) => s.key ===
 
 describe('the fixtures are the live shape', () => {
   it('every registers and actions fixture validates once the mock has added case_id, paging and totals', async () => {
-    const names = readdirSync(dir).filter((name) => /^P-\d+\.(registers|actions)\.json$/.test(name));
-    expect(names).toHaveLength(6);
+    const names = readdirSync(dir).filter((name) => /^P-\d+\.(registers|actions|documents)\.json$/.test(name));
+    expect(names).toHaveLength(8);
     for (const name of names) {
-      const [id, tab] = name.split('.') as [string, 'registers' | 'actions'];
+      const [id, tab] = name.split('.') as [string, 'registers' | 'actions' | 'documents'];
       const served = await get(id, tab, '', 'pm');
       expect(served.status, name).toBe(200);
       expect(UUID.test(served.body.case_id), name).toBe(true);
