@@ -4,10 +4,11 @@
 // 4650 engagement open to confirm the PM, 4651 open to record details (and re-check), 4652 open to register, 4653 registered with its
 // planning handoff, 4654 held (no step open, a finding), 4655 planning with five departments (changed effort, unknown effort, one waiting)
 // and an unassigned owner, 4656 planning whose packet read is not available to the person, 4657 planning with no department asked yet.
+// (The server turns a project's UUID into its P-nnnn form before routing, so the project reads are matched in both forms.)
 // A scenario that is a status answers every route here with it; 'w409' and 'w422' answer only the engagement write.
 import { workLive } from './work-live.mjs';
 
-export const ENGAGEMENT_PATH = /^\/api\/v1\/(?:work\/(465[0-7])(\/engagement|\/planning-owner-requests)?|projects\/(00000000-0000-4000-8000-00000000465[0-7])\/(engagement-intake|planning|planning\/source-clarifications))$/;
+export const ENGAGEMENT_PATH = /^\/api\/v1\/(?:work\/(465[0-7])(\/engagement|\/planning-owner-requests)?|projects\/(?:00000000-0000-4000-8000-00000000|P-)(465[0-7])\/(engagement-intake|planning|planning\/source-clarifications))$/;
 
 const NOW = '2026-11-25T09:00:00Z';
 const caseOf = (id) => `00000000-0000-4000-8000-00000000${id}`;
@@ -233,7 +234,7 @@ export function engagementLive({ method, url, scenario, csrfOk, persona, rawByte
   const found = ENGAGEMENT_PATH.exec(url.pathname);
   const status = Number(scenario);
   if (BODIES[status]) return [status, BODIES[status]];
-  const id = Number(found[1] ?? found[3].slice(-4));
+  const id = Number(found[1] ?? found[3]);
   if (persona === 'none') return [404, BODIES[404]];
   const part = found[2] ?? (found[4] ? `/${found[4]}` : '');
   if (method === 'post') return part === '/engagement' ? write(id, scenario, csrfOk, rawBytes) : [405, { code: 'method_not_allowed', message: 'Read only.' }];
