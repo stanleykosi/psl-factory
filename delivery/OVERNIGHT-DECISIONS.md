@@ -627,3 +627,13 @@ The design engineer: the wired demo is enough proof, but the data must be "as re
 
 ## D-212 (25 Nov 2026): the PMO Lead reviews weekly reports and assigns PMs
 Asked whether the PMO Lead staff role should get three missing actions, the design engineer answered "Yes, add all three". The actions are `document.review_controlled` (the backend names the step "Awaiting PMO Lead review"), `rfp.assign` and `engagement.assign` (approved design F-36: the PMO Lead assigns the accountable PM). They are added to `LEAD_ACTIONS['pmo-lead']` in `apps/identity/factory_access.py`, the same kind of change as LB-2. The demo's synthetic decision matrix in `seed_psl_demo` names the PMO Lead as the PM-assignment role, to match.
+
+## D-213 (25 Nov 2026): the PMO Lead sees contract stages and the next milestone
+The design engineer: "PMO Lead should see contract stages and the next milestone." The project journey's contract facts were gated by `finance.read`, which also opens Money, invoices and month-end. Instead, `finance_facts(..., milestones_only=True)` gives anyone with `milestone.complete` (the PMO Lead) the stage count and the next milestone, with no invoice figures (`delivered` is null). Finance keeps the full view. Changed in `apps/core/project_journey.py`, `apps/core/factory_api/workspaces.py` and `apps/core/design_views.py`.
+
+## D-214 (25 Nov 2026): placeholder costing rule and engineering lead until go-live (PSL)
+The design engineer, relaying PSL: "for engineering lead and costing rule psl said we should just use anyone for now or template and when we are ready to go live they give us the real costing and engineering lead name but remeber its the pmo lead/ pm that logs engineering decisions too".
+- **Until go-live**, the demo and test setups use a template costing rule and a placeholder engineering lead. Both are labelled as placeholders in the seed and the records, and PSL supplies the real ones before go-live.
+- **Engineering decisions are logged by the PMO Lead or the PM** (staff-recorded), not by a separate engineering login. This matches the 13 Nov decision that the Eng Lead has no login.
+- **F-77 (costing rule) and the RFP-response reviewer** are unblocked for demo and test purposes on these placeholders. The production values stay open until PSL supplies them.
+- The demo seed is rebuilt so each project's history runs through the real journey: RFP, bid, won, engagement, planning, costing, SOW signed, delivery gates, weekly reports.
