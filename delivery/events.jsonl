@@ -5430,3 +5430,7 @@
 {"at":"2026-11-25T00:18:52Z","feature":"F-89","round":0,"kind":"fields","fields":{"git.pr_number":127}}
 {"at":"2026-11-25T00:18:52Z","feature":"F-89","round":0,"kind":"fields","fields":{"git.merge_status":"merged"}}
 {"at":"2026-11-25T00:18:52Z","feature":"F-89","round":0,"kind":"fields","fields":{"git.merge_sha":"98b87c88eedaa8d934e9f46a7132bc07f92f302a"}}
+{"at":"2026-11-25T09:56:57Z","feature":"F-96","round":0,"kind":"created","tasks":["FE-CONNECT-1"]}
+{"at":"2026-11-25T12:14:15Z","feature":"F-73","round":0,"kind":"fields","fields":{"git.pr_number":136}}
+{"at":"2026-11-25T12:14:15Z","feature":"F-73","round":0,"kind":"fields","fields":{"git.merge_status":"merged"}}
+{"at":"2026-11-25T12:14:15Z","feature":"F-73","round":0,"kind":"fields","fields":{"git.merge_sha":"3b28495165fa4696d442473bc09c5ea0186dc987"}}
