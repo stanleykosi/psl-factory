@@ -11,11 +11,13 @@ import { DrawerFrame, useWide } from './DrawerFrame';
 import { CHANGED_SINCE_OPENED } from './labels';
 import type { LineForm } from './lines';
 import { ProjectPicker } from './ProjectPicker';
-import type { FieldProblem } from './types';
+import type { FieldProblem, Line } from './types';
 import { NOT_CONFIRMED, useStart } from './useStart';
 
 type Props = {
   form: LineForm;
+  /** The served line: its `request_schema` is what an engine form is built from. */
+  line: Line;
   lineKey: string;
   /** Back and "change line" go to the chooser. */
   onBack: () => void;
@@ -41,9 +43,9 @@ function ProblemBox({ problem }: { problem: FieldProblem }) {
   );
 }
 
-export function LineDrawer({ form, lineKey, onBack, onClose, onStarted, pathname, onConflict }: Props) {
+export function LineDrawer({ form, line, lineKey, onBack, onClose, onStarted, pathname, onConflict }: Props) {
   const wide = useWide();
-  const start = useStart(form, onStarted, onConflict);
+  const start = useStart(form, onStarted, onConflict, line);
   const { notice } = start;
   const readOnly = start.busy || start.uncertain;
   const changeLine = (
@@ -103,7 +105,7 @@ export function LineDrawer({ form, lineKey, onBack, onClose, onStarted, pathname
         </div>
       )}
       <ProjectPicker lineKey={lineKey} value={start.project} onChange={start.chooseProject} disabled={readOnly} error={start.errors.project} />
-      <form.Form values={start.values} setValue={start.setValue} errors={start.errors} readOnly={readOnly} caseId={start.project?.case_id ?? null} />
+      <form.Form values={start.values} setValue={start.setValue} errors={start.errors} readOnly={readOnly} caseId={start.project?.case_id ?? null} line={line} project={start.project} onRevision={start.setRevision} />
       {notice?.kind === 'invalid' && notice.unmatched.map((problem, at) => <ProblemBox key={`${problem.name}-${at}`} problem={problem} />)}
     </DrawerFrame>
   );

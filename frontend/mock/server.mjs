@@ -45,7 +45,7 @@ import { resetSetup, saveSetupRule, setupRules } from './setup.mjs';
 import { createLineRuns } from './line-runs.mjs';
 import { START_OPERATIONS, createStartWorkMock } from './start-work.mjs';
 import { RECEIVED_BIDS_PATH, receivedBids, receivedBidsLog, resetReceivedBids } from './received-bids.mjs';
-import { resetStartLive, START_LIVE_PATH, START_LIVE_WORK, startLive, startLiveLog } from './start-live.mjs';
+import { resetStartLive, START_LIVE_MINUTES, START_LIVE_PATH, START_LIVE_WORK, startLive, startLiveLog } from './start-live.mjs';
 import { resetTemplates, templatesList, templateVersion } from './templates.mjs';
 import { delegationsList, resetDelegations, saveDelegation } from './delegations.mjs';
 import { isLiveWorkRequest, liveWorkCounts, liveWorkItem, liveWorkList, ownsLiveWorkItem } from './live-work.mjs';
@@ -389,12 +389,12 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       }
       // F-86: the live Start work reads and the weekly start (start-live.mjs). The v7 routes of the same paths stay for the v7 contract tests (start without liveStart).
       if (method === 'get' && url.pathname === '/__mock/start-live-log') return send(res, 200, startLiveLog());
-      if ((START_LIVE_PATH.test(url.pathname) && method === 'get') || (url.pathname === START_LIVE_WORK && method === 'post')) {
+      if ((START_LIVE_PATH.test(url.pathname) && method === 'get') || ((url.pathname === START_LIVE_WORK || START_LIVE_MINUTES.test(url.pathname)) && method === 'post')) {
         const cookies = parseCookies(req.headers.cookie);
         if (liveStart) {
           const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
           const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
-          return send(res, ...startLive({ method, url, raw, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona }));
+          return send(res, ...startLive({ method, url, raw, rawBytes, contentType: req.headers['content-type'], scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona }));
         }
       }
       // F-88: the live received RFP (received-bids.mjs); the v7 contract has none of these routes.

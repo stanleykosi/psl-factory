@@ -6,7 +6,7 @@ import type { Field, LegacyLine as Line, LegacyStartBody as StartBody, LineOptio
 export type RangeValue = { from: string; to: string };
 /** A client that is not in the list yet (F-49, overlay `allow_new`): sent as {new: {name}}. */
 export type NewValue = { new: { name: string } };
-export type FieldValue = string | RangeValue | LineOption | LineOption[] | NewValue;
+export type FieldValue = string | RangeValue | LineOption | LineOption[] | NewValue | File;
 export type Values = Record<string, FieldValue | undefined>;
 export type CaseRef = Pick<StartBody, 'case_id' | 'case_revision'>;
 

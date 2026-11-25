@@ -12,8 +12,8 @@ import { ApiError, errorFromResponse } from '@/api/errors';
 
 import { newIdempotencyKey, type FieldValue, type Values } from './intake';
 import { RECORD_UNAVAILABLE } from './labels';
-import type { LineForm } from './lines';
-import type { FieldProblem, Project, StartBody } from './types';
+import type { LineForm, Prepared } from './lines';
+import type { FieldProblem, Line, Project, StartBody } from './types';
 import { fetchProjects, START_TIMEOUT_MS } from './useStartWork';
 
 export const PROJECT_REQUIRED = 'Project is required.';
@@ -30,12 +30,12 @@ export type Notice =
   | { kind: 'uncertain' };
 
 /** The control a problem is drawn under, by the line's table; the case names belong to the shell's project box. */
-export function mapProblems(form: Pick<LineForm, 'target'>, problems: FieldProblem[]) {
+export function mapProblems(form: Pick<LineForm, 'target'>, problems: FieldProblem[], line?: Line) {
   const errors: Record<string, string> = {};
   const unmatched: FieldProblem[] = [];
   const general: string[] = [];
   for (const problem of problems) {
-    const control = form.target(problem.name);
+    const control = form.target(problem.name, line);
     if (control === undefined) unmatched.push(problem);
     else if (control === 'general') general.push(problem.message);
     else errors[control] = errors[control] ? `${errors[control]} ${problem.message}` : problem.message;
@@ -49,7 +49,7 @@ const workIdOf = (data: unknown): number | null => {
   return typeof id === 'number' && Number.isSafeInteger(id) && id > 0 ? id : null;
 };
 
-export function useStart(form: LineForm, onStarted: (workId: string) => void, onConflict?: () => void) {
+export function useStart(form: LineForm, onStarted: (workId: string) => void, onConflict?: () => void, line?: Line) {
   const [values, setValues] = useState<Values>({});
   const [project, setProject] = useState<Project | null>(null);
   const [key, setKey] = useState(newIdempotencyKey);
@@ -57,13 +57,15 @@ export function useStart(form: LineForm, onStarted: (workId: string) => void, on
   const [uncertain, setUncertain] = useState(false);
   const [signedOut, setSignedOut] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
+  // The newest revision a source read gave for the chosen project; it replaces the one the project was listed with.
+  const [revision, setRevision] = useState<number | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   // Bumped when a press finds required fields empty or the server names fields, so the summary takes focus.
   const [attempt, setAttempt] = useState(0);
   // One write at a time, checked synchronously so a double press cannot send two starts.
   const writing = useRef(false);
   // The exact body last sent; "Check again" resends it unchanged with the same key.
-  const sent = useRef<StartBody | null>(null);
+  const sent = useRef<Prepared | null>(null);
 
   const clearError = useCallback((name: string) => setErrors((current) => (name in current ? Object.fromEntries(Object.entries(current).filter(([k]) => k !== name)) : current)), []);
 
@@ -82,6 +84,7 @@ export function useStart(form: LineForm, onStarted: (workId: string) => void, on
         setValues((v) => Object.fromEntries(Object.entries(v).filter(([name]) => !form.projectBound?.includes(name))));
       }
       setProject(next);
+      setRevision(null);
       clearError('project');
     },
     [clearError, form.projectBound, project],
@@ -93,7 +96,10 @@ export function useStart(form: LineForm, onStarted: (workId: string) => void, on
       try {
         const page = await fetchProjects(form.key, current.title);
         const fresh = page.items.find((p) => p.case_id === current.case_id);
-        if (fresh) setProject(fresh);
+        if (fresh) {
+          setProject(fresh);
+          setRevision(null);
+        }
       } catch {
         // The notice still shows; the next press sends what was last read and answers again.
       }
@@ -103,9 +109,9 @@ export function useStart(form: LineForm, onStarted: (workId: string) => void, on
 
   const submit = useCallback(async () => {
     if (writing.current) return;
-    let body: StartBody | null = uncertain ? sent.current : null;
+    let body: Prepared | null = uncertain ? sent.current : null;
     if (!body) {
-      const missing = [...(project ? [] : [{ name: 'project', label: 'Project' }]), ...form.missing(values)];
+      const missing = [...(project ? [] : [{ name: 'project', label: 'Project' }]), ...form.missing(values, line)];
       if (missing.length > 0) {
         setErrors(Object.fromEntries(missing.map((m) => [m.name, `${m.label} is required.`])));
         setNotice(null);
@@ -113,7 +119,7 @@ export function useStart(form: LineForm, onStarted: (workId: string) => void, on
         return;
       }
       if (!project) return;
-      body = form.buildBody(values, { caseId: project.case_id, caseRevision: project.case_revision, idempotencyKey: key });
+      body = form.buildBody(values, { caseId: project.case_id, caseRevision: revision ?? project.case_revision, idempotencyKey: key }, line);
     }
     writing.current = true;
     sent.current = body;
@@ -123,7 +129,9 @@ export function useStart(form: LineForm, onStarted: (workId: string) => void, on
       let data: unknown;
       let error: unknown;
       try {
-        ({ response, data, error } = await liveApi.POST('/api/v1/work', { params: csrfHeader, body, signal: AbortSignal.timeout(START_TIMEOUT_MS) }));
+        ({ response, data, error } = form.send
+          ? await form.send(body)
+          : await liveApi.POST('/api/v1/work', { params: csrfHeader, body: body as StartBody, signal: AbortSignal.timeout(START_TIMEOUT_MS) }));
       } catch (thrown) {
         // Thrown before sending (no CSRF token): nothing was sent. Anything else may have reached the server.
         if (thrown instanceof ApiError && thrown.kind === 'unauthenticated') return setSignedOut(true);
@@ -168,7 +176,7 @@ export function useStart(form: LineForm, onStarted: (workId: string) => void, on
           return setNotice({ kind: 'problem', message: RATE_LIMITED });
         case 'invalid': {
           setKey(newIdempotencyKey());
-          const mapped = mapProblems(form, apiError.fields);
+          const mapped = mapProblems(form, apiError.fields, line);
           setErrors(mapped.errors);
           setAttempt((n) => n + 1);
           return setNotice({ kind: 'invalid', unmatched: mapped.unmatched, general: apiError.fields.length === 0 ? [said] : mapped.general });
@@ -183,12 +191,12 @@ export function useStart(form: LineForm, onStarted: (workId: string) => void, on
       writing.current = false;
       setBusy(false);
     }
-  }, [form, key, onConflict, onStarted, project, rereadRevision, uncertain, values]);
+  }, [form, key, line, onConflict, onStarted, project, revision, rereadRevision, uncertain, values]);
 
   const problems = useMemo(
     () => Object.entries(errors).map(([name, message]) => ({ fieldId: `sw-field-${name}`, message })),
     [errors],
   );
 
-  return { values, setValue, project, chooseProject, busy, uncertain, signedOut, notice, errors, problems, attempt, submit };
+  return { values, setValue, project, chooseProject, setRevision, busy, uncertain, signedOut, notice, errors, problems, attempt, submit };
 }

@@ -119,6 +119,7 @@ describe('the Django embed is gone', () => {
       'LineChooser.tsx',
       'start-live.mjs',
       'start-work-live.test.tsx',
+      'start-work-engine-ui.test.tsx',
       'document-review.test.tsx',
       'document-review-model.test.ts',
       'documents/review-2901.json',
