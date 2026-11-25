@@ -20,7 +20,7 @@ const writes = (page: Page) => {
 };
 const noSideways = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
 const choose = async (page: Page, label: string | RegExp, option: string | RegExp) => {
-  await page.getByRole('combobox', { name: label }).click();
+  await page.getByRole('combobox', { name: label, exact: typeof label === 'string' }).click();
   await page.getByRole('option', { name: option }).click();
 };
 
