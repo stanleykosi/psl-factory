@@ -169,7 +169,7 @@ for (const [label, viewport] of [
       } else {
         await expect(page.getByRole('navigation', { name: 'Breadcrumb' })).toHaveText('Projects / Lagoon Health');
         await expect(page.getByRole('link', { name: 'Back to Projects', exact: true })).toBeHidden();
-        await expect(page.locator('.projects__route')).toHaveText('PM Tunde Bello · Route A · 8 pieces of work');
+        await expect(page.locator('.projects__route')).toHaveText('PM Tunde Bello · 8 pieces of work');
         await expect(page.getByRole('region', { name: 'Facts earned' })).toBeVisible();
         await expect(page.locator('.psl-fact b')).toHaveText(['CONTRACT STAGES', 'WAITING ON PEOPLE', 'STOPPED', 'NEXT MILESTONE']);
         await expect(page.getByText('Figures may be partial.')).toBeVisible();
@@ -183,11 +183,12 @@ for (const [label, viewport] of [
       await expectNoAxeViolations(page);
     });
 
-    test('journey empty: P-0125, no client, finance not available', async ({ page }) => {
+    test('journey empty: P-0125, no client, no contract tiles', async ({ page }) => {
       await page.goto('/projects/P-0125');
       await journeyLoaded(page);
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Standalone fit-out');
-      await expect(page.locator('.psl-fact strong')).toHaveText(['Not available', '0', '0', 'Not available']);
+      // finance null: the contract tiles are not drawn, so only the two work counts show.
+      await expect(page.locator('.psl-fact strong')).toHaveText(['0', '0']);
       await expect(page.getByRole('tablist', { name: 'Project' })).toBeVisible();
       await expect(page.getByText('No work on this project yet.')).toBeVisible();
       await expect(page.locator('main ol')).toHaveCount(0);
