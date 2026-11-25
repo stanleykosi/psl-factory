@@ -8,16 +8,15 @@
 //   Accept / Edit / Write your own  -> action review, one decision (verdicts accept, edit, replace; the contract has no refusal)
 //   Ask Tola                         -> action suggest (with an earlier winning answer when one is picked)
 //   Undo                             -> action undo
-// HELD: "Send for review". The review of the response is a separate pack action (POST /work/{id}/bid-pack/review-request, which
-// needs a pack_id and version_id that this panel does not carry); POST /reviews kind bid records the reviewer's verdict, not
-// the PM's send. The button is drawn disabled with that reason.
+//   Send for review                  -> POST /work/{id}/bid-pack/review-request with the pack and document version the bid pack
+//                                       read gives (F-98); drawn disabled, with its reason, while the pack is not ready or is decided.
 import { useState } from 'react';
 
-import type { LiveBidAnswerRow, LiveBidAnswers } from '@/api/types';
+import type { LiveBidAnswerRow } from '@/api/types';
 import { Button, Callout, Select, Tag, TextArea, useToastWhen, type TagTone } from '@/components';
 
 import type { CommandDescriptor, LineActionsProps } from './adapter';
-import { DISPOSITIONS, SEND_HELD, dispositionWords, statusWords } from './bidAnswersAdapter';
+import { DISPOSITIONS, dispositionWords, statusWords, type BidAnswersReadback } from './bidAnswersAdapter';
 import { useWorkCommand } from './useWorkCommand';
 
 const STATUS_TONE: Record<LiveBidAnswerRow['status'], TagTone> = {
@@ -37,7 +36,7 @@ const HELD_ROW = 'Tola’s answer for this requirement is on hold.';
 
 type Form = { key: string; verdict: 'edit' | 'replace'; answer: string; disposition: LiveBidAnswerRow['disposition']; note: string };
 
-export function BidAnswersActions({ readback, ctx, commands, reload, onAccessLost }: LineActionsProps<LiveBidAnswers>) {
+export function BidAnswersActions({ readback, ctx, commands, reload, onAccessLost }: LineActionsProps<BidAnswersReadback>) {
   const send = useWorkCommand({ item: ctx, reload, onAccessLost });
   const [form, setForm] = useState<Form | null>(null);
   const [priors, setPriors] = useState<Record<string, string>>({});
@@ -76,7 +75,7 @@ export function BidAnswersActions({ readback, ctx, commands, reload, onAccessLos
   const notice = send.notice;
   const said = (): string | null => {
     if (notice?.kind !== 'success' || !last) return null;
-    const what = last.id === 'bid-answers.review' ? `Your answer for ${last.key} was saved.` : last.id === 'bid-answers.undo' ? `The earlier answer for ${last.key} is back.` : `Tola was asked for ${last.key}.`;
+    const what = last.id === 'bid-answers.send' ? 'The response was sent for review.' : last.id === 'bid-answers.review' ? `Your answer for ${last.key} was saved.` : last.id === 'bid-answers.undo' ? `The earlier answer for ${last.key} is back.` : `Tola was asked for ${last.key}.`;
     return notice.text.replace(/^Done\./, what);
   };
   // D-151: what a press did is a toast; only a problem stays on the page as a Callout.
@@ -174,9 +173,11 @@ export function BidAnswersActions({ readback, ctx, commands, reload, onAccessLos
       )}
       {readback.can_write && (
         <div className="wr-buttons">
-          <Button kind="primary" disabled reason={SEND_HELD}>
-            Send for review
-          </Button>
+          {button(byId('bid-answers.send'), 'Send for review', 'primary', () => {
+            setForm(null);
+            const sendCommand = byId('bid-answers.send');
+            if (sendCommand) void press(sendCommand, 'send', {});
+          })}
         </div>
       )}
       {notice?.kind === 'error' && (

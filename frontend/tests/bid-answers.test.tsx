@@ -147,13 +147,23 @@ describe('who sees which control', () => {
     await open(4404);
     expect(inRow('R1', 'Accept')).toBeNull();
   });
-  it('Send for review is held with its reason', async () => {
-    await open(4401);
+  it('Send for review is held, with its reason, while the response has no bid pack', async () => {
+    await open(4403);
     const send = screen.getByRole('button', { name: 'Send for review' }) as HTMLButtonElement;
     expect(send.disabled).toBe(true);
-    expect(screen.getByText(/needs the bid pack/)).toBeTruthy();
+    expect(screen.getByText('No bid pack has been prepared yet.')).toBeTruthy();
     fireEvent.click(send);
     expect(posts).toEqual([]);
+  });
+  it('Send for review sends the pack and version the bid pack read gives, then the page says it is with the reviewer', async () => {
+    await open(4401);
+    const send = screen.getByRole('button', { name: 'Send for review' }) as HTMLButtonElement;
+    expect(send.disabled).toBe(false);
+    fireEvent.click(send);
+    await screen.findByText(/The response was sent for review\. This item is now:/);
+    expect(posts).toEqual([{ path: '/api/v1/work/4401/bid-pack/review-request', body: { pack_id: 77, version_id: 801, expected_revision: 6, case_revision: 12 } }]);
+    await waitFor(() => expect((screen.getByRole('button', { name: 'Send for review' }) as HTMLButtonElement).disabled).toBe(true));
+    expect(screen.getByText('This pack is already with the reviewer.')).toBeTruthy();
   });
 });
 
