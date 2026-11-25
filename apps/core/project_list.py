@@ -28,7 +28,7 @@ STATIONS = {
     'delivery-handover/v1': 'Handover',
     'delivery-closure/v1': 'Closure',
 }
-READ_ACTIONS = ('engagement.read', 'finance.read', 'factory.read', 'delivery.planning_decide')
+READ_ACTIONS = ('engagement.read', 'rfp.read', 'finance.read', 'factory.read', 'delivery.planning_decide')
 WORK_LIMIT = 8
 PAGE_QUERIES = 540
 PAGE_SECONDS = 8
@@ -164,14 +164,30 @@ def summaries(actor, cases):
                 phase = STATIONS[definition]
                 state = 'Outcome recorded' if status == 'verified' else WORK_STATUS.get(status)
             manager = _inspect(engagement_facts, (actor, case), 128) if (case.pk, 'engagement.read') in grants else None
+            rfp_pm = None
+            if not (manager and manager.get('manager')) and (case.pk, 'rfp.read') in grants:
+                rfp_pm = _rfp_manager(case)  # a received bid has no engagement yet; its accountable PM is the RFP assignment
             milestone = _inspect(next_milestone, (case,), 64) if not closed and (case.pk, 'finance.read') in grants else None
             counts = _inspect(_counts, (actor, work.get(case.pk, ()),
                                         (case.pk, 'delivery.planning_decide') in grants), 190) if case.pk in visible_work else None
             reviews, exceptions = counts or (None, None)
             rows.append({
-                'case': case, 'manager': manager.get('manager') if manager else None,
+                'case': case, 'manager': (manager.get('manager') if manager else None) or rfp_pm,
                 'lifecycle': 'Closed' if closed else 'Active' if opened else None,
                 'closed_at': closed_dates.get(case.pk), 'phase': phase, 'state': state,
                 'milestone': milestone, 'reviews': reviews, 'exceptions': exceptions,
             })
     return rows
+
+
+def _rfp_manager(case):
+    """The accountable PM recorded on a received RFP, for a project with no engagement yet (D-215). None when no PM is assigned."""
+    from apps.pmo.rfp_models import RFPAssignment, RFPCase
+
+    intake_id = RFPCase.objects.filter(case=case, current_intake__isnull=False).values_list('current_intake_id', flat=True).first()
+    if not intake_id:
+        return None
+    assignment = RFPAssignment.objects.filter(intake_id=intake_id).select_related('pm').order_by('-pk').first()
+    if not assignment or not assignment.pm.is_active:
+        return None
+    return assignment.pm.get_full_name() or assignment.pm.get_username()
