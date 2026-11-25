@@ -186,7 +186,8 @@ describe('draft, from data (AC 3, 6, 7)', () => {
     const text = (path: string) => readFileSync(path, 'utf8');
     // Narrow exception (D-182, F-61 Q6): the alerts receipt labels show "Delivered" only for the server's receipt state `delivered`
     // (tests/alerts-model.test.ts asserts it never shows for queued, uncertain or held). No other file may.
-    const DELIVERED_ALLOWED = ['features/alerts/model.ts'];
+    // F-90: the invoice block's "Delivered" row names the invoice's own `delivered_at` field, drawn only from what the server served.
+    const DELIVERED_ALLOWED = ['features/alerts/model.ts', 'features/workspace/invoiceAdapter.ts'];
     for (const pattern of [/procurement@|submit by|TL-SUB|all [34] approvals|Approve and submit/, /Delivered|delivery confirmed|verified as sent/]) {
       const allowed = pattern.test('Delivered') ? DELIVERED_ALLOWED : [];
       expect(files.filter((f) => pattern.test(text(f))).map((f) => f.replace(/.*src\//, '')).filter((f) => !allowed.includes(f)), String(pattern)).toEqual([]);

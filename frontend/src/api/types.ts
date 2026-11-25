@@ -45,5 +45,6 @@ export type LiveBidPack = LiveGet<'/api/v1/work/{work_id}/bid-pack'>;
 export type LiveBidSubmission = LiveGet<'/api/v1/work/{work_id}/bid-submission'>;
 
 // F-103: the cash forecast reads (contract 1.25.0). The four result arrays and the disclosure arrays are untyped in the contract.
+export type LiveInvoice = LiveGet<'/api/v1/projects/{case_id}/billing-invoices/{invoice_id}'>; // F-90
 export type LiveForecast = LiveGet<'/api/v1/work/{work_id}/forecast'>;
 export type LiveForecastMonth = LiveGet<'/api/v1/work/{work_id}/forecast/actuals/{month}'>;

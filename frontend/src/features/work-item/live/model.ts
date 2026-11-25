@@ -3,6 +3,8 @@
 import type { LiveHistoryRow, LiveTracking, LiveWorkItem, LiveWorkTask } from '@/api/types';
 import type { FactName, FactValue, Station, StationStatus } from '@/components';
 
+import { heldMark } from './releaseMark';
+
 export const HISTORY_KINDS = ['worker', 'decision', 'evidence'] as const;
 export type LiveHistoryKind = (typeof HISTORY_KINDS)[number] | 'all';
 
@@ -16,8 +18,9 @@ export const HISTORY_FILTERS: readonly { kind: LiveHistoryKind; label: string }[
   { kind: 'evidence', label: 'Evidence' },
 ];
 
-/** The item is re-read while an agent is at work on it (current_activity.watching) or it is processing. */
-export const needsPolling = (item: LiveWorkItem) => item.current_activity?.watching === true || item.state === 'processing';
+/** The item is re-read while an agent is at work on it (current_activity.watching) or it is processing, and (F-90) while a release
+ *  we sent is still offered at the revision it was sent with: the page waits for the server and never sends again. */
+export const needsPolling = (item: LiveWorkItem) => item.current_activity?.watching === true || item.state === 'processing' || heldMark(item) !== null;
 
 /** The activity line: the agent's own label, else the progress status with its time. Nothing when the item carries neither. */
 export function activityOf(item: LiveWorkItem): { text: string; updatedAt?: string } | null {
