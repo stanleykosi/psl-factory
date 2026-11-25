@@ -137,6 +137,7 @@ describe('the Django embed is gone', () => {
       'project-sections-model.test.ts',
       'issues.mjs',
       'forecast-live.mjs',
+      'engagement-live.mjs',
       'clients.mjs',
       'clients-mock.test.ts',
     ];
