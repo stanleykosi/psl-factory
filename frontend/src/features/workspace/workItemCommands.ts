@@ -1,5 +1,6 @@
 // F-87: the work item's own controls as commands (POST /work/{id}/actions, /control, /background). One per control the API lists
-// for this person; a control it does not list is not built. `adopt_profile`, `release_invoice` and every other value are ignored.
+// for this person; a control it does not list is not built. `adopt_profile` and every other value are ignored.
+// F-90: `release_invoice` is listed by the same rule, with the body's `action` set by name (the id's last part is not it).
 // None of these bodies has a key field or a case_revision (the contract forbids both), so there is no key; duplicates are
 // stopped by the press lock, the uncertain lock and the revision check. A null revision stays null and holds every command.
 import type { LiveWorkItem } from '@/api/types';
@@ -17,6 +18,9 @@ export function workItemCommands(item: Item): CommandDescriptor[] {
   const out: CommandDescriptor[] = [];
   if (item.actions.includes('reconcile')) {
     out.push(makeCommand({ id: 'work.reconcile', label: 'Check what happened', url: `${base}/actions`, tokens, successStatuses: [202], ...hold }));
+  }
+  if (item.actions.includes('release_invoice')) {
+    out.push(makeCommand({ id: 'invoice.release', label: 'Release invoice', url: `${base}/actions`, tokens, action: 'release_invoice', successStatuses: [202], ...hold }));
   }
   for (const [action, label] of [['resume', 'Resume'], ['cancel', 'Cancel']] as const) {
     if (item.available_control.includes(action)) out.push(makeCommand({ id: `work.${action}`, label, url: `${base}/control`, tokens, successStatuses: [200], ...hold }));

@@ -37,6 +37,10 @@ type Args = {
   onAccessLost?: (error: ApiError) => void;
 };
 
+/** How a press ended, for a caller that must remember it (the invoice release): 'sent' the write was accepted, 'refused' it was
+ *  answered and did not happen, 'unknown' it may or may not have happened, 'skipped' nothing was sent. */
+export type WorkCommandOutcome = 'sent' | 'refused' | 'unknown' | 'skipped';
+
 /** A lookup sends nothing to the client, so an unknown result never locks it. */
 const LOOKUPS = new Set(['work.reconcile']);
 
@@ -91,9 +95,9 @@ export function useWorkCommand({ item, reload, onAccessLost }: Args) {
   const lockedReason = (id: string) => (locked.has(lockKey(id, item.revision)) ? WORK_COMMAND_TEXT.lockedBeside : null);
 
   const run = useCallback(
-    async (command: CommandDescriptor, inputs: Record<string, unknown> = {}) => {
-      if (command.disabledReason || item.revision === null || busy || locked.has(lockKey(command.id, item.revision))) return;
-      if (!begin(command.id)) return;
+    async (command: CommandDescriptor, inputs: Record<string, unknown> = {}): Promise<WorkCommandOutcome> => {
+      if (command.disabledReason || item.revision === null || busy || locked.has(lockKey(command.id, item.revision))) return 'skipped';
+      if (!begin(command.id)) return 'skipped';
       setNotice(null);
       const sentRevision = item.revision;
       try {
@@ -102,10 +106,11 @@ export function useWorkCommand({ item, reload, onAccessLost }: Args) {
         if (!fresh) {
           setUnreadAt(latest.current);
           setNotice({ kind: 'error', text: WORK_COMMAND_TEXT.unreadable });
-          return;
+          return 'sent';
         }
         const now = STATE_TAGS[fresh.state]?.text ?? fresh.status_label;
         setNotice({ kind: 'success', text: command.id === 'work.reconcile' ? `Checked. This item is now: ${now}.` : `Done. This item is now: ${now}.` });
+        return 'sent';
       } catch (caught) {
         const error = caught instanceof ApiError ? caught : networkError();
         switch (error.kind) {
@@ -113,40 +118,41 @@ export function useWorkCommand({ item, reload, onAccessLost }: Args) {
           case 'not_found':
             if (onAccessLost) onAccessLost(error);
             else setNotice({ kind: 'error', text: error.kind === 'not_found' ? WORK_COMMAND_TEXT.unavailable : error.message });
-            return;
+            return 'refused';
           case 'forbidden':
             setNotice({ kind: 'error', text: 'You can’t do this.', detail: error.message });
             await reload();
-            return;
+            return 'refused';
           case 'csrf':
             setNotice({ kind: 'error', text: WORK_COMMAND_TEXT.csrf });
-            return;
+            return 'refused';
           case 'stale':
             await reload();
             setNotice({ kind: 'error', text: WORK_COMMAND_TEXT.changed, detail: error.message });
-            return;
+            return 'refused';
           case 'invalid':
             setNotice({ kind: 'error', text: error.message, ...(error.fields[0] ? { detail: error.fields[0].message } : {}) });
             await reload();
-            return;
+            return 'refused';
           case 'rate_limited':
           case 'read_limited':
             setNotice({ kind: 'error', text: WORK_COMMAND_TEXT.shortly });
-            return;
+            return 'refused';
           case 'bad_request':
           case 'too_large':
           case 'unsupported':
             setNotice({ kind: 'error', text: error.message });
-            return;
+            return 'refused';
           default:
             if (error.status === 503) {
               setNotice({ kind: 'error', text: WORK_COMMAND_TEXT.shortly });
-              return;
+              return 'unknown';
             }
             // Network or server: it may or may not have happened. Re-read to show what did; never send again on our own.
             if (!LOOKUPS.has(command.id)) lock(lockKey(command.id, sentRevision));
             setNotice({ kind: 'error', text: WORK_COMMAND_TEXT.uncertain });
             await reload();
+            return 'unknown';
         }
       } finally {
         end();

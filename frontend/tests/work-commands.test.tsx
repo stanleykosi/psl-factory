@@ -77,10 +77,10 @@ describe('workItemCommands (the table in the spec)', () => {
     expect(pause.successStatuses).toEqual([202]);
   });
 
-  it('adopt_profile and release_invoice are never built, even when listed', () => {
+  it('adopt_profile is never built, even when listed; release_invoice builds the one release command (F-90)', () => {
     expect(item(4123).available_control).toContain('adopt_profile');
     expect(item(4123).actions).toContain('release_invoice');
-    expect(workItemCommands(item(4123))).toEqual([]);
+    expect(workItemCommands(item(4123)).map((c) => c.id)).toEqual(['invoice.release']);
   });
 
   it('nothing listed gives no command', () => {
@@ -261,7 +261,7 @@ describe('useWorkCommand', () => {
     fetchStub.mockImplementation(async (request: Request) => (request.method === 'POST' ? new Promise<Response>((resolve) => (release = resolve)) : base(request)));
     const hook = useSender(4121);
     const [resume, cancel] = workItemCommands(hook.state.current);
-    let first: Promise<void> = Promise.resolve();
+    let first: Promise<unknown> = Promise.resolve();
     await act(async () => {
       first = hook.result.current.run(resume);
     });
@@ -340,7 +340,7 @@ describe('the controls row on the live page', () => {
   const row = () => screen.queryByRole('group', { name: 'Controls' });
   const buttons = () => within(row()!).getAllByRole('button');
 
-  it('4120 draws "Check what happened" only; 4111 draws no row; 4123 draws none for adopt_profile or release_invoice', async () => {
+  it('4120 draws "Check what happened" only; 4111 draws no row', async () => {
     open(4120);
     await screen.findByRole('button', { name: 'Check what happened' });
     expect(buttons()).toHaveLength(1);
@@ -348,7 +348,7 @@ describe('the controls row on the live page', () => {
     expect(fetchStub.mock.calls.filter(([r]) => r.method === 'POST')).toHaveLength(0);
   });
 
-  it.each([4111, 4123])('%i has no controls row and no heading', async (id) => {
+  it.each([4111])('%i has no controls row and no heading', async (id) => {
     open(id);
     await screen.findByRole('heading', { level: 1 });
     expect(row()).toBeNull();

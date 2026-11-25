@@ -54,6 +54,7 @@ import { FORECAST_PATH, forecastLive } from './forecast-live.mjs';
 import { COMMERCIAL_PATH, commercialLive, resetCommercialLive } from './commercial-live.mjs';
 import { ENGAGEMENT_PATH, engagementLive, resetEngagementLive } from './engagement-live.mjs';
 import { COSTING_PATH, costingLive, resetCostingLive } from './costing-live.mjs';
+import { INVOICE_RELEASE_PATH, invoiceReleaseLive, resetInvoiceRelease } from './invoice-release-live.mjs';
 import { issuesLog, issuesRoute, resetIssues } from './issues.mjs';
 import { liveDecideRoute, ownsLiveDecide, resetLiveDecide } from './live-decide.mjs';
 import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
@@ -310,6 +311,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetEngagementLive();
         resetCommercialLive();
         resetCostingLive();
+        resetInvoiceRelease();
         resetInvitations();
         resetIssues();
         resetClients();
@@ -336,6 +338,16 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
         return send(res, ...commercialLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
+      }
+      // F-90: releasing an invoice (ids 4140 to 4144, invoice-release-live.mjs); every other id falls through.
+      if (INVOICE_RELEASE_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        const reply = invoiceReleaseLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes });
+        // a dropped connection: the answer never arrives
+        if (reply[0] === 'drop') return req.socket.destroy();
+        return send(res, ...reply);
       }
       // F-99: the costing sheet (ids 4700 to 4705, costing-live.mjs); every other id falls through.
       if (COSTING_PATH.test(url.pathname)) {
