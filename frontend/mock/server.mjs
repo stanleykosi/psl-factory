@@ -53,6 +53,7 @@ import { workList } from './work-list.mjs';
 import { FORECAST_PATH, forecastLive } from './forecast-live.mjs';
 import { COMMERCIAL_PATH, commercialLive, resetCommercialLive } from './commercial-live.mjs';
 import { ENGAGEMENT_PATH, engagementLive, resetEngagementLive } from './engagement-live.mjs';
+import { COSTING_PATH, costingLive, resetCostingLive } from './costing-live.mjs';
 import { issuesLog, issuesRoute, resetIssues } from './issues.mjs';
 import { liveDecideRoute, ownsLiveDecide, resetLiveDecide } from './live-decide.mjs';
 import { CASE_FILES_PATH, resetWorkLive, WORK_LIVE_PATH, workLive, workLiveLog } from './work-live.mjs';
@@ -308,6 +309,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetWorkLive();
         resetEngagementLive();
         resetCommercialLive();
+        resetCostingLive();
         resetInvitations();
         resetIssues();
         resetClients();
@@ -334,6 +336,13 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
         return send(res, ...commercialLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
+      }
+      // F-99: the costing sheet (ids 4700 to 4705, costing-live.mjs); every other id falls through.
+      if (COSTING_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        return send(res, ...costingLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
       }
       // F-103: the cash forecast reads (ids 4301 to 4308); every other id falls through to work-live.mjs.
       if (FORECAST_PATH.test(url.pathname)) {

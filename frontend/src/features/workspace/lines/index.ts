@@ -9,6 +9,7 @@ import '@/features/forecast/forecastAdapter'; // F-103 (lane D): self-registers 
 import '@/features/engagement/engagementAdapter'; // F-97: self-registers on import
 import '@/features/engagement/planningAdapter'; // F-97: self-registers on import
 import '@/features/response/commercialAdapter'; // F-136: self-registers on import
+import '@/features/costing/costingAdapter'; // F-99: self-registers on import
 
 registerLineAdapter(weeklyReportAdapter as LineAdapter);
 registerLineAdapter(bidAnswersAdapter as LineAdapter);
