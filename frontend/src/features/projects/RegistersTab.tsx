@@ -9,6 +9,7 @@ import { Button, ListToolbar, PriorityTag, Table, Tabs, Tag, useIsPhone, type Co
 
 import { MoreFooter } from './MoreFooter';
 import { PANEL_ID } from './ProjectTabs';
+import { RecordIssueDrawer } from './RecordIssueDrawer';
 import { ageText, availableRegisters, knownPriority, NO_OWNER, parseSectionView, registerCountText, sectionSearch, selectedRegister, type RegisterId, type SectionItem, type SectionView } from './sectionsModel';
 import { AsOf, NONE, TabEmpty, TabNoAccess, tabStateView } from './TabParts';
 import { useFocusAfterMore } from './useFocusAfterMore';
@@ -80,6 +81,14 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
   const rows = section?.items ?? [];
   useFocusAfterMore(rowsRef, rows.length);
 
+  // F-137: "Record an issue" opens the drawer; focus returns to the button when it closes.
+  const [recording, setRecording] = useState(false);
+  const recordRef = useRef<HTMLButtonElement>(null);
+  const closeRecord = useCallback(() => {
+    setRecording(false);
+    requestAnimationFrame(() => recordRef.current?.focus());
+  }, []);
+
   const navigate = useCallback((next: Partial<SectionView>) => router.replace(`${path}${sectionSearch({ ...viewRef.current, ...next })}`, { scroll: false }), [router, path]);
 
   // Search: the box keeps what the person typed; the URL takes the settled search (SearchField's pause).
@@ -135,6 +144,14 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
   return (
     <>
       {selected && tabs.length > 0 && <Tabs label="Register" className="ptabs__registers" strip={phone} tabs={tabs} selected={selected.id} panelId={PANEL_ID} />}
+      {selected?.id === 'issues' && (
+        <div className="ptabs__record">
+          <Button ref={recordRef} kind="secondary" size={phone ? 'lg' : 'sm'} icon="plus" onClick={() => setRecording(true)}>
+            Record an issue
+          </Button>
+        </div>
+      )}
+      {recording && <RecordIssueDrawer caseId={caseId} reloadList={retry} onClose={closeRecord} pathname={`${path}${sectionSearch(view)}`} />}
       <div role="search">
         <ListToolbar
           className="ptabs__toolbar"
