@@ -23,7 +23,7 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       const sent = writes(page);
       const main = page.locator('main#main');
       await page.goto('/work/4700');
-      await expect(main.getByText('Calculated figures')).toBeVisible();
+      await expect(main.getByRole('heading', { name: 'Calculated figures' })).toBeVisible();
       await expect(main.getByText('25000000.00 NGN')).toBeVisible();
       await expect(main.getByText('Template rule (placeholder)')).toBeVisible();
       await expect(main.getByText('Chief executive')).toBeVisible();
