@@ -118,7 +118,7 @@ describe('the contract and the mock agree', () => {
 });
 
 describe('the model', () => {
-  const desk = (patch: Partial<CommercialDesk> = {}) => commercialLive({ method: 'get', url: new URL('http://m.local/api/v1/projects/00000000-0000-4000-8000-000000004660/commercial-response'), csrfOk: true, persona: 'finance_lead' })[1] as CommercialDesk & typeof patch;
+  const desk = () => commercialLive({ method: 'get', url: new URL('http://m.local/api/v1/projects/00000000-0000-4000-8000-000000004660/commercial-response'), csrfOk: true, persona: 'finance_lead' })[1] as CommercialDesk;
   const commands = (d: CommercialDesk) => commercialCommands(d, { caseId: 'c1' });
   const reason = (d: CommercialDesk, id: string) => commands(d).find((c) => c.id === id)?.disabledReason;
 
