@@ -43,6 +43,7 @@ export type LiveBidAnswerRow = LiveBidAnswers['rows'][number];
 // F-98: the bid pack, its submission and the send/review writes (contract 1.26.0).
 export type LiveBidPack = LiveGet<'/api/v1/work/{work_id}/bid-pack'>;
 export type LiveBidSubmission = LiveGet<'/api/v1/work/{work_id}/bid-submission'>;
+export type LiveSchedule = LiveGet<'/api/v1/work/{work_id}/finance-schedule'>; // F-101
 
 // F-103: the cash forecast reads (contract 1.25.0). The four result arrays and the disclosure arrays are untyped in the contract.
 export type LiveInvoice = LiveGet<'/api/v1/projects/{case_id}/billing-invoices/{invoice_id}'>; // F-90
