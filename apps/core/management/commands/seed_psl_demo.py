@@ -124,6 +124,9 @@ class Command(JourneyMixin, BaseCommand):
                 call_command(command, stdout=self.stdout)
         self.place_people()
         seed_demo_templates(self.admin)
+        # D-216: a placeholder escalation profile and request on Lagoon, and a placeholder change request on Lagoon and Delta.
+        call_command('seed_demo_escalations', stdout=self.stdout)
+        call_command('seed_demo_changes', stdout=self.stdout)
         self.stdout.write('PSL demo seeded: ' + ', '.join(project['title'] for project in PROJECTS.values()))
 
     # -- people and workspaces -------------------------------------------------------------------------
