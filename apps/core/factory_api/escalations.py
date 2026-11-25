@@ -50,7 +50,7 @@ REGISTER = {
     summary='Read current public issue facts and available communications before creating an escalation')
 def register(request, case_id):
     actor = request.user
-    case = accessible_case(actor, case_id)
+    case = accessible_case(actor, case_id, source_action='issue.read')
     require(actor, case, 'issue.read')
     number = page_number(request)
     offset = (number - 1) * 20
@@ -76,7 +76,7 @@ def register(request, case_id):
     'start_options_url': TEXT}), summary='Read the exact escalation register record and recorded client decisions')
 def request_record(request, case_id, request_id):
     actor = request.user
-    case = accessible_case(actor, case_id)
+    case = accessible_case(actor, case_id, source_action='issue.read')
     require(actor, case, 'issue.read')
     proof = public_evidence(case.evidence.all())
     row = get_object_or_404(EscalationRequest.objects.select_related('profile__state__issue').filter(
