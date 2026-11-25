@@ -6,6 +6,7 @@ import type { ComponentType } from 'react';
 import type { FieldValue, Values } from '../intake';
 import type { MinutesPrepared } from '../engine/minutes';
 import type { Line, Project, StartBody } from '../types';
+import { financePpe } from './financePpe';
 import { pmoChange } from './pmoChange';
 import { pmoEmergency } from './pmoEmergency';
 import { pmoEscalation } from './pmoEscalation';
@@ -73,7 +74,7 @@ export type OwnLine = {
   Own: ComponentType<OwnLineProps>;
 };
 
-const FORMS: LineForm[] = [weeklyReport, pmoIssues, pmoEscalation, pmoMinutes, pmoEmergency, pmoChange];
+const FORMS: LineForm[] = [weeklyReport, pmoIssues, pmoEscalation, pmoMinutes, pmoEmergency, pmoChange, financePpe];
 const OWN: OwnLine[] = [receivedBid];
 
 export function lineFormFor(key: string): LineForm | undefined {
