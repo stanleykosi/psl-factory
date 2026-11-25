@@ -70,6 +70,13 @@ const panel = (id) => {
   return state[id];
 };
 
+/** F-98: a write on the bid pack (the PM's send for review) moves this item on. */
+export const bidBump = (id) => {
+  const p = panel(id);
+  p.rev += 1;
+  p.case += 1;
+};
+
 /** What a write moved on the work item (its revision), merged over the item by work-live.mjs. */
 export const bidMoved = (id) => (state[id] ? { revision: state[id].rev, case_revision: state[id].case } : undefined);
 

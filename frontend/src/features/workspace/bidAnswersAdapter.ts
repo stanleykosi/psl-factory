@@ -5,12 +5,14 @@ import type { LiveBidAnswerRow, LiveBidAnswers } from '@/api/types';
 import { formatDayTime } from '@/components';
 
 import { BidAnswersActions } from './BidAnswersActions';
+import { readPackContext, sendForReviewCommand, type PackContext } from './bidPack';
 import { makeCommand, readPanel, type CommandDescriptor, type LineAdapter } from './adapter';
 import type { Section } from './labels';
 
 export const NO_TOKEN = 'We don’t have this response’s current version yet. Reload and try again.';
 export const READ_ONLY = 'You can’t change these answers.';
-export const SEND_HELD = 'Sending the response for review needs the bid pack, which this page doesn’t read yet.';
+/** F-98: the response panel, plus the bid pack the PM's Send for review names (read beside it). */
+export type BidAnswersReadback = LiveBidAnswers & { pack?: PackContext };
 
 export const DISPOSITIONS = [
   ['addressed', 'Addressed'],
@@ -32,7 +34,7 @@ export const statusWords = (s: LiveBidAnswerRow['status']) => STATUS_WORDS[s] ??
 
 const VERDICT_WORDS: Record<string, string> = { approve: 'Approved', return: 'Returned', reject: 'Refused' };
 
-function sections(readback: LiveBidAnswers): Section[] {
+function sections(readback: BidAnswersReadback): Section[] {
   const { counts, response_review: review, rows } = readback;
   const out: Section[] = [
     {
@@ -63,12 +65,14 @@ function sections(readback: LiveBidAnswers): Section[] {
   return out;
 }
 
-function commands(readback: LiveBidAnswers, ctx: { workId: number }): CommandDescriptor[] {
+function commands(readback: BidAnswersReadback, ctx: { workId: number }): CommandDescriptor[] {
   const tokens = { expected_revision: readback.expected_revision, case_revision: readback.case_revision };
   const url = `/api/v1/work/${ctx.workId}/bid-answers`;
   const hold = !readback.can_write ? READ_ONLY : tokens.expected_revision == null || tokens.case_revision == null ? NO_TOKEN : undefined;
   const spec = { url, tokens, ...(hold ? { disabledReason: hold } : {}) };
   return [
+    // the PM's send is the bid pack's own route, not this panel's; the pack and its version come from the pack read
+    sendForReviewCommand('bid-answers.send', ctx.workId, readback.pack, tokens, hold ?? null),
     makeCommand({ ...spec, id: 'bid-answers.review', label: 'Save answer', successStatuses: [201] }),
     makeCommand({ ...spec, id: 'bid-answers.undo', label: 'Undo', successStatuses: [201] }),
     // one descriptor per requirement: each carries its own operation key, so asking for another is never the same request
@@ -76,9 +80,13 @@ function commands(readback: LiveBidAnswers, ctx: { workId: number }): CommandDes
   ];
 }
 
-export const bidAnswersAdapter: LineAdapter<LiveBidAnswers> = {
+export const bidAnswersAdapter: LineAdapter<BidAnswersReadback> = {
   key: 'bid-answers',
-  read: (ref) => readPanel<LiveBidAnswers>(ref),
+  read: async (ref, ctx) => {
+    const answers = await readPanel<LiveBidAnswers>(ref);
+    const workId = ctx?.workId ?? parseInt(/\/work\/(\d+)\//.exec(ref.url)?.[1] ?? '', 10);
+    return { ...answers, pack: await readPackContext(workId) };
+  },
   sections: (readback) => sections(readback),
   commands: (readback, ctx) => commands(readback, ctx),
   Actions: BidAnswersActions,
