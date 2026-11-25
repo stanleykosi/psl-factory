@@ -51,6 +51,7 @@ import { delegationsList, resetDelegations, saveDelegation } from './delegations
 import { isLiveWorkRequest, liveWorkCounts, liveWorkItem, liveWorkList, ownsLiveWorkItem } from './live-work.mjs';
 import { workList } from './work-list.mjs';
 import { FORECAST_PATH, forecastLive } from './forecast-live.mjs';
+import { COMMERCIAL_PATH, commercialLive, resetCommercialLive } from './commercial-live.mjs';
 import { ENGAGEMENT_PATH, engagementLive, resetEngagementLive } from './engagement-live.mjs';
 import { COSTING_PATH, costingLive, resetCostingLive } from './costing-live.mjs';
 import { issuesLog, issuesRoute, resetIssues } from './issues.mjs';
@@ -307,6 +308,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetRetrospective();
         resetWorkLive();
         resetEngagementLive();
+        resetCommercialLive();
         resetCostingLive();
         resetInvitations();
         resetIssues();
@@ -327,6 +329,13 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
         return send(res, ...engagementLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
+      }
+      // F-136: the client's response and SOW signature (ids 4660 to 4666, commercial-live.mjs); every other id falls through.
+      if (COMMERCIAL_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        return send(res, ...commercialLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
       }
       // F-99: the costing sheet (ids 4700 to 4705, costing-live.mjs); every other id falls through.
       if (COSTING_PATH.test(url.pathname)) {
