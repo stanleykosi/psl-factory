@@ -5,8 +5,8 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 
-from apps.core.views import accessible_case
 from apps.core.services import add_evidence
+from apps.identity.factory_access import project_cases
 from apps.pmo import rfp_assignment_queue as queue
 from apps.pmo.rfp_assignment_views import AssignmentForm
 
@@ -52,7 +52,7 @@ def pending(http):
 @endpoint(response=ASSIGNMENT_SCREEN, summary='Read current bid, assignment and eligible nominees and evidence')
 def detail(http, case_id):
     actor = http.user
-    case = accessible_case(actor, case_id)
+    case = get_object_or_404(project_cases(actor), pk=case_id)
     try:
         roles, records = queue.assignment_scope(actor, case)
     except ValidationError as exc:
@@ -87,7 +87,7 @@ ASSIGN_FIELDS = {'intake': ID, 'revision': REVISION, 'candidate': ID, 'role': TE
 @transaction.atomic
 def assign(http, case_id, *, body):
     actor = http.user
-    case = accessible_case(actor, case_id)
+    case = get_object_or_404(project_cases(actor), pk=case_id)
     roles, records = queue.assignment_scope(actor, case)
     bid = get_object_or_404(queue.bids(), case=case)
     if case.revision != body['revision'] or bid.current_intake_id != body['intake'] or queue.assignment_state(bid)[0]:

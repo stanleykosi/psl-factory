@@ -33,6 +33,7 @@ from apps.pmo.issues import log_issue
 from apps.pmo.meetings import record_meeting
 from apps.pmo.services import complete_milestone, decide, prepare_baseline, sign_baseline
 from apps.pmo.signatures import capture_packet
+from apps.policy.change_drafts import draft_standard_policy
 from apps.policy.engagement_validators import ASSIGN
 from apps.policy.finance_drafts import draft_finance_policy
 from apps.policy.operator_drafts import draft_operator_policy
@@ -229,6 +230,14 @@ class Command(BaseCommand):
              for kind in EVIDENCE_KINDS}
         self.e[key] = e
         self.roles(case, e['policy_decision'], pm)
+        if key == 'sabi':
+            # D-212: the PMO Lead assigns the accountable PM. The rest is the repo fixture's synthetic matrix.
+            matrix = json.loads(Path(settings.BASE_DIR, 'fixtures/rfp.json').read_text())['decision_matrix']
+            matrix['rfp']['assignment_roles'] = ['PMO Lead']
+            config = draft_standard_policy(self.admin, case.pk, 'D05.decision_action_matrix', matrix,
+                                           e['policy_decision'].pk, timezone.now() - timedelta(minutes=1))
+            transition(self.admin, config.pk, 'validated')
+            transition(self.admin, config.pk, 'active')
         proof = self.evidence(case, 'engagement_source', f'{project["client"]} engagement source (demo record).')
         client_contacts.save(self.users[pm] if pm else self.admin, case, 'project', {
             'customer': '', 'client_name': project['client'], 'name': f'{project["client"]} project contact',

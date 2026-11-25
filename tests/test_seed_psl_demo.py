@@ -82,12 +82,36 @@ class SeedPslDemoTests(TestCase):
             active = client.get('/api/v1/work?queue=active')
             self.assertEqual(active.json()['total'], ACTIVE_WORK[key], key)
 
+    def test_project_managers_show_on_every_project_but_sabi(self):
+        for key in ('kemi', 'tunde', 'chinedu'):
+            rows = {item['title']: item['manager'] for item in self.client_for(key).get('/api/v1/projects').json()['items']}
+            expected = {LAGOON: 'Tunde Bello', DELTA: 'Chinedu Okeke', KORA: 'Tunde Bello', SABI: None}
+            self.assertEqual(rows, {title: expected[title] for title in rows}, key)
+
+    def test_pmo_lead_can_assign_the_sabi_pm_through_the_live_api(self):
+        client, sabi = self.client_for('kemi'), self.case(SABI)
+        pending = client.get('/api/v1/received-bids/assignments')
+        self.assertEqual([item['case_id'] for item in pending.json()['items']], [str(sabi.pk)])
+        detail = client.get(f'/api/v1/received-bids/{sabi.pk}/assignment').json()
+        self.assertEqual(detail['roles'], ['PMO Lead'])
+        self.assertEqual({person['label'] for person in detail['nominees']}, {'Tunde Bello', 'Chinedu Okeke'})
+        tunde = next(person for person in detail['nominees'] if person['label'] == 'Tunde Bello')
+        response = client.post(f'/api/v1/received-bids/{sabi.pk}/assignment', {
+            'intake': detail['bid']['intake_id'], 'revision': detail['bid']['revision'], 'candidate': tunde['id'],
+            'role': 'PMO Lead', 'reason': 'Tunde has capacity for this bid', 'evidence': detail['proofs'][0]['id'],
+        }, content_type='application/json')
+        self.assertEqual(response.status_code, 201, response.content)
+        self.assertEqual(response.json()['person_id'], tunde['id'])
+
     def test_pmo_lead_has_the_weekly_report_review_in_my_work(self):
         dashboard = self.client_for('kemi').get('/api/v1/role-dashboard').json()
         self.assertEqual([(row['title'], row['workspace']) for row in dashboard['decisions']],
                          [('Document review', LAGOON)])
         detail = self.client_for('kemi').get(f'/api/v1/role-work/{dashboard["decisions"][0]["id"]}')
         self.assertEqual(detail.json()['review']['verdicts'], ['approve'])
+        needs = self.client_for('kemi').get('/api/v1/work?queue=needs_me').json()
+        self.assertEqual([(row['line'], row['status_label']) for row in needs['items']],
+                         [('pmo-weekly-report/v1', 'Awaiting PMO Lead review')])
         report = FactoryWork.objects.get(definition='pmo-weekly-report/v1')
         self.assertEqual((report.case.title, report.status), (LAGOON, 'waiting'))
         for key in ('tunde', 'chinedu', 'ada', 'folake', 'ngozi', 'amaka'):
