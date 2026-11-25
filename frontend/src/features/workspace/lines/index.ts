@@ -10,6 +10,7 @@ import '@/features/engagement/engagementAdapter'; // F-97: self-registers on imp
 import '@/features/engagement/planningAdapter'; // F-97: self-registers on import
 import '@/features/response/commercialAdapter'; // F-136: self-registers on import
 import '@/features/costing/costingAdapter'; // F-99: self-registers on import
+import '@/features/fixed-assets/assetsAdapter'; // F-102: self-registers on import
 import '../invoiceAdapter'; // F-90: self-registers on import
 import '../incomeSchedulesAdapter'; // F-101: self-registers on import
 
