@@ -172,17 +172,18 @@ describe('access and errors (all tabs)', () => {
     expect(rowsOf()).toEqual(pm);
   });
 
-  it('documents lists the project\u2019s documents; no row links, as no tab row names its review (B-7)', async () => {
+  it('documents lists the project\u2019s documents on the live sectioned read; only the review path links (B-7)', async () => {
     await open('P-0101', 'documents');
     const rows = within(screen.getByRole('table', { name: 'Documents' })).getAllByRole('row').slice(1);
     expect(rows).toHaveLength(6);
-    expect(within(rows[0]).queryByRole('link')).toBeNull();
-    expect(rows[0].textContent).toContain('v2');
+    expect(within(rows[0]).getByRole('link', { name: 'Statement of work' }).getAttribute('href')).toBe(`/projects/${uuidOf('P-0101')}/documents/2901`);
+    expect(rows[0].textContent).toContain('Version 2');
     expect(rows[0].textContent).toContain('Awaiting PMO Lead review');
-    expect(rows[0].textContent).toContain('TEST TEMPLATE');
+    expect(rows[0].textContent).toContain('16 Nov 2026');
     expect(within(rows[1]).queryByRole('link')).toBeNull();
     expect(rows[1].textContent).toContain('Costing COST-0140');
     expect(rows[2].textContent).toContain('Weekly sync minutes');
+    expect(text()).not.toContain('couldn\u2019t load');
     expect(tabCalls().map((u) => u.pathname)).toEqual([`/api/v1/projects/${uuidOf('P-0101')}/documents`]);
   });
 
@@ -191,13 +192,20 @@ describe('access and errors (all tabs)', () => {
     const urls = [`/api/v1/projects/${id}/document-reviews/2901`, `/api/v1/projects/${uuidOf('P-0102')}/document-reviews/2901`, `//evil.example/api/v1/projects/${id}/document-reviews/2901`, `/api/v1/projects/${id}/documents/2901`, null];
     respond = (url) => {
       if (!url.pathname.endsWith('/documents')) return undefined;
-      const body = projectTab({ url, persona, cookies }).body as { documents: Record<string, unknown>[] };
-      return json(200, { ...body, documents: body.documents.slice(0, urls.length).map((row, i) => ({ ...row, api_url: urls[i] })) });
+      const body = structuredClone(projectTab({ url, persona, cookies }).body) as { sections: { items: Record<string, unknown>[] }[] };
+      body.sections[0].items = body.sections[0].items.slice(0, urls.length).map((row, i) => ({ ...row, api_url: urls[i] }));
+      return json(200, body);
     };
     await open('P-0101', 'documents');
     const rows = within(screen.getByRole('table', { name: 'Documents' })).getAllByRole('row').slice(1);
     expect(within(rows[0]).getByRole('link', { name: 'Statement of work' }).getAttribute('href')).toBe(`/projects/${id}/documents/2901`);
     for (const row of rows.slice(1)) expect(within(row).queryByRole('link')).toBeNull();
+  });
+
+  it('a body that is not the documents sections is a load failure', async () => {
+    respond = (url) => (url.pathname.endsWith('/documents') ? json(200, { case_id: uuidOf('P-0101'), tab: 'documents', documents: [] }) : undefined);
+    await open('P-0101', 'documents');
+    expect(text()).toContain('We couldn\u2019t load this tab');
   });
 
   it('documents of a project with none says so', async () => {
