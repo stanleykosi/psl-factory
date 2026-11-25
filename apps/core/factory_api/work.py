@@ -14,6 +14,7 @@ from apps.core.design_views import discoverable_work
 from apps.core.presentation import workspace_name
 from apps.core.workbench import granted
 from apps.identity.services import active_case_grants
+from apps.pmo import rfp_assignment_queue as bid_assignment_queue
 from apps.core.read_budget import ReadLimit, limit_queries
 from apps.core.read_observation import observation_scope, read_observation
 from apps.workflows import (
@@ -286,6 +287,12 @@ def counts(request):
         station = line_counts['stations'][queue_station(item, row)]
         station['count'] += 1
         station['needs_person'] += bool(memberships['decisions'])
+    # The Unassigned tab also holds received RFPs waiting for an accountable PM (the bid assignment queue), so they
+    # count here; without this, the PMO Lead's Unassigned tab stays hidden while a bid waits for a PM.
+    try:
+        observed['unassigned'] += len(bid_assignment_queue.page(actor)['rows'])
+    except (PermissionDenied, ValidationError):
+        pass
     limited = evaluated < len(candidates)
     return {'as_of': as_of, 'evaluated': evaluated, 'limited': limited, 'verified_month': month,
             'queues': [{'key': key, 'observed': count, 'total': None if limited else count}
