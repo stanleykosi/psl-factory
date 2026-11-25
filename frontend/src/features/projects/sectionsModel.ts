@@ -1,4 +1,4 @@
-// Registers (SCR-11) and Actions (SCR-29) on the live sectioned project tab (GET /projects/{case_id}/{tab}): which sections the
+// Registers (SCR-11), Actions (SCR-29) and Documents on the live sectioned project tab (GET /projects/{case_id}/{tab}): which sections the
 // pages draw, the view in the URL, the response check, the page merge and the display text of each value. Pure functions
 // only. Every number comes from the server (`total`, `counts`); nothing is counted, sorted or inferred from loaded rows.
 import type { operations } from '@/api/live-schema';
@@ -10,7 +10,7 @@ type TabOperation = operations['workspaces_project_tab'];
 export type TabBody = TabOperation['responses'][200]['content']['application/json'];
 export type Section = TabBody['sections'][number];
 export type SectionItem = Section['items'][number];
-export type SectionsTab = 'registers' | 'actions';
+export type SectionsTab = 'registers' | 'actions' | 'documents';
 export type RegisterId = 'issues' | 'changes' | 'emergencies' | 'rfps';
 
 /** The registers the board draws, in its order. A section is drawn only when its `key` is here; `title` is never matched. */
@@ -21,6 +21,7 @@ export const REGISTER_SECTIONS: readonly { id: RegisterId; label: string; word: 
   { id: 'rfps', label: 'RFPs', word: 'RFPs', key: 'rfp', count: ['RFP', 'RFPS'] },
 ];
 export const ACTIONS_SECTION_KEY = 'meetings';
+export const DOCUMENTS_SECTION_KEY = 'documents';
 
 export type RegisterEntry = (typeof REGISTER_SECTIONS)[number];
 

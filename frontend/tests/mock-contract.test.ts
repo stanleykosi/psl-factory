@@ -55,6 +55,7 @@ const BODY: Record<string, unknown> = {
 // Operations a persona may not use answer the declared status instead of 200 (Setup is for Leads and Admin; E-EXCEPTIONS is Leads only; E-MONTH-END Finance only).
 const PERSONA_STATUS: Record<string, Record<string, number>> = {
   'E-PROJECT': { none: 404, admin: 404, hr: 404, hr_lead: 404 },
+  'E-PROJECT-TAB': { none: 404, admin: 404, hr: 404, hr_lead: 404 },
   'E-CLIENTS': { none: 403 },
   'E-CLIENT': { none: 403 },
   'E-CLIENT-CONTACT': { none: 403 },
@@ -207,8 +208,8 @@ const CONTRACT_BODY: Record<string, (body: unknown) => unknown> = {
 const liveOpenapi = JSON.parse(readFileSync(join(__dirname, '../../contracts/psl-factory.openapi.json'), 'utf8')) as { paths: Record<string, Record<string, Operation>> };
 const liveSchema = (path: string) => liveOpenapi.paths[path].get.responses['200'].content['application/json'].schema;
 const liveMeSchema = liveSchema('/api/v1/me');
-// GET /projects and GET /projects/{case_id} answer the live shape too (F-70): their 200s are checked against the live contract.
-const LIVE_200: Record<string, object> = { 'E-ME': liveMeSchema, 'E-PROJECTS': liveSchema('/api/v1/projects'), 'E-PROJECT': liveSchema('/api/v1/projects/{case_id}') };
+// GET /projects, GET /projects/{case_id} and the project tab answer the live shape too (F-70; the tab is Documents here): their 200s are checked against the live contract.
+const LIVE_200: Record<string, object> = { 'E-ME': liveMeSchema, 'E-PROJECTS': liveSchema('/api/v1/projects'), 'E-PROJECT': liveSchema('/api/v1/projects/{case_id}'), 'E-PROJECT-TAB': liveSchema('/api/v1/projects/{case_id}/{tab}') };
 const errorSchema = byId('E-ME').op.responses['401'].content['application/json'].schema;
 
 let server: Server;
@@ -222,7 +223,7 @@ afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
 async function request(id: string, init: { persona?: string; scenario?: string; csrf?: string | null } = {}) {
   const { path, method } = byId(id);
-  const value = (name: string) => (id === 'E-PROJECT' && name === 'case_id' ? PROJECT_UUID : PATH_VALUES[name]);
+  const value = (name: string) => ((id === 'E-PROJECT' || id === 'E-PROJECT-TAB') && name === 'case_id' ? PROJECT_UUID : PATH_VALUES[name]);
   const url = base + path.replace(/\{(\w+)\}/g, (_, name: string) => value(name) ?? 'X-1') + (QUERY[id] ?? '');
   const headers: Record<string, string> = { Cookie: `psl_mock_persona=${init.persona ?? 'finance_lead'}` };
   if (init.scenario) headers['X-Mock-Scenario'] = init.scenario;

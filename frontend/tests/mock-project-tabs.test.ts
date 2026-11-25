@@ -1,28 +1,13 @@
-import { readdirSync, readFileSync } from 'node:fs';
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { join } from 'node:path';
 
-import Ajv2020 from 'ajv/dist/2020';
-import addFormats from 'ajv-formats';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
-import { OPENAPI_PATH, startMockServer } from '../mock/server.mjs';
+import { startMockServer } from '../mock/server.mjs';
 
-// E-PROJECT-TAB in the contract mock (F-25): every fixture body validates against the generated 200 schema with
-// nothing stripped, and the handler's rules (visibility, query, paging, cookies) hold.
-type Response = { content: { 'application/json': { schema: object } } };
-const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, { get: { responses: Record<string, Response> } }> };
-const ajv = new Ajv2020({ allErrors: true, strict: true });
-addFormats(ajv);
-const responses = openapi.paths['/api/v1/projects/{case_id}/{tab}'].get.responses;
-const valid200 = ajv.compile(responses['200'].content['application/json'].schema);
-
-const tabs = join(__dirname, '../mock/fixtures/projects/tabs');
-// Registers and Actions are the live shape (mock-live-project-sections.test.ts).
-const fixtureFiles = readdirSync(tabs).filter((name) => name.endsWith('.json') && !/\.(registers|actions)\.json$/.test(name));
-
+// E-PROJECT-TAB in the contract mock (F-25): the handler's rules (visibility, query, cookies) hold. Every tab is the live
+// sectioned shape and is validated against the live contract in mock-live-project-sections.test.ts and mock-live-money.test.ts.
 let server: Server;
 let base: string;
 beforeAll(async () => {
@@ -31,32 +16,13 @@ beforeAll(async () => {
 });
 afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
 
-type Body = Record<string, unknown> & { items: unknown[]; next_cursor?: string };
+type Body = Record<string, unknown>;
 async function get(path: string, init: { persona?: string; cookie?: string; scenario?: string } = {}) {
   const headers: Record<string, string> = { Cookie: `psl_mock_persona=${init.persona ?? 'pm'}${init.cookie ? `; ${init.cookie}` : ''}` };
   if (init.scenario) headers['X-Mock-Scenario'] = init.scenario;
   const response = await fetch(`${base}/api/v1/projects/${path}`, { headers });
   return { status: response.status, body: (await response.json()) as Body };
 }
-
-describe('fixtures validate against the generated E-PROJECT-TAB 200 schema', () => {
-  // the milestones fixtures are the live shape (F-71, mock-live-money.test.ts)
-  it.each(fixtureFiles.filter((name) => !name.includes('.milestones.')))('%s', (name) => {
-    const body = JSON.parse(readFileSync(join(tabs, name), 'utf8'));
-    expect(valid200(body), ajv.errorsText(valid200.errors)).toBe(true);
-  });
-
-  it('the handler serves valid bodies for every tab of P-0101, P-0102 and P-0106', async () => {
-    for (const id of ['P-0101', 'P-0102', 'P-0106']) {
-      for (const tab of ['documents']) {
-        const { status, body } = await get(`${id}/${tab}`);
-        expect(status).toBe(200);
-        expect(valid200(body), `${id} ${tab}: ${ajv.errorsText(valid200.errors)}`).toBe(true);
-        expect(body.items).toEqual(body[tab]);
-      }
-    }
-  });
-});
 
 describe('visibility and access', () => {
   it('404 for P-0099 and for a project the persona cannot see; 403 for every tab of P-0103', async () => {
@@ -67,9 +33,13 @@ describe('visibility and access', () => {
     expect((await get('P-0103')).status).toBe(200);
   });
 
-  it('documents answers its rows; an unknown tab 404; a project with no fixtures is empty', async () => {
-    expect((await get('P-0106/documents')).body.documents).toEqual([]);
-    expect(((await get('P-0101/documents')).body.documents as { work_id?: string }[]).map((d) => d.work_id)).toEqual(['W-2901', ...Array(5).fill(undefined)]);
+  it('documents answers the live sections; an unknown tab 404; a project with no fixtures is empty', async () => {
+    const empty = (await get('P-0106/documents')).body as unknown as { sections: { key: string; items: unknown[] }[] };
+    expect(empty.sections.map((s) => [s.key, s.items])).toEqual([['documents', []]]);
+    const body = (await get('P-0101/documents')).body as unknown as { tab: string; sections: { items: { api_url: string }[]; total: number; page: number }[] };
+    expect(body.tab).toBe('documents');
+    expect(body.sections[0]).toMatchObject({ total: 6, page: 1 });
+    expect(body.sections[0].items[0].api_url).toMatch(/\/document-reviews\/2901$/);
     expect((await get('P-0101/nonsense')).status).toBe(404);
   });
 
@@ -79,10 +49,10 @@ describe('visibility and access', () => {
 });
 
 describe('query', () => {
-  it('404 for a bad limit, an empty q and a bad cursor on documents', async () => {
-    for (const query of ['documents?limit=7', 'documents?q=', 'documents?cursor=x', 'documents?cursor=o999']) {
+  it('422 for an unreadable page or an empty q on documents', async () => {
+    for (const query of ['documents?page=0', 'documents?page=x', 'documents?q=']) {
       const result = await get(`P-0101/${query}`);
-      expect([query, result.status, result.body.code]).toEqual([query, 404, 'invalid_query']);
+      expect([query, result.status, result.body.code]).toEqual([query, 422, 'invalid_filter']);
     }
   });
 });

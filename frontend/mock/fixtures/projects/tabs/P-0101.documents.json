@@ -1,121 +1,109 @@
 {
   "as_of": "2026-11-17T10:00:00Z",
-  "documents": [
+  "sections": [
     {
-      "document_id": "D-2901",
-      "title": "Statement of work",
-      "kind": "SOW",
-      "version": "2",
-      "status": "Awaiting PMO Lead review",
-      "updated_at": "2026-11-16T15:20:00Z",
-      "test_template": true,
-      "work_id": "W-2901",
-      "sample": true
-    },
-    {
-      "document_id": "D-2902",
-      "title": "Costing COST-0140",
-      "kind": "Costing",
-      "version": "2",
-      "status": "Approved",
-      "updated_at": "2026-06-24T09:00:00Z",
-      "sample": true
-    },
-    {
-      "document_id": "D-2904",
-      "title": "Weekly sync minutes",
-      "kind": "Minutes",
-      "version": "1",
-      "status": "Drafted",
-      "updated_at": "2026-11-10T15:20:00Z",
-      "test_template": true,
-      "sample": true
-    },
-    {
-      "document_id": "D-2905",
-      "title": "Planning record",
-      "kind": "Planning",
-      "version": "3",
-      "status": "Approved",
-      "updated_at": "2026-11-10T15:20:00Z",
-      "sample": true
-    },
-    {
-      "document_id": "D-2906",
-      "title": "Client brief",
-      "kind": "Brief",
-      "version": "1",
-      "status": "Approved",
-      "updated_at": "2026-11-10T15:20:00Z",
-      "sample": true
-    },
-    {
-      "document_id": "D-2907",
-      "title": "Handover plan",
-      "kind": "Plan",
-      "version": "1",
-      "status": "Drafted",
-      "updated_at": "2026-11-10T15:20:00Z",
-      "sample": true
-    }
-  ],
-  "items": [
-    {
-      "document_id": "D-2901",
-      "title": "Statement of work",
-      "kind": "SOW",
-      "version": "2",
-      "status": "Awaiting PMO Lead review",
-      "updated_at": "2026-11-16T15:20:00Z",
-      "test_template": true,
-      "work_id": "W-2901",
-      "sample": true
-    },
-    {
-      "document_id": "D-2902",
-      "title": "Costing COST-0140",
-      "kind": "Costing",
-      "version": "2",
-      "status": "Approved",
-      "updated_at": "2026-06-24T09:00:00Z",
-      "sample": true
-    },
-    {
-      "document_id": "D-2904",
-      "title": "Weekly sync minutes",
-      "kind": "Minutes",
-      "version": "1",
-      "status": "Drafted",
-      "updated_at": "2026-11-10T15:20:00Z",
-      "test_template": true,
-      "sample": true
-    },
-    {
-      "document_id": "D-2905",
-      "title": "Planning record",
-      "kind": "Planning",
-      "version": "3",
-      "status": "Approved",
-      "updated_at": "2026-11-10T15:20:00Z",
-      "sample": true
-    },
-    {
-      "document_id": "D-2906",
-      "title": "Client brief",
-      "kind": "Brief",
-      "version": "1",
-      "status": "Approved",
-      "updated_at": "2026-11-10T15:20:00Z",
-      "sample": true
-    },
-    {
-      "document_id": "D-2907",
-      "title": "Handover plan",
-      "kind": "Plan",
-      "version": "1",
-      "status": "Drafted",
-      "updated_at": "2026-11-10T15:20:00Z",
-      "sample": true
+      "key": "documents",
+      "title": "Project evidence",
+      "django_url": "/projects/00000000-0000-4000-8000-000000000101/documents/",
+      "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/documents",
+      "items": [
+        {
+          "title": "Statement of work",
+          "state": "Version 2",
+          "state_code": "recorded",
+          "detail": "Awaiting PMO Lead review",
+          "at": "2026-11-16T15:20:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/documents/2901/",
+          "record_id": 2901,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/document-reviews/2901",
+          "reference": "D-2901",
+          "age_days": null,
+          "origin_meeting": null
+        },
+        {
+          "title": "Costing COST-0140",
+          "state": "Version 2",
+          "state_code": "recorded",
+          "detail": "Approved",
+          "at": "2026-06-24T09:00:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/documents/2902/",
+          "record_id": 2902,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/documents/2902",
+          "reference": "D-2902",
+          "age_days": null,
+          "origin_meeting": null
+        },
+        {
+          "title": "Weekly sync minutes",
+          "state": "Version 1",
+          "state_code": "recorded",
+          "detail": "Drafted",
+          "at": "2026-11-10T15:20:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/documents/2904/",
+          "record_id": 2904,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/documents/2904",
+          "reference": "D-2904",
+          "age_days": null,
+          "origin_meeting": null
+        },
+        {
+          "title": "Planning record",
+          "state": "Version 3",
+          "state_code": "recorded",
+          "detail": "Approved",
+          "at": "2026-11-10T15:20:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/documents/2905/",
+          "record_id": 2905,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/documents/2905",
+          "reference": "D-2905",
+          "age_days": null,
+          "origin_meeting": null
+        },
+        {
+          "title": "Client brief",
+          "state": "Version 1",
+          "state_code": "recorded",
+          "detail": "Approved",
+          "at": "2026-11-10T15:20:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/documents/2906/",
+          "record_id": 2906,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/documents/2906",
+          "reference": "D-2906",
+          "age_days": null,
+          "origin_meeting": null
+        },
+        {
+          "title": "Handover plan",
+          "state": "Version 1",
+          "state_code": "recorded",
+          "detail": "Drafted",
+          "at": "2026-11-10T15:20:00Z",
+          "due": null,
+          "severity": null,
+          "owner": null,
+          "django_url": "/projects/00000000-0000-4000-8000-000000000101/documents/2907/",
+          "record_id": 2907,
+          "api_url": "/api/v1/projects/00000000-0000-4000-8000-000000000101/documents/2907",
+          "reference": "D-2907",
+          "age_days": null,
+          "origin_meeting": null
+        }
+      ]
     }
   ]
 }
