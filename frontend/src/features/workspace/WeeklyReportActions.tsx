@@ -8,7 +8,7 @@
 import { useState } from 'react';
 
 import type { LiveWeeklyReport } from '@/api/types';
-import { Button, Callout, TextArea, TextField } from '@/components';
+import { Button, Callout, TextArea, TextField, useToastWhen } from '@/components';
 
 import type { CommandDescriptor, LineActionsProps } from './adapter';
 import { useWorkCommand } from './useWorkCommand';
@@ -124,6 +124,8 @@ export function WeeklyReportActions({ readback: report, ctx, commands, reload, o
   // the words the re-read confirms, said once the press has been re-read
   const notice = send.notice;
   const done = notice?.kind === 'success' ? notice.text.replace(/^Done\./, last === 'weekly-report.correct' ? 'Your update was sent for review.' : 'Recorded.') : null;
+  // D-151: what a press did is a toast; only a problem stays on the page as a Callout.
+  useToastWhen(done);
   const button = (c: CommandDescriptor, kind: 'primary' | 'secondary' | 'reject', onClick: () => void, invalid = false) => {
     const lockedReason = send.lockedReason(c.id) ?? (locked ? LOCKED : null);
     const reasonText = c.disabledReason ?? lockedReason;
@@ -181,7 +183,6 @@ export function WeeklyReportActions({ readback: report, ctx, commands, reload, o
           </div>
         </section>
       )}
-      {done && <Callout kind="success">{done}</Callout>}
       {notice?.kind === 'error' && (
         <Callout kind="problem">
           {notice.text}

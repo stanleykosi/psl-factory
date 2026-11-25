@@ -64,7 +64,7 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       await loaded(page);
       const main = page.locator('main#main');
       await main.getByRole('button', { name: 'Approve and send' }).click();
-      await expect(main.getByRole('status').filter({ hasText: 'Recorded.' })).toContainText('This item is now: Waiting');
+      await expect(page.getByRole('status').filter({ hasText: 'Recorded.' })).toContainText('This item is now: Waiting');
       expect(sent).toEqual([{ path: '/api/v1/work/4130/reviews', body: { kind: 'document', expected_revision: 6, case_revision: 12, version_id: 9101, verdict: 'approve', note: '' } }]);
       await expect(main.getByRole('button', { name: 'Approve and send' })).toHaveCount(0);
       await expect(main.getByText('No receipt yet')).toBeVisible();
@@ -80,7 +80,7 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       expect(sent).toEqual([]);
       await main.getByLabel('Note').fill('The dates are wrong.');
       await main.getByRole('button', { name: 'Refuse' }).click();
-      await expect(main.getByRole('status').filter({ hasText: 'Recorded.' })).toBeVisible();
+      await expect(page.getByRole('status').filter({ hasText: 'Recorded.' })).toBeVisible();
       expect(sent).toHaveLength(1);
       expect(sent[0].body).toMatchObject({ kind: 'document', verdict: 'reject', note: 'The dates are wrong.' });
     });
@@ -127,7 +127,7 @@ for (const [label, viewport] of [['desktop 1440', { width: 1440, height: 900 }],
       await expect(main.getByRole('button', { name: 'Send for review' })).toBeDisabled();
       await main.getByLabel('Reason for the change').fill('Added the delay');
       await main.getByRole('button', { name: 'Send for review' }).click();
-      await expect(main.getByRole('status').filter({ hasText: 'Your update was sent for review.' })).toBeVisible();
+      await expect(page.getByRole('status').filter({ hasText: 'Your update was sent for review.' })).toBeVisible();
       expect(sent).toHaveLength(1);
       expect(sent[0].path).toBe('/api/v1/work/4132/weekly-report');
       expect(sent[0].body).toMatchObject({ action: 'correct', expected_revision: 6, case_revision: 12, draft_id: null, reason: 'Added the delay' });
