@@ -10,19 +10,27 @@ import { ClientDetailPage, ClientsList } from '@/features/clients';
 import { AppShell } from '@/shell/AppShell';
 
 // @ts-expect-error plain ESM module without type declarations
-import { clients, resetClients } from '../mock/clients.mjs';
+import { clients } from '../mock/clients.mjs';
 import { bellFeed, isBellFeed, isRoleDashboard, roleDashboard } from './bell-feed';
 
+const nav = vi.hoisted(() => ({ search: '' }));
 vi.mock('next/navigation', () => ({
   usePathname: () => '/clients',
   useRouter: () => ({ replace: vi.fn(), push: vi.fn(), prefetch: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(nav.search),
 }));
 
-type Call = { method: string; path: string; search: string; body?: Record<string, unknown>; csrf: string | null };
+type Call = { method: string; path: string; search: string; csrf: string | null };
 type Reply = Response | Promise<Response>;
 const me = JSON.parse(readFileSync(join(__dirname, '../mock/fixtures/me.finance_lead.json'), 'utf8'));
 const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
-const OPERATIONS: Record<string, string> = { GET: 'E-CLIENT', PUT: 'E-CLIENT-CONTACT' };
+
+const ACME = 'a1b2c3d4'.repeat(8);
+const HARMATTAN = 'b2c3d4e5'.repeat(8);
+const LAGOON = 'c3d4e5f6'.repeat(8);
+const SABI = 'd4e5f607'.repeat(8);
+const TAMARIND = 'e5f60718'.repeat(8);
+const id = (n: number) => `0b6f9e1a-3c44-4d0a-9d52-${String(n).padStart(12, '0')}`;
 
 let apiPersona: string;
 let cookies: Record<string, string>;
@@ -31,9 +39,7 @@ let calls: Call[];
 let override: (call: Call) => Reply | undefined;
 
 function fromMock(call: Call): Response {
-  const url = new URL(call.path + call.search, 'http://x');
-  const operationId = call.path === '/api/v1/clients' ? 'E-CLIENTS' : OPERATIONS[call.method];
-  const r = clients({ operationId, url, raw: call.body ? JSON.stringify(call.body) : '', persona: apiPersona, cookies });
+  const r = clients({ url: new URL(call.path + call.search, 'http://x'), persona: apiPersona, cookies });
   return json(r.status, r.body);
 }
 
@@ -41,8 +47,8 @@ beforeEach(() => {
   apiPersona = 'finance_lead';
   cookies = {};
   calls = [];
+  nav.search = '';
   override = () => undefined;
-  resetClients();
   vi.stubGlobal(
     'fetch',
     vi.fn(async (request: Request) => {
@@ -50,8 +56,7 @@ beforeEach(() => {
       if (isRoleDashboard(request)) return roleDashboard();
       const url = new URL(request.url);
       if (url.pathname === '/api/v1/me') return json(200, me);
-      const text = request.method === 'GET' ? '' : await request.clone().text();
-      const call: Call = { method: request.method, path: url.pathname, search: url.search, body: text ? JSON.parse(text) : undefined, csrf: request.headers.get('X-CSRFToken') };
+      const call: Call = { method: request.method, path: url.pathname, search: url.search, csrf: request.headers.get('X-CSRFToken') };
       calls.push(call);
       return override(call) ?? fromMock(call);
     }),
@@ -62,25 +67,23 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-const reads = () => calls.filter((c) => c.method === 'GET');
-const puts = () => calls.filter((c) => c.method === 'PUT');
+const reads = () => calls.filter((c) => c.path.startsWith('/api/v1/clients'));
+const writes = () => calls.filter((c) => c.method !== 'GET');
+const phoneOn = () => vi.stubGlobal('matchMedia', (query: string) => ({ matches: true, media: query, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
 
-function renderList() {
-  return render(
+async function openList() {
+  render(
     <AppShell>
       <ClientsList />
     </AppShell>,
   );
-}
-async function openList() {
-  renderList();
   await screen.findByRole('heading', { level: 1, name: 'Clients' });
   await waitFor(() => expect(screen.queryByText('Loading…')).toBeNull());
 }
-async function openDetail(id: string) {
+async function openDetail(clientId: string) {
   render(
     <AppShell>
-      <ClientDetailPage clientId={id} />
+      <ClientDetailPage clientId={clientId} />
     </AppShell>,
   );
   await screen.findByRole('heading', { level: 1 });
@@ -88,407 +91,338 @@ async function openDetail(id: string) {
 }
 
 const bodyRows = () => [...document.querySelectorAll('tbody tr')].map((r) => [...r.querySelectorAll('td')].map((td) => td.textContent));
-const nameBox = () => screen.getByLabelText('Billing contact name') as HTMLInputElement;
-const emailBox = () => screen.getByLabelText('Billing email') as HTMLInputElement;
-const saveButton = () => screen.queryByRole('button', { name: /Save billing contact|Saving…/ }) as HTMLButtonElement | null;
-function fill(name: string, email: string) {
-  fireEvent.change(nameBox(), { target: { value: name } });
-  fireEvent.change(emailBox(), { target: { value: email } });
-}
-const press = async () => {
-  await act(async () => {
-    fireEvent.click(saveButton()!);
-  });
-};
+const hrefs = () => [...document.querySelectorAll<HTMLAnchorElement>('[data-client-link]')].map((a) => a.getAttribute('href') ?? '');
+const panel = (name: string) => screen.getByRole('region', { name });
 
-describe('Clients list (SCR-35)', () => {
-  it('shows the six clients in the returned order from the data only', async () => {
+describe('Clients list (SCR-35, live)', () => {
+  it('shows groups first, then ungrouped projects, in the returned order, with no owed column', async () => {
     await openList();
     expect(reads()).toHaveLength(1);
-    expect(reads()[0]).toMatchObject({ path: '/api/v1/clients', search: '?limit=10' });
-    expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual(['CLIENT', 'PROJECTS', 'OWED', 'BILLING CONTACT', 'STATE']);
+    expect(reads()[0]).toMatchObject({ method: 'GET', path: '/api/v1/clients', search: '' });
+    expect(screen.getAllByRole('columnheader').map((th) => th.textContent)).toEqual(['CLIENT', 'PROJECTS', 'BILLING CONTACT', 'STATE']);
     expect(bodyRows()).toEqual([
-      ['Lagoon Health', '1', 'Unknown amount not known', 'Missing · invoices can’t start', 'Billing contact missing'],
-      ['Harmattan Bank', '1', '₦4,250,000.00', 'Set', 'Set'],
-      ['Kora Logistics', '1', '₦0.00', 'Set', 'Set'],
-      ['Ojo Foods', '1', 'Unknown amount not known', 'Missing · invoices can’t start', 'Billing contact missing'],
-      ['Sabi Market', '1', '₦1,200,000.00', 'Set', 'Set'],
-      ['Tamarind Loans', '0', 'Not given', 'Set', 'Set'],
+      ['Acme Logistics', '3', '1 project needs a billing contact', 'Billing contact missing'],
+      ['Harmattan Bank', '27', '9 projects need a billing contact', 'Billing contact missing'],
+      ['Lagoon Health', '1', '1 project needs a billing contact', 'Billing contact missing'],
+      ['Sabi Market', '2', 'None needed', 'None needed'],
+      ['Tamarind Loans', '1', 'None needed', 'None needed'],
+      ['Kora FoodsKitchen display screens', '1', 'Missing · invoices can’t start', 'Billing contact missing'],
+      ['Office move', '1', 'Unknown', 'Unknown'],
+      ['Delta PrintPrint portal', '1', 'Set', 'Set'],
     ]);
-    const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-client-link]')].map((a) => a.getAttribute('href'));
-    expect(links).toEqual(['CL-3501', 'CL-3502', 'CL-3503', 'CL-3504', 'CL-3505', 'CL-3506'].map((id) => `/clients/${id}`));
-    expect(screen.getByText('6 clients as of 14 Nov, 10:00 · 2 missing billing contact')).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
-    expect(screen.queryByRole('button', { name: /Filter/ })).toBeNull();
+    expect(hrefs()).toEqual([ACME, HARMATTAN, LAGOON, SABI, TAMARIND, id(101), id(102), id(103)].map((key) => `/clients/${key}`));
     const text = document.body.textContent ?? '';
-    for (const word of ['@', 'active', 'closed', 'Prospect', 'READY', 'NEEDS DETAILS', 'PROSPECT']) expect(text).not.toContain(word);
+    expect(text).toMatch(/^.*8 clients loaded as of \d+ \w+, \d\d:\d\d · 12 missing billing contact/s);
+    for (const word of ['Owed', 'OWED', 'Invoiced', 'Received', 'blocked']) expect(text).not.toContain(word);
+    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
+    expect(writes()).toEqual([]);
   });
 
-  it('phone: one link card per client with a readable name', async () => {
-    vi.stubGlobal('matchMedia', (query: string) => ({ matches: true, media: query, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+  it('a project with unknown billing never reads Set or Missing', async () => {
+    await openList();
+    const row = screen.getByRole('link', { name: 'Office move' }).closest('tr')!;
+    expect(row.textContent).toContain('Unknown');
+    expect(row.textContent).not.toMatch(/Set|issing/);
+  });
+
+  it('phone: one link card per row with the billing words and no owed line', async () => {
+    phoneOn();
     await openList();
     expect(document.querySelector('table')).toBeNull();
-    const link = screen.getByRole('link', { name: 'Lagoon Health' });
-    expect(link.getAttribute('href')).toBe('/clients/CL-3501');
-    const card = link.closest('li')!;
-    expect(card.textContent).toContain('Owed: Unknown');
-    expect(card.textContent).toContain('Billing contact missing');
-    expect(document.querySelectorAll('ul li a[data-client-link]')).toHaveLength(6);
+    const card = screen.getByRole('link', { name: 'Acme Logistics' }).closest('li')!;
+    expect(card.textContent).toContain('1 project needs a billing contact');
+    expect(card.textContent).not.toContain('Owed');
+    expect(document.querySelectorAll('ul li a[data-client-link]')).toHaveLength(8);
+    expect(screen.getByRole('link', { name: 'Office move' }).closest('li')!.textContent).toContain('Unknown');
   });
 
-  it('pages by next_cursor: one request per press, rows appended, the line and button follow the cursor', async () => {
-    cookies = { psl_mock_clients: 'many' };
-    // The page sends no limit; this backend answers pages of 10.
-    override = (call) => {
-      if (call.path !== '/api/v1/clients') return undefined;
-      const search = new URLSearchParams(call.search);
-      search.set('limit', '10');
-      return fromMock({ ...call, search: `?${search}` });
-    };
+  it('sends q and a known billing value from the address, and ignores a bad billing value', async () => {
+    nav.search = '?q=%20kora%20&billing=needed';
     await openList();
-    expect(document.querySelectorAll('tbody tr')).toHaveLength(10);
-    expect(screen.getByText(/^10 clients loaded as of /)).toBeTruthy();
-    expect(screen.queryByText(/missing billing contact/)).toBeNull();
-    const more = screen.getByRole('button', { name: 'Show more' });
-    await act(async () => {
-      fireEvent.click(more);
-      fireEvent.click(more);
-    });
-    await waitFor(() => expect(document.querySelectorAll('tbody tr')).toHaveLength(20));
-    expect(calls.filter((c) => c.search.includes('cursor='))).toHaveLength(1);
-    expect(reads()[1].search).toBe('?limit=10&cursor=o10');
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
-    await waitFor(() => expect(document.querySelectorAll('tbody tr')).toHaveLength(25));
-    expect(reads()[2].search).toBe('?limit=10&cursor=o20');
-    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
-    expect(screen.getByText(/^25 clients as of .* · \d+ missing billing contact$/)).toBeTruthy();
-    const names = [...document.querySelectorAll('[data-client-link]')].map((a) => a.textContent);
-    expect(new Set(names).size).toBe(25);
+    expect(reads()[0].search).toBe('?q=kora&billing=needed');
+    expect(hrefs()).toEqual([`/clients/${id(101)}`]);
   });
 
-  it('a failed second page keeps the loaded rows and offers Try again', async () => {
+  it('?billing=bogus is not sent and the list loads', async () => {
+    nav.search = '?billing=bogus';
+    await openList();
+    expect(reads()[0].search).toBe('');
+    expect(hrefs()).toHaveLength(8);
+  });
+
+  it('Show more asks for the next group page, then the next project page, and never repeats a row', async () => {
+    cookies = { psl_mock_clients: 'many' };
+    await openList();
+    expect(reads().map((c) => c.search)).toEqual(['']);
+    expect(screen.getByText(/^50 clients loaded as of/)).toBeTruthy();
+    // Rows per page 50: the 50 loaded rows show; Show more then needs the next group page, then the next project page.
+    fireEvent.click(screen.getByRole('radio', { name: '50' }));
+    await waitFor(() => expect(document.querySelectorAll('tbody tr')).toHaveLength(50));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+    });
+    await waitFor(() => expect(document.querySelectorAll('tbody tr')).toHaveLength(60));
+    expect(reads().map((c) => c.search)).toEqual(['', '?clients_page=2', '?page=2']);
+    const all = hrefs();
+    expect(new Set(all).size).toBe(60);
+    expect(all[0]).toMatch(/^\/clients\/[a-f0-9]{64}$/);
+    expect(all.slice(0, 30).every((h) => /[a-f0-9]{64}$/.test(h))).toBe(true);
+    expect(all.slice(30).every((h) => h.includes('0b6f9e1a'))).toBe(true);
+    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
+  });
+
+  it('a failed next page keeps the rows and offers to try again', async () => {
     cookies = { psl_mock_clients: 'many' };
     let fail = true;
-    override = (call) => {
-      if (call.path !== '/api/v1/clients') return undefined;
-      const search = new URLSearchParams(call.search);
-      if (search.has('cursor') && fail) return json(500, { code: 'server_error', message: 'Something went wrong.' });
-      search.set('limit', '10');
-      return fromMock({ ...call, search: `?${search}` });
-    };
+    override = (call) => (fail && call.search.includes('clients_page=2') ? json(503, { code: 'unavailable', message: 'Try later.' }) : undefined);
     await openList();
+    fireEvent.click(screen.getByRole('radio', { name: '50' }));
+    await waitFor(() => expect(document.querySelectorAll('tbody tr')).toHaveLength(50));
     fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
-    await screen.findByRole('alert');
-    expect(document.querySelectorAll('tbody tr')).toHaveLength(10);
+    await screen.findByText('We couldn’t load more. Choose Show more to try again.');
+    expect(document.querySelectorAll('tbody tr')).toHaveLength(50);
     fail = false;
-    fireEvent.click(screen.getByRole('button', { name: /^Show (more|\d+ more)$/ }));
-    await waitFor(() => expect(document.querySelectorAll('tbody tr')).toHaveLength(20));
-    expect(screen.queryByRole('alert')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+    await waitFor(() => expect(document.querySelectorAll('tbody tr')).toHaveLength(60));
   });
 
-  it('empty list says so, with no count of missing contacts', async () => {
+  it('empty says so', async () => {
     cookies = { psl_mock_clients: 'empty' };
     await openList();
     expect(screen.getByText('No clients to show yet.')).toBeTruthy();
     expect(document.querySelector('table')).toBeNull();
   });
 
-  it('5xx shows the error card; Try again only reads', async () => {
+  it('a 503 shows the error card; Try again only reads', async () => {
     let fail = true;
-    override = () => (fail ? json(500, { code: 'server_error', message: 'Boom.' }) : undefined);
-    renderList();
+    override = () => (fail ? json(503, { code: 'unavailable', message: 'Boom.' }) : undefined);
+    render(
+      <AppShell>
+        <ClientsList />
+      </AppShell>,
+    );
     const alert = await screen.findByRole('alert');
     expect(alert.textContent).toContain('We couldn’t load the clients. Your work is safe; nothing was changed.');
     fail = false;
     fireEvent.click(within(alert).getByRole('button', { name: 'Try again' }));
-    await screen.findByText('Lagoon Health');
+    await screen.findByText('Acme Logistics');
     expect(calls.every((c) => c.method === 'GET')).toBe(true);
-    expect(calls).toHaveLength(2);
+  });
+
+  it('a 400 shows the error card', async () => {
+    override = () => json(400, { code: 'bad_request', message: 'No.' });
+    render(
+      <AppShell>
+        <ClientsList />
+      </AppShell>,
+    );
+    expect((await screen.findByRole('alert')).textContent).toContain('We couldn’t load the clients');
+  });
+
+  it('a 200 without the lists is an unexpected reply', async () => {
+    override = () => json(200, { projects: [] });
+    render(
+      <AppShell>
+        <ClientsList />
+      </AppShell>,
+    );
+    expect((await screen.findByRole('alert')).textContent).toContain('We couldn’t load the clients');
   });
 
   it('401 shows the signed-out callout with next=/clients', async () => {
     override = () => json(401, { code: 'not_signed_in', message: 'Sign in to continue.' });
-    renderList();
+    render(
+      <AppShell>
+        <ClientsList />
+      </AppShell>,
+    );
     const link = await screen.findByRole('link', { name: 'Sign in' });
     expect(link.getAttribute('href')).toContain('next=%2Fclients');
   });
 
-  it('403 (persona none) and 404 show the no-access page and name nothing', async () => {
+  it('403 shows the no-access page and names nothing', async () => {
     apiPersona = 'none';
-    renderList();
+    render(
+      <AppShell>
+        <ClientsList />
+      </AppShell>,
+    );
     expect(await screen.findByRole('heading', { level: 1, name: 'You can’t open the clients' })).toBeTruthy();
-    expect(document.body.textContent).not.toContain('Lagoon');
+    expect(document.body.textContent).not.toContain('Acme');
   });
 });
 
-describe('Client detail (SCR-35 detail)', () => {
-  it('CL-3501: banner from blocked[], empty inputs, the project link, money with owed Unknown', async () => {
-    await openDetail('CL-3501');
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lagoon Health Ltd');
-    expect(screen.getByText("No billing contact, so invoices for this client can't start. Add one here.")).toBeTruthy();
-    expect(nameBox().value).toBe('');
-    expect(emailBox().value).toBe('');
-    expect(screen.getByText('Needed before any invoice can start')).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'Patient app' }).getAttribute('href')).toBe('/projects/P-0101');
-    const money = screen.getByRole('region', { name: 'Money' });
-    expect(within(money).getAllByRole('term').map((t) => t.textContent)).toEqual(['Invoiced', 'Received', 'Owed']);
-    expect(within(money).getAllByRole('definition').map((d) => d.textContent)).toEqual(['₦6,000,000.00', '₦3,000,000.00', 'Unknown amount not known']);
-    expect(screen.getByRole('link', { name: 'Clients' }).getAttribute('href')).toBe('/clients');
-    const text = document.body.textContent ?? '';
-    for (const word of ['Tax ID', 'Billing address', 'Legal name', 'Contacts', 'Tunde Bello', 'milestones']) expect(text).not.toContain(word);
+describe('Client group page', () => {
+  it('shows the label, its projects with billing tags and links, the pointer line and no form', async () => {
+    await openDetail(ACME);
+    expect(reads()[0]).toMatchObject({ path: `/api/v1/clients/groups/${ACME}` });
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Acme Logistics');
+    const projects = panel('Projects');
+    expect(within(projects).getByRole('link', { name: 'Warehouse portal' }).getAttribute('href')).toBe(`/projects/${id(1)}`);
+    const row = (title: string) => within(projects).getByRole('link', { name: title }).closest('.clients__project')!.textContent;
+    expect(row('Warehouse portal')).toContain('Billing contact missing');
+    expect(row('Fleet tracking')).toContain('Set');
+    expect(row('Depot cabling')).toContain('Unknown');
+    expect(row('Depot cabling')).not.toMatch(/Set|issing/);
+    expect(within(projects).getAllByRole('link', { name: /^Billing contacts/ }).map((a) => a.getAttribute('href'))).toEqual([1, 2, 3].map((n) => `/clients/${id(n)}`));
+    expect(screen.getByText('Billing contacts are recorded for each project. Open a project’s billing contacts from the list.')).toBeTruthy();
+    expect(document.querySelector('form, input')).toBeNull();
+    expect(writes()).toEqual([]);
+    for (const word of ['Invoiced', 'Received', 'blocked']) expect(document.body.textContent).not.toContain(word);
   });
 
-  it('CL-3509 (only required fields): no banner, no money, "No projects yet.", no placeholders', async () => {
-    await openDetail('CL-3509');
-    expect(screen.getByText('No projects yet.')).toBeTruthy();
-    expect(screen.queryByRole('region', { name: 'Money' })).toBeNull();
-    expect(document.querySelector('.psl-callout')).toBeNull();
-    expect(screen.queryByText('Unknown')).toBeNull();
+  it('owed: a known amount and an unknown one stay on their own currency lines, never summed', async () => {
+    await openDetail(ACME);
+    const owed = panel('Owed');
+    const lines = [...owed.querySelectorAll('li')].map((li) => li.textContent);
+    expect(lines).toEqual(['Owed · NGN₦1,250,000.00' + '1 project with an amount not knownsample basis', 'Owed · USDNot known' + '2 projects with an amount not knownsample basis']);
+    expect(owed.textContent).toContain('As of 23 Nov 2026 · 3 projects you can see');
+    expect(owed.textContent).not.toContain('May be incomplete');
+    expect(owed.textContent).not.toMatch(/\b0\.00\b|USD 0/);
   });
 
-  it('CL-3503 (can_change false): values read-only, no form or button, the explanation', async () => {
-    await openDetail('CL-3503');
-    expect(document.querySelector('form')).toBeNull();
-    expect(saveButton()).toBeNull();
-    expect(screen.getByText('Emeka Obi')).toBeTruthy();
-    expect(screen.getByText('accounts@koralogistics.example')).toBeTruthy();
-    expect(screen.getByText('You can’t change this client’s details.')).toBeTruthy();
-    expect(screen.getByText('₦0.00')).toBeTruthy();
+  it('owed: limited coverage, empty totals, no debt, and a lone unknown amount', async () => {
+    await openDetail(HARMATTAN);
+    expect(panel('Owed').textContent).toContain('₦480,000.00');
+    expect(panel('Owed').textContent).toContain('May be incomplete: only part of this group is in your view or could be read.');
+  });
+  it('owed: empty totals does not claim zero', async () => {
+    await openDetail(LAGOON);
+    expect(panel('Owed').textContent).toContain('Nothing owed is recorded for the projects you can see.');
+    expect(panel('Owed').textContent).toContain('As of 23 Nov 2026 · 1 project you can see');
+  });
+  it('owed: debt null says it is not available', async () => {
+    await openDetail(SABI);
+    expect(panel('Owed').textContent).toBe('OwedOwed amount is not available for this group.');
+  });
+  it('owed: a null amount reads Not known, with the count', async () => {
+    await openDetail(TAMARIND);
+    expect(panel('Owed').textContent).toContain('Not known');
+    expect(panel('Owed').textContent).toContain('1 project with an amount not known');
+    expect(panel('Owed').textContent).not.toMatch(/₦|0\.00/);
   });
 
-  it('CL-3507: the sample client reads Unknown for every amount, never 0', async () => {
-    await openDetail('CL-3507');
-    const money = screen.getByRole('region', { name: 'Money' });
-    expect(within(money).getAllByRole('definition').map((d) => d.textContent)).toEqual(['Unknown amount not known', 'Unknown amount not known', 'Unknown amount not known']);
-  });
-
-  it('a blank input sends nothing and shows its message beside it with focus on the first; one press sends exactly one PUT, then one reload shows the stored values', async () => {
-    await openDetail('CL-3501');
-    expect(saveButton()!.disabled).toBe(false);
-    expect(nameBox().className).toContain('clients__needed');
-    expect(emailBox().className).toContain('clients__needed');
-    await press();
-    expect(puts()).toHaveLength(0);
-    expect(screen.getByText('Enter the billing contact name.')).toBeTruthy();
-    expect(screen.getByText('Enter the billing email.')).toBeTruthy();
-    await waitFor(() => expect(document.activeElement).toBe(nameBox()));
-    fill('Ada Okoye', '   ');
-    await press();
-    expect(puts()).toHaveLength(0);
-    expect(screen.queryByText('Enter the billing contact name.')).toBeNull();
-    expect(screen.getByText('Enter the billing email.')).toBeTruthy();
-    await waitFor(() => expect(document.activeElement).toBe(emailBox()));
-    fill('Ada Okoye', 'ada@lagoon.example');
-    expect(saveButton()!.disabled).toBe(false);
-    const button = saveButton()!;
+  it('Show more loads the next page of projects once and adds no repeats', async () => {
+    await openDetail(HARMATTAN);
+    expect(within(panel('Projects')).getAllByRole('link', { name: /^Branch rollout/ })).toHaveLength(25);
     await act(async () => {
-      fireEvent.click(button);
-      fireEvent.click(button);
+      fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     });
-    await screen.findByText('Billing contact saved.');
-    expect(puts()).toHaveLength(1);
-    expect(puts()[0]).toMatchObject({ path: '/api/v1/clients/CL-3501/billing-contact', csrf: me.csrf_token });
-    expect(puts()[0].body).toEqual({ expected_revision: 3, name: 'Ada Okoye', email: 'ada@lagoon.example' });
-    expect(reads()).toHaveLength(2);
-    expect(nameBox().value).toBe('Ada Okoye');
-    expect(emailBox().value).toBe('ada@lagoon.example');
-    expect(document.querySelector('.psl-callout--problem, .psl-callout--warning')).toBeNull();
-    expect(screen.getByRole('status').textContent).toBe('Billing contact saved.');
-    expect(saveButton()!.textContent).toBe('Save billing contact');
+    await waitFor(() => expect(within(panel('Projects')).getAllByRole('link', { name: /^Branch rollout/ })).toHaveLength(27));
+    expect(reads().map((c) => c.search)).toEqual(['', '?page=2']);
+    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
   });
 
-  it('a 200 whose reload fails keeps the entries, says so, turns the form off, and Try again only reads', async () => {
-    await openDetail('CL-3501');
-    let failReads = true;
-    override = (call) => (call.method === 'GET' && failReads ? json(502, { code: 'bad_gateway', message: 'x' }) : undefined);
-    fill('Ada Okoye', 'ada@lagoon.example');
-    await press();
-    await screen.findByText('Saved. We couldn’t refresh the page; reload to see the latest.');
-    {
-      const box = screen.getByText('Saved. We couldn’t refresh the page; reload to see the latest.').closest('[role="alert"]') as HTMLElement;
-      expect(box).toBeTruthy();
-      await waitFor(() => expect(document.activeElement).toBe(box));
-    }
-    expect(saveButton()).toBeNull();
-    expect(nameBox().value).toBe('Ada Okoye');
-    failReads = false;
-    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
-    await waitFor(() => expect(saveButton()).toBeTruthy());
-    expect(puts()).toHaveLength(1);
-    expect(nameBox().value).toBe('Ada Okoye');
+  it('sends a group key URL-encoded once', async () => {
+    await openDetail('a/b%c');
+    expect(reads()[0].path).toBe('/api/v1/clients/groups/a%2Fb%25c');
   });
 
-  it('409 (CL-3508): reloads once, keeps what was typed, shows the newer saved values, resends nothing; the next press carries the new revision', async () => {
-    await openDetail('CL-3508');
-    expect(nameBox().value).toBe('Tolu Bank');
-    fill('Tolu B.', 'tolu.b@miletwelve.example');
-    await press();
-    await screen.findByText('This client changed while you were editing. Check the details and save again.');
-    {
-      const box = screen.getByText('This client changed while you were editing. Check the details and save again.').closest('[role="alert"]') as HTMLElement;
-      expect(box).toBeTruthy();
-      await waitFor(() => expect(document.activeElement).toBe(box));
-    }
-    expect(puts()).toHaveLength(1);
-    expect(reads()).toHaveLength(2);
-    expect(nameBox().value).toBe('Tolu B.');
-    expect(screen.getByText('Current: Ngozi Eze · ngozi@miletwelve.example')).toBeTruthy();
-    expect(saveButton()!.disabled).toBe(false);
-    await press();
-    await screen.findByText('Billing contact saved.');
-    expect(puts()).toHaveLength(2);
-    expect(puts()[1].body).toEqual({ expected_revision: 3, name: 'Tolu B.', email: 'tolu.b@miletwelve.example' });
-    expect(screen.queryByText(/^Current:/)).toBeNull();
-  });
-
-  it('409 when nothing was typed: the newer values replace the fields', async () => {
-    await openDetail('CL-3508');
-    await press();
-    await screen.findByText('This client changed while you were editing. Check the details and save again.');
-    expect(nameBox().value).toBe('Ngozi Eze');
-    expect(screen.queryByText(/^Current:/)).toBeNull();
-  });
-
-  it('422 puts each message beside its input, keeps the entries, moves focus to the first invalid input, and does not reload', async () => {
-    await openDetail('CL-3501');
-    fill('Ada', 'nope');
-    override = (call) =>
-      call.method === 'PUT'
-        ? json(422, { code: 'invalid', message: 'Check the fields.', fields: [{ name: 'email', message: 'Enter a valid email address.' }, { name: 'name', message: 'That name is too short.' }, { name: 'phone', message: 'Phone is not used.' }] })
-        : undefined;
-    await press();
-    const alert = await screen.findByRole('alert');
-    expect(alert.textContent).toContain('Check the highlighted details.');
-    expect(alert.textContent).toContain('Phone is not used.');
-    for (const [input, message] of [
-      [emailBox(), 'Enter a valid email address.'],
-      [nameBox(), 'That name is too short.'],
-    ] as const) {
-      expect(input.getAttribute('aria-invalid')).toBe('true');
-      const described = input.getAttribute('aria-describedby')!.split(' ').map((id) => document.getElementById(id)!.textContent);
-      expect(described).toContain(message);
-    }
-    await waitFor(() => expect(document.activeElement).toBe(nameBox()));
-    expect(nameBox().value).toBe('Ada');
-    expect(emailBox().value).toBe('nope');
-    expect(reads()).toHaveLength(1);
-    expect(puts()).toHaveLength(1);
-  });
-
-  it('422 without fields shows the response message in the summary', async () => {
-    await openDetail('CL-3501');
-    fill('Ada', 'ada@lagoon.example');
-    override = (call) => (call.method === 'PUT' ? json(422, { code: 'invalid', message: 'We could not read that request.' }) : undefined);
-    await press();
-    expect((await screen.findByRole('alert')).textContent).toBe('We could not read that request.');
-  });
-
-  it('403 reloads once; the reloaded can_change decides, and the server message shows', async () => {
-    await openDetail('CL-3501');
-    fill('Ada', 'ada@lagoon.example');
-    override = (call) => {
-      if (call.method === 'PUT') return json(403, { code: 'forbidden', message: 'Your role changed.' });
-      if (call.method === 'GET' && reads().length > 1) return json(200, { ...JSON.parse(JSON.stringify({ client_id: 'CL-3501', name: 'Lagoon Health Ltd', revision: 3, billing_contact: { set: false }, projects: [], can_change: false })) });
-      return undefined;
-    };
-    await press();
-    await screen.findByText('Your role changed.');
-    {
-      const box = screen.getByText('Your role changed.').closest('[role="alert"]') as HTMLElement;
-      expect(box).toBeTruthy();
-      await waitFor(() => expect(document.activeElement).toBe(box));
-    }
-    expect(reads()).toHaveLength(2);
-    expect(puts()).toHaveLength(1);
-    expect(document.querySelector('form')).toBeNull();
-    expect(screen.getByText('You can’t change this client’s details.')).toBeTruthy();
-  });
-
-  it('401 on save shows the signed-out callout', async () => {
-    await openDetail('CL-3501');
-    fill('Ada', 'ada@lagoon.example');
-    override = (call) => (call.method === 'PUT' ? json(401, { code: 'not_signed_in', message: 'Sign in.' }) : undefined);
-    await press();
-    const link = await screen.findByRole('link', { name: 'Sign in' });
-    expect(link.getAttribute('href')).toContain('next=%2Fclients%2FCL-3501');
-  });
-
-  it('404 on save shows the no-access page without the name', async () => {
-    await openDetail('CL-3501');
-    fill('Ada', 'ada@lagoon.example');
-    override = (call) => (call.method === 'PUT' ? json(404, { code: 'not_found', message: 'Gone.' }) : undefined);
-    await press();
-    await screen.findByRole('heading', { level: 1, name: 'You can’t open this client' });
-    expect(document.body.textContent).not.toContain('Lagoon');
-  });
-
-  for (const [label, failure] of [
-    ['a network error', () => Promise.reject(new TypeError('Failed to fetch'))],
-    ['a 502', () => json(502, { code: 'bad_gateway', message: 'x' })],
-  ] as const) {
-    it(`${label} on save: "couldn’t confirm", one reload, no second PUT`, async () => {
-      await openDetail('CL-3501');
-      fill('Ada', 'ada@lagoon.example');
-      override = (call) => (call.method === 'PUT' ? (failure() as Reply) : undefined);
-      await press();
-      await screen.findByText('We couldn’t confirm the change was saved.');
-      {
-        const box = screen.getByText('We couldn’t confirm the change was saved.').closest('[role="alert"]') as HTMLElement;
-        expect(box).toBeTruthy();
-        await waitFor(() => expect(document.activeElement).toBe(box));
-      }
-      expect(puts()).toHaveLength(1);
-      expect(reads()).toHaveLength(2);
-      expect(nameBox().value).toBe('Ada');
-      expect(saveButton()).toBeTruthy();
-    });
-  }
-
-  it('an unclear failure whose reload also fails turns the form off; Try again only reads', async () => {
-    await openDetail('CL-3501');
-    fill('Ada', 'ada@lagoon.example');
-    let failReads = true;
-    override = (call) => {
-      if (call.method === 'PUT') return json(500, { code: 'server_error', message: 'x' });
-      return failReads && reads().length > 1 ? json(500, { code: 'server_error', message: 'x' }) : undefined;
-    };
-    await press();
-    await screen.findByText('We couldn’t confirm the change was saved.');
-    expect(saveButton()).toBeNull();
-    failReads = false;
-    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
-    await waitFor(() => expect(saveButton()).toBeTruthy());
-    expect(puts()).toHaveLength(1);
-  });
-
-  it('CL-3599 (404) and persona none (403) show the no-access page: no id, name or title anywhere', async () => {
-    await openDetail('CL-3599');
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this client');
-    expect(document.body.textContent).not.toContain('CL-3599');
-    expect(document.title).not.toContain('CL-3599');
-  });
-
-  it('403 on load shows the same no-access page', async () => {
+  it('403 and 404 show the no-access page and name nothing', async () => {
     apiPersona = 'none';
-    await openDetail('CL-3501');
+    await openDetail(ACME);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this client');
-    expect(document.body.textContent).not.toContain('Lagoon');
+    expect(document.body.textContent).not.toContain('Acme');
+  });
+  it('a stale key is no access', async () => {
+    await openDetail('f'.repeat(64));
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this client');
   });
 
-  it('a 5xx on load shows the error card; Try again reads again', async () => {
-    let fail = true;
-    override = () => (fail ? json(500, { code: 'server_error', message: 'x' }) : undefined);
+  it('401 shows the signed-out callout with a return path to this page', async () => {
+    override = () => json(401, { code: 'not_signed_in', message: 'Sign in.' });
     render(
       <AppShell>
-        <ClientDetailPage clientId="CL-3501" />
+        <ClientDetailPage clientId={ACME} />
+      </AppShell>,
+    );
+    const link = await screen.findByRole('link', { name: 'Sign in' });
+    expect(decodeURIComponent(link.getAttribute('href') ?? '')).toContain(`/clients/${ACME}`);
+  });
+
+  it('a 503 shows the error card; Try again reads again', async () => {
+    let fail = true;
+    override = () => (fail ? json(503, { code: 'unavailable', message: 'x' }) : undefined);
+    render(
+      <AppShell>
+        <ClientDetailPage clientId={ACME} />
       </AppShell>,
     );
     const alert = await screen.findByRole('alert');
     expect(alert.textContent).toContain('We couldn’t load this client. Your work is safe; nothing was changed.');
     fail = false;
     fireEvent.click(within(alert).getByRole('button', { name: 'Try again' }));
-    await screen.findByRole('heading', { level: 1, name: 'Lagoon Health Ltd' });
+    await screen.findByRole('heading', { level: 1, name: 'Acme Logistics' });
     expect(calls.every((c) => c.method === 'GET')).toBe(true);
+  });
+});
+
+describe('Client workspace page', () => {
+  it('shows billing and project contacts read only, the sample label, a held add control and the money link', async () => {
+    await openDetail(id(2));
+    expect(reads()[0]).toMatchObject({ path: `/api/v1/clients/${id(2)}` });
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Fleet tracking');
+    const billing = panel('Billing contact');
+    expect(billing.textContent).toContain('Ada Okoye');
+    expect(billing.textContent).toContain('ada@example.org');
+    expect(billing.textContent).toContain('Accounts');
+    expect(billing.textContent).toContain('Acme Logistics');
+    expect(billing.textContent).toContain('version 2');
+    expect(panel('Project contacts').textContent).toContain('Ife Balogun');
+    expect(document.querySelector('form, input')).toBeNull();
+    const add = within(billing).getByRole('button', { name: 'Add billing contact' }) as HTMLButtonElement;
+    expect(add.disabled).toBe(true);
+    expect(add.getAttribute('aria-describedby')).toBeTruthy();
+    expect(document.getElementById(add.getAttribute('aria-describedby')!)!.textContent).toContain('not available yet');
+    expect(within(panel('Projects')).getByRole('link', { name: 'Money for this project' }).getAttribute('href')).toBe(`/projects/${id(2)}/money`);
+    expect(writes()).toEqual([]);
+  });
+
+  it('a sample workspace carries the sample label when the build shows it; one with no billing contact reads Not set', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SHOW_SAMPLE_LABEL', '1');
+    await openDetail(id(1));
+    expect(screen.getByRole('heading', { level: 1 }).closest('.clients__titlerow')!.textContent).toMatch(/sample data/i);
+    expect(panel('Billing contact').textContent).toContain('Not set');
+    expect(screen.queryByText('Show history')).toBeNull();
+  });
+
+  it('Show history lists versions newest first and pages with Show more', async () => {
+    await openDetail(id(103));
+    fireEvent.click(screen.getByRole('button', { name: 'Show history' }));
+    const list = await screen.findByRole('list', { name: 'Billing contact history, newest first' });
+    expect(reads().at(-1)).toMatchObject({ path: `/api/v1/clients/${id(103)}/contacts/history`, search: '?purpose=billing&customer=Delta%20Print' });
+    expect(within(list).getAllByText(/^version \d+$/).map((n) => n.textContent)).toHaveLength(25);
+    expect(within(list).getAllByText(/^version \d+$/)[0].textContent).toBe('version 28');
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+    });
+    await waitFor(() => expect(within(list).getAllByText(/^version \d+$/)).toHaveLength(28));
+    expect(within(list).getAllByText(/^version \d+$/).at(-1)!.textContent).toBe('version 1');
+    expect(reads().at(-1)!.search).toContain('page=2');
+  });
+
+  it('a failed history shows a retry and leaves the page', async () => {
+    let fail = true;
+    override = (call) => (fail && call.path.endsWith('/history') ? json(503, { code: 'unavailable', message: 'x' }) : undefined);
+    await openDetail(id(103));
+    fireEvent.click(screen.getByRole('button', { name: 'Show history' }));
+    const alert = await screen.findByText(/We couldn’t load the history/);
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Print portal');
+    expect(panel('Billing contact').textContent).toContain('Chi Eze');
+    fail = false;
+    fireEvent.click(within(alert.closest('p')!).getByRole('button', { name: 'Try again' }));
+    await screen.findByRole('list', { name: 'Billing contact history, newest first' });
+  });
+
+  it('403 and 404 show the no-access page and name nothing', async () => {
+    apiPersona = 'none';
+    await openDetail(id(2));
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this client');
+    expect(document.body.textContent).not.toMatch(/Fleet|Ada Okoye/);
+  });
+  it('a case id from another tenant is no access', async () => {
+    await openDetail(id(9999));
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('You can’t open this client');
   });
 });
 
@@ -498,26 +432,24 @@ describe('source rules for features/clients', () => {
   const all = (pattern: RegExp) => files.flatMap(([name, text]) => text.split('\n').flatMap((line, i) => (pattern.test(line) ? [`${name}:${i + 1}: ${line.trim()}`] : [])));
 
   it('makes no permission decision from /me and defaults no amount to 0', () => {
-    expect(all(/useMe|\.roles|destinations/)).toEqual([]);
+    expect(all(/\buseMe\b|\.roles|destinations/)).toEqual([]);
     expect(all(/0\.00/)).toEqual([]);
   });
-  it('names invoices only in copy, and makes no call beyond the three operations', () => {
-    const invoice = all(/invoice/i).filter((line) => !/(Needed before any invoice|invoices can’t start|Invoiced|invoiced|\* |\/\/|label: )/.test(line));
-    expect(invoice).toEqual([]);
-    expect(all(/api\.(GET|PUT|POST|PATCH|DELETE)\(/).map((line) => line.replace(/^.*?(api\.\w+\('[^']+').*$/, '$1')).sort()).toEqual([
-      "api.GET('/api/v1/clients'",
-      "api.GET('/api/v1/clients/{client_id}'",
-      "api.PUT('/api/v1/clients/{client_id}/billing-contact'",
+  it('only reads: four live GETs, no write, and nothing calls the retired billing-contact PUT', () => {
+    expect(all(/\.(PUT|POST|PATCH|DELETE)\(/)).toEqual([]);
+    expect(all(/billing-contact/)).toEqual([]);
+    expect(all(/liveApi\.GET\(/).map((line) => line.replace(/^.*?liveApi\.GET\('([^']+)'.*$/, '$1')).sort()).toEqual([
+      '/api/v1/clients',
+      '/api/v1/clients/groups/{group}',
+      '/api/v1/clients/{case_id}',
+      '/api/v1/clients/{case_id}/contacts/history',
     ]);
   });
   it('uses tokens only in clients.css', () => {
     expect(readFileSync(join(dir, 'clients.css'), 'utf8').match(/#[0-9a-fA-F]{3,8}\b|rgba?\(|hsl\(/g)).toBeNull();
   });
-  it('hard-codes none of the sample client names in the clients code (other features already carry theirs)', () => {
-    const found = matchingSources(
-      [join(__dirname, '../src/features/clients'), join(__dirname, '../src/app/clients')],
-      /Lagoon|Harmattan|Kora|Ojo|Sabi|Tamarind/,
-    );
+  it('hard-codes none of the sample client names in the clients code', () => {
+    const found = matchingSources([join(__dirname, '../src/features/clients'), join(__dirname, '../src/app/clients')], /Lagoon|Harmattan|Kora|Ojo|Sabi|Tamarind|Acme/);
     expect(found).toEqual([]);
   });
 });

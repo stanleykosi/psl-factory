@@ -3,24 +3,30 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiError, networkError, UNEXPECTED_MESSAGE } from '@/api/errors';
-import { DEFAULT_PAGE_SIZE, type PageSize } from '@/components';
 
-import { fetchClients, type ClientList, type ClientRow } from './api';
+import { fetchDirectory, type Directory, type DirectoryQuery, type GroupRow, type ProjectRow } from './api';
 
 export type ClientsState =
   | { status: 'loading' }
   | { status: 'error'; error: ApiError }
-  | { status: 'ready'; items: ClientRow[]; nextCursor?: string; asOf: string };
+  | { status: 'ready'; groups: GroupRow[]; projects: ProjectRow[]; groupNext: number | null; projectNext: number | null; readAt: string };
 
 const asApiError = (error: unknown) => (error instanceof ApiError ? error : networkError());
 
-function checked(data: ClientList) {
-  if (!Array.isArray(data.items) || typeof data.as_of !== 'string') throw new ApiError(200, 'server', 'unexpected_response', UNEXPECTED_MESSAGE);
+function checked(data: Directory) {
+  if (!Array.isArray(data.groups) || !Array.isArray(data.projects)) throw new ApiError(200, 'server', 'unexpected_response', UNEXPECTED_MESSAGE);
   return data;
 }
 
-/** E-CLIENTS: page 1 on open, then "Show more" appends (the size is the paging footer's) the next page by the cursor the backend returned. */
-export function useClients() {
+/** Rows already shown stay; a row the server sends again (both lists come back on every call) is not added twice. */
+const added = <T>(have: T[], more: T[], keyOf: (row: T) => string) => {
+  const seen = new Set(have.map(keyOf));
+  return [...have, ...more.filter((row) => !seen.has(keyOf(row)))];
+};
+
+/** clients_directory: page 1 on open, then "Show more" asks for the next group page, and when none is left the next project page. */
+export function useClients(query: DirectoryQuery) {
+  const { q, billing } = query;
   const [state, setState] = useState<ClientsState>({ status: 'loading' });
   const [more, setMore] = useState<'idle' | 'loading' | 'error'>('idle');
   const seq = useRef(0);
@@ -31,14 +37,14 @@ export function useClients() {
     setState({ status: 'loading' });
     setMore('idle');
     try {
-      const data = checked(await fetchClients(DEFAULT_PAGE_SIZE));
+      const data = checked(await fetchDirectory({ q, billing }));
       if (mine !== seq.current) return;
-      setState({ status: 'ready', items: data.items, nextCursor: data.next_cursor, asOf: data.as_of });
+      setState({ status: 'ready', groups: data.groups, projects: data.projects, groupNext: data.next_group_page, projectNext: data.next_page, readAt: new Date().toISOString() });
     } catch (error) {
       if (mine !== seq.current) return;
       setState({ status: 'error', error: asApiError(error) });
     }
-  }, []);
+  }, [q, billing]);
 
   useEffect(() => {
     // The effect only starts the request.
@@ -46,25 +52,29 @@ export function useClients() {
     void load();
   }, [load]);
 
-  /** Appends the next page; resolves with the number of rows before it, so the caller can move focus to the first new row. */
-  const showMore = async (limit: PageSize) => {
-    if (state.status !== 'ready' || !state.nextCursor || pressed.current) return undefined;
+  const showMore = async () => {
+    if (state.status !== 'ready' || pressed.current) return;
+    const { groupNext, projectNext } = state;
+    if (groupNext === null && projectNext === null) return;
     pressed.current = true;
     const mine = seq.current;
-    const before = state.items.length;
     setMore('loading');
     try {
-      const data = checked(await fetchClients(limit, state.nextCursor));
-      if (mine !== seq.current) return undefined;
-      setState((prev) => (prev.status !== 'ready' ? prev : { ...prev, items: [...prev.items, ...data.items], nextCursor: data.next_cursor, asOf: data.as_of }));
+      const data = checked(await fetchDirectory(groupNext !== null ? { q, billing, clients_page: groupNext } : { q, billing, page: projectNext ?? undefined }));
+      if (mine !== seq.current) return;
+      setState((prev) =>
+        prev.status !== 'ready'
+          ? prev
+          : groupNext !== null
+            ? { ...prev, groups: added(prev.groups, data.groups, (g) => g.key), groupNext: data.next_group_page, readAt: new Date().toISOString() }
+            : { ...prev, projects: added(prev.projects, data.projects, (p) => p.case_id), projectNext: data.next_page, readAt: new Date().toISOString() },
+      );
       setMore('idle');
-      return before;
     } catch (error) {
-      if (mine !== seq.current) return undefined;
+      if (mine !== seq.current) return;
       const e = asApiError(error);
       if (e.kind === 'unauthenticated') setState({ status: 'error', error: e });
       else setMore('error');
-      return undefined;
     } finally {
       pressed.current = false;
     }

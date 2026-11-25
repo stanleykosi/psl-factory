@@ -26,14 +26,8 @@ test.beforeEach(async ({ context, baseURL }) => {
   await context.addCookies([{ name: 'psl_mock_persona', value: 'finance_lead', url: baseURL! }]);
 });
 
-test('a form field, the search and the composer show focus on their own border', async ({ page }) => {
+test('the search and the composer show focus on their own border', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/clients/CL-3501');
-  await expect(page.getByLabel('Billing contact name')).toBeVisible();
-  const name = page.getByLabel('Billing contact name');
-  await checkField(page, name, name);
-  await page.screenshot({ path: test.info().outputPath('focus-field.png') });
-
   await page.goto('/my-work');
   const search = page.getByRole('searchbox', { name: 'Search' });
   await expect(search).toBeVisible();

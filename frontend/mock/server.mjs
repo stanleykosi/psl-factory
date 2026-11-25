@@ -34,7 +34,7 @@ import { caseVisible, idOf, normaliseProjectPath, projects } from './projects.mj
 import { projectTab } from './project-tabs.mjs';
 import { deliveryRead } from './delivery-overview.mjs';
 import { documentRead, isLiveDocumentPath, liveDocumentReview, resetDocumentReviews } from './documents.mjs';
-import { clients, CLIENT_OPERATIONS, resetClients } from './clients.mjs';
+import { clients, CLIENT_OPERATIONS, isClientsExtraPath, resetClients } from './clients.mjs';
 import { exceptionsList } from './exceptions.mjs';
 import { uploadEvidence } from './evidence.mjs';
 import { monthEnd } from './finance.mjs';
@@ -481,6 +481,15 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const r = liveDocumentReview({ method, url, raw, persona, cookies, canSee: caseVisible });
         return send(res, r.status, r.body);
       }
+      // F-73 (SCR-35, not in v7): the client group page and the contact history, in the live shape (clients.mjs).
+      if (method === 'get' && isClientsExtraPath(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        if (scenario && SCENARIO_BODIES[scenario] && ['401', '403', '404'].includes(String(scenario))) return send(res, Number(scenario), SCENARIO_BODIES[scenario]);
+        const r = clients({ url, persona, cookies });
+        return send(res, r.status, r.body);
+      }
       const route = routes.find((r) => r.method === method && r.pattern.test(url.pathname));
       if (!route) return send(res, 404, NO_ROUTE);
       // F-17, F-30: E-WORK-STEP and E-WORK-ASSIGN go to workspace.mjs (fixture scripts, the mock's idempotency map and log).
@@ -522,7 +531,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
       if (route.operationId === 'E-ME') return send(res, 200, me[persona]);
       if (route.operationId === 'E-WORK-LIST' && isLiveWorkRequest(url)) { const r = liveWorkList({ url, persona, dataset: cookies.psl_mock_worklist }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-WORK-LIST') { const r = workList({ url, persona, dataset: cookies.psl_mock_worklist, extra: runs.rows(persona) }); return send(res, r.status, r.body); }
-      if (CLIENT_OPERATIONS.includes(route.operationId)) { const r = clients({ operationId: route.operationId, url, raw, persona, cookies }); return send(res, r.status, r.body); }
+      if (CLIENT_OPERATIONS.includes(route.operationId)) { const r = clients({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECTS' || route.operationId === 'E-PROJECT') { const r = projects({ operationId: route.operationId, url, persona }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-PROJECT-TAB') { const r = projectTab({ url, persona, cookies }); return send(res, r.status, r.body); }
       if (route.operationId === 'E-EXCEPTIONS') { const r = exceptionsList({ url, persona, cookies }); return send(res, r.status, r.body); }

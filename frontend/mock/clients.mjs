@@ -1,12 +1,11 @@
-// E-CLIENTS, E-CLIENT and E-CLIENT-CONTACT in the contract mock (architecture v7, D-CLIENTS-VIEW r1, proposed).
-// The list comes from fixtures/clients/list.json, or from cookie psl_mock_clients = empty | many (25 generated rows,
-// cursor o<N>, limit 10 | 20 | 50). A detail comes from fixtures/clients/<client_id>.json; the list's other clients
-// get a minimal detail built from their row. CL-3599 is the reserved no-access id. CL-3508 answers its first PUT with
-// 409 and then serves CL-3508.next.json (the newer revision). Sample data only; no business rules.
-// Check order: persona none (403), 404, request shape (422), field (422), stale revision (409), success.
-// A saved contact is kept in memory per persona and client (revision + 1, billing_contact.set true, blocked removed);
-// resetClients() clears it. Every reply is validated against the v7 schema before it is sent.
-import { readdirSync, readFileSync } from 'node:fs';
+// SCR-35 clients in the live shape (contracts/psl-factory.openapi.json 1.24.0): GET /clients, /clients/groups/{group},
+// /clients/{case_id} and /clients/{case_id}/contacts/history. The write routes are held and not served here.
+// Fixtures: fixtures/clients/live.json (groups with their projects and debt, ungrouped projects, workspace contacts).
+// Harmattan Bank is generated: 27 projects, so its group page has two pages and its debt is "limited". Cookie
+// psl_mock_clients = empty | many (30 groups and 30 ungrouped projects, two pages each). Workspace 0b6f...0103 has 28
+// billing contact versions (two history pages). Persona none: 403. Every other unknown key or id: 404. Pages of 25.
+// Sample data only; no business rules. Every 200 is validated against the live contract's schemas.
+import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -14,47 +13,133 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const dir = join(here, 'fixtures', 'clients');
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
-const list = readJson(join(dir, 'list.json'));
-const details = Object.fromEntries(
-  readdirSync(dir)
-    .filter((name) => /^CL-\d+(\.next)?\.json$/.test(name))
-    .map((name) => [name.slice(0, -5), readJson(join(dir, name))]),
-);
+const fixture = readJson(join(here, 'fixtures', 'clients', 'live.json'));
 
-const openapi = readJson(join(here, '..', '..', 'architecture', 'packages', 'v7', 'openapi.json'));
+const contract = readJson(join(here, '..', '..', 'contracts', 'psl-factory.openapi.json'));
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
-const schemaOf = (path, method, status) => openapi.paths[path][method].responses[status].content['application/json'].schema;
+const schemaOf = (path) => contract.paths[path].get.responses['200'].content['application/json'].schema;
 const validators = {
-  'E-CLIENTS': ajv.compile(schemaOf('/api/v1/clients', 'get', '200')),
-  'E-CLIENT': ajv.compile(schemaOf('/api/v1/clients/{client_id}', 'get', '200')),
-  'E-CLIENT-CONTACT': ajv.compile(schemaOf('/api/v1/clients/{client_id}/billing-contact', 'put', '200')),
+  directory: ajv.compile(schemaOf('/api/v1/clients')),
+  group: ajv.compile(schemaOf('/api/v1/clients/groups/{group}')),
+  workspace: ajv.compile(schemaOf('/api/v1/clients/{case_id}')),
+  history: ajv.compile(schemaOf('/api/v1/clients/{case_id}/contacts/history')),
 };
 
-export const CLIENT_OPERATIONS = ['E-CLIENTS', 'E-CLIENT', 'E-CLIENT-CONTACT'];
-export const NO_ACCESS_CLIENT_ID = 'CL-3599';
-const LIMITS = [10, 20, 50];
-const MANY_ROWS = 25;
-const STALE_FIRST_ID = 'CL-3508';
+export const CLIENT_OPERATIONS = ['E-CLIENTS', 'E-CLIENT'];
+export const PAGE_SIZE = 25;
+const BILLING = ['recorded', 'needed', 'unknown'];
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+const KEY = /^[a-f0-9]{64}$/;
 
 const FORBIDDEN = { code: 'forbidden', message: 'Your role does not allow this.' };
 const NOT_FOUND = { code: 'not_found', message: 'We could not find that record.' };
-const INVALID_QUERY = { code: 'invalid_query', message: 'We could not read that list request.' };
-const INVALID = { code: 'invalid', message: 'Check the highlighted details and try again.' };
-const STALE = { code: 'stale_revision', message: 'This client changed since you opened it. Reload to see the latest version.' };
+const BAD_REQUEST = { code: 'bad_request', message: 'We could not read that request.' };
 
-// persona:client_id -> { name, email, revision } after a save; persona:client_id that have answered their first 409.
-const saved = new Map();
-const staled = new Set();
+const id = (n) => `0b6f9e1a-3c44-4d0a-9d52-${String(n).padStart(12, '0')}`;
+const hex = (n) => n.toString(16).padStart(8, '0').repeat(8);
 
-export function resetClients() {
-  saved.clear();
-  staled.clear();
+const harmattan = {
+  key: hex(0xb2c3d4e5),
+  label: 'Harmattan Bank',
+  projects: Array.from({ length: 27 }, (_, i) => ({ case_id: id(1000 + i), title: `Branch rollout ${i + 1}`, client: 'Harmattan Bank', billing: BILLING[i % 3] })),
+  debt: { as_of: '2026-11-23', workspace_count: 27, limited: true, totals: [{ currency: 'NGN', basis: 'sample basis', known_owed: '480000.00', unknown_owed_count: 0 }] },
+};
+
+const manyGroups = () =>
+  Array.from({ length: 30 }, (_, i) => ({
+    key: hex(0x10000000 + i),
+    label: `Sample group ${i + 1}`,
+    projects: [{ case_id: id(2000 + i), title: `Sample group ${i + 1} project`, client: `Sample group ${i + 1}`, billing: BILLING[i % 3] }],
+    debt: null,
+  }));
+const manyProjects = () => Array.from({ length: 30 }, (_, i) => ({ case_id: id(3000 + i), title: `Sample project ${i + 1}`, client: i % 5 === 0 ? null : `Sample client ${i + 1}`, billing: BILLING[i % 3] }));
+
+function dataset(cookies) {
+  if (cookies.psl_mock_clients === 'empty') return { groups: [], ungrouped: [] };
+  if (cookies.psl_mock_clients === 'many') return { groups: manyGroups(), ungrouped: manyProjects() };
+  return { groups: [...fixture.groups.slice(0, 1), harmattan, ...fixture.groups.slice(1)], ungrouped: fixture.ungrouped };
 }
 
-const decodeId = (value) => {
+const projectsOf = (groups, ungrouped) => [...groups.flatMap((g) => g.projects), ...ungrouped];
+const contactsNeeded = (group) => group.projects.filter((p) => p.billing === 'needed').length;
+const groupRow = (g) => ({ key: g.key, label: g.label, project_count: g.projects.length, contacts_needed: contactsNeeded(g), api_url: `/api/v1/clients/groups/${g.key}` });
+
+const pageOf = (value) => {
+  if (value === null) return 1;
+  return /^[1-9]\d{0,8}$/.test(value) ? Number(value) : null;
+};
+function slice(rows, page) {
+  const start = (page - 1) * PAGE_SIZE;
+  return { rows: rows.slice(start, start + PAGE_SIZE), next: start + PAGE_SIZE < rows.length ? page + 1 : null };
+}
+const matches = (text, q) => text !== null && text.toLowerCase().includes(q.toLowerCase());
+
+function directory(url, cookies) {
+  const params = url.searchParams;
+  const billing = params.get('billing');
+  const q = params.get('q') ?? '';
+  const groupPage = pageOf(params.get('clients_page'));
+  const projectPage = pageOf(params.get('page'));
+  if (groupPage === null || projectPage === null || (billing !== null && !BILLING.includes(billing)) || q.length > 100) return { status: 400, body: BAD_REQUEST };
+  const { groups, ungrouped } = dataset(cookies);
+  const shownGroups = groups.filter((g) => (!q || matches(g.label, q) || g.projects.some((p) => matches(p.title, q))) && (!billing || g.projects.some((p) => p.billing === billing)));
+  const shownProjects = ungrouped.filter((p) => (!q || matches(p.title, q) || matches(p.client, q)) && (!billing || p.billing === billing));
+  const g = slice(shownGroups, groupPage);
+  const p = slice(shownProjects, projectPage);
+  return { status: 200, check: 'directory', body: { groups: g.rows.map(groupRow), next_group_page: g.next, projects: p.rows, next_page: p.next } };
+}
+
+function group(key, url, cookies) {
+  const page = pageOf(url.searchParams.get('page'));
+  if (page === null || !KEY.test(key)) return { status: page === null ? 400 : 404, body: page === null ? BAD_REQUEST : NOT_FOUND };
+  const found = dataset(cookies).groups.find((g) => g.key === key);
+  if (!found) return { status: 404, body: NOT_FOUND };
+  const p = slice(found.projects, page);
+  return { status: 200, check: 'group', body: { key: found.key, label: found.label, projects: p.rows, next_page: p.next, debt: found.debt } };
+}
+
+/** Billing contacts of a workspace: the fixture's, or 28 versions for 0103's history. */
+function contactsOf(caseId) {
+  const own = fixture.workspaces[caseId];
+  return own ? own.contacts : [];
+}
+function versionsOf(caseId, contact) {
+  if (contact.version <= 1) return [contact];
+  return Array.from({ length: contact.version }, (_, i) => ({ ...contact, contact_id: contact.contact_id + i, version: contact.version - i, role: i === 0 ? contact.role : `${contact.role} (earlier)` }));
+}
+
+function workspaceOf(caseId, cookies) {
+  const { groups, ungrouped } = dataset(cookies);
+  const project = projectsOf(groups, ungrouped).find((p) => p.case_id === caseId);
+  if (!project) return undefined;
+  const own = fixture.workspaces[caseId];
+  return { case_id: caseId, title: project.title, revision: 3, sample: own?.sample ?? false, contacts: contactsOf(caseId), django_url: `/projects/${caseId}/` };
+}
+
+function workspace(caseId, cookies) {
+  const body = UUID.test(caseId) ? workspaceOf(caseId, cookies) : undefined;
+  return body ? { status: 200, check: 'workspace', body } : { status: 404, body: NOT_FOUND };
+}
+
+function history(caseId, url, cookies) {
+  const params = url.searchParams;
+  const purpose = params.get('purpose');
+  const page = pageOf(params.get('page'));
+  if (purpose !== 'billing' && purpose !== 'project') return { status: 400, body: BAD_REQUEST };
+  if (page === null) return { status: 400, body: BAD_REQUEST };
+  const base = UUID.test(caseId) ? workspaceOf(caseId, cookies) : undefined;
+  if (!base) return { status: 404, body: NOT_FOUND };
+  const customer = params.get('customer');
+  const all = contactsOf(caseId)
+    .filter((c) => c.purpose === purpose && (customer === null || c.customer === customer))
+    .flatMap((c) => versionsOf(caseId, c));
+  const p = slice(all, page);
+  return { status: 200, check: 'history', body: { revision: base.revision, items: p.rows, next_page: p.next } };
+}
+
+const decode = (value) => {
   try {
     return decodeURIComponent(value);
   } catch {
@@ -62,110 +147,25 @@ const decodeId = (value) => {
   }
 };
 
-function decodeCursor(cursor) {
-  const match = /^o(\d+)$/.exec(cursor);
-  return match ? Number(match[1]) : null;
-}
+const GROUP_PATH = /^\/api\/v1\/clients\/groups\/([^/]+)$/;
+const HISTORY_PATH = /^\/api\/v1\/clients\/([^/]+)\/contacts\/history$/;
 
-function manyRows() {
-  return Array.from({ length: MANY_ROWS }, (_, i) => ({
-    client_id: `CL-4${String(i + 1).padStart(3, '0')}`,
-    name: `Sample client ${i + 1}`,
-    projects: i % 4,
-    billing_contact_set: i % 3 !== 0,
-    sample: true,
-  }));
-}
+/** The reads the v7 route table has no route for (the group page and the history). */
+export const isClientsExtraPath = (pathname) => GROUP_PATH.test(pathname) || HISTORY_PATH.test(pathname);
 
-function rowsFor(cookies) {
-  if (cookies.psl_mock_clients === 'empty') return { items: [], as_of: list.as_of };
-  if (cookies.psl_mock_clients === 'many') return { items: manyRows(), as_of: list.as_of };
-  return list;
-}
-
-function clientList(url, cookies, persona) {
-  const params = url.searchParams;
-  const limit = params.has('limit') ? Number(params.get('limit')) : 20;
-  const offset = params.has('cursor') ? decodeCursor(params.get('cursor')) : 0;
-  if (!LIMITS.includes(limit) || offset === null || params.get('q') === '') return { status: 404, body: INVALID_QUERY };
-  const { items, as_of } = rowsFor(cookies);
-  const body = { items: items.slice(offset, offset + limit).map((row) => withSaved(row, persona)), as_of };
-  if (offset + limit < items.length) body.next_cursor = `o${offset + limit}`;
-  return { status: 200, body };
-}
-
-/** A list row after a save: the contact is now set. */
-function withSaved(row, persona) {
-  return saved.has(`${persona}:${row.client_id}`) ? { ...row, billing_contact_set: true } : row;
-}
-
-/** The detail now served: the fixture (or its .next after the first 409), or a minimal one for the list's other rows. */
-function baseDetail(clientId, persona) {
-  if (staled.has(`${persona}:${clientId}`) && details[`${clientId}.next`]) return details[`${clientId}.next`];
-  if (Object.hasOwn(details, clientId)) return details[clientId];
-  const row = list.items.find((r) => r.client_id === clientId);
-  if (!row) return undefined;
-  return { client_id: clientId, name: row.name, revision: 1, billing_contact: { set: row.billing_contact_set }, projects: [] };
-}
-
-function currentDetail(clientId, persona) {
-  const base = baseDetail(clientId, persona);
-  const own = saved.get(`${persona}:${clientId}`);
-  if (!base || !own) return base;
-  const rest = Object.fromEntries(Object.entries(base).filter(([key]) => key !== 'blocked'));
-  return { ...rest, revision: own.revision, billing_contact: { name: own.name, email: own.email, set: true } };
-}
-
-function readBody(raw) {
-  try {
-    const body = JSON.parse(raw);
-    return body && typeof body === 'object' && !Array.isArray(body) ? body : null;
-  } catch {
-    return null;
-  }
-}
-
-function setContact(clientId, raw, persona) {
-  const detail = currentDetail(clientId, persona);
-  const key = `${persona}:${clientId}`;
-  if (clientId === NO_ACCESS_CLIENT_ID || !detail) return { status: 404, body: NOT_FOUND };
-  const body = readBody(raw);
-  const keys = body ? Object.keys(body) : [];
-  const shaped =
-    body &&
-    Number.isInteger(body.expected_revision) &&
-    typeof body.name === 'string' &&
-    typeof body.email === 'string' &&
-    keys.every((key) => ['expected_revision', 'name', 'email', 'reason'].includes(key)) &&
-    (body.reason === undefined || typeof body.reason === 'string');
-  if (!shaped) return { status: 422, body: { ...INVALID, message: 'We could not read that request.' } };
-  const fields = [];
-  if (body.name.trim() === '') fields.push({ name: 'name', message: 'Enter the billing contact’s name.' });
-  if (body.email.trim() === '') fields.push({ name: 'email', message: 'Enter the billing email.' });
-  else if (!body.email.includes('@')) fields.push({ name: 'email', message: 'Enter a valid email address.' });
-  if (fields.length) return { status: 422, body: { ...INVALID, fields } };
-  if (clientId === STALE_FIRST_ID && !staled.has(key)) {
-    staled.add(key);
-    return { status: 409, body: STALE };
-  }
-  if (body.expected_revision !== detail.revision) return { status: 409, body: STALE };
-  const revision = detail.revision + 1;
-  saved.set(key, { name: body.name.trim(), email: body.email.trim(), revision });
-  return { status: 200, body: { client_id: clientId, revision } };
-}
-
-function validated(operationId, result) {
-  if (result.status !== 200) return result;
-  const validate = validators[operationId];
-  if (!validate(result.body)) throw new Error(`clients mock: ${operationId} reply is not valid: ${ajv.errorsText(validate.errors)}`);
-  return result;
-}
-
-export function clients({ operationId, url, raw, persona, cookies = {} }) {
+export function clients({ url, persona, cookies = {} }) {
   if (persona === 'none') return { status: 403, body: FORBIDDEN };
-  if (operationId === 'E-CLIENTS') return validated(operationId, clientList(url, cookies, persona));
-  const clientId = decodeId(url.pathname.split('/')[4] ?? '');
-  if (operationId === 'E-CLIENT-CONTACT') return validated(operationId, setContact(clientId, raw, persona));
-  const detail = clientId === NO_ACCESS_CLIENT_ID ? undefined : currentDetail(clientId, persona);
-  return validated(operationId, detail ? { status: 200, body: detail } : { status: 404, body: NOT_FOUND });
+  const { pathname } = url;
+  let result;
+  if (pathname === '/api/v1/clients') result = directory(url, cookies);
+  else if (GROUP_PATH.test(pathname)) result = group(decode(GROUP_PATH.exec(pathname)[1]), url, cookies);
+  else if (HISTORY_PATH.test(pathname)) result = history(decode(HISTORY_PATH.exec(pathname)[1]), url, cookies);
+  else result = workspace(decode(pathname.split('/')[4] ?? ''), cookies);
+  if (result.check) {
+    const validate = validators[result.check];
+    if (!validate(result.body)) throw new Error(`clients mock: ${result.check} reply is not valid: ${ajv.errorsText(validate.errors)}`);
+  }
+  return { status: result.status, body: result.body };
 }
+
+export function resetClients() {}
