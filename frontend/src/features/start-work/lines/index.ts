@@ -4,7 +4,13 @@
 import type { ComponentType } from 'react';
 
 import type { FieldValue, Values } from '../intake';
-import type { StartBody } from '../types';
+import type { MinutesPrepared } from '../engine/minutes';
+import type { Line, Project, StartBody } from '../types';
+import { pmoChange } from './pmoChange';
+import { pmoEmergency } from './pmoEmergency';
+import { pmoEscalation } from './pmoEscalation';
+import { pmoIssues } from './pmoIssues';
+import { pmoMinutes } from './pmoMinutes';
 import { receivedBid } from './receivedBid';
 import { weeklyReport } from './weeklyReport';
 
@@ -16,7 +22,14 @@ export type LineFormProps = {
   readOnly: boolean;
   /** The chosen project's case, or null before one is chosen. */
   caseId: string | null;
+  /** F-92: the served line (its `request_schema`), the whole chosen project, and where a read gives the case's newer revision. */
+  line: Line;
+  project: Project | null;
+  onRevision: (caseRevision: number) => void;
 };
+
+/** What a start sends: `POST /work`'s body, or (minutes) the multipart parts built once so a resend is the same file and key. */
+export type Prepared = StartBody | MinutesPrepared;
 
 /** What a body needs from the shell: the chosen project and the one key for this body. */
 export type StartContext = { caseId: string; caseRevision: number; idempotencyKey: string };
@@ -35,12 +48,16 @@ export type LineForm = {
   /** The line's controls below the project picker; the shell draws it and owns the start. */
   Form: ComponentType<LineFormProps>;
   /** The required controls left empty, in the order drawn (the project is checked by the shell). */
-  missing(values: Values): Missing[];
+  missing(values: Values, line?: Line): Missing[];
   /** The body, exactly the line's schema branch. */
-  buildBody(values: Values, ctx: StartContext): StartBody;
+  buildBody(values: Values, ctx: StartContext, line?: Line): Prepared;
+  /** F-92: replaces the default `POST /work` (minutes goes to its own route). It sends what `buildBody` made. */
+  send?(prepared: Prepared): Promise<{ response: Response; data?: unknown; error?: unknown }>;
+  /** F-92: false when the served schema is one this form cannot fully build; the chooser then lists the line as unavailable. */
+  available?(line: Line): boolean;
   /** Which control a server field name belongs to: its control name, 'project' for the case, 'general' for a message
    *  with no control; undefined for a name this line does not know (drawn as its own box). */
-  target(serverName: string): string | undefined;
+  target(serverName: string, line?: Line): string | undefined;
 };
 
 /** What a line that owns its whole drawer is handed: the shell's way back and out, and where a signed-out person returns. */
@@ -56,7 +73,7 @@ export type OwnLine = {
   Own: ComponentType<OwnLineProps>;
 };
 
-const FORMS: LineForm[] = [weeklyReport];
+const FORMS: LineForm[] = [weeklyReport, pmoIssues, pmoEscalation, pmoMinutes, pmoEmergency, pmoChange];
 const OWN: OwnLine[] = [receivedBid];
 
 export function lineFormFor(key: string): LineForm | undefined {

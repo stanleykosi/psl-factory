@@ -66,10 +66,10 @@ for (const [label, viewport, phone] of [
       await expect(dialog(page).getByText('Weekly client report')).toBeVisible();
       await expect(dialog(page).getByText(/Next:/)).toHaveCount(0);
       await expect(dialog(page).getByText('Invoice')).toHaveCount(0);
-      await expect(dialog(page).getByRole('radio')).toHaveCount(1);
+      await expect(dialog(page).getByRole('radio')).toHaveCount(7);
       const links = dialog(page).getByRole('link', { name: 'Open in the full form' });
-      await expect(links).toHaveCount(3);
-      await expect(links.first()).toHaveAttribute('href', '/lines/pmo-minutes/');
+      await expect(links).toHaveCount(2);
+      await expect(links.first()).toHaveAttribute('href', '/lines/finance-payroll/');
       await expect(dialog(page).getByRole('button', { name: 'Next', exact: true })).toBeDisabled();
       await expectNoAxeViolations(page);
     });

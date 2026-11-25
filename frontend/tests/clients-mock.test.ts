@@ -1,30 +1,35 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { join } from 'node:path';
 
 import Ajv2020 from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // @ts-expect-error plain ESM module without type declarations
-import { OPENAPI_PATH, startMockServer } from '../mock/server.mjs';
+import { startMockServer } from '../mock/server.mjs';
 
-// E-CLIENTS, E-CLIENT and E-CLIENT-CONTACT against the v7 openapi the mock loads (D-CLIENTS-VIEW r1, proposed).
+// The clients reads answer the live shape (F-73) and every 200 is checked against the live contract.
 type Operation = { responses: Record<string, { content: { 'application/json': { schema: object } } }> };
-const openapi = JSON.parse(readFileSync(OPENAPI_PATH, 'utf8')) as { paths: Record<string, Record<string, Operation>> };
+const contract = JSON.parse(readFileSync(join(__dirname, '../../contracts/psl-factory.openapi.json'), 'utf8')) as { paths: Record<string, { get: Operation }>; components: { schemas: { Error: object } } };
 const ajv = new Ajv2020({ allErrors: true, strict: true });
 addFormats(ajv);
-const compile = (path: string, method: string) =>
-  Object.fromEntries(Object.entries(openapi.paths[path][method].responses).map(([status, r]) => [status, ajv.compile(r.content['application/json'].schema)]));
-const validators = {
-  list: compile('/api/v1/clients', 'get'),
-  detail: compile('/api/v1/clients/{client_id}', 'get'),
-  contact: compile('/api/v1/clients/{client_id}/billing-contact', 'put'),
+const compile = (path: string) => ajv.compile(contract.paths[path].get.responses['200'].content['application/json'].schema);
+const valid = {
+  directory: compile('/api/v1/clients'),
+  group: compile('/api/v1/clients/groups/{group}'),
+  workspace: compile('/api/v1/clients/{case_id}'),
+  history: compile('/api/v1/clients/{case_id}/contacts/history'),
 };
+const validError = ajv.compile(contract.components.schemas.Error);
 
-const fixtureDir = join(__dirname, '../mock/fixtures/clients');
-const csrfOf = (persona: string) => JSON.parse(readFileSync(join(__dirname, `../mock/fixtures/me.${persona}.json`), 'utf8')).csrf_token as string;
+const ACME = 'a1b2c3d4'.repeat(8);
+const HARMATTAN = 'b2c3d4e5'.repeat(8);
+const LAGOON = 'c3d4e5f6'.repeat(8);
+const SABI = 'd4e5f607'.repeat(8);
+const TAMARIND = 'e5f60718'.repeat(8);
+const id = (n: number) => `0b6f9e1a-3c44-4d0a-9d52-${String(n).padStart(12, '0')}`;
 
 let server: Server;
 let base: string;
@@ -33,158 +38,115 @@ beforeAll(async () => {
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
 });
 afterAll(() => new Promise<void>((resolve) => server.close(() => resolve())));
-beforeEach(async () => {
-  await fetch(`${base}/__mock/reset`, { method: 'POST' });
-});
 
-type Kind = keyof typeof validators;
-async function request(kind: Kind, path: string, { persona = 'finance_lead', cookie = '', body, headers = {} }: { persona?: string; cookie?: string; body?: unknown; headers?: Record<string, string> } = {}) {
-  const response = await fetch(base + path, {
-    method: body === undefined ? 'GET' : 'PUT',
-    headers: { Cookie: `psl_mock_persona=${persona}${cookie ? `; ${cookie}` : ''}`, 'Content-Type': 'application/json', ...headers },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
-  const json = await response.json();
-  const validate = validators[kind][String(response.status)];
-  if (response.status !== 403 || json.code !== 'csrf_failed') {
-    expect(validate, `undeclared status ${response.status}`).toBeTruthy();
-    expect(validate(json), `${path} ${response.status}: ${ajv.errorsText(validate.errors)}`).toBe(true);
-  }
-  return { status: response.status, body: json };
+type Body = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any -- parsed mock replies
+async function read(path: string, check: keyof typeof valid | null, { persona = 'finance_lead', cookie = '' }: { persona?: string; cookie?: string } = {}) {
+  const response = await fetch(base + path, { headers: { Cookie: `psl_mock_persona=${persona}${cookie ? `; ${cookie}` : ''}` } });
+  const body = (await response.json()) as Body;
+  if (response.status === 200 && check) expect(valid[check](body), `${path}: ${ajv.errorsText(valid[check].errors)}`).toBe(true);
+  else expect(validError(body), path).toBe(true);
+  return { status: response.status, body };
 }
-const list = (query = '', options = {}) => request('list', `/api/v1/clients${query}`, options);
-const detail = (id: string, options = {}) => request('detail', `/api/v1/clients/${id}`, options);
-const save = (id: string, body: unknown, options: { persona?: string; headers?: Record<string, string> } = {}) =>
-  request('contact', `/api/v1/clients/${id}/billing-contact`, { body, ...options, headers: { 'X-CSRFToken': csrfOf(options.persona ?? 'finance_lead'), ...options.headers } });
-const contact = (revision: number, name = 'Ada Okoye', email = 'ada@example.org') => ({ expected_revision: revision, name, email });
+const directory = (query = '', options = {}) => read(`/api/v1/clients${query}`, 'directory', options);
+const group = (key: string, query = '', options = {}) => read(`/api/v1/clients/groups/${key}${query}`, 'group', options);
+const workspace = (caseId: string, options = {}) => read(`/api/v1/clients/${caseId}`, 'workspace', options);
+const history = (caseId: string, query = '?purpose=billing') => read(`/api/v1/clients/${caseId}/contacts/history${query}`, 'history');
 
-describe('E-CLIENTS', () => {
-  it('serves the six board clients in fixture order, two without a billing contact (Lagoon Health, Ojo Foods)', async () => {
-    const { status, body } = await list();
+describe('GET /clients', () => {
+  it('serves groups first and the ungrouped projects, in the live shape', async () => {
+    const { status, body } = await directory();
     expect(status).toBe(200);
-    expect(body.items.map((i: { name: string }) => i.name)).toEqual(['Lagoon Health', 'Harmattan Bank', 'Kora Logistics', 'Ojo Foods', 'Sabi Market', 'Tamarind Loans']);
-    expect(body.items.filter((i: { billing_contact_set: boolean }) => !i.billing_contact_set).map((i: { client_id: string }) => i.client_id)).toEqual(['CL-3501', 'CL-3504']);
-    expect(body.items[5].projects).toBe(0);
-    expect(body.items[5].owed).toBeUndefined();
-    expect(body.next_cursor).toBeUndefined();
-    expect(body.as_of).toBeTruthy();
+    expect(body.groups.map((g: Body) => [g.label, g.project_count, g.contacts_needed])).toEqual([
+      ['Acme Logistics', 3, 1],
+      ['Harmattan Bank', 27, 9],
+      ['Lagoon Health', 1, 1],
+      ['Sabi Market', 2, 0],
+      ['Tamarind Loans', 1, 0],
+    ]);
+    expect(body.projects.map((p: Body) => [p.client, p.billing])).toEqual([['Kora Foods', 'needed'], [null, 'unknown'], ['Delta Print', 'recorded']]);
+    expect(body.next_group_page).toBeNull();
+    expect(body.next_page).toBeNull();
   });
 
-  it('empty and many datasets; many pages 10/10/5 by cursor o<N> with no repeat', async () => {
-    expect((await list('', { cookie: 'psl_mock_clients=empty' })).body.items).toEqual([]);
-    const seen: string[] = [];
-    let cursor: string | undefined;
-    const sizes: number[] = [];
-    do {
-      const { status, body } = await list(`?limit=10${cursor ? `&cursor=${cursor}` : ''}`, { cookie: 'psl_mock_clients=many' });
-      expect(status).toBe(200);
-      sizes.push(body.items.length);
-      seen.push(...body.items.map((i: { client_id: string }) => i.client_id));
-      cursor = body.next_cursor;
-    } while (cursor && sizes.length < 10);
-    expect(sizes).toEqual([10, 10, 5]);
-    expect(new Set(seen).size).toBe(25);
-    expect((await list('?limit=10', { cookie: 'psl_mock_clients=many' })).body.next_cursor).toBe('o10');
-    expect((await list('', { cookie: 'psl_mock_clients=many' })).body.items).toHaveLength(20);
+  it('filters by billing and q, and refuses a value the contract does not allow', async () => {
+    expect((await directory('?billing=unknown')).body.projects.map((p: Body) => p.title)).toEqual(['Office move']);
+    expect((await directory('?q=kora')).body.projects).toHaveLength(1);
+    expect((await directory('?billing=bogus')).status).toBe(400);
+    expect((await directory(`?q=${'x'.repeat(101)}`)).status).toBe(400);
+    expect((await directory('?page=0')).status).toBe(400);
+    expect((await directory('?clients_page=abc')).status).toBe(400);
   });
 
-  it('refuses a limit outside 10, 20, 50 and a cursor it did not issue', async () => {
-    expect((await list('?limit=7')).status).toBe(404);
-    expect((await list('?cursor=nope')).status).toBe(404);
+  it('the many state has two pages of groups and two of projects, and every call returns both lists', async () => {
+    const cookie = 'psl_mock_clients=many';
+    const first = (await directory('', { cookie })).body;
+    expect([first.groups.length, first.next_group_page, first.projects.length, first.next_page]).toEqual([25, 2, 25, 2]);
+    const groups2 = (await directory('?clients_page=2', { cookie })).body;
+    expect([groups2.groups.length, groups2.next_group_page, groups2.projects.length]).toEqual([5, null, 25]);
+    const projects2 = (await directory('?page=2', { cookie })).body;
+    expect([projects2.projects.length, projects2.next_page, projects2.groups.length]).toEqual([5, null, 25]);
   });
 
-  it('persona none gets 403 on all three operations, before anything else', async () => {
-    expect((await list('', { persona: 'none' })).status).toBe(403);
-    expect((await detail('CL-3501', { persona: 'none' })).status).toBe(403);
-    expect((await save('CL-3501', {}, { persona: 'none' })).body.code).toBe('forbidden');
-    expect((await save('CL-3599', contact(1), { persona: 'none' })).body.code).toBe('forbidden');
+  it('the empty state has no rows, and persona none is refused', async () => {
+    const empty = (await directory('', { cookie: 'psl_mock_clients=empty' })).body;
+    expect([empty.groups, empty.projects, empty.next_group_page, empty.next_page]).toEqual([[], [], null, null]);
+    expect((await directory('', { persona: 'none' })).status).toBe(403);
   });
 });
 
-describe('E-CLIENT', () => {
-  it('CL-3501 is the detail board: revision 3, no contact, the banner line, one project, owed unknown', async () => {
-    const { status, body } = await detail('CL-3501');
-    expect(status).toBe(200);
-    expect(body).toMatchObject({ name: 'Lagoon Health Ltd', revision: 3, can_change: true, billing_contact: { set: false } });
-    expect(body.blocked).toEqual(["No billing contact, so invoices for this client can't start. Add one here."]);
-    expect(body.projects).toEqual([{ case_id: 'P-0101', title: 'Patient app', stage: 'Delivery' }]);
-    expect(body.money.owed).toEqual({ currency: 'NGN', unknown: true });
+describe('GET /clients/groups/{group}', () => {
+  it('covers each debt state the page must tell apart', async () => {
+    const acme = (await group(ACME)).body;
+    expect(acme.projects.map((p: Body) => p.billing)).toEqual(['needed', 'recorded', 'unknown']);
+    expect(acme.debt.totals.map((t: Body) => [t.currency, t.known_owed, t.unknown_owed_count])).toEqual([['NGN', '1250000.00', 1], ['USD', null, 2]]);
+    expect((await group(HARMATTAN)).body.debt.limited).toBe(true);
+    expect((await group(LAGOON)).body.debt.totals).toEqual([]);
+    expect((await group(SABI)).body.debt).toBeNull();
+    expect((await group(TAMARIND)).body.debt.totals[0]).toMatchObject({ known_owed: null, unknown_owed_count: 1 });
   });
 
-  it('CL-3503 is read-only; CL-3507 is sample with unknown money; CL-3509 has every optional field absent', async () => {
-    expect((await detail('CL-3503')).body.can_change).toBe(false);
-    expect((await detail('CL-3507')).body).toMatchObject({ sample: true, money: { owed: { unknown: true } } });
-    expect(Object.keys((await detail('CL-3509')).body).sort()).toEqual(['billing_contact', 'client_id', 'name', 'projects', 'revision']);
-    expect((await detail('CL-3509')).body.billing_contact).toEqual({ set: false });
-  });
-
-  it('a client from the list without its own file gets a minimal detail; CL-3599 and unknown ids are 404', async () => {
-    expect((await detail('CL-3504')).body).toEqual({ client_id: 'CL-3504', name: 'Ojo Foods', revision: 1, billing_contact: { set: false }, projects: [] });
-    expect((await detail('CL-3599')).status).toBe(404);
-    expect((await detail('CL-0000')).status).toBe(404);
-  });
-
-  it('every fixture file validates against the v7 schema', () => {
-    const files = readdirSync(fixtureDir).filter((name) => name.endsWith('.json'));
-    expect(files).toContain('CL-3508.next.json');
-    for (const name of files) {
-      const body = JSON.parse(readFileSync(join(fixtureDir, name), 'utf8'));
-      const validate = name === 'list.json' ? validators.list['200'] : validators.detail['200'];
-      expect(validate(body), `${name}: ${ajv.errorsText(validate.errors)}`).toBe(true);
-    }
+  it('pages a large group by 25 and returns not_found for an unknown or malformed key', async () => {
+    const one = (await group(HARMATTAN)).body;
+    expect([one.projects.length, one.next_page]).toEqual([25, 2]);
+    const two = (await group(HARMATTAN, '?page=2')).body;
+    expect([two.projects.length, two.next_page]).toEqual([2, null]);
+    expect((await group('f'.repeat(64))).status).toBe(404);
+    expect((await group('not-a-key')).status).toBe(404);
+    expect((await group(ACME, '?page=0')).status).toBe(400);
+    expect((await group(ACME, '', { persona: 'none' })).status).toBe(403);
   });
 });
 
-describe('E-CLIENT-CONTACT', () => {
-  it('a PUT without the CSRF header gets 403', async () => {
-    const { status, body } = await request('contact', '/api/v1/clients/CL-3501/billing-contact', { body: contact(3) });
-    expect(status).toBe(403);
-    expect(body.code).toBe('csrf_failed');
+describe('GET /clients/{case_id} and its history', () => {
+  it('serves billing and project contacts, the sample flag and no write', async () => {
+    const w = (await workspace(id(1))).body;
+    expect([w.title, w.sample, w.contacts.map((c: Body) => c.purpose)]).toEqual(['Warehouse portal', true, ['project']]);
+    const billed = (await workspace(id(2))).body;
+    expect(billed.contacts.map((c: Body) => [c.purpose, c.version])).toEqual([['billing', 2], ['project', 1]]);
+    expect((await workspace(id(9999))).status).toBe(404);
+    expect((await workspace('CL-3501')).status).toBe(404);
+    expect((await workspace(id(1), { persona: 'none' })).status).toBe(403);
+    const post = await fetch(`${base}/api/v1/clients/${id(1)}/contacts`, { method: 'POST', headers: { 'Content-Type': 'application/json', Cookie: 'psl_mock_persona=finance_lead' }, body: '{}' });
+    expect(post.status).toBeGreaterThanOrEqual(400);
   });
 
-  it('stores the contact, bumps the revision, serves set:true with no banner; a repeat with the old revision is 409', async () => {
-    expect(await save('CL-3501', contact(3))).toEqual({ status: 200, body: { client_id: 'CL-3501', revision: 4 } });
-    const after = (await detail('CL-3501')).body;
-    expect(after.revision).toBe(4);
-    expect(after.billing_contact).toEqual({ name: 'Ada Okoye', email: 'ada@example.org', set: true });
-    expect(after.blocked).toBeUndefined();
-    expect((await list()).body.items[0].billing_contact_set).toBe(true);
-    expect((await save('CL-3501', contact(3))).status).toBe(409);
-    expect((await save('CL-3501', contact(4, 'Bola', 'bola@example.org'))).body.revision).toBe(5);
-    await fetch(`${base}/__mock/reset`, { method: 'POST' });
-    expect((await detail('CL-3501')).body.revision).toBe(3);
+  it('lists billing versions newest first over two pages, and needs a purpose', async () => {
+    const one = (await history(id(103))).body;
+    expect([one.items.length, one.items[0].version, one.items[24].version, one.next_page]).toEqual([25, 28, 4, 2]);
+    const two = (await history(id(103), '?purpose=billing&page=2')).body;
+    expect([two.items.map((i: Body) => i.version), two.next_page]).toEqual([[3, 2, 1], null]);
+    expect((await history(id(103), '')).status).toBe(400);
+    expect((await history(id(9999))).status).toBe(404);
+    expect((await history(id(1))).body.items).toEqual([]);
   });
+});
 
-  it('422 for a request that is not the contract shape, then for blank or malformed fields, named', async () => {
-    expect((await save('CL-3501', { name: 'A', email: 'a@b.c' })).status).toBe(422);
-    expect((await save('CL-3501', { ...contact(3), extra: 1 })).status).toBe(422);
-    expect((await save('CL-3501', { ...contact(3), reason: 5 })).status).toBe(422);
-    const blank = await save('CL-3501', contact(3, '  ', ''));
-    expect(blank.status).toBe(422);
-    expect(blank.body.fields.map((f: { name: string }) => f.name)).toEqual(['name', 'email']);
-    const noAt = await save('CL-3501', contact(3, 'Ada', 'not-an-email'));
-    expect(noAt.body.fields).toEqual([{ name: 'email', message: expect.any(String) }]);
-    expect((await detail('CL-3501')).body.revision).toBe(3);
-  });
-
-  it('checks 404, then request shape, then fields, then the revision', async () => {
-    expect((await save('CL-3599', {})).status).toBe(404);
-    expect((await save('CL-0000', contact(1))).status).toBe(404);
-    expect((await save('CL-3501', { expected_revision: 99, name: 'A' })).status).toBe(422);
-    expect((await save('CL-3501', contact(99, '', 'x'))).status).toBe(422);
-    expect((await save('CL-3501', contact(99))).status).toBe(409);
-  });
-
-  it('CL-3508: the first PUT is 409, then the detail serves the newer revision with a different contact', async () => {
-    expect((await detail('CL-3508')).body).toMatchObject({ revision: 2, billing_contact: { name: 'Tolu Bank' } });
-    expect((await save('CL-3508', contact(2))).status).toBe(409);
-    expect((await detail('CL-3508')).body).toMatchObject({ revision: 3, billing_contact: { name: 'Ngozi Eze' } });
-    expect((await save('CL-3508', contact(2))).status).toBe(409);
-    expect((await save('CL-3508', contact(3))).body.revision).toBe(4);
-  });
-
-  it('X-Mock-Scenario codes still apply to the operations that declare them', async () => {
-    expect((await list('', { headers: { 'X-Mock-Scenario': '401' } })).status).toBe(401);
-    expect((await save('CL-3501', contact(3), { headers: { 'X-Mock-Scenario': '409' } })).status).toBe(409);
+describe('the validators', () => {
+  it('a wrong shape fails them', () => {
+    expect(valid.directory({ groups: [], projects: [], next_page: null })).toBe(false);
+    expect(valid.directory({ groups: [{ key: 'short', label: 'x', project_count: 1, contacts_needed: 0, api_url: '/x' }], projects: [], next_group_page: null, next_page: null })).toBe(false);
+    expect(valid.group({ key: ACME, label: 'Acme', projects: [], next_page: null })).toBe(false);
+    expect(valid.workspace({ case_id: 'CL-3501', title: 'x', revision: 1, sample: false, contacts: [], django_url: '/x' })).toBe(false);
+    expect(valid.history({ revision: 1, items: [{ version: 1 }], next_page: null })).toBe(false);
   });
 });

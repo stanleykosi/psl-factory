@@ -304,7 +304,8 @@ describe('the source (1, 2, 4, 8, 11, 15, 20)', () => {
   it('the page has no upload limits, accept attribute, date comparison on received_at or duplicate check', () => {
     // F-88: the live received-RFP line (SCR-23) is its own file and does carry its file limits and fields; the generic form does not
     const apart = '--exclude=receivedBid.tsx';
-    expect(grep([apart, 'PROOF_TYPES|PROOF_MAX_BYTES|accept=|\\.size *[<>]', 'src/features/start-work'])).toBe('');
+    // F-92: the engine's file control passes an empty `accept` and no size limit on purpose (the server decides)
+    expect(grep([apart, '--exclude=controls.tsx', 'PROOF_TYPES|PROOF_MAX_BYTES|accept=|\\.size *[<>]', 'src/features/start-work'])).toBe('');
     expect(grep([apart, 'received_at', 'src/features/start-work'])).toBe('');
     expect(grep([apart, 'rfp_reference|duplicate', 'src/features/start-work'])).toBe('');
   });

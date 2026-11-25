@@ -31,22 +31,8 @@
 .clients__main { flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
 .clients__aside { flex: 1 1 320px; max-width: 420px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-14px); }
 .clients__panelbody { display: flex; flex-direction: column; gap: var(--space-3); margin: 0; }
-.clients__form { display: flex; flex-direction: column; gap: var(--space-3); }
-.clients__fieldgroup { display: flex; flex-direction: column; gap: var(--space-1); }
 .clients__help { margin: 0; font-size: var(--text-hint-size); color: var(--signal-ink); }
-.clients__value { min-height: var(--control-md); display: flex; align-items: center; padding: 0 var(--space-3); border: var(--rule-strong) solid var(--rule-soft); background: var(--surface-subtle); overflow-wrap: anywhere; }
-.clients__current { font-size: var(--text-hint-size); color: var(--ink-muted); }
-.clients__block { display: block; }
-.clients__save { align-self: flex-start; min-width: 200px; }
-.psl .clients__needed { border-color: var(--signal); }
-.clients__bar { display: contents; }
-.clients__notice { scroll-margin-bottom: 96px; }
-.clients__retry { align-self: flex-start; }
 .clients__project { display: flex; flex-direction: column; gap: var(--space-1); }
-.clients__money { display: flex; flex-direction: column; }
-.clients__moneyrow { display: flex; justify-content: space-between; gap: var(--space-3); }
-.clients__moneyrow dt { color: var(--ink-muted); }
-.clients__moneyrow dd { margin: 0; font-family: var(--font-mono); font-weight: 600; text-align: right; }
 
 .clients__noaccess { max-width: 720px; }
 .clients__noaccesstag { align-self: flex-start; }
@@ -57,11 +43,19 @@
   .clients__eyebrow, .clients__crumb { display: none; }
   .clients__body, .clients__main { gap: var(--space-3); }
   .clients__aside { flex-basis: 100%; max-width: none; }
-  .clients__save { width: 100%; }
-  /* the form sits straight on the page; the Save bar is pinned at the bottom (as .monthend-bar) */
-  .psl .clients__formpanel { border: 0; background: none; display: contents; }
-  .clients__formpanel > .psl-panel__head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; padding: 0; border: 0; }
-  .clients__formbody, .clients__form, .clients__body, .clients__main { display: contents; }
-  .clients__page:has(.clients__bar) { min-height: calc(100dvh - 88px); }
-  .clients__bar { display: block; order: 1; position: sticky; bottom: 0; margin: auto calc(-1 * var(--space-4)) calc(-1 * var(--space-4)); padding: var(--space-3) var(--space-4) var(--space-18px); background: var(--surface); border-top: var(--rule-strong) solid var(--ink); }
 }
+
+/* detail: contacts, owed, history (F-73) */
+.clients__projectrow { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.psl .clients__crumblink { text-decoration: underline; text-underline-offset: 2px; }
+.clients__contact { display: flex; flex-direction: column; gap: var(--space-1); }
+.clients__facts { margin: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.clients__facts div { display: flex; gap: var(--space-3); }
+.clients__facts dt { color: var(--ink-muted); min-width: 80px; }
+.clients__facts dd { margin: 0; overflow-wrap: anywhere; }
+.clients__history { display: flex; flex-direction: column; gap: var(--space-3); }
+.clients__versions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.clients__more { align-self: flex-start; }
+.clients__owed { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.clients__owedrow { display: flex; flex-direction: column; gap: var(--space-1); }
+.clients__owedline { display: flex; justify-content: space-between; gap: var(--space-3); font-family: var(--font-mono); font-weight: 600; }

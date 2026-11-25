@@ -13,6 +13,7 @@ import { lineFormFor } from '@/features/start-work/lines';
 import { localMidnight, weeklyReport } from '@/features/start-work/lines/weeklyReport';
 import { mapProblems, useStart } from '@/features/start-work/useStart';
 import { fetchProjects, fetchSources, useLines } from '@/features/start-work/useStartWork';
+import type { WeeklyBody } from '@/features/start-work/types';
 import { StartUpload } from '@/features/start-work/StartUpload';
 
 // @ts-expect-error plain ESM module without type declarations
@@ -81,10 +82,10 @@ describe('chooser', () => {
     const dialog = screen.getByRole('dialog');
     expect(within(dialog).queryByText('Invoice')).toBeNull();
     const links = within(dialog).getAllByRole('link', { name: 'Open in the full form' });
-    // pmo-minutes (cannot submit), finance-payroll (can submit, no registered form), pmo-issues (cannot submit)
-    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/lines/pmo-minutes/', '/lines/finance-payroll/', '/lines/pmo-issues/']);
-    // the weekly report, and the received RFP, which owns its submit and is not a `/lines` row (F-88)
-    expect(within(dialog).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['pmo-weekly-report/v1', 'received-bid']);
+    // finance-payroll (can submit, no registered form), pmo-leadership-report (can submit; its schema has array and object leaves, F-92)
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/lines/finance-payroll/', '/lines/pmo-leadership-report/']);
+    // the weekly report, the received RFP, which owns its submit (F-88), and the five engine lines (F-92)
+    expect(within(dialog).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['pmo-weekly-report/v1', 'pmo-minutes/v1', 'received-bid', 'pmo-issues/v1', 'pmo-escalation/v1', 'pmo-emergency/v1', 'pmo-change/v1']);
     expect((within(dialog).getByRole('button', { name: 'Next' }) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(within(dialog).getAllByRole('radio')[0]);
     expect((within(dialog).getByRole('button', { name: 'Next' }) as HTMLButtonElement).disabled).toBe(false);
@@ -186,15 +187,15 @@ describe('reads', () => {
 
   it('fetchSources sends line, field, parent_id and before only when set, and returns next_before and the revision (AC13)', async () => {
     const id = PROJECT.case_id;
-    const plain = await fetchSources(id, 'pmo-minutes/v1');
+    const plain = await fetchSources(id, 'pmo-weekly-report/v1');
     expect(plain.items.map((i) => i.id)).toEqual([11, 12, 13]);
     expect(plain.nextBefore).toBeNull();
     expect(plain.caseRevision).toBe(4);
-    await fetchSources(id, 'pmo-minutes/v1', { field: 'meeting', parentId: 5, before: 12 });
+    await fetchSources(id, 'pmo-weekly-report/v1', { field: 'meeting', parentId: 5, before: 12 });
     const [a, b] = requests().map((r) => new URL(r.url));
     expect(a.pathname).toBe(`/api/v1/projects/${id}/intake-sources`);
     expect([...a.searchParams.keys()]).toEqual(['line']);
-    expect(Object.fromEntries(b.searchParams)).toEqual({ line: 'pmo-minutes/v1', field: 'meeting', parent_id: '5', before: '12' });
+    expect(Object.fromEntries(b.searchParams)).toEqual({ line: 'pmo-weekly-report/v1', field: 'meeting', parent_id: '5', before: '12' });
   });
 });
 
@@ -229,7 +230,7 @@ describe('the period carries an explicit offset (QA-1-1)', () => {
   });
 
   it('the body ends the period at the midnight after the last day, so that day is included', () => {
-    const body = offsetMinutes([-60], () => weeklyReport.buildBody({ week: WEEK, reference: 'r' }, { caseId: PROJECT.case_id, caseRevision: 4, idempotencyKey: 'k' }));
+    const body = offsetMinutes([-60], () => weeklyReport.buildBody({ week: WEEK, reference: 'r' }, { caseId: PROJECT.case_id, caseRevision: 4, idempotencyKey: 'k' }) as WeeklyBody);
     expect(body.intake).toEqual({ inputs: { template_id: null, content_id: null, start_at: '2026-11-16T00:00:00+01:00', end_at: '2026-11-23T00:00:00+01:00' } });
   });
 
@@ -520,10 +521,11 @@ describe('the registry and the source (AC15, AC16)', () => {
   const files = (d: string): string[] => readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(join(d, e.name)) : [join(d, e.name)]));
   const text = (f: string) => readFileSync(f, 'utf8');
 
-  it('knows the weekly line only, and gives nothing for any other key', () => {
+  it('knows the weekly line and the five engine lines, and gives nothing for any other key', () => {
     expect(lineFormFor('pmo-weekly-report/v1')?.startLabel).toBe('Start report');
     expect(lineFormFor('pmo-weekly-report/v1')?.drawerTitle).toBe('Weekly client report');
-    expect(lineFormFor('pmo-minutes/v1')).toBeUndefined();
+    for (const key of ['pmo-issues/v1', 'pmo-escalation/v1', 'pmo-minutes/v1', 'pmo-emergency/v1', 'pmo-change/v1']) expect(lineFormFor(key)?.key).toBe(key);
+    expect(lineFormFor('pmo-leadership-report/v1')).toBeUndefined();
     expect(lineFormFor('')).toBeUndefined();
   });
 
@@ -532,7 +534,9 @@ describe('the registry and the source (AC15, AC16)', () => {
     expect(all.filter((f) => /default_line/.test(text(f)))).toEqual([]);
     expect(text(join(dir, 'LineChooser.tsx'))).not.toMatch(/from '\.\/lines\/|weeklyReport/);
     expect(all.filter((f) => /8 days|up to 8/.test(text(f)))).toEqual([]);
-    expect(all.filter((f) => /new FormData|multipart/.test(text(f)))).toEqual([]);
+    // F-92: the one FormData is the minutes start; the upload helper stays F-85's
+    expect(all.filter((f) => /FormData/.test(text(f))).map((f) => f.replace(`${dir}/`, ''))).toEqual(['engine/minutes.ts']);
+    expect(all.filter((f) => /uploadCaseFile/.test(text(f))).filter((f) => /\/(engine|lines)\//.test(f))).toEqual([]);
     expect(text(join(dir, 'StartUpload.tsx'))).toMatch(/EvidencePicker/);
     expect(text(join(dir, 'lines/weeklyReport.tsx'))).not.toMatch(/StartUpload|StartProof/);
   });
