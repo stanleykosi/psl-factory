@@ -111,7 +111,7 @@ for (const [label, viewport] of [
       await openPage(page, context, baseURL!, { psl_mock_month_end: 'empty' });
       await expect(page.getByText('Nothing to close this month')).toBeVisible();
       expect((await page.locator('.monthend-empty').boundingBox())!.height).toBeLessThan(200);
-      if (viewport === DESKTOP) await expect(page.locator('.monthend-cell__value')).toHaveText(['0', '0', '0', '0', 'Unknown']);
+      if (viewport === DESKTOP) await expect(page.locator('.monthend-cell__value')).toHaveText(['0', '0', '0', '0', '₦4.7M']);
       else await expect(page.locator('.monthend-summary')).toHaveText('0 done · 0 waiting');
       await expect(page.locator('table, .monthend-card')).toHaveCount(0);
       await expectNoAxeViolations(page);
@@ -155,8 +155,10 @@ for (const [label, viewport] of [
     });
 
     test('the error card offers Try again', async ({ page, context, baseURL }) => {
-      await openPage(page, context, baseURL!, { psl_mock_month_end: 'error' });
+      await cookies(context, { psl_mock_month_end: 'error' }, baseURL!);
+      await page.goto(PAGE);
       await expect(page.getByText(/couldn’t load the month-end checklist/)).toBeVisible();
+      await expect(page.getByRole('button', { name: /Try again/ })).toBeVisible();
       await expectNoAxeViolations(page);
     });
   });

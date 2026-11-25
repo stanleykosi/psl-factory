@@ -27,6 +27,8 @@
 .payments__more p { margin: 0; }
 .payments__reason { display: block; font-size: var(--text-hint-size); color: var(--ink-muted); }
 .payments__actions { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+/* a 24px target at least (WCAG 2.2 target size), also where the links are stacked */
+.payments__action a, .payments__action--off { min-height: 24px; display: inline-flex; align-items: center; }
 .payments__action { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .payments__action--off { color: var(--ink-muted); text-decoration: line-through; cursor: not-allowed; }
 .payments__draft { font-size: var(--text-hint-size); color: var(--ink-muted); }
