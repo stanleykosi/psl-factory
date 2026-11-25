@@ -12,6 +12,7 @@ import '@/features/response/commercialAdapter'; // F-136: self-registers on impo
 import '@/features/costing/costingAdapter'; // F-99: self-registers on import
 import '@/features/fixed-assets/assetsAdapter'; // F-102: self-registers on import
 import '../invoiceAdapter'; // F-90: self-registers on import
+import '../incomeSchedulesAdapter'; // F-101: self-registers on import
 
 registerLineAdapter(weeklyReportAdapter as LineAdapter);
 registerLineAdapter(bidAnswersAdapter as LineAdapter);
