@@ -337,3 +337,17 @@ a.ws-ref { color: var(--action); text-decoration: underline; text-underline-offs
   .ws-figstrip dd { font-size: var(--text-fact-size); }
 }
 .ws-caption { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
+
+/* F-89 weekly report: report text, review block and edit form; buttons stack full width on the phone */
+.wr-actions { display: flex; flex-direction: column; gap: var(--space-3); }
+.wr-block { display: flex; flex-direction: column; gap: var(--space-2); }
+.wr-head, .wr-sub { margin: 0; }
+.wr-section { display: flex; flex-direction: column; gap: var(--space-1); }
+.wr-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.wr-note { margin: 0; font-size: var(--text-small-size); color: var(--ink-muted); }
+.wr-line { margin: 0; font-size: var(--text-hint-size); color: var(--ink-muted); }
+.wr-buttons { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
+@media (max-width: 719.98px) {
+  .wr-buttons { flex-direction: column; align-items: stretch; }
+  .wr-buttons .psl-btn { width: 100%; min-height: 44px; }
+}
