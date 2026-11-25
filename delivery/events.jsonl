@@ -5427,3 +5427,6 @@
 {"at":"2026-11-24T22:54:07Z","feature":"F-63","round":1,"kind":"fields","fields":{"git.pr_number":125}}
 {"at":"2026-11-24T22:54:07Z","feature":"F-63","round":1,"kind":"fields","fields":{"git.merge_status":"merged"}}
 {"at":"2026-11-24T22:54:07Z","feature":"F-63","round":1,"kind":"fields","fields":{"git.merge_sha":"b51c99c0abfab8e42755b546ccd8c0b5c1112098"}}
+{"at":"2026-11-25T00:18:52Z","feature":"F-89","round":0,"kind":"fields","fields":{"git.pr_number":127}}
+{"at":"2026-11-25T00:18:52Z","feature":"F-89","round":0,"kind":"fields","fields":{"git.merge_status":"merged"}}
+{"at":"2026-11-25T00:18:52Z","feature":"F-89","round":0,"kind":"fields","fields":{"git.merge_sha":"98b87c88eedaa8d934e9f46a7132bc07f92f302a"}}
