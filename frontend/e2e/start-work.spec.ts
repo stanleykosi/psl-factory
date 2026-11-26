@@ -65,8 +65,8 @@ for (const [label, viewport, phone] of [
       await expect(page.getByRole('dialog', { name: 'Choose a line' })).toBeVisible();
       await expect(dialog(page).getByText('Weekly client report')).toBeVisible();
       await expect(dialog(page).getByText(/Next:/)).toHaveCount(0);
-      await expect(dialog(page).getByText('Invoice')).toHaveCount(0);
-      await expect(dialog(page).getByRole('radio')).toHaveCount(7);
+      await expect(dialog(page).getByText('Prepare an invoice')).toBeVisible();
+      await expect(dialog(page).getByRole('radio')).toHaveCount(9);
       const links = dialog(page).getByRole('link', { name: 'Open in the full form' });
       await expect(links).toHaveCount(2);
       await expect(links.first()).toHaveAttribute('href', '/lines/finance-payroll/');

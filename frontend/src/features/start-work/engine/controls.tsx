@@ -122,7 +122,7 @@ export function RecordControl({ field, caseId, lineKey, parentId, value, onChang
 
 export function ChoiceControl({ field, value, onChange, disabled, error }: { field: EngineField; value: string | undefined; onChange: (value: string | undefined) => void; disabled: boolean; error: string | undefined }) {
   const id = useId();
-  const options = field.values.map((v) => ({ value: v, label: capital(v) }));
+  const options = field.values.map((v) => ({ value: v, label: field.valueLabels?.[v] ?? capital(v) }));
   const label = withOptional(field);
   if (options.length > 3) {
     return (
@@ -144,10 +144,10 @@ export function ChoiceControl({ field, value, onChange, disabled, error }: { fie
   );
 }
 
-export function TextControl({ name, label, required, maxLength, value, onChange, disabled, error }: { name: string; label: string; required: boolean; maxLength?: number; value: string; onChange: (value: string) => void; disabled: boolean; error: string | undefined }) {
+export function TextControl({ name, label, required, maxLength, date, value, onChange, disabled, error }: { name: string; label: string; required: boolean; maxLength?: number; date?: boolean; value: string; onChange: (value: string) => void; disabled: boolean; error: string | undefined }) {
   return (
     <Field name={name}>
-      <TextField label={label} optional={!required} maxLength={maxLength} value={value} readOnly={disabled} error={error} aria-required={required || undefined} onChange={(event) => onChange(event.target.value)} />
+      <TextField label={label} type={date ? 'date' : undefined} optional={!required} maxLength={maxLength} value={value} readOnly={disabled} error={error} aria-required={required || undefined} onChange={(event) => onChange(event.target.value)} />
     </Field>
   );
 }

@@ -13,7 +13,7 @@ import type { EngineConfig } from './config';
 import { ChoiceControl, FileControl, NO_ESCALATIONS, RecordControl, TextControl, WaitingRecord, CHOOSE_PROJECT_FIRST } from './controls';
 import { escalationSource } from './escalations';
 import { isMinutes, minutesParts, sendMinutes } from './minutes';
-import { planOf, type EngineField, type Plan } from './plan';
+import { activeFields, planOf, type EngineField, type Plan } from './plan';
 
 const planFor = (config: EngineConfig, line: Line | undefined) => (line ? planOf(config, line.request_schema) : 'unsupported');
 const optionOf = (value: FieldValue | undefined) => (value && typeof value === 'object' && 'value' in value ? (value as LineOption) : undefined);
@@ -34,7 +34,7 @@ function Fields({ plan, values, setValue, errors, readOnly, caseId, project, onR
       return <ChoiceControl key={field.name} field={field} value={typeof values[field.name] === 'string' ? (values[field.name] as string) : undefined} onChange={(v) => setValue(field.name, v)} disabled={readOnly} error={error} />;
     }
     if (field.kind === 'text') {
-      return <TextControl key={field.name} name={field.name} label={field.label} required={field.required} maxLength={field.maxLength} value={textOf(values[field.name])} onChange={(v) => setValue(field.name, v)} disabled={readOnly} error={error} />;
+      return <TextControl key={field.name} name={field.name} label={field.label} required={field.required} maxLength={field.maxLength} date={field.date} value={textOf(values[field.name])} onChange={(v) => setValue(field.name, v)} disabled={readOnly} error={error} />;
     }
     if (!caseId) return <WaitingRecord key={field.name} field={field} why={CHOOSE_PROJECT_FIRST} />;
     const parentOption = field.parent ? optionOf(values[field.parent]) : undefined;
@@ -63,7 +63,7 @@ function Fields({ plan, values, setValue, errors, readOnly, caseId, project, onR
 
   return (
     <>
-      {plan.fields.map(control)}
+      {activeFields(plan, values).map(control)}
       {plan.upload && <FileControl name={plan.upload.name} label={plan.upload.label} value={fileOf(values[plan.upload.name])} onChange={(file) => setValue(plan.upload!.name, file ?? undefined)} disabledReason={caseId ? undefined : CHOOSE_PROJECT_FIRST} error={errors[plan.upload.name]} />}
       {plan.reference && <TextControl name="reference" label="Reference" required maxLength={plan.reference.maxLength} value={textOf(values.reference)} onChange={(v) => setValue('reference', v)} disabled={readOnly} error={errors.reference} />}
     </>
