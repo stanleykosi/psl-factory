@@ -150,6 +150,7 @@ describe('the Django embed is gone', () => {
       'handover-live.mjs',
       'archive-live.mjs',
       'closure-live.mjs',
+      'change-live.mjs',
     ];
     expect(hits.filter((file) => !allowed.some((name) => file.endsWith(name)) && !/mock\/fixtures\/me\.[a-z_]+\.json$/.test(file) && !/mock\/fixtures\/(projects\/(money\/|tabs\/)?[^/]+|E-PROJECT)\.json$/.test(file))).toEqual([]);
   });

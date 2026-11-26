@@ -19,6 +19,7 @@ import '@/features/hypercare/hypercareAdapter'; // F-115: self-registers on impo
 import '@/features/delivery-handover/handoverAdapter'; // F-117: self-registers on import
 import '@/features/delivery-archive/archiveAdapter'; // F-116: self-registers on import
 import '@/features/delivery-closure/closureAdapter'; // F-118: self-registers on import
+import '@/features/change-request/changeAdapter'; // F-112: self-registers on import
 
 registerLineAdapter(weeklyReportAdapter as LineAdapter);
 registerLineAdapter(bidAnswersAdapter as LineAdapter);
