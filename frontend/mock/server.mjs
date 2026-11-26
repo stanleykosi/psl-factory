@@ -55,6 +55,7 @@ import { ASSETS_PATH, assetsLive } from './assets-live.mjs';
 import { COMMERCIAL_PATH, commercialLive, resetCommercialLive } from './commercial-live.mjs';
 import { ENGAGEMENT_PATH, engagementLive, resetEngagementLive } from './engagement-live.mjs';
 import { RELEASE_PATH, releaseLive, resetReleaseLive } from './delivery-release.mjs';
+import { HYPERCARE_PATH, hypercareLive, resetHypercareLive } from './hypercare-live.mjs';
 import { COSTING_PATH, costingLive, resetCostingLive } from './costing-live.mjs';
 import { INCOME_SCHEDULES_PATH, incomeSchedulesLive, resetIncomeSchedulesLive } from './income-schedules-live.mjs';
 import { INVOICE_RELEASE_PATH, invoiceReleaseLive, resetInvoiceRelease } from './invoice-release-live.mjs';
@@ -314,6 +315,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetWorkLive();
         resetEngagementLive();
         resetReleaseLive();
+        resetHypercareLive();
         resetCommercialLive();
         resetCostingLive();
         resetIncomeSchedulesLive();
@@ -345,6 +347,16 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
         const reply = releaseLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes });
+        // a dropped connection: the answer never arrives
+        if (reply[0] === 'drop') return req.socket.destroy();
+        return send(res, ...reply);
+      }
+      // F-115: the hypercare page (ids 5201 to 5208, hypercare-live.mjs); every other id falls through.
+      if (HYPERCARE_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        const reply = hypercareLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes });
         // a dropped connection: the answer never arrives
         if (reply[0] === 'drop') return req.socket.destroy();
         return send(res, ...reply);
