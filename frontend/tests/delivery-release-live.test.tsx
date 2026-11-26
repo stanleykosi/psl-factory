@@ -82,10 +82,10 @@ describe('reading', () => {
     expect(screen.queryByText(/0 records/)).toBeNull();
     expect(screen.getByText('Proof is out of date')).toBeTruthy();
   });
-  it('4807 asks for the appointments, draws OWNER NEEDED, the people and a link, and no decision form (AC16)', async () => {
-    await open(4807, 'OWNER NEEDED');
+  it('4807 asks for the appointments, draws Owner needed, the people and a link, and no decision form (AC16)', async () => {
+    await open(4807, 'Owner needed');
     expect(calls().some((c) => c.path.includes('decision-appointments'))).toBe(true);
-    expect(screen.getByRole('link', { name: 'Open Setup roles' }).getAttribute('href')).toBe('/setup/roles');
+    expect((await screen.findByRole('link', { name: 'Open Setup roles' })).getAttribute('href')).toBe('/setup/roles');
     expect(screen.queryByRole('button', { name: /Approve for release|Return with a note/ })).toBeNull();
   });
   it('a failing client-testing read hides only that row (AC22)', async () => {

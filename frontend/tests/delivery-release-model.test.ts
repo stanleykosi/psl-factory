@@ -107,10 +107,10 @@ describe('the sections', () => {
     expect(uat({ outcome: 'changes_requested' })).toContain('Changes requested');
     expect(sections(4801).some((x) => x.key === 'uat')).toBe(false);
   });
-  it('the owner-needed state draws OWNER NEEDED and the people and eligibility as given (AC16)', () => {
+  it('the owner-needed state draws Owner needed and the people and eligibility as given (AC16)', () => {
     const appointments = { case_revision: 1, latest_id: null, active_id: null, people: [{ id: 31, label: 'Tunde Bello' }], proofs: [], can_draft: false, appointments: [{ user_id: 31, roles: ['PM'], eligibility: 'Eligible' }], next_page: null };
     const text = JSON.stringify(sections(4807, 'owner_needed', { appointments }));
-    expect(text).toMatch(/PMO Lead assigned.*OWNER NEEDED/);
+    expect(text).toMatch(/PMO Lead assigned.*Owner needed/);
     expect(text).toMatch(/Tunde Bello.*PM.*Eligible/);
   });
   it('draws none of the removed figures (AC23)', () => {

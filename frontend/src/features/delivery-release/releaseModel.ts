@@ -143,7 +143,7 @@ function uatSection(uat: ClientTesting): Section {
 }
 
 function ownerSections(a: Appointments | null): Section[] {
-  const sections: Section[] = [{ key: 'owner', kind: 'facts', title: 'Who decides', items: [{ id: 'pmo', label: 'PMO Lead assigned', tag: { label: 'OWNER NEEDED', tone: 'person' } }] }];
+  const sections: Section[] = [{ key: 'owner', kind: 'facts', title: 'Who decides', items: [{ id: 'pmo', label: 'PMO Lead assigned', tag: { label: 'Owner needed', tone: 'person' } }] }];
   if (a) {
     const name = (id: number) => a.people.find((p) => p.id === id)?.label ?? 'Unknown person';
     sections.push({
