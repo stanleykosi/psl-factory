@@ -57,6 +57,7 @@ import { ENGAGEMENT_PATH, engagementLive, resetEngagementLive } from './engageme
 import { RELEASE_PATH, releaseLive, resetReleaseLive } from './delivery-release.mjs';
 import { GO_LIVE_PATH, goLiveLive, resetGoLiveLive } from './go-live.mjs';
 import { HYPERCARE_PATH, hypercareLive, resetHypercareLive } from './hypercare-live.mjs';
+import { HANDOVER_PATH, handoverLive, resetHandoverLive } from './handover-live.mjs';
 import { ARCHIVE_PATH, archiveLive, resetArchiveLive } from './archive-live.mjs';
 import { COSTING_PATH, costingLive, resetCostingLive } from './costing-live.mjs';
 import { INCOME_SCHEDULES_PATH, incomeSchedulesLive, resetIncomeSchedulesLive } from './income-schedules-live.mjs';
@@ -319,6 +320,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetReleaseLive();
         resetGoLiveLive();
         resetHypercareLive();
+        resetHandoverLive();
         resetArchiveLive();
         resetCommercialLive();
         resetCostingLive();
@@ -371,6 +373,16 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
         const reply = hypercareLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes });
+        // a dropped connection: the answer never arrives
+        if (reply[0] === 'drop') return req.socket.destroy();
+        return send(res, ...reply);
+      }
+      // F-117: the handover page (ids 6101 to 6108, handover-live.mjs); every other id falls through.
+      if (HANDOVER_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        const reply = handoverLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes });
         // a dropped connection: the answer never arrives
         if (reply[0] === 'drop') return req.socket.destroy();
         return send(res, ...reply);
