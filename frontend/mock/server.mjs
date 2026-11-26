@@ -54,6 +54,7 @@ import { FORECAST_PATH, forecastLive } from './forecast-live.mjs';
 import { ASSETS_PATH, assetsLive } from './assets-live.mjs';
 import { COMMERCIAL_PATH, commercialLive, resetCommercialLive } from './commercial-live.mjs';
 import { ENGAGEMENT_PATH, engagementLive, resetEngagementLive } from './engagement-live.mjs';
+import { RELEASE_PATH, releaseLive, resetReleaseLive } from './delivery-release.mjs';
 import { COSTING_PATH, costingLive, resetCostingLive } from './costing-live.mjs';
 import { INCOME_SCHEDULES_PATH, incomeSchedulesLive, resetIncomeSchedulesLive } from './income-schedules-live.mjs';
 import { INVOICE_RELEASE_PATH, invoiceReleaseLive, resetInvoiceRelease } from './invoice-release-live.mjs';
@@ -312,6 +313,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetRetrospective();
         resetWorkLive();
         resetEngagementLive();
+        resetReleaseLive();
         resetCommercialLive();
         resetCostingLive();
         resetIncomeSchedulesLive();
@@ -336,6 +338,16 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
         return send(res, ...engagementLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes }));
+      }
+      // F-113B: the release gates page (ids 4801 to 4814 and 4890, delivery-release.mjs); every other id falls through to F-113's reads.
+      if (RELEASE_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        const reply = releaseLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes });
+        // a dropped connection: the answer never arrives
+        if (reply[0] === 'drop') return req.socket.destroy();
+        return send(res, ...reply);
       }
       // F-136: the client's response and SOW signature (ids 4660 to 4666, commercial-live.mjs); every other id falls through.
       if (COMMERCIAL_PATH.test(url.pathname)) {
