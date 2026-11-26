@@ -15,6 +15,7 @@ import '../invoiceAdapter'; // F-90: self-registers on import
 import '../incomeSchedulesAdapter'; // F-101: self-registers on import
 import '@/features/delivery-release/releaseAdapter'; // F-113B: self-registers on import
 import '@/features/go-live/goLiveAdapter'; // F-114: self-registers on import
+import '@/features/hypercare/hypercareAdapter'; // F-115: self-registers on import
 
 registerLineAdapter(weeklyReportAdapter as LineAdapter);
 registerLineAdapter(bidAnswersAdapter as LineAdapter);
