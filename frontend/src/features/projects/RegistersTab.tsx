@@ -7,6 +7,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, ListToolbar, PriorityTag, Table, Tabs, Tag, useIsPhone, type Column } from '@/components';
 
+import { LogChangeDrawer } from '@/features/change-request/LogChangeDrawer';
+
 import { MoreFooter } from './MoreFooter';
 import { PANEL_ID } from './ProjectTabs';
 import { RecordIssueDrawer } from './RecordIssueDrawer';
@@ -88,6 +90,13 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
     setRecording(false);
     requestAnimationFrame(() => recordRef.current?.focus());
   }, []);
+  // F-112: "Log a change" opens its drawer on the Changes register; focus returns to the button when it closes.
+  const [logging, setLogging] = useState(false);
+  const logRef = useRef<HTMLButtonElement>(null);
+  const closeLog = useCallback(() => {
+    setLogging(false);
+    requestAnimationFrame(() => logRef.current?.focus());
+  }, []);
 
   const navigate = useCallback((next: Partial<SectionView>) => router.replace(`${path}${sectionSearch({ ...viewRef.current, ...next })}`, { scroll: false }), [router, path]);
 
@@ -151,6 +160,14 @@ export function RegistersTab({ caseId, base }: { caseId: string; base: string })
           </Button>
         </div>
       )}
+      {selected?.id === 'changes' && (
+        <div className="ptabs__record">
+          <Button ref={logRef} kind="secondary" size={phone ? 'lg' : 'sm'} icon="plus" onClick={() => setLogging(true)}>
+            Log a change
+          </Button>
+        </div>
+      )}
+      {logging && <LogChangeDrawer caseId={caseId} reloadList={retry} onClose={closeLog} pathname={`${path}${sectionSearch(view)}`} />}
       {recording && <RecordIssueDrawer caseId={caseId} reloadList={retry} onClose={closeRecord} pathname={`${path}${sectionSearch(view)}`} />}
       <div role="search">
         <ListToolbar
