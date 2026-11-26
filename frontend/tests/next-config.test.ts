@@ -145,6 +145,7 @@ describe('the Django embed is gone', () => {
       'commercial-live.mjs',
       'issue-record.mjs',
       'delivery-release.mjs',
+      'go-live.mjs',
       'hypercare-live.mjs',
     ];
     expect(hits.filter((file) => !allowed.some((name) => file.endsWith(name)) && !/mock\/fixtures\/me\.[a-z_]+\.json$/.test(file) && !/mock\/fixtures\/(projects\/(money\/|tabs\/)?[^/]+|E-PROJECT)\.json$/.test(file))).toEqual([]);
