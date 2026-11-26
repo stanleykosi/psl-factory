@@ -58,6 +58,7 @@ import { RELEASE_PATH, releaseLive, resetReleaseLive } from './delivery-release.
 import { GO_LIVE_PATH, goLiveLive, resetGoLiveLive } from './go-live.mjs';
 import { HYPERCARE_PATH, hypercareLive, resetHypercareLive } from './hypercare-live.mjs';
 import { HANDOVER_PATH, handoverLive, resetHandoverLive } from './handover-live.mjs';
+import { ARCHIVE_PATH, archiveLive, resetArchiveLive } from './archive-live.mjs';
 import { COSTING_PATH, costingLive, resetCostingLive } from './costing-live.mjs';
 import { INCOME_SCHEDULES_PATH, incomeSchedulesLive, resetIncomeSchedulesLive } from './income-schedules-live.mjs';
 import { INVOICE_RELEASE_PATH, invoiceReleaseLive, resetInvoiceRelease } from './invoice-release-live.mjs';
@@ -320,6 +321,7 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         resetGoLiveLive();
         resetHypercareLive();
         resetHandoverLive();
+        resetArchiveLive();
         resetCommercialLive();
         resetCostingLive();
         resetIncomeSchedulesLive();
@@ -381,6 +383,16 @@ export function createMockServer(openapi = JSON.parse(readFileSync(OPENAPI_PATH,
         const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
         const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
         const reply = handoverLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes });
+        // a dropped connection: the answer never arrives
+        if (reply[0] === 'drop') return req.socket.destroy();
+        return send(res, ...reply);
+      }
+      // F-116: the archive page (ids 5301 to 5308, archive-live.mjs); every other id falls through.
+      if (ARCHIVE_PATH.test(url.pathname)) {
+        const cookies = parseCookies(req.headers.cookie);
+        const persona = PERSONAS.includes(cookies.psl_mock_persona) ? cookies.psl_mock_persona : DEFAULT_PERSONA;
+        const scenario = req.headers['x-mock-scenario'] ?? cookies.psl_mock_scenario;
+        const reply = archiveLive({ method, url, scenario, csrfOk: req.headers['x-csrftoken'] === me[persona].csrf_token, persona, rawBytes });
         // a dropped connection: the answer never arrives
         if (reply[0] === 'drop') return req.socket.destroy();
         return send(res, ...reply);
