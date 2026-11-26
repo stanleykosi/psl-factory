@@ -10,6 +10,7 @@ import { financePpe } from './financePpe';
 import { pmoChange } from './pmoChange';
 import { pmoEmergency } from './pmoEmergency';
 import { pmoEscalation } from './pmoEscalation';
+import { pmoFinance } from './pmoFinance';
 import { pmoIssues } from './pmoIssues';
 import { pmoMinutes } from './pmoMinutes';
 import { receivedBid } from './receivedBid';
@@ -74,7 +75,7 @@ export type OwnLine = {
   Own: ComponentType<OwnLineProps>;
 };
 
-const FORMS: LineForm[] = [weeklyReport, pmoIssues, pmoEscalation, pmoMinutes, pmoEmergency, pmoChange, financePpe];
+const FORMS: LineForm[] = [weeklyReport, pmoIssues, pmoEscalation, pmoMinutes, pmoEmergency, pmoChange, financePpe, pmoFinance];
 const OWN: OwnLine[] = [receivedBid];
 
 export function lineFormFor(key: string): LineForm | undefined {

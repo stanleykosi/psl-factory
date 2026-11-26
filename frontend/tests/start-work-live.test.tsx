@@ -84,8 +84,8 @@ describe('chooser', () => {
     const links = within(dialog).getAllByRole('link', { name: 'Open in the full form' });
     // finance-payroll (can submit, no registered form), pmo-leadership-report (can submit; its schema has array and object leaves, F-92)
     expect(links.map((a) => a.getAttribute('href'))).toEqual(['/lines/finance-payroll/', '/lines/pmo-leadership-report/']);
-    // the weekly report, the received RFP, which owns its submit (F-88), the five engine lines (F-92) and the fixed asset schedule (F-102)
-    expect(within(dialog).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['pmo-weekly-report/v1', 'pmo-minutes/v1', 'received-bid', 'pmo-issues/v1', 'pmo-escalation/v1', 'pmo-emergency/v1', 'pmo-change/v1', 'finance-ppe/v1']);
+    // the weekly report, the received RFP, which owns its submit (F-88), the five engine lines (F-92) the fixed asset schedule (F-102) and the invoice (F-94)
+    expect(within(dialog).getAllByRole('radio').map((r) => r.getAttribute('value'))).toEqual(['pmo-weekly-report/v1', 'pmo-minutes/v1', 'received-bid', 'pmo-issues/v1', 'pmo-escalation/v1', 'pmo-emergency/v1', 'pmo-change/v1', 'finance-ppe/v1', 'pmo-finance/v1']);
     expect((within(dialog).getByRole('button', { name: 'Next' }) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(within(dialog).getAllByRole('radio')[0]);
     expect((within(dialog).getByRole('button', { name: 'Next' }) as HTMLButtonElement).disabled).toBe(false);

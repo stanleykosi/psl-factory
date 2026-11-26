@@ -2,7 +2,7 @@
 import type { FieldValue, Values } from '../intake';
 import type { Missing, StartContext } from '../lines';
 import type { StartBody } from '../types';
-import type { EngineField, Plan } from './plan';
+import { activeFields, type EngineField, type Plan } from './plan';
 
 export type Picked = { value: string; label: string };
 
@@ -33,7 +33,7 @@ const setPath = (target: Record<string, unknown>, path: string, value: unknown) 
 export function jsonBody(key: string, plan: Plan, values: Values, ctx: StartContext): StartBody {
   const intake: Record<string, unknown> = {};
   for (const { path, value } of plan.consts) setPath(intake, path, value);
-  for (const field of plan.fields) {
+  for (const field of activeFields(plan, values)) {
     const value = sentValue(field, values[field.name]);
     if (value !== undefined) setPath(intake, field.path, value);
   }
@@ -50,7 +50,7 @@ export function jsonBody(key: string, plan: Plan, values: Values, ctx: StartCont
 /** The required controls left empty, in the order drawn. */
 export function missingOf(plan: Plan, values: Values): Missing[] {
   const out: Missing[] = [];
-  for (const field of plan.fields) if (field.required && sentValue(field, values[field.name]) == null) out.push({ name: field.name, label: field.label });
+  for (const field of activeFields(plan, values)) if (field.required && sentValue(field, values[field.name]) == null) out.push({ name: field.name, label: field.label });
   if (plan.upload && !fileOf(values[plan.upload.name])) out.push({ name: plan.upload.name, label: plan.upload.label });
   if (plan.reference && !textOf(values.reference)) out.push({ name: 'reference', label: 'Reference' });
   return out;

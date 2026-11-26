@@ -16,7 +16,7 @@ export type EngineConfig = {
   /** Schema paths this form neither draws nor sends (the JSON route's `data.evidence_id`, which the upload route does not take). */
   skip?: string[];
   /** The controls by name (the path without `strip`), in the order drawn. A schema leaf that is not here makes the line unsupported. */
-  labels: Record<string, { label: string; help?: string }>;
+  labels: Record<string, { label: string; help?: string; /** Words for a choice's values; unnamed values read as their capitalised value. */ valueLabels?: Record<string, string> }>;
   /** A control that waits for another (name to its parent's name). */
   parents?: Record<string, string>;
   /** The record controls and where their choices come from. */
