@@ -91,3 +91,9 @@ Two builders at a time works well. Each build costs about 1% of the weekly limit
 - Weekly usage was 89% (the design engineer's stop was 93%). The delivery chain is connected through handover; **F-118 closure** and the change workspace (**F-112**, **F-112B**) with **F-111B** issue updates are next, then F-121, F-69, F-122, Setup (F-74, F-76, F-77) and the Finance screens.
 - Three-way merges of two features into `mock/server.mjs`, `workspace/lines/index.ts` and `tests/next-config.test.ts` conflict every time (adjacent additions). Resolve by keeping both sides, then **check that each mock block still ends with `// a dropped connection…`, `if (reply[0] === 'drop') return req.socket.destroy();`, `return send(res, ...reply);` and a closing `}`** (git drops them), and run `node --check`.
 - Shared bugs noted by builders, to fix once: `makeCommand` with `action: null` deletes `fixed.action`; `useWorkCommand` draws no success notice for line writes, can't place a 422 beside its field, and doesn't lock after a 503; F-87 shows both Pause and Continue whatever the state.
+
+## Update 26 Nov (stopped at 90% weekly)
+Merged since the last note: F-118 closure (#156) and F-112 change workspace (#157). No builds in flight, no lane worktrees left. demo-live is on origin/main.
+Held: F-118 Close/Return (needs LD-2 ids) and Confirm milestone notifications (needs Finance evidence list); F-112 preapprove and bind_standard (backend must say how Standard changes flow).
+Neither feature was tried on live data (psl_demo5 has no closure or change work item). Review-later has both rows.
+Next candidates: F-112B, F-111B, F-121, F-69, F-122, F-74, F-76, F-77. First reviews: F-90, F-113B, F-114, F-112, F-101, F-94.
