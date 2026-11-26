@@ -4,6 +4,8 @@
 export type JsonSchema = {
   type?: string;
   anyOf?: JsonSchema[];
+  oneOf?: JsonSchema[];
+  format?: string;
   enum?: unknown[];
   const?: unknown;
   properties?: Record<string, JsonSchema>;
@@ -12,11 +14,15 @@ export type JsonSchema = {
 };
 
 /** One leaf of the schema's `intake`, by its dotted path. */
-export type Leaf =
+export type Leaf = (
   | { path: string; kind: 'integer'; nullable: boolean; optional: boolean }
-  | { path: string; kind: 'text'; nullable: boolean; optional: boolean; maxLength?: number }
+  | { path: string; kind: 'text'; nullable: boolean; optional: boolean; maxLength?: number; format?: string }
   | { path: string; kind: 'choice'; nullable: boolean; optional: boolean; values: string[] }
-  | { path: string; kind: 'const'; nullable: false; optional: false; value: unknown };
+  | { path: string; kind: 'const'; nullable: false; optional: false; value: unknown }
+) & {
+  /** F-94: the `mode` value of the `oneOf` branch the leaf belongs to; absent for a leaf every mode shares. */
+  when?: string;
+};
 
 const isNull = (schema: JsonSchema) => schema.type === 'null';
 
@@ -45,7 +51,7 @@ function walk(schema: JsonSchema, path: string, optional: boolean, skip: string[
     return true;
   }
   if (schema.type === 'integer') out.push({ path, kind: 'integer', nullable: false, optional });
-  else if (schema.type === 'string') out.push({ path, kind: 'text', nullable: false, optional, maxLength: schema.maxLength });
+  else if (schema.type === 'string') out.push({ path, kind: 'text', nullable: false, optional, maxLength: schema.maxLength, format: schema.format });
   else if (schema.type === 'object' && schema.properties) {
     const required = schema.required ?? [];
     for (const [key, child] of Object.entries(schema.properties)) {
@@ -60,7 +66,24 @@ export function leavesOf(requestSchema: unknown, skip: string[] = []): Leaf[] | 
   const intake = (requestSchema as JsonSchema | null | undefined)?.properties?.intake;
   if (!intake) return 'unsupported';
   const out: Leaf[] = [];
+  if (intake.oneOf) return modesOf(intake.oneOf, skip) ?? 'unsupported';
   return walk(intake, '', false, skip, out) ? out : 'unsupported';
+}
+
+/** F-94: an `intake` that is a `oneOf` whose branches each fix a `mode` const. The modes become one required choice leaf; every other
+ *  leaf of a branch carries that branch's mode. Any other `oneOf` is a shape the engine cannot draw. */
+function modesOf(branches: JsonSchema[], skip: string[]): Leaf[] | undefined {
+  const modes: string[] = [];
+  const rest: Leaf[] = [];
+  for (const branch of branches) {
+    const found: Leaf[] = [];
+    if (!walk(branch, '', false, skip, found)) return undefined;
+    const mode = found.find((leaf) => leaf.path === 'mode');
+    if (!mode || mode.kind !== 'const' || typeof mode.value !== 'string' || modes.includes(mode.value)) return undefined;
+    modes.push(mode.value);
+    for (const leaf of found) if (leaf !== mode) rest.push({ ...leaf, when: mode.value });
+  }
+  return [{ path: 'mode', kind: 'choice', nullable: false, optional: false, values: modes }, ...rest];
 }
 
 /** The `reference` text the schema asks for, or null when the server derives it (no `reference` property). */

@@ -17,6 +17,11 @@ export type EngineField = {
   omit: boolean;
   values: string[];
   maxLength?: number;
+  /** A date text (`format: date`): drawn and sent as YYYY-MM-DD. */
+  date?: boolean;
+  valueLabels?: Record<string, string>;
+  /** F-94: drawn and sent only when the `mode` control has this value. */
+  mode?: string;
   parent?: string;
   source?: Source;
 };
@@ -37,14 +42,14 @@ function fieldOf(config: EngineConfig, leaf: Exclude<Leaf, { kind: 'const' }>): 
   const name = nameOf(config, leaf.path);
   const words = config.labels[name];
   if (!words) return null;
-  const base = { name, path: leaf.path, label: words.label, help: words.help, nullable: leaf.nullable, omit: leaf.optional, parent: config.parents?.[name] };
+  const base = { name, path: leaf.path, label: words.label, help: words.help, nullable: leaf.nullable, omit: leaf.optional, parent: config.parents?.[name], mode: leaf.when, valueLabels: words.valueLabels };
   const required = !leaf.nullable && !leaf.optional;
   if (leaf.kind === 'integer') {
     const source = config.sources[name];
     return source ? { ...base, kind: 'record', required, values: [], source } : null;
   }
   if (leaf.kind === 'choice') return { ...base, kind: 'choice', required, values: leaf.values };
-  return { ...base, kind: 'text', required, values: [], maxLength: leaf.maxLength };
+  return { ...base, kind: 'text', required, values: [], maxLength: leaf.maxLength, date: leaf.format === 'date' };
 }
 
 export function planOf(config: EngineConfig, requestSchema: unknown): Plan | 'unsupported' {
@@ -67,4 +72,9 @@ export function planOf(config: EngineConfig, requestSchema: unknown): Plan | 'un
   if (!config.needs.every((name) => fields.some((f) => f.name === name))) return 'unsupported';
   if (fields.some((f) => f.parent && !fields.some((p) => p.name === f.parent))) return 'unsupported';
   return { fields, consts, reference: referenceOf(requestSchema), upload: config.upload ? { name: config.upload.name, label: config.upload.label } : null };
+}
+
+/** The controls in play: every one for a line with no modes, otherwise the `mode` control and the ones of the chosen mode. */
+export function activeFields(plan: Plan, values: Record<string, unknown>): EngineField[] {
+  return plan.fields.filter((f) => f.mode === undefined || f.mode === values.mode);
 }

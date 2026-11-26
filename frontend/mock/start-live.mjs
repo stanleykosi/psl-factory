@@ -70,6 +70,16 @@ export const SCHEMAS = {
     'pmo-leadership-report/v1',
     obj({ inputs: obj({ template_id: NID, content_id: NID, start_at: { type: 'string', maxLength: 64 }, end_at: { type: 'string', maxLength: 64 }, kind: { enum: ['monthly_executive'] }, audience: { enum: ['internal', 'management'] }, selections: obj({ issues: { type: 'array', items: ID } }), scope: obj({ domains: { type: 'array', items: { enum: ['pmo'] } } }) }) }),
   ),
+  // F-94: the intake is a oneOf on `mode`, as the server serves it.
+  'pmo-finance/v1': work(
+    'pmo-finance/v1',
+    {
+      oneOf: [
+        obj({ mode: { const: 'completion' }, coverage_id: ID, handoff_id: ID }),
+        obj({ mode: { const: 'preparation' }, preparation_id: ID, due_date: { anyOf: [{ type: 'string', format: 'date' }, { type: 'null' }] }, invoice_id: NID }),
+      ],
+    },
+  ),
   'finance-payroll/v1': work('finance-payroll/v1', obj({ request_id: ID })),
   'finance-ppe/v1': work('finance-ppe/v1', obj({ register_id: ID, prior_id: NID, ledger_id: NID })),
 };
@@ -96,9 +106,10 @@ const LINES = [
   line('pmo-emergency/v1', 'Record an emergency', 'Emergency change with its authorisation', true, 'pmo-emergency', true),
   line('pmo-change/v1', 'Start a change', 'Ordinary change for a project', true, 'pmo-change', true),
   line('finance-ppe/v1', 'Fixed asset schedule', 'Depreciation schedule from a register', true, 'finance-ppe', true),
+  line('pmo-finance/v1', 'Prepare an invoice', 'Continue an exact Finance preparation or PMO completion through review, issuance and delivery.', true, 'pmo-finance', true),
   line('pmo-leadership-report/v1', 'Leadership report', 'Monthly report for leadership', true, 'pmo-leadership-report', true),
 ];
-const PROJECT_LINES = new Set([WEEKLY, 'pmo-issues/v1', 'pmo-escalation/v1', 'pmo-emergency/v1', 'pmo-change/v1', 'pmo-minutes/v1', 'finance-ppe/v1']);
+const PROJECT_LINES = new Set([WEEKLY, 'pmo-issues/v1', 'pmo-escalation/v1', 'pmo-emergency/v1', 'pmo-change/v1', 'pmo-minutes/v1', 'finance-ppe/v1', 'pmo-finance/v1']);
 const PICKS = (n, text, extra = {}) => Array.from({ length: n }, (_, i) => ({ id: n - i, label: `${text} ${n - i}`, ...extra }));
 // Source rows by line and field, newest first. A row with `parent` belongs to the record chosen above it (parent_id).
 const SOURCE_ROWS = {
@@ -119,6 +130,12 @@ const SOURCE_ROWS = {
     register_id: [{ id: 33, label: 'PPE register 2025 · v2' }, { id: 31, label: 'PPE register 2025 · v1' }],
     prior_id: [{ id: 41, label: 'Schedule 2024' }],
     ledger_id: [{ id: 51, label: 'Ledger mapping Q4' }],
+  },
+  'pmo-finance/v1': {
+    coverage_id: [{ id: 12, label: 'COV-0002 · 3' }, { id: 11, label: 'COV-0001 · 1' }],
+    handoff_id: [{ id: 22, label: 'Go-live accepted · #22' }, { id: 21, label: 'Design signed off · #21' }],
+    preparation_id: [{ id: 32, label: 'fixed_contract · COV-0002 · #32' }, { id: 31, label: 'usage · COV-0001 · #31' }],
+    invoice_id: [{ id: 42, label: 'INV-0042 · 1', parent: 32 }],
   },
   'pmo-minutes/v1': {
     'data.template_id': [{ id: 54, label: 'Minutes, internal and client' }],
